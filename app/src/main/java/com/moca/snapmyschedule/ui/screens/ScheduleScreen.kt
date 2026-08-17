@@ -6,9 +6,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -20,8 +25,8 @@ import androidx.compose.ui.res.stringResource
 import com.moca.snapmyschedule.R
 import com.moca.snapmyschedule.data.model.ClassSession
 import com.moca.snapmyschedule.data.model.WeekDay
-import com.moca.snapmyschedule.ui.widgets.DateCarousel
-import com.moca.snapmyschedule.ui.widgets.DayScheduleContent
+import com.moca.snapmyschedule.ui.widgets.schedule_screen.DateCarousel
+import com.moca.snapmyschedule.ui.widgets.schedule_screen.DayScheduleContent
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
@@ -30,6 +35,8 @@ import java.util.Calendar
 fun ScheduleScreen(
     classes: List<ClassSession>,
     onAddClass: () -> Unit,
+    onClassClick: (ClassSession) -> Unit,
+    onOpenDrawer: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     /*
@@ -60,22 +67,30 @@ fun ScheduleScreen(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    Text(
-                        text = stringResource(R.string.app_name)
-                    )
+                    Text("Mi horario")
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = onOpenDrawer
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Menu,
+                            contentDescription = "Abrir menu"
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(
+                        onClick = onAddClass
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Agregar materia"
+                        )
+                    }
                 }
             )
         },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = onAddClass
-            ) {
-                Text(
-                    text = "+",
-                    style = MaterialTheme.typography.headlineMedium
-                )
-            }
-        }
     ) { innerPadding ->
 
         Column(
@@ -126,7 +141,8 @@ fun ScheduleScreen(
 
                 DayScheduleContent(
                     date = date,
-                    classes = classesForDay
+                    classes = classesForDay,
+                    onClassClick = onClassClick
                 )
             }
         }

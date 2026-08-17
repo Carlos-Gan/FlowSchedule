@@ -1,5 +1,8 @@
-package com.moca.snapmyschedule.ui.widgets
+package com.moca.snapmyschedule.ui.widgets.schedule_screen
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -13,18 +16,23 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Today
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -42,51 +50,22 @@ fun DateCarousel(
     onPageSelected: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    /*
-     * Permitimos navegar aproximadamente diez años
-     * hacia atrás y diez años hacia delante.
-     */
     val startPage = centerPage - DATE_RANGE_DAYS
     val itemCount = DATE_RANGE_DAYS * 2 + 1
 
-    val selectedIndex = (
-            selectedPage - startPage
-            ).coerceIn(
-            minimumValue = 0,
-            maximumValue = itemCount - 1
-        )
-
-    /*
-     * Dejamos aproximadamente dos elementos antes
-     * del seleccionado para que quede cerca del centro.
-     */
-    val initialVisibleIndex = (
-            selectedIndex - 2
-            ).coerceAtLeast(0)
+    val selectedIndex = (selectedPage - startPage).coerceIn(0, itemCount - 1)
+    val initialVisibleIndex = (selectedIndex - 2).coerceAtLeast(0)
 
     val listState = rememberLazyListState(
         initialFirstVisibleItemIndex = initialVisibleIndex
     )
 
     val selectedDate = remember(selectedPage) {
-        getDateForPage(
-            page = selectedPage,
-            centerPage = centerPage
-        )
+        getDateForPage(page = selectedPage, centerPage = centerPage)
     }
 
-    /*
-     * Mantiene sincronizado el carrusel cuando el usuario
-     * desliza el horario inferior.
-     */
     LaunchedEffect(selectedIndex) {
-        val targetIndex = (
-                selectedIndex - 2
-                ).coerceIn(
-                minimumValue = 0,
-                maximumValue = itemCount - 1
-            )
-
+        val targetIndex = (selectedIndex - 2).coerceIn(0, itemCount - 1)
         listState.animateScrollToItem(targetIndex)
     }
 
@@ -98,10 +77,7 @@ fun DateCarousel(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(
-                    start = 16.dp,
-                    end = 8.dp
-                ),
+                .padding(start = 16.dp, end = 12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -111,12 +87,17 @@ fun DateCarousel(
                 fontWeight = FontWeight.Bold
             )
 
-            TextButton(
-                onClick = {
-                    onPageSelected(centerPage)
-                }
+            FilledTonalButton(
+                onClick = { onPageSelected(centerPage) },
+                contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)
             ) {
-                Text("Hoy")
+                Icon(
+                    imageVector = Icons.Filled.Today,
+                    contentDescription = null,
+                    modifier = Modifier.height(16.dp)
+                )
+                androidx.compose.foundation.layout.Spacer(Modifier.width(6.dp))
+                Text("Hoy", style = MaterialTheme.typography.labelLarge)
             }
         }
 
@@ -125,39 +106,23 @@ fun DateCarousel(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(102.dp),
-            contentPadding = PaddingValues(
-                horizontal = 16.dp
-            ),
+            contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
-            flingBehavior = rememberSnapFlingBehavior(
-                lazyListState = listState
-            )
+            flingBehavior = rememberSnapFlingBehavior(lazyListState = listState)
         ) {
-            items(
-                count = itemCount,
-                key = { index -> index }
-            ) { index ->
-
+            items(count = itemCount, key = { index -> index }) { index ->
                 val page = startPage + index
 
                 val date = remember(page) {
-                    getDateForPage(
-                        page = page,
-                        centerPage = centerPage
-                    )
+                    getDateForPage(page = page, centerPage = centerPage)
                 }
 
                 DateCarouselItem(
                     date = date,
                     selected = page == selectedPage,
-                    today = isSameDate(
-                        first = date,
-                        second = Calendar.getInstance()
-                    ),
-                    onClick = {
-                        onPageSelected(page)
-                    }
+                    today = isSameDate(first = date, second = Calendar.getInstance()),
+                    onClick = { onPageSelected(page) }
                 )
             }
         }
@@ -175,74 +140,88 @@ private fun DateCarouselItem(
     val locale = LocalLocale.current.platformLocale
 
     val dayName = remember(date.timeInMillis, locale) {
-        SimpleDateFormat(
-            "EEE",
-            locale
-        ).format(date.time)
+        SimpleDateFormat("EEE", locale).format(date.time)
             .replace(".", "")
-            .replaceFirstChar { character ->
-                character.titlecase(locale)
-            }
+            .replaceFirstChar { it.titlecase(locale) }
     }
 
     val monthName = remember(date.timeInMillis, locale) {
-        SimpleDateFormat(
-            "MMM",
-            locale
-        ).format(date.time)
+        SimpleDateFormat("MMM", locale).format(date.time)
             .replace(".", "")
             .lowercase(locale)
     }
 
-    val shape = RoundedCornerShape(18.dp)
+    val isWeekend = remember(date.timeInMillis) {
+        val dow = date.get(Calendar.DAY_OF_WEEK)
+        dow == Calendar.SATURDAY || dow == Calendar.SUNDAY
+    }
+
+    val shape = RoundedCornerShape(14.dp)
+
+    // Transiciones suaves entre estados
+    val backgroundColor by animateColorAsState(
+        targetValue = if (selected) {
+            MaterialTheme.colorScheme.primaryContainer
+        } else {
+            MaterialTheme.colorScheme.surfaceContainer
+        },
+        label = "dateItemBackground"
+    )
+
+    val scale by animateFloatAsState(
+        targetValue = if (selected) 1.05f else 1f,
+        animationSpec = spring(dampingRatio = 0.6f),
+        label = "dateItemScale"
+    )
 
     var itemModifier = modifier
-        .width(55.dp)
-        .height(75.dp)
+        .width(46.dp)
+        .height(62.dp)
+        .scale(scale)
         .clip(shape)
-        .background(
-            color = if (selected) {
-                MaterialTheme.colorScheme.primaryContainer
-            } else {
-                MaterialTheme.colorScheme.surfaceContainer
-            },
-            shape = shape
+
+    if (selected) {
+        itemModifier = itemModifier.shadow(
+            elevation = 4.dp,
+            shape = shape,
+            clip = false
         )
+    }
+
+    itemModifier = itemModifier.background(color = backgroundColor, shape = shape)
 
     if (today && !selected) {
         itemModifier = itemModifier.border(
-            width = 1.dp,
+            width = 1.5.dp,
             color = MaterialTheme.colorScheme.primary,
             shape = shape
         )
     }
 
+    val dayNameColor = when {
+        selected -> MaterialTheme.colorScheme.onPrimaryContainer
+        isWeekend -> MaterialTheme.colorScheme.tertiary
+        else -> MaterialTheme.colorScheme.onSurfaceVariant
+    }
+
     Column(
         modifier = itemModifier
             .clickable(onClick = onClick)
-            .padding(
-                horizontal = 4.dp,
-                vertical = 8.dp
-            ),
+            .padding(horizontal = 2.dp, vertical = 6.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Text(
             text = dayName,
             style = MaterialTheme.typography.labelMedium,
-            color = if (selected) {
-                MaterialTheme.colorScheme.onPrimaryContainer
-            } else {
-                MaterialTheme.colorScheme.onSurfaceVariant
-            },
+            color = dayNameColor,
+            fontWeight = if (isWeekend) FontWeight.SemiBold else FontWeight.Normal,
             textAlign = TextAlign.Center
         )
 
         Text(
-            text = date
-                .get(Calendar.DAY_OF_MONTH)
-                .toString(),
-            style = MaterialTheme.typography.headlineSmall,
+            text = date.get(Calendar.DAY_OF_MONTH).toString(),
+            style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             color = if (selected) {
                 MaterialTheme.colorScheme.onPrimaryContainer
@@ -253,11 +232,7 @@ private fun DateCarouselItem(
         )
 
         Text(
-            text = if (today) {
-                "Hoy"
-            } else {
-                monthName
-            },
+            text = if (today) "Hoy" else monthName,
             style = MaterialTheme.typography.labelSmall,
             color = if (today || selected) {
                 MaterialTheme.colorScheme.primary
@@ -269,12 +244,8 @@ private fun DateCarouselItem(
     }
 }
 
-private fun getDateForPage(
-    page: Int,
-    centerPage: Int
-): Calendar {
-    val dayOffset =
-        page.toLong() - centerPage.toLong()
+private fun getDateForPage(page: Int, centerPage: Int): Calendar {
+    val dayOffset = page.toLong() - centerPage.toLong()
 
     return Calendar.getInstance().apply {
         set(Calendar.HOUR_OF_DAY, 0)
@@ -284,24 +255,14 @@ private fun getDateForPage(
 
         add(
             Calendar.DAY_OF_YEAR,
-            dayOffset.coerceIn(
-                minimumValue = Int.MIN_VALUE.toLong(),
-                maximumValue = Int.MAX_VALUE.toLong()
-            ).toInt()
+            dayOffset.coerceIn(Int.MIN_VALUE.toLong(), Int.MAX_VALUE.toLong()).toInt()
         )
     }
 }
 
-private fun formatMonthAndYear(
-    date: Calendar
-): String {
+private fun formatMonthAndYear(date: Calendar): String {
     val locale = Locale.getDefault()
 
-    return SimpleDateFormat(
-        "MMMM yyyy",
-        locale
-    ).format(date.time)
-        .replaceFirstChar { character ->
-            character.titlecase(locale)
-        }
+    return SimpleDateFormat("MMMM yyyy", locale).format(date.time)
+        .replaceFirstChar { it.titlecase(locale) }
 }

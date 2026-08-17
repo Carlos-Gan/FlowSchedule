@@ -1,4 +1,4 @@
-package com.moca.snapmyschedule.ui.widgets
+package com.moca.snapmyschedule.ui.widgets.schedule_screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

@@ -1,4 +1,4 @@
-package com.moca.snapmyschedule.ui.widgets
+package com.moca.snapmyschedule.ui.widgets.schedule_screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,6 +25,7 @@ import java.util.Locale
 fun DayScheduleContent(
     date: Calendar,
     classes: List<ClassSession>,
+    onClassClick: (ClassSession) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val isToday = remember(date.timeInMillis) {
@@ -83,6 +84,9 @@ fun DayScheduleContent(
 
                     ClassCard(
                         classSession = classSession,
+                        onClick = {
+                            onClassClick(classSession)
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp)
