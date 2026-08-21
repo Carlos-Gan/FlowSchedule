@@ -1,0 +1,6 @@
+{
+  "name": "SnapMySchedule",
+  "description": "Aplicación de gestión escolar moderna con horario semanal interactivo, agenda, tareas, exámenes, recordatorios e importación inteligente de horarios con foto.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
