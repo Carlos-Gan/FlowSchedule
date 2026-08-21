@@ -1,0 +1,502 @@
+package com.mocas.ui.viewmodel
+
+import android.app.Application
+import android.graphics.Bitmap
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import com.mocas.data.ai.DetectedSubjectItem
+import com.mocas.data.ai.ScheduleScannerService
+import com.mocas.data.local.AcademicPeriodEntity
+import com.mocas.data.local.AppDatabase
+import com.mocas.data.local.ClassExceptionEntity
+import com.mocas.data.local.ClassExceptionType
+import com.mocas.data.local.ScheduleSlotEntity
+import com.mocas.data.local.SchoolEventEntity
+import com.mocas.data.local.SchoolEventType
+import com.mocas.data.local.SchoolEventWithSubject
+import com.mocas.data.local.SubjectEntity
+import com.mocas.data.local.SubjectWithSlots
+import com.mocas.data.preferences.AppSettingsStore
+import com.mocas.data.notifications.ReminderRescheduler
+import com.mocas.data.widget.ScheduleWidgetProvider
+import com.mocas.data.widget.DailyScheduleWidgetProvider
+import com.mocas.data.repository.ScheduleRepository
+import com.mocas.ui.model.AppSettings
+import com.mocas.ui.model.ClassOccurrenceInfo
+import com.mocas.ui.model.BottomNavTab
+import com.mocas.ui.model.DayClassItem
+import com.mocas.ui.model.NextClassInfo
+import com.mocas.ui.model.TimetableDisplayMode
+import com.mocas.util.DateTimeUtils
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.DayOfWeek
+import java.time.temporal.TemporalAdjusters
+import java.util.Locale
+
+class ScheduleViewModel(application: Application) : AndroidViewModel(application) {
+    private val repository = ScheduleRepository(AppDatabase.getDatabase(application))
+    private val settingsStore = AppSettingsStore(application)
+
+    private val _currentTab = MutableStateFlow(BottomNavTab.INICIO)
+    val currentTab = _currentTab.asStateFlow()
+    private val _timetableMode = MutableStateFlow(TimetableDisplayMode.SEMANAL)
+    val timetableMode = _timetableMode.asStateFlow()
+    private val _selectedDayOfWeek = MutableStateFlow(getCurrentDayOfWeekNumber())
+    val selectedDayOfWeek = _selectedDayOfWeek.asStateFlow()
+    private val _selectedWeekStart = MutableStateFlow(startOfWeek(LocalDate.now()))
+    val selectedWeekStart = _selectedWeekStart.asStateFlow()
+    private val _selectedCalendarDate = MutableStateFlow(getTodayDateString())
+    val selectedCalendarDate = _selectedCalendarDate.asStateFlow()
+    private val _eventFilter = MutableStateFlow("TODOS")
+    val eventFilter = _eventFilter.asStateFlow()
+    private val _appSettings = MutableStateFlow(settingsStore.load())
+    val appSettings = _appSettings.asStateFlow()
+
+    private val _isAddSubjectOpen = MutableStateFlow(false)
+    val isAddSubjectOpen = _isAddSubjectOpen.asStateFlow()
+    private val _isAddEventOpen = MutableStateFlow(false)
+    val isAddEventOpen = _isAddEventOpen.asStateFlow()
+    private val _isImportScheduleOpen = MutableStateFlow(false)
+    val isImportScheduleOpen = _isImportScheduleOpen.asStateFlow()
+    private val _isGlobalSearchOpen = MutableStateFlow(false)
+    val isGlobalSearchOpen = _isGlobalSearchOpen.asStateFlow()
+    private val _selectedSubjectDetailId = MutableStateFlow<Long?>(null)
+    val selectedSubjectDetailId = _selectedSubjectDetailId.asStateFlow()
+    private val _editingSubject = MutableStateFlow<SubjectWithSlots?>(null)
+    val editingSubject = _editingSubject.asStateFlow()
+    private val _editingEvent = MutableStateFlow<SchoolEventWithSubject?>(null)
+    val editingEvent = _editingEvent.asStateFlow()
+    private val _newEventSubjectId = MutableStateFlow<Long?>(null)
+    val newEventSubjectId = _newEventSubjectId.asStateFlow()
+    private val _newEventDate = MutableStateFlow<String?>(null)
+    val newEventDate = _newEventDate.asStateFlow()
+    private val _newEventType = MutableStateFlow<SchoolEventType?>(null)
+    val newEventType = _newEventType.asStateFlow()
+    private val _newEventTitle = MutableStateFlow<String?>(null)
+    val newEventTitle = _newEventTitle.asStateFlow()
+    private val _selectedClassOccurrence = MutableStateFlow<ClassOccurrenceInfo?>(null)
+    val selectedClassOccurrence = _selectedClassOccurrence.asStateFlow()
+
+    private val _isScanning = MutableStateFlow(false)
+    val isScanning = _isScanning.asStateFlow()
+    private val _detectedSubjects = MutableStateFlow<List<DetectedSubjectItem>>(emptyList())
+    val detectedSubjects = _detectedSubjects.asStateFlow()
+    private val _capturedPhotoBitmap = MutableStateFlow<Bitmap?>(null)
+    val capturedPhotoBitmap = _capturedPhotoBitmap.asStateFlow()
+    private val _userMessage = MutableStateFlow<String?>(null)
+    val userMessage = _userMessage.asStateFlow()
+
+    val subjectsWithSlots: StateFlow<List<SubjectWithSlots>> = repository.allSubjectsWithSlots
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+    val allEventsWithSubject: StateFlow<List<SchoolEventWithSubject>> = repository.allEventsWithSubject
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+    val academicPeriods: StateFlow<List<AcademicPeriodEntity>> = repository.allAcademicPeriods
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+    val classExceptions: StateFlow<List<ClassExceptionEntity>> = repository.allClassExceptions
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+    val todayClasses: StateFlow<List<DayClassItem>> = combine(
+        subjectsWithSlots,
+        _selectedDayOfWeek,
+        _selectedWeekStart,
+        classExceptions
+    ) { subjects, day, weekStart, exceptions ->
+        computeClassesForDate(
+            subjects,
+            weekStart.plusDays((day - 1).toLong()),
+            exceptions
+        )
+    }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+    val nextClassInfo: StateFlow<NextClassInfo?> = subjectsWithSlots
+        .combine(_selectedDayOfWeek) { subjects, _ -> computeNextClass(subjects) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+
+    init {
+        viewModelScope.launch {
+            combine(
+                repository.allSubjectsWithSlots,
+                repository.allEventsWithSubject,
+                repository.allClassExceptions,
+                _appSettings
+            ) { _, _, _, _ -> Unit }
+                .collectLatest {
+                    ReminderRescheduler.reschedule(application)
+                    ScheduleWidgetProvider.requestUpdate(application)
+                    DailyScheduleWidgetProvider.requestUpdate(application)
+                }
+        }
+    }
+
+    fun setTab(tab: BottomNavTab) { _currentTab.value = tab }
+    fun setTimetableMode(mode: TimetableDisplayMode) { _timetableMode.value = mode }
+    fun setSelectedDayOfWeek(day: Int) { if (day in 1..7) _selectedDayOfWeek.value = day }
+    fun showPreviousWeek() { _selectedWeekStart.value = _selectedWeekStart.value.minusWeeks(1) }
+    fun showNextWeek() { _selectedWeekStart.value = _selectedWeekStart.value.plusWeeks(1) }
+    fun showPreviousDay() {
+        if (_selectedDayOfWeek.value == 1) {
+            _selectedWeekStart.value = _selectedWeekStart.value.minusWeeks(1)
+            _selectedDayOfWeek.value = 7
+        } else {
+            _selectedDayOfWeek.value -= 1
+        }
+    }
+    fun showNextDay() {
+        if (_selectedDayOfWeek.value == 7) {
+            _selectedWeekStart.value = _selectedWeekStart.value.plusWeeks(1)
+            _selectedDayOfWeek.value = 1
+        } else {
+            _selectedDayOfWeek.value += 1
+        }
+    }
+    fun showCurrentWeek() {
+        _selectedWeekStart.value = startOfWeek(LocalDate.now())
+        _selectedDayOfWeek.value = getCurrentDayOfWeekNumber()
+    }
+    fun setSelectedCalendarDate(date: String) {
+        if (DateTimeUtils.isValidDate(date)) _selectedCalendarDate.value = date
+    }
+    fun setEventFilter(filter: String) { _eventFilter.value = filter }
+    fun updateSettings(newSettings: AppSettings) {
+        _appSettings.value = newSettings
+        settingsStore.save(newSettings)
+        if (!newSettings.aiFeaturesEnabled) {
+            _isImportScheduleOpen.value = false
+            _isScanning.value = false
+            _detectedSubjects.value = emptyList()
+            _capturedPhotoBitmap.value = null
+        }
+    }
+    fun completeOnboarding(settings: AppSettings) {
+        updateSettings(
+            settings.copy(
+                userName = settings.userName.trim(),
+                onboardingCompleted = true
+            )
+        )
+    }
+    fun clearUserMessage() { _userMessage.value = null }
+
+    fun openAddSubject(subjectToEdit: SubjectWithSlots? = null) {
+        _editingSubject.value = subjectToEdit
+        _isAddSubjectOpen.value = true
+    }
+    fun closeAddSubject() {
+        _isAddSubjectOpen.value = false
+        _editingSubject.value = null
+    }
+    fun openAddEvent(
+        eventToEdit: SchoolEventWithSubject? = null,
+        subjectId: Long? = null,
+        defaultDate: String? = null,
+        defaultType: SchoolEventType? = null,
+        defaultTitle: String? = null
+    ) {
+        _editingEvent.value = eventToEdit
+        _newEventSubjectId.value = eventToEdit?.event?.subjectId ?: subjectId
+        _newEventDate.value = defaultDate?.takeIf(DateTimeUtils::isValidDate)
+        _newEventType.value = defaultType
+        _newEventTitle.value = defaultTitle
+        _isAddEventOpen.value = true
+    }
+    fun closeAddEvent() {
+        _isAddEventOpen.value = false
+        _editingEvent.value = null
+        _newEventSubjectId.value = null
+        _newEventDate.value = null
+        _newEventType.value = null
+        _newEventTitle.value = null
+    }
+    fun openImportSchedule() {
+        if (!_appSettings.value.aiFeaturesEnabled) return
+        _detectedSubjects.value = emptyList()
+        _capturedPhotoBitmap.value = null
+        _isScanning.value = false
+        _isImportScheduleOpen.value = true
+    }
+    fun closeImportSchedule() { _isImportScheduleOpen.value = false }
+    fun openGlobalSearch() { _isGlobalSearchOpen.value = true }
+    fun closeGlobalSearch() { _isGlobalSearchOpen.value = false }
+    fun openSubjectDetail(subjectId: Long) { _selectedSubjectDetailId.value = subjectId }
+    fun closeSubjectDetail() { _selectedSubjectDetailId.value = null }
+    fun openClassOccurrence(
+        subject: SubjectEntity,
+        slot: ScheduleSlotEntity,
+        date: LocalDate,
+        exception: ClassExceptionEntity? = null
+    ) {
+        _selectedClassOccurrence.value = ClassOccurrenceInfo(subject, slot, date.toString(), exception)
+    }
+    fun closeClassOccurrence() { _selectedClassOccurrence.value = null }
+
+    fun saveClassException(item: ClassExceptionEntity) {
+        viewModelScope.launch {
+            runOperation {
+                repository.saveClassException(item)
+                closeClassOccurrence()
+                _userMessage.value = if (item.type == ClassExceptionType.CANCELED) {
+                    "Clase cancelada solamente para esta fecha."
+                } else {
+                    "Cambio aplicado solamente a esta fecha."
+                }
+            }
+        }
+    }
+
+    fun deleteClassException(id: Long) {
+        viewModelScope.launch {
+            runOperation {
+                check(repository.deleteClassException(id)) { "La excepción ya no existe." }
+                closeClassOccurrence()
+                _userMessage.value = "La clase volvió a su horario habitual."
+            }
+        }
+    }
+
+    fun saveSubject(subject: SubjectEntity, slots: List<ScheduleSlotEntity>) {
+        viewModelScope.launch {
+            runOperation {
+                if (subject.id == 0L) repository.insertSubjectWithSlots(subject, slots)
+                else repository.updateSubjectWithSlots(subject, slots)
+                closeAddSubject()
+            }
+        }
+    }
+
+    fun deleteSubject(subjectId: Long) {
+        viewModelScope.launch {
+            runOperation {
+                check(repository.deleteSubject(subjectId)) { "La materia ya no existe." }
+                closeSubjectDetail()
+            }
+        }
+    }
+
+    fun saveEvent(event: SchoolEventEntity) {
+        viewModelScope.launch {
+            runOperation {
+                if (event.id == 0L) repository.insertEvent(event) else repository.updateEvent(event)
+                closeAddEvent()
+            }
+        }
+    }
+
+    fun deleteEvent(eventId: Long) {
+        viewModelScope.launch {
+            runOperation { check(repository.deleteEvent(eventId)) { "El evento ya no existe." } }
+        }
+    }
+
+    fun saveAcademicPeriod(period: AcademicPeriodEntity) {
+        viewModelScope.launch {
+            runOperation {
+                repository.saveAcademicPeriod(period)
+                _userMessage.value = if (period.id == 0L) "Periodo guardado." else "Periodo actualizado."
+            }
+        }
+    }
+
+    fun deleteAcademicPeriod(periodId: Long) {
+        viewModelScope.launch {
+            runOperation {
+                check(repository.deleteAcademicPeriod(periodId)) {
+                    "El periodo ya no existe."
+                }
+            }
+        }
+    }
+
+    fun copySubjectsBetweenPeriods(sourcePeriodId: Long, targetPeriodId: Long) {
+        viewModelScope.launch {
+            runOperation {
+                val copied = repository.copySubjectsBetweenPeriods(sourcePeriodId, targetPeriodId)
+                _userMessage.value = when (copied) {
+                    0 -> "No había materias nuevas para copiar."
+                    1 -> "Se copió 1 materia al periodo."
+                    else -> "Se copiaron $copied materias al periodo."
+                }
+            }
+        }
+    }
+
+    fun toggleEventCompleted(eventId: Long, completed: Boolean) {
+        viewModelScope.launch {
+            runOperation {
+                check(repository.setEventCompleted(eventId, completed)) { "El evento ya no existe." }
+            }
+        }
+    }
+
+    fun scanScheduleImage(bitmap: Bitmap?) {
+        if (!_appSettings.value.aiFeaturesEnabled) return
+        if (bitmap == null) {
+            _userMessage.value = "No se pudo leer la imagen seleccionada."
+            return
+        }
+        _capturedPhotoBitmap.value = bitmap
+        _isScanning.value = true
+        viewModelScope.launch {
+            try {
+                _detectedSubjects.value = ScheduleScannerService.analyzeScheduleImage(bitmap)
+            } catch (error: Exception) {
+                _detectedSubjects.value = emptyList()
+                _userMessage.value = error.message ?: "No se pudo analizar el horario."
+            } finally {
+                _isScanning.value = false
+            }
+        }
+    }
+
+    fun toggleDetectedItemSelection(index: Int) {
+        val current = _detectedSubjects.value.toMutableList()
+        if (index in current.indices) {
+            current[index] = current[index].copy(isSelected = !current[index].isSelected)
+            _detectedSubjects.value = current
+        }
+    }
+
+    fun updateDetectedItem(index: Int, updated: DetectedSubjectItem) {
+        val current = _detectedSubjects.value.toMutableList()
+        if (index in current.indices) {
+            current[index] = updated
+            _detectedSubjects.value = current
+        }
+    }
+
+    fun confirmImportDetectedSchedule(semesterStart: String, semesterEnd: String) {
+        viewModelScope.launch {
+            runOperation {
+                repository.importDetectedSubjects(_detectedSubjects.value, semesterStart, semesterEnd)
+                closeImportSchedule()
+                _currentTab.value = BottomNavTab.HORARIO
+            }
+        }
+    }
+
+    fun clearAllData() {
+        viewModelScope.launch { runOperation { repository.clearAll() } }
+    }
+
+    private suspend fun runOperation(block: suspend () -> Unit) {
+        try {
+            block()
+        } catch (error: Exception) {
+            _userMessage.value = error.message ?: "Ocurrió un error inesperado."
+        }
+    }
+
+    companion object {
+        fun getCurrentDayOfWeekNumber(): Int = DateTimeUtils.currentDayOfWeek()
+        fun getTodayDateString(): String = DateTimeUtils.todayString()
+        fun getFormattedTodayHeading(): String = DateTimeUtils.formatDate(getTodayDateString(), true)
+        fun getGreetingText(name: String): String {
+            val greeting = when (LocalTime.now().hour) {
+                in 6..11 -> "Buenos días"
+                in 12..19 -> "Buenas tardes"
+                else -> "Buenas noches"
+            }
+            return if (name.isBlank()) "¡$greeting!" else "¡$greeting, $name!"
+        }
+
+        fun startOfWeek(date: LocalDate): LocalDate =
+            date.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+
+        private fun computeClassesForDate(
+            subjects: List<SubjectWithSlots>,
+            date: LocalDate,
+            exceptions: List<ClassExceptionEntity>
+        ): List<DayClassItem> {
+            val today = LocalDate.now()
+            val nowMinutes = LocalTime.now().let { it.hour * 60 + it.minute }
+            return subjects.filter { item ->
+                val start = DateTimeUtils.parseDate(item.subject.semesterStart)
+                val end = DateTimeUtils.parseDate(item.subject.semesterEnd)
+                start != null && end != null && date in start..end
+            }.flatMap { item ->
+                item.slots.filter { it.dayOfWeek == date.dayOfWeek.value }.mapNotNull { slot ->
+                    val exception = exceptions.firstOrNull {
+                        it.slotId == slot.id && it.date == date.toString()
+                    }
+                    if (exception?.type == ClassExceptionType.CANCELED) return@mapNotNull null
+                    val effectiveSlot = if (exception?.type == ClassExceptionType.MODIFIED) {
+                        slot.copy(
+                            startTime = exception.newStartTime ?: slot.startTime,
+                            endTime = exception.newEndTime ?: slot.endTime,
+                            room = exception.newRoom ?: slot.room
+                        )
+                    } else slot
+                    val start = parseTimeToMinutes(effectiveSlot.startTime)
+                    val end = parseTimeToMinutes(effectiveSlot.endTime)
+                    val isToday = date == today
+                    DayClassItem(
+                        subject = item.subject,
+                        slot = effectiveSlot,
+                        isLiveNow = isToday && nowMinutes >= start && nowMinutes < end,
+                        isCompletedToday = isToday && nowMinutes >= end
+                    )
+                }
+            }.sortedBy { parseTimeToMinutes(it.slot.startTime) }
+        }
+
+        private fun computeNextClass(subjects: List<SubjectWithSlots>): NextClassInfo? {
+            val today = LocalDate.now()
+            val nowMinutes = LocalTime.now().let { it.hour * 60 + it.minute }
+            for (offset in 0..7) {
+                val date = today.plusDays(offset.toLong())
+                val candidates = subjects.flatMap { item ->
+                    val semesterStart = DateTimeUtils.parseDate(item.subject.semesterStart)
+                    val semesterEnd = DateTimeUtils.parseDate(item.subject.semesterEnd)
+                    if (semesterStart == null || semesterEnd == null || date !in semesterStart..semesterEnd) {
+                        emptyList()
+                    } else {
+                        item.slots.filter { it.dayOfWeek == date.dayOfWeek.value }
+                            .map { item.subject to it }
+                    }
+                }.sortedBy { parseTimeToMinutes(it.second.startTime) }
+
+                candidates.forEach { (subject, slot) ->
+                    val start = parseTimeToMinutes(slot.startTime)
+                    val end = parseTimeToMinutes(slot.endTime)
+                    if (offset > 0 || nowMinutes < end) {
+                        val happening = offset == 0 && nowMinutes >= start && nowMinutes < end
+                        val dayName = when {
+                            offset == 0 -> "Hoy"
+                            offset == 1 -> "Mañana (${dayName(date.dayOfWeek.value)})"
+                            else -> "El ${dayName(date.dayOfWeek.value)}"
+                        }
+                        return NextClassInfo(
+                            subject = subject,
+                            slot = slot,
+                            dayName = dayName,
+                            timeRange = "${slot.startTime} - ${slot.endTime}",
+                            room = slot.room.ifBlank { subject.defaultRoom },
+                            minutesUntil = if (offset == 0 && !happening) start - nowMinutes else if (happening) 0 else -1,
+                            isHappeningNow = happening
+                        )
+                    }
+                }
+            }
+            return null
+        }
+
+        fun parseTimeToMinutes(timeStr: String): Int = DateTimeUtils.timeToMinutes(timeStr) ?: 0
+
+        private fun dayName(day: Int): String = when (day) {
+            1 -> "Lunes"
+            2 -> "Martes"
+            3 -> "Miércoles"
+            4 -> "Jueves"
+            5 -> "Viernes"
+            6 -> "Sábado"
+            else -> "Domingo"
+        }
+    }
+}

@@ -1,3 +1,7 @@
 <resources>
+    <string name="widget_description">Próxima clase y actividades pendientes</string>
+    <string name="next_class_widget_name">Próxima clase</string>
+    <string name="daily_widget_name">Horario del día</string>
+    <string name="daily_widget_description">Clases de hoy y pendientes de cada materia</string>
     <string name="app_name">SnapMySchedule</string>
 </resources>
