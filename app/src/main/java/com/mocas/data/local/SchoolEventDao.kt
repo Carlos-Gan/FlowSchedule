@@ -16,6 +16,7 @@ interface SchoolEventDao {
         """
         SELECT *
         FROM school_events
+        WHERE isDeleted = 0
         ORDER BY
             startDate ASC,
             CASE WHEN startTime IS NULL THEN 0 ELSE 1 END ASC,
@@ -29,6 +30,7 @@ interface SchoolEventDao {
         """
         SELECT *
         FROM school_events
+        WHERE isDeleted = 0
         ORDER BY
             startDate ASC,
             CASE WHEN startTime IS NULL THEN 0 ELSE 1 END ASC,
@@ -38,14 +40,14 @@ interface SchoolEventDao {
     fun getAllEventsWithSubject(): Flow<List<SchoolEventWithSubject>>
 
     @Transaction
-    @Query("SELECT * FROM school_events ORDER BY startDate ASC, startTime ASC")
+    @Query("SELECT * FROM school_events WHERE isDeleted = 0 ORDER BY startDate ASC, startTime ASC")
     suspend fun getAllEventsWithSubjectOnce(): List<SchoolEventWithSubject>
 
     @Query(
         """
         SELECT *
         FROM school_events
-        WHERE id = :eventId
+        WHERE id = :eventId AND isDeleted = 0
         LIMIT 1
         """
     )
@@ -58,7 +60,7 @@ interface SchoolEventDao {
         """
         SELECT *
         FROM school_events
-        WHERE id = :eventId
+        WHERE id = :eventId AND isDeleted = 0
         LIMIT 1
         """
     )
@@ -71,7 +73,7 @@ interface SchoolEventDao {
         """
         SELECT *
         FROM school_events
-        WHERE subjectId = :subjectId
+        WHERE subjectId = :subjectId AND isDeleted = 0
         ORDER BY
             startDate ASC,
             CASE WHEN startTime IS NULL THEN 0 ELSE 1 END ASC,
@@ -96,7 +98,8 @@ interface SchoolEventDao {
         """
         SELECT *
         FROM school_events
-        WHERE startDate <= :date
+        WHERE isDeleted = 0
+          AND startDate <= :date
           AND endDate >= :date
         ORDER BY
             CASE WHEN startTime IS NULL THEN 0 ELSE 1 END ASC,
@@ -112,7 +115,8 @@ interface SchoolEventDao {
         """
         SELECT *
         FROM school_events
-        WHERE endDate >= :fromDate
+        WHERE isDeleted = 0
+          AND endDate >= :fromDate
         ORDER BY
             startDate ASC,
             CASE WHEN startTime IS NULL THEN 0 ELSE 1 END ASC,
@@ -128,7 +132,8 @@ interface SchoolEventDao {
         """
         SELECT *
         FROM school_events
-        WHERE startDate <= :endDate
+        WHERE isDeleted = 0
+          AND startDate <= :endDate
           AND endDate >= :startDate
         ORDER BY
             startDate ASC,
@@ -146,7 +151,8 @@ interface SchoolEventDao {
         """
         SELECT *
         FROM school_events
-        WHERE isCompleted = 0
+        WHERE isDeleted = 0
+          AND isCompleted = 0
           AND endDate >= :fromDate
         ORDER BY
             startDate ASC,
@@ -173,6 +179,18 @@ interface SchoolEventDao {
         event: SchoolEventEntity
     ): Int
 
+    @Query("SELECT * FROM school_events WHERE isDeleted = 1 ORDER BY deletedAtMillis DESC")
+    fun getDeletedEvents(): Flow<List<SchoolEventEntity>>
+
+    @Query("SELECT * FROM school_events WHERE isDeleted = 1 ORDER BY deletedAtMillis DESC")
+    suspend fun getDeletedEventsSnapshot(): List<SchoolEventEntity>
+
+    @Query("UPDATE school_events SET isDeleted = :deleted, deletedAtMillis = :deletedAt WHERE id = :eventId")
+    suspend fun setEventDeleted(eventId: Long, deleted: Boolean, deletedAt: Long?): Int
+
+    @Query("DELETE FROM school_events WHERE isDeleted = 1 AND deletedAtMillis < :beforeMillis")
+    suspend fun purgeDeletedEvents(beforeMillis: Long): Int
+
     @Delete
     suspend fun deleteEvent(
         event: SchoolEventEntity
@@ -183,7 +201,7 @@ interface SchoolEventDao {
         UPDATE school_events
         SET isCompleted = :completed,
             updatedAtMillis = :updatedAtMillis
-        WHERE id = :eventId
+        WHERE id = :eventId AND isDeleted = 0
         """
     )
     suspend fun setEventCompleted(

@@ -9,7 +9,7 @@ Aplicación Android para organizar materias, sesiones, tareas, exámenes, period
 ![Android](https://img.shields.io/badge/Android-8.0%2B-3DDC84?logo=android&logoColor=white)
 ![Kotlin](https://img.shields.io/badge/Kotlin-2.4-7F52FF?logo=kotlin&logoColor=white)
 ![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-Material%203-4285F4?logo=jetpackcompose&logoColor=white)
-![Version](https://img.shields.io/badge/versión-1.3-5847EB)
+![Version](https://img.shields.io/badge/versión-1.3.1-5847EB)
 
 </div>
 
@@ -37,6 +37,9 @@ Aplicación Android para organizar materias, sesiones, tareas, exámenes, period
 
 - Tareas, exámenes, exposiciones, reuniones, eventos escolares, vacaciones y otros eventos.
 - Actividades de uno o varios días.
+- Actividades recurrentes semanales o mensuales con fecha de finalización.
+- Prioridad baja, media o alta para ordenar visualmente lo más importante.
+- Subtareas persistentes para dividir proyectos en pasos, con barra de progreso.
 - Selectores de fecha con calendario y selectores de hora con reloj.
 - Actividades vinculadas a una materia y control de completadas o pendientes.
 - Integración con el calendario del teléfono mediante `CalendarContract`.
@@ -50,6 +53,7 @@ Aplicación Android para organizar materias, sesiones, tareas, exámenes, period
 - Configuración independiente por categoría.
 - Anticipación personalizable: minutos, horas o días antes.
 - Restauración automática de recordatorios después de reiniciar el teléfono.
+- Acciones para completar o posponer una actividad durante una hora sin abrir la aplicación.
 
 ### Organización y búsqueda
 
@@ -60,10 +64,12 @@ Aplicación Android para organizar materias, sesiones, tareas, exámenes, period
 
 ### Exportación y respaldos
 
-- Respaldo portátil en JSON con periodos, materias, sesiones, excepciones y actividades.
+- Respaldo portátil en JSON con periodos, materias, sesiones, excepciones, actividades recurrentes y subtareas.
 - Restauración completa en el mismo dispositivo o en otro teléfono.
 - Validación del archivo antes de reemplazar los datos actuales.
 - Exportación `.ics` independiente para Google Calendar, Apple Calendar y Outlook.
+- Papelera recuperable para materias y actividades, con retención de 30 días.
+- Hasta cinco respaldos automáticos antes de importar, restaurar o borrar todos los datos.
 
 ### Widgets
 

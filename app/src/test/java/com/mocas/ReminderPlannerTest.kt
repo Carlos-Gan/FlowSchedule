@@ -139,6 +139,7 @@ class ReminderPlannerTest {
 
         assertFalse(reminders.any { it.id.startsWith("class_") })
         val taskReminder = reminders.single { it.id == "event_8" }
+        assertEquals(8L, taskReminder.eventId)
         assertEquals(
             LocalDateTime.parse("2026-08-23T10:00").toInstant(ZoneOffset.UTC).toEpochMilli(),
             taskReminder.triggerAtMillis

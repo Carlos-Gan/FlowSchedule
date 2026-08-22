@@ -7,6 +7,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.mocas.data.ai.DetectedSubjectItem
 import com.mocas.data.ai.ScheduleScannerService
+import com.mocas.data.backup.AutomaticBackupInfo
+import com.mocas.data.backup.AutomaticBackupManager
 import com.mocas.data.local.AcademicPeriodEntity
 import com.mocas.data.local.AppDatabase
 import com.mocas.data.local.ClassExceptionEntity
@@ -48,6 +50,7 @@ import java.util.Locale
 class ScheduleViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = ScheduleRepository(AppDatabase.getDatabase(application))
     private val settingsStore = AppSettingsStore(application)
+    private val automaticBackupManager = AutomaticBackupManager(application)
 
     private val _currentTab = MutableStateFlow(BottomNavTab.INICIO)
     val currentTab = _currentTab.asStateFlow()
@@ -106,6 +109,12 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
     val classExceptions: StateFlow<List<ClassExceptionEntity>> = repository.allClassExceptions
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+    val deletedSubjects: StateFlow<List<SubjectEntity>> = repository.deletedSubjects
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+    val deletedEvents: StateFlow<List<SchoolEventEntity>> = repository.deletedEvents
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+    private val _automaticBackups = MutableStateFlow<List<AutomaticBackupInfo>>(emptyList())
+    val automaticBackups = _automaticBackups.asStateFlow()
     val todayClasses: StateFlow<List<DayClassItem>> = combine(
         subjectsWithSlots,
         _selectedDayOfWeek,
@@ -124,6 +133,10 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
     init {
+        viewModelScope.launch {
+            repository.purgeExpiredTrash()
+            refreshAutomaticBackups()
+        }
         viewModelScope.launch {
             combine(
                 repository.allSubjectsWithSlots,
@@ -279,14 +292,16 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
             runOperation {
                 check(repository.deleteSubject(subjectId)) { "La materia ya no existe." }
                 closeSubjectDetail()
+                _userMessage.value = "Materia movida a la papelera."
             }
         }
     }
 
-    fun saveEvent(event: SchoolEventEntity) {
+    fun saveEvent(event: SchoolEventEntity, subtasks: List<com.mocas.data.local.SubtaskEntity>) {
         viewModelScope.launch {
             runOperation {
-                if (event.id == 0L) repository.insertEvent(event) else repository.updateEvent(event)
+                if (event.id == 0L) repository.insertEvent(event, subtasks)
+                else repository.updateEvent(event, subtasks)
                 closeAddEvent()
             }
         }
@@ -294,7 +309,49 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
 
     fun deleteEvent(eventId: Long) {
         viewModelScope.launch {
-            runOperation { check(repository.deleteEvent(eventId)) { "El evento ya no existe." } }
+            runOperation {
+                check(repository.deleteEvent(eventId)) { "El evento ya no existe." }
+                _userMessage.value = "Actividad movida a la papelera."
+            }
+        }
+    }
+
+    fun restoreDeletedSubject(subjectId: Long) {
+        viewModelScope.launch {
+            runOperation {
+                check(repository.restoreSubject(subjectId)) { "La materia ya no está en la papelera." }
+                _userMessage.value = "Materia restaurada."
+            }
+        }
+    }
+
+    fun restoreDeletedEvent(eventId: Long) {
+        viewModelScope.launch {
+            runOperation {
+                check(repository.restoreEvent(eventId)) { "La actividad ya no está en la papelera." }
+                _userMessage.value = "Actividad restaurada."
+            }
+        }
+    }
+
+    fun permanentlyDeleteSubject(subjectId: Long) {
+        viewModelScope.launch {
+            runOperation { repository.permanentlyDeleteSubject(subjectId) }
+        }
+    }
+
+    fun permanentlyDeleteEvent(eventId: Long) {
+        viewModelScope.launch {
+            runOperation { repository.permanentlyDeleteEvent(eventId) }
+        }
+    }
+
+    fun emptyTrash() {
+        viewModelScope.launch {
+            runOperation {
+                repository.emptyTrash()
+                _userMessage.value = "Papelera vaciada."
+            }
         }
     }
 
@@ -334,6 +391,16 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch {
             runOperation {
                 check(repository.setEventCompleted(eventId, completed)) { "El evento ya no existe." }
+            }
+        }
+    }
+
+    fun toggleSubtaskCompleted(eventId: Long, subtaskId: Long, completed: Boolean) {
+        viewModelScope.launch {
+            runOperation {
+                check(repository.setSubtaskCompleted(eventId, subtaskId, completed)) {
+                    "La subtarea ya no existe."
+                }
             }
         }
     }
@@ -385,7 +452,13 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun clearAllData() {
-        viewModelScope.launch { runOperation { repository.clearAll() } }
+        viewModelScope.launch {
+            runOperation {
+                createAutomaticBackup("clear")
+                repository.clearAll()
+                _userMessage.value = "Datos borrados. Guardamos un respaldo automático."
+            }
+        }
     }
 
     fun exportScheduleBackup(uri: Uri) {
@@ -414,11 +487,46 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
                         "No se pudo abrir el respaldo seleccionado."
                     }.bufferedReader().use { reader -> reader.readText() }
                 }
+                createAutomaticBackup("import")
                 val summary = repository.importScheduleBackup(json)
                 _userMessage.value =
                     "Respaldo restaurado: ${summary.subjects} materias, " +
                     "${summary.sessions} sesiones y ${summary.activities} actividades."
             }
+        }
+    }
+
+    fun restoreAutomaticBackup(fileName: String) {
+        viewModelScope.launch {
+            runOperation {
+                val json = withContext(Dispatchers.IO) { automaticBackupManager.read(fileName) }
+                createAutomaticBackup("restore")
+                val summary = repository.importScheduleBackup(json)
+                refreshAutomaticBackups()
+                _userMessage.value = "Respaldo restaurado: ${summary.subjects} materias y ${summary.activities} actividades."
+            }
+        }
+    }
+
+    fun deleteAutomaticBackup(fileName: String) {
+        viewModelScope.launch {
+            runOperation {
+                withContext(Dispatchers.IO) { automaticBackupManager.delete(fileName) }
+                refreshAutomaticBackups()
+            }
+        }
+    }
+
+    private suspend fun createAutomaticBackup(reasonCode: String) {
+        withContext(Dispatchers.IO) {
+            automaticBackupManager.create(repository.exportScheduleBackup(), reasonCode)
+        }
+        refreshAutomaticBackups()
+    }
+
+    private suspend fun refreshAutomaticBackups() {
+        _automaticBackups.value = withContext(Dispatchers.IO) {
+            automaticBackupManager.listFiles()
         }
     }
 

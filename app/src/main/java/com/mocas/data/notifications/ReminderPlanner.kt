@@ -19,7 +19,8 @@ data class PlannedReminder(
     val triggerAtMillis: Long,
     val title: String,
     val message: String,
-    val channel: String
+    val channel: String,
+    val eventId: Long? = null
 )
 
 internal fun planReminders(
@@ -119,7 +120,8 @@ internal fun planReminders(
                 triggerAtMillis = trigger.atZone(zoneId).toInstant().toEpochMilli(),
                 title = "$label: ${event.title}",
                 message = DateTimeUtils.formatDate(event.startDate, true),
-                channel = NotificationScheduler.CHANNEL_ACTIVITIES
+                channel = NotificationScheduler.CHANNEL_ACTIVITIES,
+                eventId = event.id
             )
         }
         val dueDate = DateTimeUtils.parseDate(event.endDate) ?: return@forEach
@@ -134,7 +136,8 @@ internal fun planReminders(
                 triggerAtMillis = overdue.atZone(zoneId).toInstant().toEpochMilli(),
                 title = "Actividad vencida",
                 message = "${event.title} sigue pendiente.",
-                channel = NotificationScheduler.CHANNEL_ACTIVITIES
+                channel = NotificationScheduler.CHANNEL_ACTIVITIES,
+                eventId = event.id
             )
         }
     }

@@ -24,4 +24,16 @@ class DatabaseConverters {
     @TypeConverter
     fun stringToClassExceptionType(value: String): ClassExceptionType =
         runCatching { ClassExceptionType.valueOf(value) }.getOrDefault(ClassExceptionType.CANCELED)
+
+    @TypeConverter
+    fun eventPriorityToString(value: EventPriority): String = value.name
+
+    @TypeConverter
+    fun stringToEventPriority(value: String?): EventPriority = EventPriority.fromString(value)
+
+    @TypeConverter
+    fun recurrenceTypeToString(value: RecurrenceType): String = value.name
+
+    @TypeConverter
+    fun stringToRecurrenceType(value: String?): RecurrenceType = RecurrenceType.fromString(value)
 }

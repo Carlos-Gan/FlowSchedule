@@ -16,6 +16,7 @@ interface SubjectDao {
         """
         SELECT *
         FROM subjects
+        WHERE isDeleted = 0
         ORDER BY name COLLATE NOCASE ASC
         """
     )
@@ -25,6 +26,7 @@ interface SubjectDao {
         """
         SELECT *
         FROM subjects
+        WHERE isDeleted = 0
         ORDER BY name COLLATE NOCASE ASC
         """
     )
@@ -35,6 +37,7 @@ interface SubjectDao {
         """
         SELECT *
         FROM subjects
+        WHERE isDeleted = 0
         ORDER BY name COLLATE NOCASE ASC
         """
     )
@@ -45,6 +48,7 @@ interface SubjectDao {
         """
         SELECT *
         FROM subjects
+        WHERE isDeleted = 0
         ORDER BY name COLLATE NOCASE ASC
         """
     )
@@ -59,7 +63,7 @@ interface SubjectDao {
         """
         SELECT *
         FROM subjects
-        WHERE id = :subjectId
+        WHERE id = :subjectId AND isDeleted = 0
         LIMIT 1
         """
     )
@@ -75,7 +79,7 @@ interface SubjectDao {
         """
         SELECT *
         FROM subjects
-        WHERE id = :subjectId
+        WHERE id = :subjectId AND isDeleted = 0
         LIMIT 1
         """
     )
@@ -87,7 +91,7 @@ interface SubjectDao {
         """
         SELECT *
         FROM subjects
-        WHERE id = :subjectId
+        WHERE id = :subjectId AND isDeleted = 0
         LIMIT 1
         """
     )
@@ -99,7 +103,7 @@ interface SubjectDao {
         """
         SELECT *
         FROM subjects
-        WHERE id = :subjectId
+        WHERE id = :subjectId AND isDeleted = 0
         LIMIT 1
         """
     )
@@ -111,9 +115,10 @@ interface SubjectDao {
         """
         SELECT *
         FROM subjects
-        WHERE name LIKE '%' || :query || '%'
+        WHERE isDeleted = 0
+          AND (name LIKE '%' || :query || '%'
            OR code LIKE '%' || :query || '%'
-           OR professor LIKE '%' || :query || '%'
+           OR professor LIKE '%' || :query || '%')
         ORDER BY name COLLATE NOCASE ASC
         """
     )
@@ -135,6 +140,18 @@ interface SubjectDao {
     suspend fun updateSubject(
         subject: SubjectEntity
     ): Int
+
+    @Query("SELECT * FROM subjects WHERE isDeleted = 1 ORDER BY deletedAtMillis DESC")
+    fun getDeletedSubjects(): Flow<List<SubjectEntity>>
+
+    @Query("SELECT * FROM subjects WHERE isDeleted = 1 ORDER BY deletedAtMillis DESC")
+    suspend fun getDeletedSubjectsSnapshot(): List<SubjectEntity>
+
+    @Query("UPDATE subjects SET isDeleted = :deleted, deletedAtMillis = :deletedAt WHERE id = :subjectId")
+    suspend fun setSubjectDeleted(subjectId: Long, deleted: Boolean, deletedAt: Long?): Int
+
+    @Query("DELETE FROM subjects WHERE isDeleted = 1 AND deletedAtMillis < :beforeMillis")
+    suspend fun purgeDeletedSubjects(beforeMillis: Long): Int
 
     @Query(
         """

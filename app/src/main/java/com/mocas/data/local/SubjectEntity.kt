@@ -32,6 +32,9 @@ data class SubjectEntity(
     // Es mejor que el usuario active esta opción explícitamente.
     val syncCalendar: Boolean = false,
 
+    val isDeleted: Boolean = false,
+    val deletedAtMillis: Long? = null,
+
     val createdAtMillis: Long = System.currentTimeMillis(),
     val updatedAtMillis: Long = System.currentTimeMillis()
 )

@@ -14,9 +14,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         ScheduleSlotEntity::class,
         SchoolEventEntity::class,
         AcademicPeriodEntity::class,
-        ClassExceptionEntity::class
+        ClassExceptionEntity::class,
+        SubtaskEntity::class
     ],
-    version = 5,
+    version = 7,
     exportSchema = false
 )
 @TypeConverters(DatabaseConverters::class)
@@ -30,6 +31,7 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun academicPeriodDao(): AcademicPeriodDao
     abstract fun classExceptionDao(): ClassExceptionDao
+    abstract fun subtaskDao(): SubtaskDao
 
     companion object {
 
@@ -43,7 +45,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "snap_my_schedule_db_v2"
                 )
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
                     .build()
                     .also { database ->
                         INSTANCE = database
@@ -115,6 +117,40 @@ abstract class AppDatabase : RoomDatabase() {
                 db.execSQL("ALTER TABLE `subjects` ADD COLUMN `isImportant` INTEGER NOT NULL DEFAULT 0")
                 db.execSQL("ALTER TABLE `school_events` ADD COLUMN `organizationTag` TEXT NOT NULL DEFAULT 'UNIVERSIDAD'")
                 db.execSQL("ALTER TABLE `school_events` ADD COLUMN `isImportant` INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+
+        private val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `subjects` ADD COLUMN `isDeleted` INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("ALTER TABLE `subjects` ADD COLUMN `deletedAtMillis` INTEGER")
+                db.execSQL("ALTER TABLE `school_events` ADD COLUMN `isDeleted` INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("ALTER TABLE `school_events` ADD COLUMN `deletedAtMillis` INTEGER")
+            }
+        }
+
+        private val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `school_events` ADD COLUMN `priority` TEXT NOT NULL DEFAULT 'MEDIUM'")
+                db.execSQL("ALTER TABLE `school_events` ADD COLUMN `recurrenceType` TEXT NOT NULL DEFAULT 'NONE'")
+                db.execSQL("ALTER TABLE `school_events` ADD COLUMN `recurrenceInterval` INTEGER NOT NULL DEFAULT 1")
+                db.execSQL("ALTER TABLE `school_events` ADD COLUMN `recurrenceEndDate` TEXT")
+                db.execSQL("ALTER TABLE `school_events` ADD COLUMN `recurrenceGroupId` TEXT")
+                db.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `event_subtasks` (
+                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        `eventId` INTEGER NOT NULL,
+                        `title` TEXT NOT NULL,
+                        `isCompleted` INTEGER NOT NULL,
+                        `sortOrder` INTEGER NOT NULL,
+                        `createdAtMillis` INTEGER NOT NULL,
+                        `updatedAtMillis` INTEGER NOT NULL,
+                        FOREIGN KEY(`eventId`) REFERENCES `school_events`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE
+                    )
+                    """.trimIndent()
+                )
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_event_subtasks_eventId` ON `event_subtasks` (`eventId`)")
             }
         }
     }

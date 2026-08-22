@@ -228,6 +228,9 @@ fun AgendaScreen(viewModel: ScheduleViewModel, modifier: Modifier = Modifier) {
                                 eventWithSubject.subject?.name
                             )
                         )
+                    },
+                    onToggleSubtask = { subtaskId, completed ->
+                        viewModel.toggleSubtaskCompleted(eventWithSubject.event.id, subtaskId, completed)
                     }
                 )
             }

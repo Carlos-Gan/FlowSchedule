@@ -24,5 +24,12 @@ data class SchoolEventWithSubject(
         parentColumn = "subjectId",
         entityColumn = "id"
     )
-    val subject: SubjectEntity? = null
+    val subject: SubjectEntity? = null,
+
+    @Relation(
+        entity = SubtaskEntity::class,
+        parentColumn = "id",
+        entityColumn = "eventId"
+    )
+    val subtasks: List<SubtaskEntity> = emptyList()
 )

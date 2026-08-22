@@ -51,6 +51,12 @@ data class SchoolEventEntity(
     val organizationTag: String = OrganizationTag.UNIVERSIDAD.name,
     val isImportant: Boolean = false,
 
+    val priority: EventPriority = EventPriority.MEDIUM,
+    val recurrenceType: RecurrenceType = RecurrenceType.NONE,
+    val recurrenceInterval: Int = 1,
+    val recurrenceEndDate: String? = null,
+    val recurrenceGroupId: String? = null,
+
     val reminderMinutes: Int = 30,
     val isCompleted: Boolean = false,
 
@@ -63,6 +69,9 @@ data class SchoolEventEntity(
     val calendarId: Long? = null,
 
     val lastCalendarSyncMillis: Long? = null,
+
+    val isDeleted: Boolean = false,
+    val deletedAtMillis: Long? = null,
 
     val createdAtMillis: Long = System.currentTimeMillis(),
     val updatedAtMillis: Long = System.currentTimeMillis()

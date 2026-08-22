@@ -21,6 +21,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Notifications
@@ -42,6 +44,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -62,6 +65,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.mocas.data.local.SchoolEventEntity
+import com.mocas.data.local.SubtaskEntity
+import com.mocas.data.local.EventPriority
+import com.mocas.data.local.RecurrenceType
 import com.mocas.data.local.SchoolEventType
 import com.mocas.data.local.SchoolEventWithSubject
 import com.mocas.data.local.SubjectWithSlots
@@ -85,7 +91,7 @@ fun AddEventDialog(
     defaultTitle: String? = null,
     subjects: List<SubjectWithSlots>,
     onDismiss: () -> Unit,
-    onSave: (SchoolEventEntity) -> Unit
+    onSave: (SchoolEventEntity, List<SubtaskEntity>) -> Unit
 ) {
     val initialEvent = editingEvent?.event
     var title by remember { mutableStateOf(initialEvent?.title ?: defaultTitle.orEmpty()) }
@@ -114,6 +120,15 @@ fun AddEventDialog(
         )
     }
     var isImportant by remember { mutableStateOf(initialEvent?.isImportant ?: false) }
+    var priority by remember { mutableStateOf(initialEvent?.priority ?: EventPriority.MEDIUM) }
+    var recurrenceType by remember { mutableStateOf(initialEvent?.recurrenceType ?: RecurrenceType.NONE) }
+    var recurrenceEndDate by remember {
+        mutableStateOf(initialEvent?.recurrenceEndDate ?: DateTimeUtils.today().plusMonths(3).toString())
+    }
+    var subtaskTitle by remember { mutableStateOf("") }
+    var subtasks by remember(editingEvent?.event?.id) {
+        mutableStateOf(editingEvent?.subtasks?.sortedBy { it.sortOrder } ?: emptyList())
+    }
 
     var isSubjectDropdownExpanded by remember { mutableStateOf(false) }
 
@@ -432,6 +447,132 @@ fun AddEventDialog(
 
                 Spacer(modifier = Modifier.height(14.dp))
 
+                Text("Prioridad", fontWeight = FontWeight.SemiBold)
+                Spacer(modifier = Modifier.height(6.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    EventPriority.entries.forEach { option ->
+                        val selected = priority == option
+                        val color = when (option) {
+                            EventPriority.LOW -> Color(0xFF10B981)
+                            EventPriority.MEDIUM -> Color(0xFFF59E0B)
+                            EventPriority.HIGH -> Color(0xFFEF4444)
+                        }
+                        Surface(
+                            shape = RoundedCornerShape(9.dp),
+                            color = if (selected) color else MaterialTheme.colorScheme.surfaceVariant,
+                            modifier = Modifier.weight(1f).clickable { priority = option }
+                        ) {
+                            Text(
+                                option.displayName,
+                                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                                color = if (selected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
+                                fontWeight = FontWeight.SemiBold,
+                                modifier = Modifier.padding(vertical = 7.dp)
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(14.dp))
+                Text("Repetición", fontWeight = FontWeight.SemiBold)
+                Spacer(modifier = Modifier.height(6.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    RecurrenceType.entries.forEach { option ->
+                        val selected = recurrenceType == option
+                        Surface(
+                            shape = RoundedCornerShape(9.dp),
+                            color = if (selected) IndigoPrimary else MaterialTheme.colorScheme.surfaceVariant,
+                            modifier = Modifier.weight(1f).clickable { recurrenceType = option }
+                        ) {
+                            Text(
+                                option.displayName,
+                                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                                color = if (selected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                modifier = Modifier.padding(vertical = 7.dp)
+                            )
+                        }
+                    }
+                }
+                if (recurrenceType != RecurrenceType.NONE) {
+                    Spacer(modifier = Modifier.height(10.dp))
+                    CalendarDateField(
+                        value = recurrenceEndDate,
+                        onDateSelected = { recurrenceEndDate = it },
+                        label = "Repetir hasta",
+                        isError = DateTimeUtils.parseDate(recurrenceEndDate)?.let { end ->
+                            DateTimeUtils.parseDate(startDate)?.let { end.isBefore(it) } ?: true
+                        } ?: true,
+                        modifier = Modifier.fillMaxWidth(),
+                        testTag = "event_recurrence_end_date"
+                    )
+                    if (initialEvent != null) {
+                        Text(
+                            "Al editar, este cambio se aplica solamente a esta ocurrencia.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(14.dp))
+                Text("Pasos o subtareas", fontWeight = FontWeight.SemiBold)
+                Text(
+                    "Divide proyectos grandes y consulta su progreso.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    OutlinedTextField(
+                        value = subtaskTitle,
+                        onValueChange = { subtaskTitle = capitalizeFirstLetter(it) },
+                        label = { Text("Nuevo paso") },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
+                        modifier = Modifier.weight(1f)
+                    )
+                    IconButton(
+                        enabled = subtaskTitle.isNotBlank(),
+                        onClick = {
+                            subtasks = subtasks + SubtaskEntity(
+                                title = subtaskTitle.trim(),
+                                sortOrder = subtasks.size
+                            )
+                            subtaskTitle = ""
+                        }
+                    ) { Icon(Icons.Default.Add, contentDescription = "Agregar subtarea") }
+                }
+                subtasks.forEachIndexed { index, item ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Checkbox(
+                            checked = item.isCompleted,
+                            onCheckedChange = { checked ->
+                                subtasks = subtasks.toMutableList().also {
+                                    it[index] = item.copy(isCompleted = checked)
+                                }
+                            }
+                        )
+                        Text(item.title, modifier = Modifier.weight(1f), maxLines = 2)
+                        IconButton(onClick = { subtasks = subtasks.filterIndexed { i, _ -> i != index } }) {
+                            Icon(Icons.Default.Delete, contentDescription = "Eliminar subtarea")
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(14.dp))
+
                 // Reminder Selector
                 Text(
                     text = "Recordatorio antes del evento",
@@ -525,6 +666,10 @@ fun AddEventDialog(
                                         description = description.trim(),
                                         organizationTag = organizationTag,
                                         isImportant = isImportant,
+                                        priority = priority,
+                                        recurrenceType = recurrenceType,
+                                        recurrenceEndDate = recurrenceEndDate.takeIf { recurrenceType != RecurrenceType.NONE },
+                                        recurrenceGroupId = initialEvent?.recurrenceGroupId,
                                         reminderMinutes = reminderMinutes,
                                         isCompleted = initialEvent?.isCompleted ?: false,
                                         syncCalendar = syncCalendar,
@@ -533,7 +678,8 @@ fun AddEventDialog(
                                         lastCalendarSyncMillis = initialEvent?.lastCalendarSyncMillis,
                                         createdAtMillis = initialEvent?.createdAtMillis ?: System.currentTimeMillis(),
                                         updatedAtMillis = initialEvent?.updatedAtMillis ?: System.currentTimeMillis()
-                                    )
+                                    ),
+                                    subtasks
                                 )
                             }
                         },
@@ -542,6 +688,10 @@ fun AddEventDialog(
                             DateTimeUtils.parseDate(endDate)?.let { end ->
                                 DateTimeUtils.parseDate(startDate)?.let { !end.isBefore(it) } ?: false
                             } == true &&
+                            (recurrenceType == RecurrenceType.NONE ||
+                                DateTimeUtils.parseDate(recurrenceEndDate)?.let { repeatEnd ->
+                                    DateTimeUtils.parseDate(startDate)?.let { !repeatEnd.isBefore(it) } ?: false
+                                } == true) &&
                             (isAllDay || (
                                 DateTimeUtils.isValidTime(startTime) &&
                                     DateTimeUtils.isValidTime(endTime) &&

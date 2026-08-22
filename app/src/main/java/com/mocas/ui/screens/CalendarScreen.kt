@@ -383,6 +383,9 @@ fun CalendarScreen(
                                 eventWithSubject.subject?.name
                             )
                         )
+                    },
+                    onToggleSubtask = { subtaskId, completed ->
+                        viewModel.toggleSubtaskCompleted(eventWithSubject.event.id, subtaskId, completed)
                     }
                 )
             }

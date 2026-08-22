@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -34,6 +35,9 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.FileUpload
+import androidx.compose.material.icons.filled.Backup
+import androidx.compose.material.icons.filled.Restore
+import androidx.compose.material.icons.filled.RestoreFromTrash
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.School
 import androidx.compose.material3.AlertDialog
@@ -78,6 +82,9 @@ import com.mocas.ui.util.capitalizeFirstLetter
 import com.mocas.ui.viewmodel.ScheduleViewModel
 import com.mocas.util.DateTimeUtils
 import java.time.temporal.ChronoUnit
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun SettingsScreen(
@@ -88,6 +95,9 @@ fun SettingsScreen(
     val settings by viewModel.appSettings.collectAsStateWithLifecycle()
     val subjectsWithSlots by viewModel.subjectsWithSlots.collectAsStateWithLifecycle()
     val academicPeriods by viewModel.academicPeriods.collectAsStateWithLifecycle()
+    val deletedSubjects by viewModel.deletedSubjects.collectAsStateWithLifecycle()
+    val deletedEvents by viewModel.deletedEvents.collectAsStateWithLifecycle()
+    val automaticBackups by viewModel.automaticBackups.collectAsStateWithLifecycle()
 
     var showNameDialog by remember { mutableStateOf(false) }
     var tempName by remember { mutableStateOf(settings.userName) }
@@ -96,6 +106,10 @@ fun SettingsScreen(
     var editingPeriod by remember { mutableStateOf<AcademicPeriodEntity?>(null) }
     var copyTargetPeriod by remember { mutableStateOf<AcademicPeriodEntity?>(null) }
     var pendingImportUri by remember { mutableStateOf<Uri?>(null) }
+    var showTrashDialog by remember { mutableStateOf(false) }
+    var showBackupsDialog by remember { mutableStateOf(false) }
+    var showEmptyTrashConfirm by remember { mutableStateOf(false) }
+    var pendingAutomaticRestore by remember { mutableStateOf<String?>(null) }
 
     val exportBackupLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument("application/json")
@@ -759,6 +773,65 @@ fun SettingsScreen(
 
                     Spacer(modifier = Modifier.height(10.dp))
 
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { showTrashDialog = true }
+                            .padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Surface(
+                            shape = RoundedCornerShape(10.dp),
+                            color = Color(0xFFF59E0B).copy(alpha = 0.12f),
+                            modifier = Modifier.size(36.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(Icons.Default.RestoreFromTrash, null, tint = Color(0xFFD97706))
+                            }
+                        }
+                        Spacer(modifier = Modifier.width(14.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text("Papelera", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                            val trashCount = deletedSubjects.size + deletedEvents.size
+                            Text(
+                                "$trashCount elementos · se eliminan después de 30 días",
+                                fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { showBackupsDialog = true }
+                            .padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Surface(
+                            shape = RoundedCornerShape(10.dp),
+                            color = Color(0xFF10B981).copy(alpha = 0.12f),
+                            modifier = Modifier.size(36.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(Icons.Default.Backup, null, tint = Color(0xFF059669))
+                            }
+                        }
+                        Spacer(modifier = Modifier.width(14.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text("Respaldos automáticos", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                            Text(
+                                "${automaticBackups.size} copias disponibles · máximo 5",
+                                fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
                     // Export ICS
                     Row(
                         modifier = Modifier
@@ -1081,7 +1154,173 @@ fun SettingsScreen(
             }
         )
     }
+
+    if (showTrashDialog) {
+        AlertDialog(
+            onDismissRequest = { showTrashDialog = false },
+            title = { Text("Papelera", fontWeight = FontWeight.Bold) },
+            text = {
+                LazyColumn(
+                    modifier = Modifier.heightIn(max = 420.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    if (deletedSubjects.isEmpty() && deletedEvents.isEmpty()) {
+                        item { Text("La papelera está vacía.", color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                    }
+                    deletedSubjects.forEach { subject ->
+                        item(key = "trash-subject-${subject.id}") {
+                            TrashRow(
+                                title = subject.name,
+                                subtitle = "Materia",
+                                onRestore = { viewModel.restoreDeletedSubject(subject.id) },
+                                onDelete = { viewModel.permanentlyDeleteSubject(subject.id) }
+                            )
+                        }
+                    }
+                    deletedEvents.forEach { event ->
+                        item(key = "trash-event-${event.id}") {
+                            TrashRow(
+                                title = event.title,
+                                subtitle = "Actividad · ${event.startDate}",
+                                onRestore = { viewModel.restoreDeletedEvent(event.id) },
+                                onDelete = { viewModel.permanentlyDeleteEvent(event.id) }
+                            )
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                if (deletedSubjects.isNotEmpty() || deletedEvents.isNotEmpty()) {
+                    Button(
+                        onClick = {
+                            showTrashDialog = false
+                            showEmptyTrashConfirm = true
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEF4444))
+                    ) { Text("Vaciar") }
+                }
+            },
+            dismissButton = {
+                OutlinedButton(onClick = { showTrashDialog = false }) { Text("Cerrar") }
+            }
+        )
+    }
+
+    if (showBackupsDialog) {
+        AlertDialog(
+            onDismissRequest = { showBackupsDialog = false },
+            title = { Text("Respaldos automáticos", fontWeight = FontWeight.Bold) },
+            text = {
+                LazyColumn(
+                    modifier = Modifier.heightIn(max = 420.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    if (automaticBackups.isEmpty()) {
+                        item {
+                            Text(
+                                "Se creará una copia antes de importar, restaurar o borrar todos los datos.",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                    automaticBackups.forEach { backup ->
+                        item(key = backup.fileName) {
+                            TrashRow(
+                                title = backup.reason,
+                                subtitle = formatBackupDate(backup.createdAtMillis),
+                                onRestore = {
+                                    showBackupsDialog = false
+                                    pendingAutomaticRestore = backup.fileName
+                                },
+                                onDelete = { viewModel.deleteAutomaticBackup(backup.fileName) },
+                                restoreDescription = "Restaurar respaldo"
+                            )
+                        }
+                    }
+                }
+            },
+            confirmButton = {},
+            dismissButton = {
+                OutlinedButton(onClick = { showBackupsDialog = false }) { Text("Cerrar") }
+            }
+        )
+    }
+
+    if (showEmptyTrashConfirm) {
+        AlertDialog(
+            onDismissRequest = { showEmptyTrashConfirm = false },
+            title = { Text("¿Vaciar la papelera?", fontWeight = FontWeight.Bold) },
+            text = { Text("Los elementos se eliminarán definitivamente y no podrán recuperarse.") },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.emptyTrash()
+                        showEmptyTrashConfirm = false
+                        showTrashDialog = false
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEF4444))
+                ) { Text("Eliminar definitivamente") }
+            },
+            dismissButton = {
+                OutlinedButton(onClick = { showEmptyTrashConfirm = false }) { Text("Cancelar") }
+            }
+        )
+    }
+
+    pendingAutomaticRestore?.let { fileName ->
+        AlertDialog(
+            onDismissRequest = { pendingAutomaticRestore = null },
+            title = { Text("¿Restaurar esta copia?", fontWeight = FontWeight.Bold) },
+            text = { Text("El estado actual se guardará primero en otra copia automática.") },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.restoreAutomaticBackup(fileName)
+                        pendingAutomaticRestore = null
+                        showBackupsDialog = false
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = IndigoPrimary)
+                ) { Text("Restaurar") }
+            },
+            dismissButton = {
+                OutlinedButton(onClick = { pendingAutomaticRestore = null }) { Text("Cancelar") }
+            }
+        )
+    }
 }
+
+@Composable
+private fun TrashRow(
+    title: String,
+    subtitle: String,
+    onRestore: () -> Unit,
+    onDelete: () -> Unit,
+    restoreDescription: String = "Restaurar"
+) {
+    Surface(
+        shape = RoundedCornerShape(12.dp),
+        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(title, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text(subtitle, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+            IconButton(onClick = onRestore) {
+                Icon(Icons.Default.Restore, contentDescription = restoreDescription, tint = IndigoPrimary)
+            }
+            IconButton(onClick = onDelete) {
+                Icon(Icons.Default.Delete, contentDescription = "Eliminar definitivamente", tint = MaterialTheme.colorScheme.error)
+            }
+        }
+    }
+}
+
+private fun formatBackupDate(timestamp: Long): String =
+    SimpleDateFormat("dd MMM yyyy · HH:mm", Locale.getDefault()).format(Date(timestamp))
 
 @Composable
 private fun NotificationSettingRow(

@@ -12,6 +12,7 @@ import com.mocas.data.local.AppDatabase
 import com.mocas.data.local.ScheduleSlotEntity
 import com.mocas.data.local.SchoolEventEntity
 import com.mocas.data.local.SchoolEventWithSubject
+import com.mocas.data.local.SubtaskEntity
 import com.mocas.data.local.SubjectEntity
 import com.mocas.data.local.SubjectWithSlots
 import com.mocas.util.DateTimeUtils
@@ -24,11 +25,14 @@ class ScheduleRepository(private val database: AppDatabase) {
     private val eventDao = database.schoolEventDao()
     private val periodDao = database.academicPeriodDao()
     private val exceptionDao = database.classExceptionDao()
+    private val subtaskDao = database.subtaskDao()
 
     val allSubjectsWithSlots: Flow<List<SubjectWithSlots>> = subjectDao.getAllSubjectsWithSlots()
     val allEventsWithSubject: Flow<List<SchoolEventWithSubject>> = eventDao.getAllEventsWithSubject()
     val allAcademicPeriods: Flow<List<AcademicPeriodEntity>> = periodDao.getAllPeriods()
     val allClassExceptions: Flow<List<ClassExceptionEntity>> = exceptionDao.getAll()
+    val deletedSubjects: Flow<List<SubjectEntity>> = subjectDao.getDeletedSubjects()
+    val deletedEvents: Flow<List<SchoolEventEntity>> = eventDao.getDeletedEvents()
 
     suspend fun insertAcademicPeriod(period: AcademicPeriodEntity): Long =
         saveAcademicPeriod(period.copy(id = 0))
@@ -190,20 +194,95 @@ class ScheduleRepository(private val database: AppDatabase) {
         }
     }
 
-    suspend fun deleteSubject(subjectId: Long): Boolean = subjectDao.deleteSubjectById(subjectId) > 0
+    suspend fun deleteSubject(subjectId: Long): Boolean =
+        subjectDao.setSubjectDeleted(subjectId, true, System.currentTimeMillis()) > 0
 
-    suspend fun insertEvent(event: SchoolEventEntity): Long {
+    suspend fun restoreSubject(subjectId: Long): Boolean =
+        subjectDao.setSubjectDeleted(subjectId, false, null) > 0
+
+    suspend fun permanentlyDeleteSubject(subjectId: Long): Boolean =
+        subjectDao.deleteSubjectById(subjectId) > 0
+
+    suspend fun insertEvent(
+        event: SchoolEventEntity,
+        subtasks: List<SubtaskEntity> = emptyList()
+    ): Long = database.withTransaction {
         validateEvent(event)
-        return eventDao.insertEvent(event.copy(id = 0))
+        val occurrences = EventRecurrenceGenerator.generate(event)
+        var firstId = 0L
+        occurrences.forEachIndexed { index, occurrence ->
+            val eventId = eventDao.insertEvent(occurrence.copy(id = 0))
+            if (index == 0) firstId = eventId
+            insertSubtasksForEvent(eventId, subtasks)
+        }
+        firstId
     }
 
-    suspend fun updateEvent(event: SchoolEventEntity): Boolean {
+    suspend fun updateEvent(
+        event: SchoolEventEntity,
+        subtasks: List<SubtaskEntity> = emptyList()
+    ): Boolean = database.withTransaction {
         require(event.id > 0) { "No se puede actualizar un evento sin ID." }
         validateEvent(event)
-        return eventDao.updateEvent(event.copy(updatedAtMillis = System.currentTimeMillis())) > 0
+        val previous = requireNotNull(eventDao.getEventById(event.id)) { "La actividad ya no existe." }
+        val turnsIntoSeries = previous.recurrenceType == com.mocas.data.local.RecurrenceType.NONE &&
+            event.recurrenceType != com.mocas.data.local.RecurrenceType.NONE
+        if (turnsIntoSeries) {
+            val occurrences = EventRecurrenceGenerator.generate(event.copy(id = 0))
+            val first = occurrences.first().copy(
+                id = event.id,
+                createdAtMillis = previous.createdAtMillis,
+                updatedAtMillis = System.currentTimeMillis()
+            )
+            check(eventDao.updateEvent(first) > 0)
+            subtaskDao.deleteForEvent(event.id)
+            insertSubtasksForEvent(event.id, subtasks)
+            occurrences.drop(1).forEach { occurrence ->
+                val newId = eventDao.insertEvent(occurrence)
+                insertSubtasksForEvent(newId, subtasks)
+            }
+            true
+        } else {
+            val updated = eventDao.updateEvent(event.copy(updatedAtMillis = System.currentTimeMillis())) > 0
+            if (updated) {
+                subtaskDao.deleteForEvent(event.id)
+                insertSubtasksForEvent(event.id, subtasks)
+            }
+            updated
+        }
     }
 
-    suspend fun deleteEvent(eventId: Long): Boolean = eventDao.deleteEventById(eventId) > 0
+    private suspend fun insertSubtasksForEvent(eventId: Long, items: List<SubtaskEntity>) {
+        val prepared = items.mapIndexedNotNull { index, item ->
+            item.title.trim().takeIf { it.isNotBlank() }?.let { title ->
+                item.copy(id = 0, eventId = eventId, title = title, sortOrder = index)
+            }
+        }
+        if (prepared.isNotEmpty()) subtaskDao.insertSubtasks(prepared)
+    }
+
+
+    suspend fun deleteEvent(eventId: Long): Boolean =
+        eventDao.setEventDeleted(eventId, true, System.currentTimeMillis()) > 0
+
+    suspend fun restoreEvent(eventId: Long): Boolean =
+        eventDao.setEventDeleted(eventId, false, null) > 0
+
+    suspend fun permanentlyDeleteEvent(eventId: Long): Boolean =
+        eventDao.deleteEventById(eventId) > 0
+
+    suspend fun emptyTrash() = database.withTransaction {
+        eventDao.getDeletedEventsSnapshot().forEach { eventDao.deleteEventById(it.id) }
+        subjectDao.getDeletedSubjectsSnapshot().forEach { subjectDao.deleteSubjectById(it.id) }
+    }
+
+    suspend fun purgeExpiredTrash(retentionDays: Long = 30) {
+        val threshold = System.currentTimeMillis() - retentionDays * 24 * 60 * 60 * 1000
+        database.withTransaction {
+            eventDao.purgeDeletedEvents(threshold)
+            subjectDao.purgeDeletedSubjects(threshold)
+        }
+    }
 
     suspend fun saveClassException(item: ClassExceptionEntity): Long = database.withTransaction {
         val date = requireDate(item.date, "fecha de la excepción")
@@ -236,8 +315,24 @@ class ScheduleRepository(private val database: AppDatabase) {
 
     suspend fun deleteClassException(id: Long): Boolean = exceptionDao.delete(id) > 0
 
-    suspend fun setEventCompleted(eventId: Long, completed: Boolean): Boolean =
-        eventDao.setEventCompleted(eventId, completed, System.currentTimeMillis()) > 0
+    suspend fun setEventCompleted(eventId: Long, completed: Boolean): Boolean = database.withTransaction {
+        val now = System.currentTimeMillis()
+        val changed = eventDao.setEventCompleted(eventId, completed, now) > 0
+        if (changed) subtaskDao.setAllCompletedForEvent(eventId, completed, now)
+        changed
+    }
+
+    suspend fun setSubtaskCompleted(eventId: Long, subtaskId: Long, completed: Boolean): Boolean =
+        database.withTransaction {
+            val now = System.currentTimeMillis()
+            val changed = subtaskDao.setCompleted(subtaskId, completed, now) > 0
+            if (!changed) return@withTransaction false
+            val subtasks = subtaskDao.getForEvent(eventId)
+            if (subtasks.isNotEmpty()) {
+                eventDao.setEventCompleted(eventId, subtasks.all { it.isCompleted }, now)
+            }
+            true
+        }
 
     suspend fun importDetectedSubjects(
         items: List<DetectedSubjectItem>,
@@ -323,7 +418,8 @@ class ScheduleRepository(private val database: AppDatabase) {
             periods = periodDao.getAllPeriodsOnce(),
             subjects = subjectDao.getAllSubjectsWithSlotsOnce(),
             events = eventDao.getAllEventsWithSubjectOnce().map { it.event },
-            exceptions = exceptionDao.getAllOnce()
+            exceptions = exceptionDao.getAllOnce(),
+            subtasks = eventDao.getAllEventsWithSubjectOnce().flatMap { it.subtasks }
         )
     )
 
@@ -362,11 +458,12 @@ class ScheduleRepository(private val database: AppDatabase) {
             }
         }
 
+        val eventIds = mutableMapOf<Long, Long>()
         backup.events.forEach { event ->
             val mappedSubjectId = event.subjectId?.let { oldId ->
                 requireNotNull(subjectIds[oldId]) { "Una actividad apunta a una materia inexistente." }
             }
-            eventDao.insertEvent(
+            val newEventId = eventDao.insertEvent(
                 event.copy(
                     id = 0,
                     subjectId = mappedSubjectId,
@@ -376,7 +473,18 @@ class ScheduleRepository(private val database: AppDatabase) {
                     lastCalendarSyncMillis = null
                 )
             )
+            eventIds[event.id] = newEventId
         }
+
+        val restoredSubtasks = backup.subtasks.map { item ->
+            item.copy(
+                id = 0,
+                eventId = requireNotNull(eventIds[item.eventId]) {
+                    "Una subtarea apunta a una actividad inexistente."
+                }
+            )
+        }
+        if (restoredSubtasks.isNotEmpty()) subtaskDao.insertSubtasks(restoredSubtasks)
 
         backup.exceptions.forEach { exception ->
             exceptionDao.insert(
@@ -439,6 +547,14 @@ class ScheduleRepository(private val database: AppDatabase) {
             require(event.subjectId == null || event.subjectId in subjectIds) {
                 "Una actividad apunta a una materia inexistente."
             }
+        }
+        val eventIds = backup.events.mapTo(mutableSetOf()) { it.id }
+        require(backup.subtasks.map { it.id }.distinct().size == backup.subtasks.size) {
+            "El respaldo contiene subtareas duplicadas."
+        }
+        backup.subtasks.forEach { item ->
+            require(item.eventId in eventIds) { "Una subtarea apunta a una actividad inexistente." }
+            require(item.title.isNotBlank()) { "El respaldo contiene una subtarea sin título." }
         }
         backup.exceptions.forEach { exception ->
             require(exception.subjectId in subjectIds && exception.slotId in slotIds) {

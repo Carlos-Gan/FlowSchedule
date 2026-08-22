@@ -1,6 +1,8 @@
 package com.mocas.ui.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,6 +25,7 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Quiz
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.School
+import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -33,6 +36,7 @@ import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -55,6 +59,8 @@ import androidx.compose.ui.unit.sp
 import com.mocas.data.local.SchoolEventEntity
 import com.mocas.data.local.SchoolEventType
 import com.mocas.data.local.SchoolEventWithSubject
+import com.mocas.data.local.EventPriority
+import com.mocas.data.local.RecurrenceType
 import com.mocas.ui.theme.IndigoPrimary
 import com.mocas.util.DateTimeUtils
 import java.util.Locale
@@ -113,6 +119,7 @@ fun getEventTypeColor(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun EventItemCard(
     eventWithSubject: SchoolEventWithSubject,
@@ -120,11 +127,13 @@ fun EventItemCard(
     onClick: () -> Unit,
     onCalendarSyncClick: () -> Unit,
     modifier: Modifier = Modifier,
-    onDeleteClick: (() -> Unit)? = null
+    onDeleteClick: (() -> Unit)? = null,
+    onToggleSubtask: (Long, Boolean) -> Unit = { _, _ -> }
 ) {
     val event = eventWithSubject.event
     val subject = eventWithSubject.subject
     var showDeleteConfirmation by remember(event.id) { mutableStateOf(false) }
+    var subtasksExpanded by remember(event.id) { mutableStateOf(false) }
 
     /*
      * SchoolEventEntity.type debe ser SchoolEventType.
@@ -157,9 +166,17 @@ fun EventItemCard(
     }
 
     Card(
-        onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
+            .combinedClickable(
+                onClick = {
+                    if (eventWithSubject.subtasks.isNotEmpty()) {
+                        subtasksExpanded = !subtasksExpanded
+                    }
+                },
+                onLongClick = onClick,
+                onLongClickLabel = "Editar actividad"
+            )
             .testTag("event_card_${event.id}"),
         shape = RoundedCornerShape(18.dp),
         border = BorderStroke(
@@ -172,11 +189,7 @@ fun EventItemCard(
         ),
         colors = CardDefaults.cardColors(
             containerColor = when {
-                event.isCompleted -> {
-                    MaterialTheme.colorScheme.surfaceVariant.copy(
-                        alpha = 0.55f
-                    )
-                }
+                event.isCompleted -> MaterialTheme.colorScheme.surface
 
                 isUrgent -> {
                     typeColor.copy(alpha = 0.07f).compositeOver(MaterialTheme.colorScheme.surface)
@@ -247,6 +260,38 @@ fun EventItemCard(
                     }
                 }
 
+                if (event.priority != EventPriority.MEDIUM || event.recurrenceType != RecurrenceType.NONE) {
+                    Spacer(modifier = Modifier.height(5.dp))
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        if (event.priority != EventPriority.MEDIUM) {
+                            val priorityColor = if (event.priority == EventPriority.HIGH) {
+                                Color(0xFFEF4444)
+                            } else {
+                                Color(0xFF10B981)
+                            }
+                            Text(
+                                text = "Prioridad ${event.priority.displayName.lowercase()}",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = priorityColor,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                        if (event.recurrenceType != RecurrenceType.NONE) {
+                            Icon(
+                                Icons.Default.Repeat,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.size(13.dp)
+                            )
+                            Text(
+                                text = event.recurrenceType.displayName,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+
                 Spacer(modifier = Modifier.height(6.dp))
 
                 Text(
@@ -261,7 +306,7 @@ fun EventItemCard(
                     color = if (event.isCompleted) {
                         MaterialTheme.colorScheme
                             .onSurfaceVariant
-                            .copy(alpha = 0.6f)
+                            .copy(alpha = 0.85f)
                     } else {
                         MaterialTheme.colorScheme.onSurface
                     },
@@ -303,6 +348,60 @@ fun EventItemCard(
                     EventLocationRow(
                         location = event.location
                     )
+                }
+
+                if (eventWithSubject.subtasks.isNotEmpty()) {
+                    val completed = eventWithSubject.subtasks.count { it.isCompleted }
+                    val total = eventWithSubject.subtasks.size
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text("Progreso", style = MaterialTheme.typography.labelSmall)
+                        Text("$completed/$total", style = MaterialTheme.typography.labelSmall)
+                    }
+                    Spacer(modifier = Modifier.height(3.dp))
+                    LinearProgressIndicator(
+                        progress = { completed.toFloat() / total },
+                        modifier = Modifier.fillMaxWidth(),
+                        color = typeColor,
+                        trackColor = MaterialTheme.colorScheme.surfaceVariant
+                    )
+                    Text(
+                        text = if (subtasksExpanded) "Toca para ocultar" else "Toca para ver los pasos",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = IndigoPrimary,
+                        modifier = Modifier.padding(top = 5.dp)
+                    )
+                    if (subtasksExpanded) {
+                        Spacer(modifier = Modifier.height(6.dp))
+                        eventWithSubject.subtasks.sortedBy { it.sortOrder }.forEach { subtask ->
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Checkbox(
+                                    checked = subtask.isCompleted,
+                                    onCheckedChange = { onToggleSubtask(subtask.id, it) },
+                                    colors = CheckboxDefaults.colors(checkedColor = typeColor),
+                                    modifier = Modifier.size(36.dp)
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = subtask.title,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    textDecoration = if (subtask.isCompleted) TextDecoration.LineThrough else TextDecoration.None,
+                                    color = if (subtask.isCompleted) {
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurface
+                                    },
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
+                        }
+                    }
                 }
             }
 

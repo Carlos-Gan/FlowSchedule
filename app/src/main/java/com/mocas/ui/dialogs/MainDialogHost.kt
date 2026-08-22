@@ -183,6 +183,11 @@ fun MainDialogHost(
                     eventId = eventId,
                     completed = isCompleted
                 )
+            },
+            onToggleSubtask = viewModel::toggleSubtaskCompleted,
+            onEditEvent = { event ->
+                viewModel.closeSubjectDetail()
+                viewModel.openAddEvent(event)
             }
         )
     }

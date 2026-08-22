@@ -70,7 +70,9 @@ fun SubjectDetailDialog(
     onEditClick: () -> Unit,
     onDeleteClick: () -> Unit,
     onAddEventClick: () -> Unit,
-    onToggleEventCompleted: (Long, Boolean) -> Unit
+    onToggleEventCompleted: (Long, Boolean) -> Unit,
+    onToggleSubtask: (Long, Long, Boolean) -> Unit,
+    onEditEvent: (SchoolEventWithSubject) -> Unit
 ) {
     val context = LocalContext.current
     val subject = subjectWithSlots.subject
@@ -336,7 +338,7 @@ fun SubjectDetailDialog(
                                 onToggleCompleted = {
                                     onToggleEventCompleted(eventWithSubject.event.id, it)
                                 },
-                                onClick = {},
+                                onClick = { onEditEvent(eventWithSubject) },
                                 onCalendarSyncClick = {
                                     showCalendarResult(
                                         context,
@@ -346,6 +348,9 @@ fun SubjectDetailDialog(
                                             subject.name
                                         )
                                     )
+                                },
+                                onToggleSubtask = { subtaskId, completed ->
+                                    onToggleSubtask(eventWithSubject.event.id, subtaskId, completed)
                                 }
                             )
                             Spacer(modifier = Modifier.height(6.dp))

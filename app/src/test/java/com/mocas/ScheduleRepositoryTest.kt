@@ -76,7 +76,7 @@ class ScheduleRepositoryTest {
     }
 
     @Test
-    fun deletingSubjectCascadesSlotsAndKeepsEventWithNullSubject() = runTest {
+    fun deletedSubjectCanBeRestoredBeforePermanentRemoval() = runTest {
         val subjectId = repository.insertSubjectWithSlots(
             SubjectEntity(name = "Bases", semesterStart = "2026-08-20", semesterEnd = "2026-12-10"),
             listOf(ScheduleSlotEntity(subjectId = 0, dayOfWeek = 2, startTime = "08:00", endTime = "09:00"))
@@ -94,6 +94,15 @@ class ScheduleRepositoryTest {
 
         repository.deleteSubject(subjectId)
 
+        assertTrue(repository.allSubjectsWithSlots.first().isEmpty())
+        assertEquals(subjectId, repository.deletedSubjects.first().single().id)
+        assertEquals(slotId, database.scheduleSlotDao().getSlotById(slotId)?.id)
+
+        repository.restoreSubject(subjectId)
+        assertEquals(subjectId, repository.allSubjectsWithSlots.first().single().subject.id)
+
+        repository.deleteSubject(subjectId)
+        repository.permanentlyDeleteSubject(subjectId)
         assertEquals(null, database.scheduleSlotDao().getSlotById(slotId))
         assertEquals(null, database.schoolEventDao().getEventById(eventId)?.subjectId)
     }

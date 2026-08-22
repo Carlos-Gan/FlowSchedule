@@ -226,6 +226,9 @@ fun EventsScreen(
                         },
                         onDeleteClick = {
                             viewModel.deleteEvent(eventWithSubject.event.id)
+                        },
+                        onToggleSubtask = { subtaskId, completed ->
+                            viewModel.toggleSubtaskCompleted(eventWithSubject.event.id, subtaskId, completed)
                         }
                     )
                 }

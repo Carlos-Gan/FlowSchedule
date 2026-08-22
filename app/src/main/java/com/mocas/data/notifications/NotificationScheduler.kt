@@ -14,8 +14,16 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.mocas.MainActivity
 import com.mocas.R
+import com.mocas.data.local.AppDatabase
+import com.mocas.data.widget.DailyScheduleWidgetProvider
+import com.mocas.data.widget.ScheduleWidgetProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 object NotificationScheduler {
+    const val ACTION_COMPLETE = "com.mocas.action.COMPLETE_EVENT"
+    const val ACTION_SNOOZE = "com.mocas.action.SNOOZE_EVENT"
     const val CHANNEL_CLASSES = "class_reminders"
     const val CHANNEL_ACTIVITIES = "activity_reminders"
     const val CHANNEL_SUMMARY = "daily_summary"
@@ -49,6 +57,19 @@ object NotificationScheduler {
         ).forEach(manager::createNotificationChannel)
     }
 
+    fun scheduleOne(context: Context, reminder: PlannedReminder) {
+        createChannels(context)
+        context.getSystemService(AlarmManager::class.java).setAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,
+            reminder.triggerAtMillis,
+            pendingIntent(context, reminder.id, reminder)
+        )
+        val preferences = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        val ids = preferences.getStringSet(KEY_IDS, emptySet()).orEmpty().toMutableSet()
+        ids += reminder.id
+        preferences.edit().putStringSet(KEY_IDS, ids).apply()
+    }
+
     private fun pendingIntent(
         context: Context,
         id: String,
@@ -60,6 +81,7 @@ object NotificationScheduler {
                 putExtra("title", it.title)
                 putExtra("message", it.message)
                 putExtra("channel", it.channel)
+                it.eventId?.let { eventId -> putExtra("eventId", eventId) }
             }
         }
         return PendingIntent.getBroadcast(
@@ -93,7 +115,88 @@ class ReminderReceiver : BroadcastReceiver() {
             .setContentIntent(openApp)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .apply {
+                val eventId = intent.getLongExtra("eventId", -1L)
+                if (eventId > 0) {
+                    addAction(
+                        R.drawable.ic_notification,
+                        "Completar",
+                        notificationAction(context, NotificationScheduler.ACTION_COMPLETE, id, eventId, intent)
+                    )
+                    addAction(
+                        R.drawable.ic_notification,
+                        "Posponer 1 h",
+                        notificationAction(context, NotificationScheduler.ACTION_SNOOZE, id, eventId, intent)
+                    )
+                }
+            }
             .build()
         NotificationManagerCompat.from(context).notify(id.hashCode(), notification)
+    }
+
+    private fun notificationAction(
+        context: Context,
+        action: String,
+        notificationId: String,
+        eventId: Long,
+        source: Intent
+    ): PendingIntent {
+        val intent = Intent(context, NotificationActionReceiver::class.java).apply {
+            this.action = action
+            putExtra("notificationId", notificationId)
+            putExtra("eventId", eventId)
+            putExtra("title", source.getStringExtra("title"))
+            putExtra("message", source.getStringExtra("message"))
+            putExtra("channel", source.getStringExtra("channel"))
+        }
+        return PendingIntent.getBroadcast(
+            context,
+            "$action-$notificationId".hashCode(),
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+    }
+
+}
+
+class NotificationActionReceiver : BroadcastReceiver() {
+    override fun onReceive(context: Context, intent: Intent) {
+        val eventId = intent.getLongExtra("eventId", -1L)
+        val notificationId = intent.getStringExtra("notificationId") ?: return
+        if (eventId <= 0) return
+        NotificationManagerCompat.from(context).cancel(notificationId.hashCode())
+        val pendingResult = goAsync()
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                when (intent.action) {
+                    NotificationScheduler.ACTION_COMPLETE -> {
+                        AppDatabase.getDatabase(context).schoolEventDao().setEventCompleted(
+                            eventId,
+                            true,
+                            System.currentTimeMillis()
+                        )
+                        ReminderRescheduler.reschedule(context)
+                        ScheduleWidgetProvider.requestUpdate(context)
+                        DailyScheduleWidgetProvider.requestUpdate(context)
+                    }
+                    NotificationScheduler.ACTION_SNOOZE -> {
+                        NotificationScheduler.scheduleOne(
+                            context,
+                            PlannedReminder(
+                                id = "snooze_${eventId}_${System.currentTimeMillis()}",
+                                triggerAtMillis = System.currentTimeMillis() + 60 * 60 * 1000,
+                                title = intent.getStringExtra("title") ?: "Actividad pendiente",
+                                message = intent.getStringExtra("message").orEmpty(),
+                                channel = intent.getStringExtra("channel")
+                                    ?: NotificationScheduler.CHANNEL_ACTIVITIES,
+                                eventId = eventId
+                            )
+                        )
+                    }
+                }
+            } finally {
+                pendingResult.finish()
+            }
+        }
     }
 }
