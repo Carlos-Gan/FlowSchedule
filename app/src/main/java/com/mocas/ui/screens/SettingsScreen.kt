@@ -1,7 +1,10 @@
 package com.mocas.ui.screens
 
 import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -30,6 +33,7 @@ import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.FileDownload
+import androidx.compose.material.icons.filled.FileUpload
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.School
 import androidx.compose.material3.AlertDialog
@@ -91,6 +95,18 @@ fun SettingsScreen(
     var showPeriodDialog by remember { mutableStateOf(false) }
     var editingPeriod by remember { mutableStateOf<AcademicPeriodEntity?>(null) }
     var copyTargetPeriod by remember { mutableStateOf<AcademicPeriodEntity?>(null) }
+    var pendingImportUri by remember { mutableStateOf<Uri?>(null) }
+
+    val exportBackupLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("application/json")
+    ) { uri ->
+        uri?.let(viewModel::exportScheduleBackup)
+    }
+    val importBackupLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        pendingImportUri = uri
+    }
 
     LazyColumn(
         modifier = modifier
@@ -666,6 +682,83 @@ fun SettingsScreen(
                 elevation = CardDefaults.cardElevation(1.dp)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
+                    // Portable SnapMySchedule backup
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                exportBackupLauncher.launch(
+                                    "SnapMySchedule-${DateTimeUtils.todayString()}.json"
+                                )
+                            }
+                            .padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Surface(
+                            shape = RoundedCornerShape(10.dp),
+                            color = IndigoPrimary.copy(alpha = 0.1f),
+                            modifier = Modifier.size(36.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.Default.FileDownload,
+                                    contentDescription = null,
+                                    tint = IndigoPrimary,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.width(14.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text("Exportar respaldo", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                            Text(
+                                "Guardar materias, sesiones, periodos y actividades",
+                                fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                importBackupLauncher.launch(
+                                    arrayOf("application/json", "text/plain", "application/octet-stream")
+                                )
+                            }
+                            .padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Surface(
+                            shape = RoundedCornerShape(10.dp),
+                            color = Color(0xFF0EA5E9).copy(alpha = 0.12f),
+                            modifier = Modifier.size(36.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.Default.FileUpload,
+                                    contentDescription = null,
+                                    tint = Color(0xFF0284C7),
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.width(14.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text("Importar respaldo", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                            Text(
+                                "Restaurar un archivo exportado por SnapMySchedule",
+                                fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
                     // Export ICS
                     Row(
                         modifier = Modifier
@@ -725,7 +818,7 @@ fun SettingsScreen(
                         Spacer(modifier = Modifier.width(14.dp))
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Exportar Horario (.ics)",
+                                text = "Compartir horario (.ics)",
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp
                             )
@@ -954,6 +1047,35 @@ fun SettingsScreen(
                     onClick = { showClearConfirmDialog = false },
                     shape = RoundedCornerShape(10.dp)
                 ) {
+                    Text("Cancelar")
+                }
+            }
+        )
+    }
+
+    pendingImportUri?.let { uri ->
+        AlertDialog(
+            onDismissRequest = { pendingImportUri = null },
+            title = { Text("¿Restaurar este respaldo?", fontWeight = FontWeight.Bold) },
+            text = {
+                Text(
+                    "Se reemplazarán las materias, sesiones, periodos, excepciones y actividades actuales. " +
+                        "Tu nombre, tema y preferencias permanecerán sin cambios."
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.importScheduleBackup(uri)
+                        pendingImportUri = null
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = IndigoPrimary)
+                ) {
+                    Text("Restaurar", fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                OutlinedButton(onClick = { pendingImportUri = null }) {
                     Text("Cancelar")
                 }
             }

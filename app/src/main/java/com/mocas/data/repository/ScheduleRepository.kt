@@ -1,6 +1,9 @@
 package com.mocas.data.repository
 
 import androidx.room.withTransaction
+import com.mocas.data.backup.BackupImportSummary
+import com.mocas.data.backup.ScheduleBackupCodec
+import com.mocas.data.backup.ScheduleBackupData
 import com.mocas.data.ai.DetectedSubjectItem
 import com.mocas.data.local.AcademicPeriodEntity
 import com.mocas.data.local.ClassExceptionEntity
@@ -315,11 +318,144 @@ class ScheduleRepository(private val database: AppDatabase) {
         }
     }
 
+    suspend fun exportScheduleBackup(): String = ScheduleBackupCodec.encode(
+        ScheduleBackupData(
+            periods = periodDao.getAllPeriodsOnce(),
+            subjects = subjectDao.getAllSubjectsWithSlotsOnce(),
+            events = eventDao.getAllEventsWithSubjectOnce().map { it.event },
+            exceptions = exceptionDao.getAllOnce()
+        )
+    )
+
+    suspend fun importScheduleBackup(json: String): BackupImportSummary = database.withTransaction {
+        val backup = ScheduleBackupCodec.decode(json)
+        validateBackup(backup)
+
+        exceptionDao.clearAll()
+        eventDao.clearAllEvents()
+        subjectDao.clearAllSubjects()
+        periodDao.clearAllPeriods()
+
+        backup.periods.forEach { period ->
+            periodDao.insertPeriod(period.copy(id = 0))
+        }
+
+        val subjectIds = mutableMapOf<Long, Long>()
+        val slotIds = mutableMapOf<Long, Long>()
+        backup.subjects.forEach { item ->
+            val oldSubjectId = item.subject.id
+            val newSubjectId = subjectDao.insertSubject(
+                item.subject.copy(id = 0, syncCalendar = false)
+            )
+            subjectIds[oldSubjectId] = newSubjectId
+            item.slots.forEach { slot ->
+                val newSlotId = slotDao.insertSlot(
+                    slot.copy(
+                        id = 0,
+                        subjectId = newSubjectId,
+                        calendarEventId = null,
+                        calendarId = null,
+                        lastCalendarSyncMillis = null
+                    )
+                )
+                slotIds[slot.id] = newSlotId
+            }
+        }
+
+        backup.events.forEach { event ->
+            val mappedSubjectId = event.subjectId?.let { oldId ->
+                requireNotNull(subjectIds[oldId]) { "Una actividad apunta a una materia inexistente." }
+            }
+            eventDao.insertEvent(
+                event.copy(
+                    id = 0,
+                    subjectId = mappedSubjectId,
+                    syncCalendar = false,
+                    calendarEventId = null,
+                    calendarId = null,
+                    lastCalendarSyncMillis = null
+                )
+            )
+        }
+
+        backup.exceptions.forEach { exception ->
+            exceptionDao.insert(
+                exception.copy(
+                    id = 0,
+                    subjectId = requireNotNull(subjectIds[exception.subjectId]) {
+                        "Una excepción apunta a una materia inexistente."
+                    },
+                    slotId = requireNotNull(slotIds[exception.slotId]) {
+                        "Una excepción apunta a una sesión inexistente."
+                    }
+                )
+            )
+        }
+
+        BackupImportSummary(
+            subjects = backup.subjects.size,
+            sessions = backup.subjects.sumOf { it.slots.size },
+            activities = backup.events.size,
+            periods = backup.periods.size
+        )
+    }
+
     suspend fun clearAll() = database.withTransaction {
         exceptionDao.clearAll()
         eventDao.clearAllEvents()
         subjectDao.clearAllSubjects()
         periodDao.clearAllPeriods()
+    }
+
+    private fun validateBackup(backup: ScheduleBackupData) {
+        require(backup.subjects.map { it.subject.id }.distinct().size == backup.subjects.size) {
+            "El respaldo contiene materias duplicadas."
+        }
+        val allSlots = backup.subjects.flatMap { it.slots }
+        require(allSlots.map { it.id }.distinct().size == allSlots.size) {
+            "El respaldo contiene sesiones duplicadas."
+        }
+        backup.periods.forEach { period ->
+            require(period.name.isNotBlank()) { "Hay un periodo sin nombre en el respaldo." }
+            val start = requireDate(period.startDate, "inicio del periodo")
+            val end = requireDate(period.endDate, "fin del periodo")
+            require(!end.isBefore(start)) { "Hay un periodo con fechas inválidas." }
+            require(Regex("^#[0-9A-Fa-f]{6}$").matches(period.colorHex)) {
+                "Hay un periodo con color inválido."
+            }
+        }
+        backup.subjects.forEach { item ->
+            validateSubject(item.subject)
+            validateAndPrepareSlots(item.subject.id, item.slots)
+            require(item.slots.all { it.subjectId == item.subject.id }) {
+                "Una sesión no pertenece a su materia."
+            }
+        }
+        val subjectIds = backup.subjects.mapTo(mutableSetOf()) { it.subject.id }
+        val slotIds = allSlots.mapTo(mutableSetOf()) { it.id }
+        val subjectBySlotId = allSlots.associate { it.id to it.subjectId }
+        backup.events.forEach { event ->
+            validateEvent(event)
+            require(event.subjectId == null || event.subjectId in subjectIds) {
+                "Una actividad apunta a una materia inexistente."
+            }
+        }
+        backup.exceptions.forEach { exception ->
+            require(exception.subjectId in subjectIds && exception.slotId in slotIds) {
+                "Una excepción contiene referencias inexistentes."
+            }
+            require(subjectBySlotId[exception.slotId] == exception.subjectId) {
+                "Una excepción no pertenece a la materia indicada."
+            }
+            requireDate(exception.date, "fecha de la excepción")
+            if (exception.type == ClassExceptionType.MODIFIED) {
+                require(
+                    !exception.newStartTime.isNullOrBlank() &&
+                        !exception.newEndTime.isNullOrBlank() &&
+                        DateTimeUtils.endIsAfterStart(exception.newStartTime, exception.newEndTime)
+                ) { "Una excepción contiene un horario inválido." }
+            }
+        }
     }
 
     private suspend fun ensureNoOccurrenceConflict(

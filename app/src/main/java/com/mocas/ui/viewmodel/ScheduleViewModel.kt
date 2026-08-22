@@ -2,6 +2,7 @@ package com.mocas.ui.viewmodel
 
 import android.app.Application
 import android.graphics.Bitmap
+import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.mocas.data.ai.DetectedSubjectItem
@@ -35,7 +36,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.DayOfWeek
@@ -383,6 +386,40 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
 
     fun clearAllData() {
         viewModelScope.launch { runOperation { repository.clearAll() } }
+    }
+
+    fun exportScheduleBackup(uri: Uri) {
+        viewModelScope.launch {
+            runOperation {
+                val json = withContext(Dispatchers.IO) {
+                    repository.exportScheduleBackup()
+                }
+                withContext(Dispatchers.IO) {
+                    val resolver = getApplication<Application>().contentResolver
+                    requireNotNull(resolver.openOutputStream(uri, "wt")) {
+                        "No se pudo abrir el archivo de destino."
+                    }.bufferedWriter().use { writer -> writer.write(json) }
+                }
+                _userMessage.value = "Respaldo exportado correctamente."
+            }
+        }
+    }
+
+    fun importScheduleBackup(uri: Uri) {
+        viewModelScope.launch {
+            runOperation {
+                val json = withContext(Dispatchers.IO) {
+                    val resolver = getApplication<Application>().contentResolver
+                    requireNotNull(resolver.openInputStream(uri)) {
+                        "No se pudo abrir el respaldo seleccionado."
+                    }.bufferedReader().use { reader -> reader.readText() }
+                }
+                val summary = repository.importScheduleBackup(json)
+                _userMessage.value =
+                    "Respaldo restaurado: ${summary.subjects} materias, " +
+                    "${summary.sessions} sesiones y ${summary.activities} actividades."
+            }
+        }
     }
 
     private suspend fun runOperation(block: suspend () -> Unit) {

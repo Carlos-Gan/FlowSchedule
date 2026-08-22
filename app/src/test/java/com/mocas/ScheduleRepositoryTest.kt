@@ -315,4 +315,62 @@ class ScheduleRepositoryTest {
         assertTrue(subjects.any { it.subject.semesterStart.startsWith("2026") })
         assertTrue(subjects.any { it.subject.semesterStart.startsWith("2027") })
     }
+
+    @Test
+    fun scheduleBackupRestoresRelationshipsWithNewIds() = runTest {
+        repository.saveAcademicPeriod(
+            AcademicPeriodEntity(
+                name = "Ago–Dic 2026",
+                startDate = "2026-08-01",
+                endDate = "2026-12-20"
+            )
+        )
+        val subjectId = repository.insertSubjectWithSlots(
+            SubjectEntity(
+                name = "Redes",
+                semesterStart = "2026-08-01",
+                semesterEnd = "2026-12-20"
+            ),
+            listOf(
+                ScheduleSlotEntity(
+                    subjectId = 0,
+                    dayOfWeek = 1,
+                    startTime = "08:00",
+                    endTime = "09:00",
+                    room = "SC9"
+                )
+            )
+        )
+        val slotId = database.scheduleSlotDao().getSlotsForSubjectOnce(subjectId).single().id
+        repository.insertEvent(
+            SchoolEventEntity(
+                title = "Tarea de redes",
+                subjectId = subjectId,
+                startDate = "2026-09-01",
+                startTime = "10:00",
+                endTime = "11:00"
+            )
+        )
+        repository.saveClassException(
+            ClassExceptionEntity(
+                subjectId = subjectId,
+                slotId = slotId,
+                date = "2026-08-24",
+                type = ClassExceptionType.CANCELED
+            )
+        )
+
+        val backup = repository.exportScheduleBackup()
+        repository.clearAll()
+        val summary = repository.importScheduleBackup(backup)
+
+        val restoredSubject = repository.allSubjectsWithSlots.first().single()
+        val restoredEvent = repository.allEventsWithSubject.first().single()
+        val restoredException = repository.allClassExceptions.first().single()
+        assertEquals(1, summary.subjects)
+        assertEquals(restoredSubject.subject.id, restoredEvent.event.subjectId)
+        assertEquals(restoredSubject.subject.id, restoredException.subjectId)
+        assertEquals(restoredSubject.slots.single().id, restoredException.slotId)
+        assertEquals(1, repository.allAcademicPeriods.first().size)
+    }
 }
