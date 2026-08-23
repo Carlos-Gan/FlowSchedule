@@ -15,9 +15,12 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         SchoolEventEntity::class,
         AcademicPeriodEntity::class,
         ClassExceptionEntity::class,
-        SubtaskEntity::class
+        SubtaskEntity::class,
+        GradeCategoryEntity::class,
+        GradeUnitEntity::class,
+        GradeItemEntity::class
     ],
-    version = 7,
+    version = 10,
     exportSchema = false
 )
 @TypeConverters(DatabaseConverters::class)
@@ -32,6 +35,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun academicPeriodDao(): AcademicPeriodDao
     abstract fun classExceptionDao(): ClassExceptionDao
     abstract fun subtaskDao(): SubtaskDao
+    abstract fun gradeDao(): GradeDao
 
     companion object {
 
@@ -45,7 +49,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "snap_my_schedule_db_v2"
                 )
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10)
                     .build()
                     .also { database ->
                         INSTANCE = database
@@ -151,6 +155,71 @@ abstract class AppDatabase : RoomDatabase() {
                     """.trimIndent()
                 )
                 db.execSQL("CREATE INDEX IF NOT EXISTS `index_event_subtasks_eventId` ON `event_subtasks` (`eventId`)")
+            }
+        }
+
+        private val MIGRATION_7_8 = object : Migration(7, 8) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("""
+                    CREATE TABLE IF NOT EXISTS `grade_categories` (
+                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        `subjectId` INTEGER NOT NULL,
+                        `name` TEXT NOT NULL,
+                        `weightPercent` REAL NOT NULL,
+                        `sortOrder` INTEGER NOT NULL,
+                        `createdAtMillis` INTEGER NOT NULL,
+                        FOREIGN KEY(`subjectId`) REFERENCES `subjects`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE
+                    )
+                """.trimIndent())
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_grade_categories_subjectId` ON `grade_categories` (`subjectId`)")
+                db.execSQL("""
+                    CREATE TABLE IF NOT EXISTS `grade_items` (
+                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        `categoryId` INTEGER NOT NULL,
+                        `name` TEXT NOT NULL,
+                        `score` REAL NOT NULL,
+                        `createdAtMillis` INTEGER NOT NULL,
+                        FOREIGN KEY(`categoryId`) REFERENCES `grade_categories`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE
+                    )
+                """.trimIndent())
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_grade_items_categoryId` ON `grade_items` (`categoryId`)")
+            }
+        }
+
+        private val MIGRATION_8_9 = object : Migration(8, 9) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `grade_items` ADD COLUMN `unitName` TEXT NOT NULL DEFAULT 'Unidad 1'")
+            }
+        }
+
+        private val MIGRATION_9_10 = object : Migration(9, 10) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("""
+                    CREATE TABLE IF NOT EXISTS `grade_units` (
+                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        `subjectId` INTEGER NOT NULL,
+                        `name` TEXT NOT NULL,
+                        `sortOrder` INTEGER NOT NULL,
+                        `createdAtMillis` INTEGER NOT NULL,
+                        FOREIGN KEY(`subjectId`) REFERENCES `subjects`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE
+                    )
+                """.trimIndent())
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_grade_units_subjectId` ON `grade_units` (`subjectId`)")
+                db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_grade_units_subjectId_name` ON `grade_units` (`subjectId`, `name`)")
+                db.execSQL("""
+                    INSERT OR IGNORE INTO grade_units(subjectId, name, sortOrder, createdAtMillis)
+                    SELECT gc.subjectId, gi.unitName, 0, gi.createdAtMillis
+                    FROM grade_items gi JOIN grade_categories gc ON gc.id = gi.categoryId
+                """.trimIndent())
+                db.execSQL("ALTER TABLE `grade_items` ADD COLUMN `unitId` INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("""
+                    UPDATE grade_items SET unitId = COALESCE((
+                        SELECT gu.id FROM grade_units gu
+                        JOIN grade_categories gc ON gc.subjectId = gu.subjectId
+                        WHERE gc.id = grade_items.categoryId AND gu.name = grade_items.unitName
+                        LIMIT 1
+                    ), 0)
+                """.trimIndent())
             }
         }
     }

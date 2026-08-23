@@ -19,6 +19,9 @@ import com.mocas.data.local.SchoolEventType
 import com.mocas.data.local.SchoolEventWithSubject
 import com.mocas.data.local.SubjectEntity
 import com.mocas.data.local.SubjectWithSlots
+import com.mocas.data.local.GradeCategoryEntity
+import com.mocas.data.local.GradeItemEntity
+import com.mocas.data.local.GradeUnitEntity
 import com.mocas.data.preferences.AppSettingsStore
 import com.mocas.data.notifications.ReminderRescheduler
 import com.mocas.data.widget.ScheduleWidgetProvider
@@ -112,6 +115,12 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     val deletedSubjects: StateFlow<List<SubjectEntity>> = repository.deletedSubjects
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
     val deletedEvents: StateFlow<List<SchoolEventEntity>> = repository.deletedEvents
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+    val gradeCategories: StateFlow<List<GradeCategoryEntity>> = repository.gradeCategories
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+    val gradeItems: StateFlow<List<GradeItemEntity>> = repository.gradeItems
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+    val gradeUnits: StateFlow<List<GradeUnitEntity>> = repository.gradeUnits
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
     private val _automaticBackups = MutableStateFlow<List<AutomaticBackupInfo>>(emptyList())
     val automaticBackups = _automaticBackups.asStateFlow()
@@ -395,6 +404,15 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
+    fun postponeEventOneDay(eventId: Long) {
+        viewModelScope.launch {
+            runOperation {
+                check(repository.postponeEventByDays(eventId, 1)) { "No se pudo posponer la actividad." }
+                _userMessage.value = "Actividad pospuesta para mañana."
+            }
+        }
+    }
+
     fun toggleSubtaskCompleted(eventId: Long, subtaskId: Long, completed: Boolean) {
         viewModelScope.launch {
             runOperation {
@@ -403,6 +421,30 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
                 }
             }
         }
+    }
+
+    fun addGradeCategory(item: GradeCategoryEntity) {
+        viewModelScope.launch { runOperation { repository.addGradeCategory(item) } }
+    }
+
+    fun addGradeItem(item: GradeItemEntity) {
+        viewModelScope.launch { runOperation { repository.addGradeItem(item) } }
+    }
+
+    fun addGradeUnit(item: GradeUnitEntity) {
+        viewModelScope.launch { runOperation { repository.addGradeUnit(item) } }
+    }
+
+    fun deleteGradeUnit(item: GradeUnitEntity) {
+        viewModelScope.launch { runOperation { repository.deleteGradeUnit(item) } }
+    }
+
+    fun deleteGradeCategory(item: GradeCategoryEntity) {
+        viewModelScope.launch { runOperation { repository.deleteGradeCategory(item) } }
+    }
+
+    fun deleteGradeItem(item: GradeItemEntity) {
+        viewModelScope.launch { runOperation { repository.deleteGradeItem(item) } }
     }
 
     fun scanScheduleImage(bitmap: Bitmap?) {

@@ -41,6 +41,7 @@ import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.School
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -60,6 +61,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -93,6 +96,7 @@ import com.mocas.ui.util.isActiveOn
 import com.mocas.ui.util.weekRangeLabel
 import com.mocas.ui.util.forDate
 import com.mocas.ui.viewmodel.ScheduleViewModel
+import com.mocas.ui.dialogs.ShareScheduleDialog
 import java.util.Calendar
 import java.time.LocalDate
 
@@ -110,6 +114,7 @@ fun TimetableScreen(
     val allEvents by viewModel.allEventsWithSubject.collectAsStateWithLifecycle()
     val classExceptions by viewModel.classExceptions.collectAsStateWithLifecycle()
     val settings by viewModel.appSettings.collectAsStateWithLifecycle()
+    var showShareDialog by remember { mutableStateOf(false) }
     val selectedDate = selectedWeekStart.plusDays((selectedDay - 1).toLong())
     val selectedDateIsVacation = settings.showVacationsInTimetable && isVacationDate(
         date = selectedDate,
@@ -169,7 +174,8 @@ fun TimetableScreen(
                 weekStart = selectedWeekStart,
                 onPreviousWeek = viewModel::showPreviousWeek,
                 onCurrentWeek = viewModel::showCurrentWeek,
-                onNextWeek = viewModel::showNextWeek
+                onNextWeek = viewModel::showNextWeek,
+                onShare = { showShareDialog = true }
             )
         }
 
@@ -227,6 +233,15 @@ fun TimetableScreen(
             }
         }
     }
+    if (showShareDialog) {
+        ShareScheduleDialog(
+            context = context,
+            subjects = subjectsWithSlots,
+            events = allEvents,
+            weekStart = selectedWeekStart,
+            onDismiss = { showShareDialog = false }
+        )
+    }
 }
 
 @Composable
@@ -234,7 +249,8 @@ private fun WeekNavigationBar(
     weekStart: LocalDate,
     onPreviousWeek: () -> Unit,
     onCurrentWeek: () -> Unit,
-    onNextWeek: () -> Unit
+    onNextWeek: () -> Unit,
+    onShare: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -288,6 +304,9 @@ private fun WeekNavigationBar(
                 contentDescription = "Semana siguiente",
                 tint = IndigoPrimary
             )
+        }
+        IconButton(onClick = onShare) {
+            Icon(Icons.Default.Share, contentDescription = "Compartir horario", tint = IndigoPrimary)
         }
     }
 }

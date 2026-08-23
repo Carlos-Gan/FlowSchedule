@@ -15,8 +15,12 @@ import com.mocas.data.local.SchoolEventWithSubject
 import com.mocas.data.local.SubtaskEntity
 import com.mocas.data.local.SubjectEntity
 import com.mocas.data.local.SubjectWithSlots
+import com.mocas.data.local.GradeCategoryEntity
+import com.mocas.data.local.GradeItemEntity
+import com.mocas.data.local.GradeUnitEntity
 import com.mocas.util.DateTimeUtils
 import kotlinx.coroutines.flow.Flow
+import java.time.temporal.ChronoUnit
 import java.util.Locale
 
 class ScheduleRepository(private val database: AppDatabase) {
@@ -26,6 +30,7 @@ class ScheduleRepository(private val database: AppDatabase) {
     private val periodDao = database.academicPeriodDao()
     private val exceptionDao = database.classExceptionDao()
     private val subtaskDao = database.subtaskDao()
+    private val gradeDao = database.gradeDao()
 
     val allSubjectsWithSlots: Flow<List<SubjectWithSlots>> = subjectDao.getAllSubjectsWithSlots()
     val allEventsWithSubject: Flow<List<SchoolEventWithSubject>> = eventDao.getAllEventsWithSubject()
@@ -33,6 +38,40 @@ class ScheduleRepository(private val database: AppDatabase) {
     val allClassExceptions: Flow<List<ClassExceptionEntity>> = exceptionDao.getAll()
     val deletedSubjects: Flow<List<SubjectEntity>> = subjectDao.getDeletedSubjects()
     val deletedEvents: Flow<List<SchoolEventEntity>> = eventDao.getDeletedEvents()
+    val gradeCategories: Flow<List<GradeCategoryEntity>> = gradeDao.observeCategories()
+    val gradeItems: Flow<List<GradeItemEntity>> = gradeDao.observeItems()
+    val gradeUnits: Flow<List<GradeUnitEntity>> = gradeDao.observeUnits()
+
+    suspend fun addGradeUnit(item: GradeUnitEntity): Long {
+        require(item.name.isNotBlank()) { "El nombre de la unidad es obligatorio." }
+        return gradeDao.insertUnit(item.copy(id = 0, name = item.name.trim()))
+    }
+
+    suspend fun deleteGradeUnit(item: GradeUnitEntity): Boolean = database.withTransaction {
+        gradeDao.deleteItemsForUnit(item.id)
+        gradeDao.deleteUnit(item) > 0
+    }
+
+    suspend fun addGradeCategory(item: GradeCategoryEntity): Long {
+        require(item.name.isNotBlank()) { "El nombre de la categoría es obligatorio." }
+        require(item.weightPercent > 0.0 && item.weightPercent <= 100.0) { "El porcentaje debe estar entre 0 y 100." }
+        val assigned = gradeDao.getCategoriesForSubjectOnce(item.subjectId).sumOf { it.weightPercent }
+        require(assigned + item.weightPercent <= 100.0) {
+            "Las categorías no pueden superar el 100%. Ya tienes ${assigned.toInt()}% asignado."
+        }
+        return gradeDao.insertCategory(item.copy(id = 0, name = item.name.trim()))
+    }
+
+    suspend fun addGradeItem(item: GradeItemEntity): Long {
+        require(item.name.isNotBlank()) { "El nombre de la evaluación es obligatorio." }
+        require(item.score in 0.0..100.0) { "La calificación debe estar entre 0 y 100." }
+        require(item.unitName.isNotBlank()) { "La unidad es obligatoria." }
+        require(item.unitId > 0) { "Selecciona una unidad válida." }
+        return gradeDao.insertItem(item.copy(id = 0, name = item.name.trim(), unitName = item.unitName.trim()))
+    }
+
+    suspend fun deleteGradeCategory(item: GradeCategoryEntity): Boolean = gradeDao.deleteCategory(item) > 0
+    suspend fun deleteGradeItem(item: GradeItemEntity): Boolean = gradeDao.deleteItem(item) > 0
 
     suspend fun insertAcademicPeriod(period: AcademicPeriodEntity): Long =
         saveAcademicPeriod(period.copy(id = 0))
@@ -322,6 +361,22 @@ class ScheduleRepository(private val database: AppDatabase) {
         changed
     }
 
+    suspend fun postponeEventByDays(eventId: Long, days: Long = 1): Boolean = database.withTransaction {
+        require(days > 0) { "Solo se puede posponer hacia una fecha futura." }
+        val event = requireNotNull(eventDao.getEventById(eventId)) { "La actividad ya no existe." }
+        val start = requireDate(event.startDate, "fecha inicial")
+        val end = requireDate(event.endDate, "fecha final")
+        val durationDays = ChronoUnit.DAYS.between(start, end)
+        val newStart = start.plusDays(days)
+        val newEnd = newStart.plusDays(durationDays)
+        eventDao.updateEventDates(
+            eventId = eventId,
+            startDate = newStart.toString(),
+            endDate = newEnd.toString(),
+            updatedAtMillis = System.currentTimeMillis()
+        ) > 0
+    }
+
     suspend fun setSubtaskCompleted(eventId: Long, subtaskId: Long, completed: Boolean): Boolean =
         database.withTransaction {
             val now = System.currentTimeMillis()
@@ -419,7 +474,10 @@ class ScheduleRepository(private val database: AppDatabase) {
             subjects = subjectDao.getAllSubjectsWithSlotsOnce(),
             events = eventDao.getAllEventsWithSubjectOnce().map { it.event },
             exceptions = exceptionDao.getAllOnce(),
-            subtasks = eventDao.getAllEventsWithSubjectOnce().flatMap { it.subtasks }
+            subtasks = eventDao.getAllEventsWithSubjectOnce().flatMap { it.subtasks },
+            gradeCategories = gradeDao.getCategoriesOnce(),
+            gradeItems = gradeDao.getItemsOnce(),
+            gradeUnits = gradeDao.getUnitsOnce()
         )
     )
 
@@ -428,6 +486,9 @@ class ScheduleRepository(private val database: AppDatabase) {
         validateBackup(backup)
 
         exceptionDao.clearAll()
+        gradeDao.clearItems()
+        gradeDao.clearCategories()
+        gradeDao.clearUnits()
         eventDao.clearAllEvents()
         subjectDao.clearAllSubjects()
         periodDao.clearAllPeriods()
@@ -456,6 +517,49 @@ class ScheduleRepository(private val database: AppDatabase) {
                 )
                 slotIds[slot.id] = newSlotId
             }
+        }
+
+        val categoryIds = mutableMapOf<Long, Long>()
+        backup.gradeCategories.forEach { category ->
+            val newId = gradeDao.insertCategory(
+                category.copy(
+                    id = 0,
+                    subjectId = requireNotNull(subjectIds[category.subjectId]) {
+                        "Una categoría de calificación apunta a una materia inexistente."
+                    }
+                )
+            )
+            categoryIds[category.id] = newId
+        }
+        val unitIds = mutableMapOf<Long, Long>()
+        val unitsToRestore = if (backup.gradeUnits.isNotEmpty()) {
+            backup.gradeUnits
+        } else {
+            backup.gradeItems.distinctBy { it.categoryId to it.unitName }.mapIndexed { index, item ->
+                val oldSubjectId = backup.gradeCategories.first { it.id == item.categoryId }.subjectId
+                GradeUnitEntity(id = -(index + 1L), subjectId = oldSubjectId, name = item.unitName, sortOrder = index)
+            }.distinctBy { it.subjectId to it.name }
+        }
+        unitsToRestore.forEach { unit ->
+            val newId = gradeDao.insertUnit(
+                unit.copy(id = 0, subjectId = requireNotNull(subjectIds[unit.subjectId]))
+            )
+            unitIds[unit.id] = newId
+        }
+        backup.gradeItems.forEach { item ->
+            val oldUnitId = item.unitId.takeIf { it > 0 } ?: unitsToRestore.first {
+                it.subjectId == backup.gradeCategories.first { category -> category.id == item.categoryId }.subjectId &&
+                    it.name == item.unitName
+            }.id
+            gradeDao.insertItem(
+                item.copy(
+                    id = 0,
+                    categoryId = requireNotNull(categoryIds[item.categoryId]) {
+                        "Una calificación apunta a una categoría inexistente."
+                    },
+                    unitId = requireNotNull(unitIds[oldUnitId]) { "Una calificación apunta a una unidad inexistente." }
+                )
+            )
         }
 
         val eventIds = mutableMapOf<Long, Long>()
@@ -510,6 +614,9 @@ class ScheduleRepository(private val database: AppDatabase) {
 
     suspend fun clearAll() = database.withTransaction {
         exceptionDao.clearAll()
+        gradeDao.clearItems()
+        gradeDao.clearCategories()
+        gradeDao.clearUnits()
         eventDao.clearAllEvents()
         subjectDao.clearAllSubjects()
         periodDao.clearAllPeriods()
@@ -555,6 +662,23 @@ class ScheduleRepository(private val database: AppDatabase) {
         backup.subtasks.forEach { item ->
             require(item.eventId in eventIds) { "Una subtarea apunta a una actividad inexistente." }
             require(item.title.isNotBlank()) { "El respaldo contiene una subtarea sin título." }
+        }
+        val categoryIds = backup.gradeCategories.mapTo(mutableSetOf()) { it.id }
+        val unitIds = backup.gradeUnits.mapTo(mutableSetOf()) { it.id }
+        backup.gradeUnits.forEach { unit ->
+            require(unit.subjectId in subjectIds && unit.name.isNotBlank()) { "El respaldo contiene una unidad inválida." }
+        }
+        backup.gradeCategories.forEach { category ->
+            require(category.subjectId in subjectIds) { "Una categoría apunta a una materia inexistente." }
+            require(category.name.isNotBlank() && category.weightPercent > 0 && category.weightPercent <= 100) {
+                "El respaldo contiene una categoría de calificación inválida."
+            }
+        }
+        backup.gradeItems.forEach { item ->
+            require(item.categoryId in categoryIds && (item.unitId == 0L || item.unitId in unitIds) &&
+                item.name.isNotBlank() && item.unitName.isNotBlank() && item.score in 0.0..100.0) {
+                "El respaldo contiene una calificación inválida."
+            }
         }
         backup.exceptions.forEach { exception ->
             require(exception.subjectId in subjectIds && exception.slotId in slotIds) {

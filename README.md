@@ -44,6 +44,22 @@ Aplicación Android para organizar materias, sesiones, tareas, exámenes, period
 - Actividades vinculadas a una materia y control de completadas o pendientes.
 - Integración con el calendario del teléfono mediante `CalendarContract`.
 
+### Calificaciones
+
+- Categorías ponderadas para parciales, tareas, proyectos u otros rubros.
+- Espacio independiente y compacto dentro de cada materia, con unidades persistentes que pueden crearse vacías.
+- Registro de evaluaciones con calificación sobre 100.
+- Promedio actual, meta editable y calificación necesaria para aprobar.
+- Promedio combinado de la materia, promedio independiente por unidad y promedio general por periodo con desglose por materia.
+- Simulador guiado por unidad y categoría, con control de nota y comparación entre promedio actual y proyectado.
+
+### Compartir el horario
+
+- Imagen PNG semanal con diseño limpio.
+- Documento PDF listo para imprimir o enviar.
+- Archivo `.ics` compatible con calendarios de compañeros.
+- Controles para ocultar profesor, salón y actividades personales.
+
 ### Notificaciones
 
 - Próxima clase.

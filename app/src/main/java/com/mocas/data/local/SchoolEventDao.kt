@@ -213,6 +213,22 @@ interface SchoolEventDao {
     @Query(
         """
         UPDATE school_events
+        SET startDate = :startDate,
+            endDate = :endDate,
+            updatedAtMillis = :updatedAtMillis
+        WHERE id = :eventId AND isDeleted = 0
+        """
+    )
+    suspend fun updateEventDates(
+        eventId: Long,
+        startDate: String,
+        endDate: String,
+        updatedAtMillis: Long
+    ): Int
+
+    @Query(
+        """
+        UPDATE school_events
         SET calendarEventId = :calendarEventId,
             calendarId = :calendarId,
             lastCalendarSyncMillis = :syncTimeMillis,

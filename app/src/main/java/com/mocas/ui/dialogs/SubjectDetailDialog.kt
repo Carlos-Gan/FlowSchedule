@@ -56,8 +56,12 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.mocas.data.local.SchoolEventWithSubject
 import com.mocas.data.local.SubjectWithSlots
+import com.mocas.data.local.GradeCategoryEntity
+import com.mocas.data.local.GradeItemEntity
+import com.mocas.data.local.GradeUnitEntity
 import com.mocas.data.repository.CalendarSyncHelper
 import com.mocas.ui.components.EventItemCard
+import com.mocas.ui.components.GradesSection
 import com.mocas.ui.components.parseColorFromHex
 import com.mocas.ui.theme.IndigoPrimary
 import com.mocas.ui.util.showCalendarResult
@@ -72,7 +76,16 @@ fun SubjectDetailDialog(
     onAddEventClick: () -> Unit,
     onToggleEventCompleted: (Long, Boolean) -> Unit,
     onToggleSubtask: (Long, Long, Boolean) -> Unit,
-    onEditEvent: (SchoolEventWithSubject) -> Unit
+    onEditEvent: (SchoolEventWithSubject) -> Unit,
+    gradeCategories: List<GradeCategoryEntity>,
+    gradeItems: List<GradeItemEntity>,
+    gradeUnits: List<GradeUnitEntity>,
+    onAddGradeCategory: (GradeCategoryEntity) -> Unit,
+    onAddGradeItem: (GradeItemEntity) -> Unit,
+    onDeleteGradeCategory: (GradeCategoryEntity) -> Unit,
+    onDeleteGradeItem: (GradeItemEntity) -> Unit,
+    onAddGradeUnit: (GradeUnitEntity) -> Unit,
+    onDeleteGradeUnit: (GradeUnitEntity) -> Unit
 ) {
     val context = LocalContext.current
     val subject = subjectWithSlots.subject
@@ -297,6 +310,21 @@ fun SubjectDetailDialog(
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
+
+                    GradesSection(
+                        subjectId = subject.id,
+                        categories = gradeCategories,
+                        gradeItems = gradeItems,
+                        units = gradeUnits,
+                        onAddCategory = onAddGradeCategory,
+                        onAddItem = onAddGradeItem,
+                        onDeleteCategory = onDeleteGradeCategory,
+                        onDeleteItem = onDeleteGradeItem,
+                        onAddUnit = onAddGradeUnit,
+                        onDeleteUnit = onDeleteGradeUnit
+                    )
+
+                    Spacer(modifier = Modifier.height(18.dp))
 
                     // Linked tasks & exams
                     Row(

@@ -466,11 +466,16 @@ object CalendarSyncHelper {
     fun createIcsShareIntent(
         context: Context,
         subjectsWithSlots: List<SubjectWithSlots>,
-        zoneId: ZoneId = ZoneId.systemDefault()
+        zoneId: ZoneId = ZoneId.systemDefault(),
+        showProfessor: Boolean = true,
+        showRoom: Boolean = true
     ): Intent {
         val exportDirectory = File(context.cacheDir, "exports").apply { mkdirs() }
         val file = File(exportDirectory, "horario-snapmyschedule.ics")
-        file.writeText(exportScheduleAsIcsText(subjectsWithSlots, zoneId), Charsets.UTF_8)
+        var content = exportScheduleAsIcsText(subjectsWithSlots, zoneId)
+        if (!showProfessor) content = content.replace(Regex("DESCRIPTION:Profesor:[^\\r\\n]*"), "DESCRIPTION:")
+        if (!showRoom) content = content.replace(Regex("LOCATION:[^\\r\\n]*"), "LOCATION:")
+        file.writeText(content, Charsets.UTF_8)
         val uri = FileProvider.getUriForFile(
             context,
             "${context.packageName}.fileprovider",

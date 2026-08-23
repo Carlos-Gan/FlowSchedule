@@ -58,6 +58,10 @@ fun MainDialogHost(
     val selectedClassOccurrence by
     viewModel.selectedClassOccurrence.collectAsStateWithLifecycle()
 
+    val gradeCategories by viewModel.gradeCategories.collectAsStateWithLifecycle()
+    val gradeItems by viewModel.gradeItems.collectAsStateWithLifecycle()
+    val gradeUnits by viewModel.gradeUnits.collectAsStateWithLifecycle()
+
     val selectedSubject = remember(
         selectedDetailId,
         subjectsWithSlots
@@ -188,7 +192,16 @@ fun MainDialogHost(
             onEditEvent = { event ->
                 viewModel.closeSubjectDetail()
                 viewModel.openAddEvent(event)
-            }
+            },
+            gradeCategories = gradeCategories.filter { it.subjectId == selectedSubject.subject.id },
+            gradeItems = gradeItems,
+            gradeUnits = gradeUnits.filter { it.subjectId == selectedSubject.subject.id },
+            onAddGradeCategory = viewModel::addGradeCategory,
+            onAddGradeItem = viewModel::addGradeItem,
+            onDeleteGradeCategory = viewModel::deleteGradeCategory,
+            onDeleteGradeItem = viewModel::deleteGradeItem,
+            onAddGradeUnit = viewModel::addGradeUnit,
+            onDeleteGradeUnit = viewModel::deleteGradeUnit
         )
     }
 }
