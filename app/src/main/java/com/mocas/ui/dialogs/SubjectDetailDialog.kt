@@ -58,6 +58,7 @@ import com.mocas.data.local.SchoolEventWithSubject
 import com.mocas.data.local.SubjectWithSlots
 import com.mocas.data.local.GradeCategoryEntity
 import com.mocas.data.local.GradeItemEntity
+import com.mocas.data.local.GradeUnitCategoryWeightEntity
 import com.mocas.data.local.GradeUnitEntity
 import com.mocas.data.repository.CalendarSyncHelper
 import com.mocas.ui.components.EventItemCard
@@ -80,12 +81,15 @@ fun SubjectDetailDialog(
     gradeCategories: List<GradeCategoryEntity>,
     gradeItems: List<GradeItemEntity>,
     gradeUnits: List<GradeUnitEntity>,
+    gradeUnitCategoryWeights: List<GradeUnitCategoryWeightEntity> = emptyList(),
     onAddGradeCategory: (GradeCategoryEntity) -> Unit,
     onAddGradeItem: (GradeItemEntity) -> Unit,
     onDeleteGradeCategory: (GradeCategoryEntity) -> Unit,
-    onDeleteGradeItem: (GradeItemEntity) -> Unit,
+    onDeleteItem: (GradeItemEntity) -> Unit,
     onAddGradeUnit: (GradeUnitEntity) -> Unit,
-    onDeleteGradeUnit: (GradeUnitEntity) -> Unit
+    onDeleteGradeUnit: (GradeUnitEntity) -> Unit,
+    onSaveUnitCategoryWeights: (Long, List<GradeUnitCategoryWeightEntity>) -> Unit = { _, _ -> },
+    onResetUnitCategoryWeights: (Long) -> Unit = {}
 ) {
     val context = LocalContext.current
     val subject = subjectWithSlots.subject
@@ -185,7 +189,7 @@ fun SubjectDetailDialog(
 
                 // Content Body
                 Column(modifier = Modifier.padding(20.dp)) {
-                    // Quick stats / room
+                    // Solo mostramos el resumen útil; el salón ya aparece en el horario.
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -196,9 +200,13 @@ fun SubjectDetailDialog(
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
                         ) {
                             Column(modifier = Modifier.padding(12.dp)) {
-                                Text("Aula Principal", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text("Salones", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 Text(
-                                    text = subject.defaultRoom.ifBlank { "No especificado" },
+                                    text = slots.map { it.room.ifBlank { subject.defaultRoom } }
+                                        .filter { it.isNotBlank() }
+                                        .distinct()
+                                        .joinToString(" · ")
+                                        .ifBlank { "No especificado" },
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 14.sp,
                                     color = MaterialTheme.colorScheme.onSurface
@@ -225,9 +233,15 @@ fun SubjectDetailDialog(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Timetable slots
+                    // Agrupa sesiones repetidas: una sola tarjeta por horario y salón.
+                    val groupedSlots = slots
+                        .groupBy { slot ->
+                            Triple(slot.startTime, slot.endTime, slot.room.ifBlank { subject.defaultRoom })
+                        }
+                        .toList()
+                        .sortedBy { (_, group) -> group.minOf { it.dayOfWeek } }
                     Text(
-                        text = "Horarios de clase (${slots.size} sesiones/semana)",
+                        text = "Horario (${slots.size} sesiones/semana)",
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold,
                             fontSize = 15.sp
@@ -237,16 +251,11 @@ fun SubjectDetailDialog(
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    slots.forEach { slot ->
-                        val dayName = when (slot.dayOfWeek) {
-                            1 -> "Lunes"
-                            2 -> "Martes"
-                            3 -> "Miércoles"
-                            4 -> "Jueves"
-                            5 -> "Viernes"
-                            6 -> "Sábado"
-                            else -> "Domingo"
-                        }
+                    groupedSlots.forEach { (schedule, group) ->
+                        val (startTime, endTime, room) = schedule
+                        val days = group
+                            .sortedBy { it.dayOfWeek }
+                            .joinToString(", ") { dayName(it.dayOfWeek) }
 
                         Surface(
                             modifier = Modifier
@@ -270,11 +279,18 @@ fun SubjectDetailDialog(
                                             .background(subjectColor)
                                     )
                                     Spacer(modifier = Modifier.width(8.dp))
-                                    Text(
-                                        text = "$dayName ${slot.startTime} - ${slot.endTime}",
-                                        fontWeight = FontWeight.SemiBold,
-                                        fontSize = 13.sp
-                                    )
+                                    Column {
+                                        Text(
+                                            text = days,
+                                            fontWeight = FontWeight.SemiBold,
+                                            fontSize = 13.sp
+                                        )
+                                        Text(
+                                            text = "$startTime - $endTime",
+                                            fontSize = 12.sp,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
                                 }
 
                                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -286,24 +302,10 @@ fun SubjectDetailDialog(
                                     )
                                     Spacer(modifier = Modifier.width(4.dp))
                                     Text(
-                                        text = slot.room.ifBlank { subject.defaultRoom },
+                                        text = room.ifBlank { "Sin salón" },
                                         fontSize = 12.sp,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
-                                    IconButton(
-                                        onClick = {
-                                            showCalendarResult(
-                                                context,
-                                                CalendarSyncHelper.addClassToPhoneCalendar(context, subject, slot)
-                                            )
-                                        }
-                                    ) {
-                                        Icon(
-                                            Icons.Default.CalendarMonth,
-                                            contentDescription = "Agregar esta sesión al calendario",
-                                            tint = IndigoPrimary
-                                        )
-                                    }
                                 }
                             }
                         }
@@ -316,12 +318,15 @@ fun SubjectDetailDialog(
                         categories = gradeCategories,
                         gradeItems = gradeItems,
                         units = gradeUnits,
+                        unitCategoryWeights = gradeUnitCategoryWeights,
                         onAddCategory = onAddGradeCategory,
                         onAddItem = onAddGradeItem,
                         onDeleteCategory = onDeleteGradeCategory,
-                        onDeleteItem = onDeleteGradeItem,
+                        onDeleteItem = onDeleteItem,
                         onAddUnit = onAddGradeUnit,
-                        onDeleteUnit = onDeleteGradeUnit
+                        onDeleteUnit = onDeleteGradeUnit,
+                        onSaveUnitCategoryWeights = onSaveUnitCategoryWeights,
+                        onResetUnitCategoryWeights = onResetUnitCategoryWeights
                     )
 
                     Spacer(modifier = Modifier.height(18.dp))
@@ -438,4 +443,14 @@ fun SubjectDetailDialog(
             }
         )
     }
+}
+
+private fun dayName(dayOfWeek: Int): String = when (dayOfWeek) {
+    1 -> "Lunes"
+    2 -> "Martes"
+    3 -> "Miércoles"
+    4 -> "Jueves"
+    5 -> "Viernes"
+    6 -> "Sábado"
+    else -> "Domingo"
 }

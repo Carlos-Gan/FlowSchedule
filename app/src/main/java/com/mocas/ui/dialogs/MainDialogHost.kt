@@ -61,6 +61,7 @@ fun MainDialogHost(
     val gradeCategories by viewModel.gradeCategories.collectAsStateWithLifecycle()
     val gradeItems by viewModel.gradeItems.collectAsStateWithLifecycle()
     val gradeUnits by viewModel.gradeUnits.collectAsStateWithLifecycle()
+    val gradeUnitCategoryWeights by viewModel.gradeUnitCategoryWeights.collectAsStateWithLifecycle()
 
     val selectedSubject = remember(
         selectedDetailId,
@@ -196,12 +197,15 @@ fun MainDialogHost(
             gradeCategories = gradeCategories.filter { it.subjectId == selectedSubject.subject.id },
             gradeItems = gradeItems,
             gradeUnits = gradeUnits.filter { it.subjectId == selectedSubject.subject.id },
+            gradeUnitCategoryWeights = gradeUnitCategoryWeights,
             onAddGradeCategory = viewModel::addGradeCategory,
             onAddGradeItem = viewModel::addGradeItem,
             onDeleteGradeCategory = viewModel::deleteGradeCategory,
-            onDeleteGradeItem = viewModel::deleteGradeItem,
+            onDeleteItem = viewModel::deleteGradeItem,
             onAddGradeUnit = viewModel::addGradeUnit,
-            onDeleteGradeUnit = viewModel::deleteGradeUnit
+            onDeleteGradeUnit = viewModel::deleteGradeUnit,
+            onSaveUnitCategoryWeights = viewModel::saveUnitCategoryWeights,
+            onResetUnitCategoryWeights = viewModel::resetUnitCategoryWeights
         )
     }
 }

@@ -18,6 +18,7 @@ import com.mocas.data.local.SubjectWithSlots
 import com.mocas.data.local.GradeCategoryEntity
 import com.mocas.data.local.GradeItemEntity
 import com.mocas.data.local.GradeUnitEntity
+import com.mocas.data.local.GradeUnitCategoryWeightEntity
 import com.mocas.util.DateTimeUtils
 import kotlinx.coroutines.flow.Flow
 import java.time.temporal.ChronoUnit
@@ -41,6 +42,7 @@ class ScheduleRepository(private val database: AppDatabase) {
     val gradeCategories: Flow<List<GradeCategoryEntity>> = gradeDao.observeCategories()
     val gradeItems: Flow<List<GradeItemEntity>> = gradeDao.observeItems()
     val gradeUnits: Flow<List<GradeUnitEntity>> = gradeDao.observeUnits()
+    val gradeUnitCategoryWeights: Flow<List<GradeUnitCategoryWeightEntity>> = gradeDao.observeUnitCategoryWeights()
 
     suspend fun addGradeUnit(item: GradeUnitEntity): Long {
         require(item.name.isNotBlank()) { "El nombre de la unidad es obligatorio." }
@@ -51,6 +53,17 @@ class ScheduleRepository(private val database: AppDatabase) {
         gradeDao.deleteItemsForUnit(item.id)
         gradeDao.deleteUnit(item) > 0
     }
+
+    suspend fun saveUnitCategoryWeights(unitId: Long, weights: List<GradeUnitCategoryWeightEntity>) = database.withTransaction {
+        require(weights.isNotEmpty()) { "Agrega al menos un porcentaje." }
+        require(weights.all { it.unitId == unitId && it.weightPercent >= 0.0 }) { "Los porcentajes no son válidos." }
+        require(weights.sumOf { it.weightPercent } <= 100.0) { "Los porcentajes no pueden superar el 100%." }
+        gradeDao.deleteUnitCategoryWeights(unitId)
+        gradeDao.insertUnitCategoryWeights(weights)
+    }
+
+    suspend fun resetUnitCategoryWeights(unitId: Long): Boolean =
+        gradeDao.deleteUnitCategoryWeights(unitId) >= 0
 
     suspend fun addGradeCategory(item: GradeCategoryEntity): Long {
         require(item.name.isNotBlank()) { "El nombre de la categoría es obligatorio." }
@@ -477,7 +490,8 @@ class ScheduleRepository(private val database: AppDatabase) {
             subtasks = eventDao.getAllEventsWithSubjectOnce().flatMap { it.subtasks },
             gradeCategories = gradeDao.getCategoriesOnce(),
             gradeItems = gradeDao.getItemsOnce(),
-            gradeUnits = gradeDao.getUnitsOnce()
+            gradeUnits = gradeDao.getUnitsOnce(),
+            gradeUnitCategoryWeights = gradeDao.getUnitCategoryWeightsOnce()
         )
     )
 
@@ -486,6 +500,7 @@ class ScheduleRepository(private val database: AppDatabase) {
         validateBackup(backup)
 
         exceptionDao.clearAll()
+        gradeDao.clearUnitCategoryWeights()
         gradeDao.clearItems()
         gradeDao.clearCategories()
         gradeDao.clearUnits()
@@ -545,6 +560,18 @@ class ScheduleRepository(private val database: AppDatabase) {
                 unit.copy(id = 0, subjectId = requireNotNull(subjectIds[unit.subjectId]))
             )
             unitIds[unit.id] = newId
+        }
+        val restoredWeights = backup.gradeUnitCategoryWeights.mapNotNull { weight ->
+            val newUnitId = unitIds[weight.unitId] ?: return@mapNotNull null
+            val newCategoryId = categoryIds[weight.categoryId] ?: return@mapNotNull null
+            GradeUnitCategoryWeightEntity(
+                unitId = newUnitId,
+                categoryId = newCategoryId,
+                weightPercent = weight.weightPercent
+            )
+        }
+        if (restoredWeights.isNotEmpty()) {
+            gradeDao.insertUnitCategoryWeights(restoredWeights)
         }
         backup.gradeItems.forEach { item ->
             val oldUnitId = item.unitId.takeIf { it > 0 } ?: unitsToRestore.first {
@@ -614,6 +641,7 @@ class ScheduleRepository(private val database: AppDatabase) {
 
     suspend fun clearAll() = database.withTransaction {
         exceptionDao.clearAll()
+        gradeDao.clearUnitCategoryWeights()
         gradeDao.clearItems()
         gradeDao.clearCategories()
         gradeDao.clearUnits()
@@ -672,6 +700,14 @@ class ScheduleRepository(private val database: AppDatabase) {
             require(category.subjectId in subjectIds) { "Una categoría apunta a una materia inexistente." }
             require(category.name.isNotBlank() && category.weightPercent > 0 && category.weightPercent <= 100) {
                 "El respaldo contiene una categoría de calificación inválida."
+            }
+        }
+        backup.gradeUnitCategoryWeights.forEach { weight ->
+            require(weight.unitId in unitIds && weight.categoryId in categoryIds) {
+                "El respaldo contiene una ponderación por unidad con referencias inválidas."
+            }
+            require(weight.weightPercent in 0.0..100.0) {
+                "El respaldo contiene un porcentaje de ponderación inválido."
             }
         }
         backup.gradeItems.forEach { item ->

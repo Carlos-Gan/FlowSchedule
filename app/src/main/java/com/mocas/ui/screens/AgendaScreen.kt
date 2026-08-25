@@ -91,6 +91,8 @@ fun AgendaScreen(viewModel: ScheduleViewModel, modifier: Modifier = Modifier) {
     val periods by viewModel.academicPeriods.collectAsStateWithLifecycle()
     val gradeCategories by viewModel.gradeCategories.collectAsStateWithLifecycle()
     val gradeItems by viewModel.gradeItems.collectAsStateWithLifecycle()
+    val gradeUnits by viewModel.gradeUnits.collectAsStateWithLifecycle()
+    val gradeUnitCategoryWeights by viewModel.gradeUnitCategoryWeights.collectAsStateWithLifecycle()
     val classExceptions by viewModel.classExceptions.collectAsStateWithLifecycle()
     val today = ScheduleViewModel.getTodayDateString()
 
@@ -186,6 +188,8 @@ fun AgendaScreen(viewModel: ScheduleViewModel, modifier: Modifier = Modifier) {
                 subjects = subjects,
                 categories = gradeCategories,
                 items = gradeItems,
+                units = gradeUnits,
+                unitCategoryWeights = gradeUnitCategoryWeights,
                 onSubjectClick = viewModel::openSubjectDetail
             )
         }

@@ -14,8 +14,8 @@ android {
     applicationId = "com.gaco.snapmyschedule"
     minSdk = 26
     targetSdk = 37
-    versionCode = 1
-    versionName = "1.3.1"
+    versionCode = 2
+    versionName = "1.3.2"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }

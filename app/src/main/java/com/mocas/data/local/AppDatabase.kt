@@ -18,9 +18,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         SubtaskEntity::class,
         GradeCategoryEntity::class,
         GradeUnitEntity::class,
+        GradeUnitCategoryWeightEntity::class,
         GradeItemEntity::class
     ],
-    version = 10,
+    version = 11,
     exportSchema = false
 )
 @TypeConverters(DatabaseConverters::class)
@@ -49,7 +50,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "snap_my_schedule_db_v2"
                 )
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11)
                     .build()
                     .also { database ->
                         INSTANCE = database
@@ -220,6 +221,22 @@ abstract class AppDatabase : RoomDatabase() {
                         LIMIT 1
                     ), 0)
                 """.trimIndent())
+            }
+        }
+
+        private val MIGRATION_10_11 = object : Migration(10, 11) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("""
+                    CREATE TABLE IF NOT EXISTS `grade_unit_category_weights` (
+                        `unitId` INTEGER NOT NULL,
+                        `categoryId` INTEGER NOT NULL,
+                        `weightPercent` REAL NOT NULL,
+                        PRIMARY KEY(`unitId`, `categoryId`),
+                        FOREIGN KEY(`unitId`) REFERENCES `grade_units`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE,
+                        FOREIGN KEY(`categoryId`) REFERENCES `grade_categories`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE
+                    )
+                """.trimIndent())
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_grade_unit_category_weights_categoryId` ON `grade_unit_category_weights` (`categoryId`)")
             }
         }
     }

@@ -21,6 +21,7 @@ import com.mocas.data.local.SubjectEntity
 import com.mocas.data.local.SubjectWithSlots
 import com.mocas.data.local.GradeCategoryEntity
 import com.mocas.data.local.GradeItemEntity
+import com.mocas.data.local.GradeUnitCategoryWeightEntity
 import com.mocas.data.local.GradeUnitEntity
 import com.mocas.data.preferences.AppSettingsStore
 import com.mocas.data.notifications.ReminderRescheduler
@@ -121,6 +122,8 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     val gradeItems: StateFlow<List<GradeItemEntity>> = repository.gradeItems
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
     val gradeUnits: StateFlow<List<GradeUnitEntity>> = repository.gradeUnits
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+    val gradeUnitCategoryWeights: StateFlow<List<GradeUnitCategoryWeightEntity>> = repository.gradeUnitCategoryWeights
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
     private val _automaticBackups = MutableStateFlow<List<AutomaticBackupInfo>>(emptyList())
     val automaticBackups = _automaticBackups.asStateFlow()
@@ -437,6 +440,14 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
 
     fun deleteGradeUnit(item: GradeUnitEntity) {
         viewModelScope.launch { runOperation { repository.deleteGradeUnit(item) } }
+    }
+
+    fun saveUnitCategoryWeights(unitId: Long, weights: List<GradeUnitCategoryWeightEntity>) {
+        viewModelScope.launch { runOperation { repository.saveUnitCategoryWeights(unitId, weights) } }
+    }
+
+    fun resetUnitCategoryWeights(unitId: Long) {
+        viewModelScope.launch { runOperation { repository.resetUnitCategoryWeights(unitId) } }
     }
 
     fun deleteGradeCategory(item: GradeCategoryEntity) {

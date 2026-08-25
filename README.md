@@ -9,7 +9,7 @@ Aplicación Android para organizar materias, sesiones, tareas, exámenes, period
 ![Android](https://img.shields.io/badge/Android-8.0%2B-3DDC84?logo=android&logoColor=white)
 ![Kotlin](https://img.shields.io/badge/Kotlin-2.4-7F52FF?logo=kotlin&logoColor=white)
 ![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-Material%203-4285F4?logo=jetpackcompose&logoColor=white)
-![Version](https://img.shields.io/badge/versión-1.3.1-5847EB)
+![Version](https://img.shields.io/badge/versión-1.3.2-5847EB)
 
 </div>
 
@@ -224,7 +224,7 @@ No subas archivos de firma, contraseñas, `local.properties` ni `.env` al reposi
 
 ## Estado del proyecto
 
-- Versión actual: **1.3**.
+- Versión actual: **1.3.2**.
 - `applicationId`: `com.gaco.snapmyschedule`.
 - SDK mínimo: **26**.
 - SDK objetivo: **37**.

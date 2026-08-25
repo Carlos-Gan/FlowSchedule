@@ -51,21 +51,18 @@ fun ClassScheduleCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
+            .clip(RoundedCornerShape(20.dp))
             .clickable { onClick() }
             .testTag("class_card_${subject.id}_${slot.id}"),
         shape = RoundedCornerShape(20.dp),
         border = BorderStroke(
-            1.dp,
-            if (dayClassItem.isLiveNow) subjectColor.copy(alpha = 0.5f) else MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
+            if (dayClassItem.isLiveNow) 1.5.dp else 1.dp,
+            if (dayClassItem.isLiveNow) subjectColor.copy(alpha = 0.7f) else MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
         ),
         colors = CardDefaults.cardColors(
-            containerColor = if (dayClassItem.isLiveNow) {
-                subjectColor.copy(alpha = 0.08f)
-            } else {
-                MaterialTheme.colorScheme.surface
-            }
+            containerColor = MaterialTheme.colorScheme.surface
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = if (dayClassItem.isLiveNow) 3.dp else 1.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = if (dayClassItem.isLiveNow) 2.dp else 1.dp)
     ) {
         Row(
             modifier = Modifier
@@ -76,7 +73,7 @@ fun ClassScheduleCard(
             // Bento Time Block with Colored Pill Strip
             Surface(
                 shape = RoundedCornerShape(12.dp),
-                color = if (dayClassItem.isLiveNow) subjectColor.copy(alpha = 0.2f) else MaterialTheme.colorScheme.surfaceVariant,
+                color = MaterialTheme.colorScheme.surfaceVariant,
                 modifier = Modifier.width(62.dp)
             ) {
                 Column(
