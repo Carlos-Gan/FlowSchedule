@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Modifier
 import com.mocas.ui.model.BottomNavTab
-import com.mocas.ui.screens.AgendaScreen
+import com.mocas.ui.screens.DashboardScreen
 import com.mocas.ui.screens.CalendarScreen
 import com.mocas.ui.screens.EventsScreen
 import com.mocas.ui.screens.SettingsScreen
@@ -31,7 +31,7 @@ fun AppTabContent(
         ) {
             when (tab) {
                 BottomNavTab.INICIO -> {
-                    AgendaScreen(viewModel = viewModel)
+                    DashboardScreen(viewModel = viewModel)
                 }
 
                 BottomNavTab.HORARIO -> {

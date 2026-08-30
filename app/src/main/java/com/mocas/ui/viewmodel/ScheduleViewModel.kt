@@ -34,6 +34,7 @@ import com.mocas.ui.model.BottomNavTab
 import com.mocas.ui.model.DayClassItem
 import com.mocas.ui.model.NextClassInfo
 import com.mocas.ui.model.TimetableDisplayMode
+import com.mocas.ui.model.DailyClassStats
 import com.mocas.util.DateTimeUtils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -140,6 +141,12 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         )
     }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+    val todayClassStats: StateFlow<DailyClassStats> = combine(
+        subjectsWithSlots,
+        classExceptions
+    ) { subjects, exceptions ->
+        computeDailyClassStats(subjects, LocalDate.now(), exceptions)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), DailyClassStats())
     val nextClassInfo: StateFlow<NextClassInfo?> = subjectsWithSlots
         .combine(_selectedDayOfWeek) { subjects, _ -> computeNextClass(subjects) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
@@ -644,57 +651,86 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
             }.sortedBy { parseTimeToMinutes(it.slot.startTime) }
         }
 
+        private fun computeDailyClassStats(
+            subjects: List<SubjectWithSlots>,
+            date: LocalDate,
+            exceptions: List<ClassExceptionEntity>
+        ): DailyClassStats {
+            val classes = computeClassesForDate(subjects, date, exceptions)
+            if (classes.isEmpty()) return DailyClassStats()
+
+            val nowMinutes = LocalTime.now().let { it.hour * 60 + it.minute }
+            
+            var totalMinutes = 0.0
+            var completedMinutes = 0.0
+            
+            classes.forEach { item ->
+                val start = parseTimeToMinutes(item.slot.startTime)
+                val end = parseTimeToMinutes(item.slot.endTime)
+                val duration = (end - start).toDouble()
+                
+                totalMinutes += duration
+                
+                if (nowMinutes >= end) {
+                    completedMinutes += duration
+                } else if (nowMinutes > start) {
+                    completedMinutes += (nowMinutes - start).toDouble()
+                }
+            }
+            
+            val remainingMinutes = (totalMinutes - completedMinutes).coerceAtLeast(0.0)
+            val progress = if (totalMinutes > 0) (completedMinutes / totalMinutes).toFloat() else 0f
+            
+            return DailyClassStats(
+                totalHours = totalMinutes / 60.0,
+                remainingHours = remainingMinutes / 60.0,
+                progress = progress
+            )
+        }
+
         private fun computeNextClass(subjects: List<SubjectWithSlots>): NextClassInfo? {
             val today = LocalDate.now()
             val nowMinutes = LocalTime.now().let { it.hour * 60 + it.minute }
-            for (offset in 0..7) {
-                val date = today.plusDays(offset.toLong())
-                val candidates = subjects.flatMap { item ->
-                    val semesterStart = DateTimeUtils.parseDate(item.subject.semesterStart)
-                    val semesterEnd = DateTimeUtils.parseDate(item.subject.semesterEnd)
-                    if (semesterStart == null || semesterEnd == null || date !in semesterStart..semesterEnd) {
-                        emptyList()
-                    } else {
-                        item.slots.filter { it.dayOfWeek == date.dayOfWeek.value }
-                            .map { item.subject to it }
-                    }
-                }.sortedBy { parseTimeToMinutes(it.second.startTime) }
+            
+            // Solo buscamos clases para el día de hoy para evitar mostrar clases de días futuros 
+            // en el dashboard, según lo solicitado.
+            val date = today
+            
+            val candidates = subjects.flatMap { item ->
+                val semesterStart = DateTimeUtils.parseDate(item.subject.semesterStart)
+                val semesterEnd = DateTimeUtils.parseDate(item.subject.semesterEnd)
+                if (semesterStart == null || semesterEnd == null || date !in semesterStart..semesterEnd) {
+                    emptyList()
+                } else {
+                    item.slots.filter { it.dayOfWeek == date.dayOfWeek.value }
+                        .map { item.subject to it }
+                }
+            }.sortedBy { parseTimeToMinutes(it.second.startTime) }
 
-                candidates.forEach { (subject, slot) ->
-                    val start = parseTimeToMinutes(slot.startTime)
-                    val end = parseTimeToMinutes(slot.endTime)
-                    if (offset > 0 || nowMinutes < end) {
-                        val happening = offset == 0 && nowMinutes >= start && nowMinutes < end
-                        val dayName = when {
-                            offset == 0 -> "Hoy"
-                            offset == 1 -> "Mañana (${dayName(date.dayOfWeek.value)})"
-                            else -> "El ${dayName(date.dayOfWeek.value)}"
-                        }
-                        return NextClassInfo(
-                            subject = subject,
-                            slot = slot,
-                            dayName = dayName,
-                            timeRange = "${slot.startTime} - ${slot.endTime}",
-                            room = slot.room.ifBlank { subject.defaultRoom },
-                            minutesUntil = if (offset == 0 && !happening) start - nowMinutes else if (happening) 0 else -1,
-                            isHappeningNow = happening
-                        )
-                    }
+            candidates.forEach { (subject, slot) ->
+                val start = parseTimeToMinutes(slot.startTime)
+                val end = parseTimeToMinutes(slot.endTime)
+                
+                // Si la clase no ha terminado todavía
+                if (nowMinutes < end) {
+                    val happening = nowMinutes >= start
+                    val dayName = "Hoy"
+                    
+                    return NextClassInfo(
+                        subject = subject,
+                        slot = slot,
+                        dayName = dayName,
+                        timeRange = "${slot.startTime} - ${slot.endTime}",
+                        room = slot.room.ifBlank { subject.defaultRoom },
+                        // minutesUntil será >= 0 ya que happening=true -> 0, y !happening -> start-nowMinutes > 0
+                        minutesUntil = if (!happening) start - nowMinutes else 0,
+                        isHappeningNow = happening
+                    )
                 }
             }
             return null
         }
 
         fun parseTimeToMinutes(timeStr: String): Int = DateTimeUtils.timeToMinutes(timeStr) ?: 0
-
-        private fun dayName(day: Int): String = when (day) {
-            1 -> "Lunes"
-            2 -> "Martes"
-            3 -> "Miércoles"
-            4 -> "Jueves"
-            5 -> "Viernes"
-            6 -> "Sábado"
-            else -> "Domingo"
-        }
     }
 }

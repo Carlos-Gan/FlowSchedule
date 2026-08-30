@@ -59,6 +59,12 @@ data class ClassOccurrenceInfo(
     val exception: ClassExceptionEntity? = null
 )
 
+data class DailyClassStats(
+    val totalHours: Double = 0.0,
+    val remainingHours: Double = 0.0,
+    val progress: Float = 0f
+)
+
 data class CalendarDayItem(
     val dateString: String, // "YYYY-MM-DD"
     val dayNumber: Int,

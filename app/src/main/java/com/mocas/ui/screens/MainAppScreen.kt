@@ -8,8 +8,11 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mocas.ui.components.AppTabContent
 import com.mocas.ui.components.SnapBottomNavBar
@@ -24,6 +27,7 @@ import com.mocas.ui.viewmodel.ScheduleViewModel
 fun MainAppScreen(
     viewModel: ScheduleViewModel
 ) {
+    val focusManager = LocalFocusManager.current
     val currentTab by
     viewModel.currentTab.collectAsStateWithLifecycle()
 
@@ -39,6 +43,9 @@ fun MainAppScreen(
     val settings by
     viewModel.appSettings.collectAsStateWithLifecycle()
 
+    val isSearchActive by
+    viewModel.isGlobalSearchOpen.collectAsStateWithLifecycle()
+
     val snackbarHostState = remember {
         SnackbarHostState()
     }
@@ -50,6 +57,8 @@ fun MainAppScreen(
             !it.event.isCompleted
         }
     }
+
+    var searchQuery by remember { mutableStateOf("") }
 
     val topBarConfig = remember(
         currentTab,
@@ -82,7 +91,33 @@ fun MainAppScreen(
             SnapTopAppBar(
                 title = topBarConfig.title,
                 subtitle = topBarConfig.subtitle,
-                onSearchClick = viewModel::openGlobalSearch,
+                searchQuery = searchQuery,
+                onQueryChange = { text ->
+                    searchQuery = text
+                },
+                isSearchActive = isSearchActive,
+                onSearchActiveChange = { active ->
+                    if (active) {
+                        viewModel.openGlobalSearch()
+                    } else {
+                        viewModel.closeGlobalSearch()
+                        searchQuery = ""
+                    }
+                },
+                subjects = subjectsWithSlots,
+                events = allEventsWithSubject,
+                // Acción al hacer clic en una materia
+                onSubjectClick = { subjectId ->
+                    searchQuery = "" // Limpia la búsqueda y cierra el popup visualmente
+                    viewModel.closeGlobalSearch()
+                    viewModel.openSubjectDetail(subjectId)
+                },
+                // Acción al hacer clic en un evento
+                onEventClick = { eventItem ->
+                    searchQuery = "" // Limpia la búsqueda y cierra el popup visualmente
+                    viewModel.closeGlobalSearch()
+                    viewModel.openAddEvent(eventToEdit = eventItem)
+                },
                 onScanClick = if (
                     topBarConfig.showScanAction &&
                     settings.aiFeaturesEnabled
@@ -118,7 +153,13 @@ fun MainAppScreen(
         bottomBar = {
             SnapBottomNavBar(
                 selectedTab = currentTab,
-                onTabSelected = viewModel::setTab
+                onTabSelected = {tab->
+                    // Cierra la búsqueda activa al cambiar de pestaña
+                    searchQuery=""
+                    viewModel.closeGlobalSearch()
+                    viewModel.setTab(tab)
+                    focusManager.clearFocus()
+                }
             )
         }
     ) { innerPadding ->

@@ -2,57 +2,106 @@ package com.mocas.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Bento Grid Accent & Primary Palette
-val IndigoPrimary = Color(0xFF4F46E5)
-val IndigoPrimaryVariant = Color(0xFF4338CA)
-val IndigoLight = Color(0xFF818CF8)
-val IndigoDark = Color(0xFF3730A3)
-val IndigoContainerLight = Color(0xFFEEF2FF)
-val IndigoContainerDark = Color(0xFF1E1B4B)
+// EduFlow Design System - Primary Palette (Focus Indigo)
+val Primary = Color(0xFF24389C)
+val OnPrimary = Color(0xFFFFFFFF)
+val PrimaryContainer = Color(0xFF3F51B5)
+val OnPrimaryContainer = Color(0xFFCACFFF)
+val InversePrimary = Color(0xFFBAC3FF)
 
-val TurquoiseSecondary = Color(0xFF0EA5E9)
-val TurquoiseLight = Color(0xFF38BDF8)
-val TurquoiseDark = Color(0xFF0369A1)
-val TurquoiseContainerLight = Color(0xFFE0F2FE)
+// EduFlow Design System - Secondary Palette (Success Mint)
+val Secondary = Color(0xFF2C6956)
+val OnSecondary = Color(0xFFFFFFFF)
+val SecondaryContainer = Color(0xFFAEEDD5)
+val OnSecondaryContainer = Color(0xFF316D5B)
 
-val AccentAmber = Color(0xFFF59E0B)
-val AccentAmberContainer = Color(0xFFFEF3C7)
-val AccentRose = Color(0xFFF43F5E)
-val AccentRoseContainer = Color(0xFFFFE4E6)
-val AccentEmerald = Color(0xFF10B981)
-val AccentEmeraldContainer = Color(0xFFD1FAE5)
-val AccentViolet = Color(0xFF8B5CF6)
-val AccentVioletContainer = Color(0xFFEDE9FE)
+// EduFlow Design System - Tertiary Palette (Urgent Sunset)
+val Tertiary = Color(0xFF6F3000)
+val OnTertiary = Color(0xFFFFFFFF)
+val TertiaryContainer = Color(0xFF944200)
+val OnTertiaryContainer = Color(0xFFFFC5A6)
 
-// Bento Neutral Canvas, Tiles & Border Outlines
-val BackgroundLight = Color(0xFFF6F8FB)
-val SurfaceLight = Color(0xFFFFFFFF)
-val SurfaceVariantLight = Color(0xFFF1F5F9)
-val BentoTileLight = Color(0xFFFFFFFF)
-val BentoBorderLight = Color(0xFFE2E8F0)
-val TextPrimaryLight = Color(0xFF0F172A)
-val TextSecondaryLight = Color(0xFF64748B)
+// EduFlow Design System - Neutral Canvas & Surfaces
+val Background = Color(0xFFF8F9FA)
+val OnBackground = Color(0xFF191C1D)
 
-val BackgroundDark = Color(0xFF0A0F1D)
-val SurfaceDark = Color(0xFF141D2F)
-val SurfaceVariantDark = Color(0xFF1E293B)
-val BentoTileDark = Color(0xFF151F32)
-val BentoBorderDark = Color(0xFF26354D)
-val TextPrimaryDark = Color(0xFFF8FAFC)
-val TextSecondaryDark = Color(0xFF94A3B8)
+val Surface = Color(0xFFF8F9FA)
+val OnSurface = Color(0xFF191C1D)
+val SurfaceVariant = Color(0xFFE1E3E4)
+val OnSurfaceVariant = Color(0xFF454652)
 
-// Subject Palette for Timetable & Categorization
+val SurfaceDim = Color(0xFFD9DADB)
+val SurfaceBright = Color(0xFFF8F9FA)
+val SurfaceContainerLowest = Color(0xFFFFFFFF)
+val SurfaceContainerLow = Color(0xFFF3F4F5)
+val SurfaceContainer = Color(0xFFEDEEEF)
+val SurfaceContainerHigh = Color(0xFFE7E8E9)
+val SurfaceContainerHighest = Color(0xFFE1E3E4)
+
+val InverseSurface = Color(0xFF2E3132)
+val InverseOnSurface = Color(0xFFF0F1F2)
+
+val Outline = Color(0xFF757684)
+val OutlineVariant = Color(0xFFC5C5D4)
+val SurfaceTint = Color(0xFF4355B9)
+
+// EduFlow Design System - Error
+val Error = Color(0xFFBA1A1A)
+val OnError = Color(0xFFFFFFFF)
+val ErrorContainer = Color(0xFFFFDAD6)
+val OnErrorContainer = Color(0xFF93000A)
+
+// Fixed Variants
+val PrimaryFixed = Color(0xFFDEE0FF)
+val PrimaryFixedDim = Color(0xFFBAC3FF)
+val OnPrimaryFixed = Color(0xFF00105C)
+val OnPrimaryFixedVariant = Color(0xFF293CA0)
+
+val SecondaryFixed = Color(0xFFB1EFD8)
+val SecondaryFixedDim = Color(0xFF96D3BD)
+val OnSecondaryFixed = Color(0xFF002118)
+val OnSecondaryFixedVariant = Color(0xFF0D503F)
+
+val TertiaryFixed = Color(0xFFFFDBC9)
+val TertiaryFixedDim = Color(0xFFFFB68D)
+val OnTertiaryFixed = Color(0xFF331200)
+val OnTertiaryFixedVariant = Color(0xFF763300)
+
+// Dark Theme Derived Palette (EduFlow focus)
+val PrimaryDark = Color(0xFFBAC3FF)
+val OnPrimaryDark = Color(0xFF001970)
+val PrimaryContainerDark = Color(0xFF293CA0)
+val OnPrimaryContainerDark = Color(0xFFDEE0FF)
+
+val SecondaryDark = Color(0xFF96D3BD)
+val OnSecondaryDark = Color(0xFF003828)
+val SecondaryContainerDark = Color(0xFF0D503F)
+val OnSecondaryContainerDark = Color(0xFFB1EFD8)
+
+val TertiaryDark = Color(0xFFFCB88E)
+val OnTertiaryDark = Color(0xFF4C2100)
+val TertiaryContainerDark = Color(0xFF6E3200)
+val OnTertiaryContainerDark = Color(0xFFFFDBC9)
+
+val BackgroundDark = Color(0xFF191C1D)
+val OnBackgroundDark = Color(0xFFE1E3E4)
+val SurfaceDark = Color(0xFF191C1D)
+val OnSurfaceDark = Color(0xFFE1E3E4)
+val SurfaceVariantDark = Color(0xFF454652)
+val OnSurfaceVariantDark = Color(0xFFC5C5D4)
+
+// Subject Palette for Timetable & Categorization (Maintained from previous style)
 val SubjectColors = listOf(
-    Color(0xFF3B82F6), // Blue (Desarrollo Móvil)
-    Color(0xFF10B981), // Emerald (Redes)
-    Color(0xFF8B5CF6), // Violet (Inteligencia Artificial)
-    Color(0xFFF59E0B), // Amber (Bases de Datos)
-    Color(0xFFEF4444), // Red (Cálculo)
-    Color(0xFF06B6D4), // Cyan (UI/UX)
-    Color(0xFFEC4899), // Pink (Sistemas Operativos)
-    Color(0xFF14B8A6), // Teal (Ingeniería de Software)
-    Color(0xFF6366F1), // Indigo (Arquitectura de Software)
-    Color(0xFF84CC16)  // Lime (Ciberseguridad)
+    Color(0xFF3B82F6), // Blue
+    Color(0xFF10B981), // Emerald
+    Color(0xFF8B5CF6), // Violet
+    Color(0xFFF59E0B), // Amber
+    Color(0xFFEF4444), // Red
+    Color(0xFF06B6D4), // Cyan
+    Color(0xFFEC4899), // Pink
+    Color(0xFF14B8A6), // Teal
+    Color(0xFF6366F1), // Indigo
+    Color(0xFF84CC16)  // Lime
 )
 
 val SubjectColorHexes = listOf(
@@ -68,3 +117,37 @@ val SubjectColorHexes = listOf(
     "#84CC16"
 )
 
+// Legacy Aliases for existing components (Bento style names)
+val IndigoPrimary = Primary
+val IndigoPrimaryVariant = PrimaryContainer
+val IndigoLight = PrimaryFixedDim
+val IndigoDark = OnPrimaryFixed
+val IndigoContainerLight = PrimaryFixed
+val IndigoContainerDark = PrimaryContainerDark
+
+val TurquoiseSecondary = Secondary
+val TurquoiseLight = SecondaryFixedDim
+val TurquoiseDark = OnSecondaryFixed
+val TurquoiseContainerLight = SecondaryFixed
+
+val AccentAmber = Tertiary
+val AccentAmberContainer = TertiaryFixed
+val AccentRose = Error
+val AccentRoseContainer = ErrorContainer
+val AccentEmerald = Secondary
+val AccentEmeraldContainer = SecondaryFixed
+val AccentViolet = PrimaryFixed
+val AccentVioletContainer = PrimaryFixedDim
+
+val BackgroundLight = Background
+val SurfaceLight = SurfaceContainerLowest
+val SurfaceVariantLight = SurfaceVariant
+val BentoTileLight = SurfaceContainerLowest
+val BentoBorderLight = OutlineVariant
+val TextPrimaryLight = OnSurface
+val TextSecondaryLight = OnSurfaceVariant
+
+val BentoTileDark = SurfaceDark
+val BentoBorderDark = Outline
+val TextPrimaryDark = OnSurfaceDark
+val TextSecondaryDark = OnSurfaceVariantDark

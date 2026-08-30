@@ -125,21 +125,21 @@ fun MainDialogHost(
         )
     }
 
-    if (isGlobalSearchOpen) {
-        GlobalSearchDialog(
-            subjects = subjectsWithSlots,
-            events = allEventsWithSubject,
-            onDismiss = viewModel::closeGlobalSearch,
-            onSubjectClick = { subjectId ->
-                viewModel.closeGlobalSearch()
-                viewModel.openSubjectDetail(subjectId)
-            },
-            onEventClick = { event ->
-                viewModel.closeGlobalSearch()
-                viewModel.openAddEvent(eventToEdit = event)
-            }
-        )
-    }
+//    if (isGlobalSearchOpen) {
+//        GlobalSearchDialog(
+//            subjects = subjectsWithSlots,
+//            events = allEventsWithSubject,
+//            onDismiss = viewModel::closeGlobalSearch,
+//            onSubjectClick = { subjectId ->
+//                viewModel.closeGlobalSearch()
+//                viewModel.openSubjectDetail(subjectId)
+//            },
+//            onEventClick = { event ->
+//                viewModel.closeGlobalSearch()
+//                viewModel.openAddEvent(eventToEdit = event)
+//            }
+//        )
+//    }
 
     selectedClassOccurrence?.let { occurrence ->
         ClassExceptionDialog(
