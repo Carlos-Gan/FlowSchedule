@@ -61,7 +61,6 @@ import com.mocas.ui.components.ClassScheduleCard
 import com.mocas.ui.components.EmptyStateCard
 import com.mocas.ui.components.EventItemCard
 import com.mocas.ui.model.DayClassItem
-import com.mocas.ui.theme.IndigoPrimary
 import com.mocas.ui.theme.TurquoiseSecondary
 import com.mocas.ui.util.showCalendarResult
 import com.mocas.ui.util.lazyItemKey
@@ -173,7 +172,7 @@ fun CalendarScreen(
                                 calendarMonth = calendarMonth.minusMonths(1)
                             }
                         ) {
-                            Icon(Icons.Default.ChevronLeft, contentDescription = "Mes anterior", tint = IndigoPrimary)
+                            Icon(Icons.Default.ChevronLeft, contentDescription = "Mes anterior", tint = MaterialTheme.colorScheme.primary)
                         }
 
                         Text(
@@ -190,7 +189,7 @@ fun CalendarScreen(
                                 calendarMonth = calendarMonth.plusMonths(1)
                             }
                         ) {
-                            Icon(Icons.Default.ChevronRight, contentDescription = "Mes siguiente", tint = IndigoPrimary)
+                            Icon(Icons.Default.ChevronRight, contentDescription = "Mes siguiente", tint = MaterialTheme.colorScheme.primary)
                         }
                     }
 
@@ -336,7 +335,7 @@ fun CalendarScreen(
                             }
                         },
                         shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = IndigoPrimary),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                         contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
                         modifier = Modifier.testTag("calendar_sync_day_btn")
                     ) {
@@ -464,8 +463,8 @@ fun MonthDayCell(
             .clip(RoundedCornerShape(10.dp))
             .background(
                 when {
-                    dayItem.isSelected -> IndigoPrimary
-                    dayItem.isToday -> IndigoPrimary.copy(alpha = 0.15f)
+                    dayItem.isSelected -> MaterialTheme.colorScheme.primary
+                    dayItem.isToday -> MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
                     else -> Color.Transparent
                 }
             )
@@ -483,8 +482,8 @@ fun MonthDayCell(
                 fontWeight = if (dayItem.isSelected || dayItem.isToday) FontWeight.ExtraBold else FontWeight.Medium,
                 color = when {
                     !dayItem.isCurrentMonth -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
-                    dayItem.isSelected -> Color.White
-                    dayItem.isToday -> IndigoPrimary
+                    dayItem.isSelected -> MaterialTheme.colorScheme.onPrimary
+                    dayItem.isToday -> MaterialTheme.colorScheme.primary
                     else -> MaterialTheme.colorScheme.onSurface
                 }
             )
@@ -503,7 +502,7 @@ fun MonthDayCell(
                         Box(modifier = Modifier.size(3.5.dp).clip(CircleShape).background(Color(0xFF8B5CF6)))
                     }
                     if (dayItem.hasClasses) {
-                        Box(modifier = Modifier.size(3.5.dp).clip(CircleShape).background(if (dayItem.isSelected) Color.White else Color(0xFF3B82F6)))
+                        Box(modifier = Modifier.size(3.5.dp).clip(CircleShape).background(if (dayItem.isSelected) MaterialTheme.colorScheme.onPrimary else Color(0xFF3B82F6)))
                     }
                     if (dayItem.hasEvents) {
                         Box(modifier = Modifier.size(3.5.dp).clip(CircleShape).background(Color(0xFFF59E0B)))
@@ -514,7 +513,7 @@ fun MonthDayCell(
                                 .size(3.5.dp)
                                 .clip(CircleShape)
                                 .background(
-                                    if (dayItem.isSelected) Color.White else Color(0xFF10B981)
+                                    if (dayItem.isSelected) MaterialTheme.colorScheme.onPrimary else Color(0xFF10B981)
                                 )
                         )
                     }

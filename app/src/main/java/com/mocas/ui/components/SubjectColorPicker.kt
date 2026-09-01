@@ -88,7 +88,7 @@ fun SubjectColorPicker(
                         Icon(
                             imageVector = Icons.Default.Check,
                             contentDescription = "Seleccionado",
-                            tint = Color.White,
+                            tint = MaterialTheme.colorScheme.surface,
                             modifier = Modifier.size(20.dp)
                         )
                     }

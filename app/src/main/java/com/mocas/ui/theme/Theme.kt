@@ -34,7 +34,13 @@ private val DarkColorScheme = darkColorScheme(
     surfaceVariant = SurfaceVariantDark,
     onSurfaceVariant = OnSurfaceVariantDark,
     outline = Outline,
-    outlineVariant = OutlineVariant
+    outlineVariant = OutlineVariant,
+    // OLED Optimizations for surface containers
+    surfaceContainerLowest = Color(0xFF000000),
+    surfaceContainerLow = Color(0xFF0A0B0C),
+    surfaceContainer = Color(0xFF121415),
+    surfaceContainerHigh = Color(0xFF1A1C1D),
+    surfaceContainerHighest = Color(0xFF222425)
 )
 
 private val LightColorScheme = lightColorScheme(

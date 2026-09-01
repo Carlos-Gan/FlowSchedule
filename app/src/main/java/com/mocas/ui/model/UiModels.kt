@@ -80,6 +80,9 @@ data class CalendarDayItem(
 
 data class AppSettings(
     val userName: String = "Estudiante",
+    val educationLevel: String = "Grado o Carrera",
+    val educationInstitution: String = "Escuela o Institución",
+    val useGpaScale: Boolean = false,
     val themeMode: String = "LIGHT", // LIGHT por defecto; AUTO y DARK siguen disponibles
     val defaultReminderMinutes: Int = 15,
     val firstDayOfWeek: Int = 1, // 1 = Lunes, 7 = Domingo

@@ -34,7 +34,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.mocas.ui.theme.IndigoPrimary
 
 @Composable
 fun EmptyStateCard(
@@ -51,9 +50,9 @@ fun EmptyStateCard(
             .padding(vertical = 8.dp)
             .testTag("empty_state_card"),
         shape = RoundedCornerShape(22.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest
         )
     ) {
         Column(
@@ -73,7 +72,7 @@ fun EmptyStateCard(
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
-                    tint = IndigoPrimary,
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
                     modifier = Modifier.size(26.dp)
                 )
             }
@@ -106,7 +105,7 @@ fun EmptyStateCard(
                 Button(
                     onClick = onActionClick,
                     shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = IndigoPrimary),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                     modifier = Modifier.testTag("empty_state_action_btn")
                 ) {
                     Icon(

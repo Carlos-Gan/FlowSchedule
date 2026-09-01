@@ -1,19 +1,21 @@
 package com.mocas.ui.dialogs
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,35 +24,24 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.School
-import androidx.compose.material.icons.filled.Title
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.ExposedDropdownMenuAnchorType
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
-import androidx.compose.material3.Text
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.ExposedDropdownMenu
-import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material3.*
+import androidx.compose.material.icons.outlined.Assignment
+import androidx.compose.material.icons.outlined.CalendarMonth
+import androidx.compose.material.icons.outlined.Description
+import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.Quiz
+import androidx.compose.material.icons.outlined.Schedule
+import androidx.compose.material.icons.outlined.School
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -58,29 +49,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.mocas.data.local.SchoolEventEntity
-import com.mocas.data.local.SubtaskEntity
-import com.mocas.data.local.EventPriority
-import com.mocas.data.local.RecurrenceType
 import com.mocas.data.local.SchoolEventType
 import com.mocas.data.local.SchoolEventWithSubject
 import com.mocas.data.local.SubjectWithSlots
-import com.mocas.ui.components.getEventTypeColor
-import com.mocas.ui.components.getEventTypeIcon
-import com.mocas.ui.components.parseColorFromHex
+import com.mocas.data.local.SubtaskEntity
+import com.mocas.data.local.EventPriority
+import com.mocas.data.local.RecurrenceType
 import com.mocas.ui.components.CalendarDateField
 import com.mocas.ui.components.ClockTimeField
-import com.mocas.ui.components.OrganizationSelector
-import com.mocas.ui.theme.IndigoPrimary
+import com.mocas.ui.components.getEventTypeIcon
+import com.mocas.ui.components.parseColorFromHex
 import com.mocas.ui.util.capitalizeFirstLetter
 import com.mocas.util.DateTimeUtils
+import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -100,45 +91,17 @@ fun AddEventDialog(
         mutableStateOf(initialEvent?.type ?: defaultType ?: SchoolEventType.TAREA)
     }
     var selectedSubjectId by remember { mutableStateOf(initialEvent?.subjectId ?: defaultSubjectId) }
-    var startDate by remember {
+    var eventDate by remember {
         mutableStateOf(initialEvent?.startDate ?: defaultDate ?: DateTimeUtils.todayString())
     }
-    var endDate by remember { mutableStateOf(initialEvent?.endDate ?: startDate) }
     var isAllDay by remember {
         mutableStateOf(initialEvent?.isAllDay ?: (defaultType == SchoolEventType.VACACIONES))
     }
-    var startTime by remember { mutableStateOf(initialEvent?.startTime ?: "10:00") }
-    var endTime by remember { mutableStateOf(initialEvent?.endTime ?: "11:00") }
+    var eventTime by remember { mutableStateOf(initialEvent?.startTime ?: "09:00") }
     var location by remember { mutableStateOf(initialEvent?.location ?: "") }
     var description by remember { mutableStateOf(initialEvent?.description ?: "") }
-    var reminderMinutes by remember { mutableIntStateOf(initialEvent?.reminderMinutes ?: 30) }
-    var syncCalendar by remember { mutableStateOf(initialEvent?.syncCalendar ?: false) }
-    var organizationTag by remember {
-        mutableStateOf(
-            initialEvent?.organizationTag
-                ?: subjects.firstOrNull { it.subject.id == defaultSubjectId }?.subject?.organizationTag
-                ?: "UNIVERSIDAD"
-        )
-    }
-    var isImportant by remember { mutableStateOf(initialEvent?.isImportant ?: false) }
-    var priority by remember { mutableStateOf(initialEvent?.priority ?: EventPriority.MEDIUM) }
-    var recurrenceType by remember { mutableStateOf(initialEvent?.recurrenceType ?: RecurrenceType.NONE) }
-    var recurrenceEndDate by remember {
-        mutableStateOf(initialEvent?.recurrenceEndDate ?: DateTimeUtils.today().plusMonths(3).toString())
-    }
-    var subtaskTitle by remember { mutableStateOf("") }
-    var subtasks by remember(editingEvent?.event?.id) {
-        mutableStateOf(editingEvent?.subtasks?.sortedBy { it.sortOrder } ?: emptyList())
-    }
 
     var isSubjectDropdownExpanded by remember { mutableStateOf(false) }
-
-    val quickDateChips = listOf(
-        "Hoy" to 0,
-        "Mañana" to 1,
-        "En 3 días" to 3,
-        "En 1 semana" to 7
-    )
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -146,126 +109,146 @@ fun AddEventDialog(
     ) {
         Surface(
             modifier = Modifier
-                .fillMaxWidth(0.94f)
-                .clip(RoundedCornerShape(24.dp))
+                .fillMaxWidth(0.92f)
+                .clip(RoundedCornerShape(28.dp))
                 .testTag("add_event_dialog"),
             color = MaterialTheme.colorScheme.surface,
             tonalElevation = 6.dp
         ) {
             Column(
                 modifier = Modifier
-                    .padding(20.dp)
+                    .padding(24.dp)
                     .verticalScroll(rememberScrollState())
             ) {
-                // Dialog Title Header
+                // Header
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.Top
                 ) {
-                    Text(
-                        text = if (initialEvent == null) "Nueva Actividad" else "Editar Actividad",
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    IconButton(
-                        onClick = onDismiss,
-                        modifier = Modifier.size(32.dp)
-                    ) {
-                        Icon(Icons.Default.Close, contentDescription = "Cerrar")
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = if (initialEvent == null) "Nueva Actividad" else "Editar Actividad",
+                            style = MaterialTheme.typography.headlineSmall.copy(
+                                fontWeight = FontWeight.Black,
+                                fontSize = 26.sp,
+                                letterSpacing = (-0.5).sp
+                            ),
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = "Organiza tu semestre de forma inteligente.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Title Input
-                OutlinedTextField(
-                    value = title,
-                    onValueChange = { title = capitalizeFirstLetter(it) },
-                    label = { Text("Título de la actividad *") },
-                    placeholder = { Text("Ej. Examen Parcial 2, Entrega de Ensayo") },
-                    leadingIcon = { Icon(Icons.Default.Title, contentDescription = null, tint = IndigoPrimary) },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        capitalization = KeyboardCapitalization.Sentences
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag("event_title_input")
-                )
-
-                Spacer(modifier = Modifier.height(14.dp))
-
-                // Event Type Selector Chips
-                Text(
-                    text = "Tipo de actividad",
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Spacer(modifier = Modifier.height(6.dp))
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    items(SchoolEventType.entries) { type ->
-                        val isSelected = selectedType == type
-                        val typeColor = getEventTypeColor(type)
-
-                        Surface(
-                            shape = RoundedCornerShape(10.dp),
-                            color = if (isSelected) typeColor else MaterialTheme.colorScheme.surfaceVariant,
-                            modifier = Modifier
-                                .clickable { selectedType = type }
-                                .testTag("type_chip_${type.name}"),
-                            tonalElevation = if (isSelected) 3.dp else 0.dp
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    imageVector = getEventTypeIcon(type),
-                                    contentDescription = null,
-                                    tint = if (isSelected) Color.White else typeColor,
-                                    modifier = Modifier.size(14.dp)
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(
-                                    text = type.displayName,
-                                    fontSize = 12.sp,
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                                    color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
+                    Surface(
+                        onClick = onDismiss,
+                        shape = CircleShape,
+                        color = MaterialTheme.colorScheme.surfaceVariant,
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(Icons.Rounded.Close, contentDescription = "Cerrar", tint = MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(20.dp))
                         }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(14.dp))
+                Spacer(modifier = Modifier.height(32.dp))
 
-                // Subject Selection Dropdown
+                // Activity Title - Estilo Moderno
+                OutlinedTextField(
+                    value = title,
+                    onValueChange = { title = capitalizeFirstLetter(it) },
+                    placeholder = { Text("¿Qué tienes que hacer?", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)) },
+                    singleLine = true,
+                    textStyle = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                        focusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.02f)
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // Activity Type - Usando SegmentedButton Row
+                Text(
+                    text = "CATEGORÍA",
+                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black, letterSpacing = 1.sp),
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                
+                SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+                    val types = listOf(
+                        SchoolEventType.TAREA to "Tarea",
+                        SchoolEventType.EXAMEN to "Examen",
+                        SchoolEventType.EXPOSICION to "Expo",
+                        SchoolEventType.EVENTO_ESCOLAR to "Evento"
+                    )
+                    types.forEachIndexed { index, (type, label) ->
+                        SegmentedButton(
+                            shape = SegmentedButtonDefaults.itemShape(index = index, count = types.size),
+                            onClick = { selectedType = type },
+                            selected = selectedType == type,
+                            label = { Text(label, fontSize = 11.sp, fontWeight = FontWeight.Bold) },
+                            colors = SegmentedButtonDefaults.colors(
+                                activeContainerColor = MaterialTheme.colorScheme.primary,
+                                activeContentColor = MaterialTheme.colorScheme.onPrimary,
+                                inactiveContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(28.dp))
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // Subject Selection
+                Text(
+                    text = "ASIGNATURA",
+                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black, letterSpacing = 1.sp),
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Spacer(modifier = Modifier.height(12.dp))
                 ExposedDropdownMenuBox(
                     expanded = isSubjectDropdownExpanded,
                     onExpandedChange = { isSubjectDropdownExpanded = !isSubjectDropdownExpanded },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    val currentSubjectName = subjects.find { it.subject.id == selectedSubjectId }?.subject?.name ?: "Ninguna (General)"
-                    OutlinedTextField(
-                        value = currentSubjectName,
-                        onValueChange = {},
-                        readOnly = true,
-                        label = { Text("Materia vinculada") },
-                        leadingIcon = { Icon(Icons.Default.School, contentDescription = null, tint = IndigoPrimary) },
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isSubjectDropdownExpanded) },
-                        shape = RoundedCornerShape(12.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
-                    )
+                    val currentSubjectName = subjects.find { it.subject.id == selectedSubjectId }?.subject?.name ?: "Seleccionar materia..."
+                    Surface(
+                        modifier = Modifier.fillMaxWidth().menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
+                        shape = RoundedCornerShape(16.dp),
+                        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                        onClick = { isSubjectDropdownExpanded = true }
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(Icons.Outlined.School, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Text(
+                                text = currentSubjectName,
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                                color = if (selectedSubjectId == null) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.weight(1f)
+                            )
+                            Icon(
+                                imageVector = if (isSubjectDropdownExpanded) Icons.Outlined.Schedule else Icons.Outlined.School, // Reemplazo visual
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.outlineVariant,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
 
                     ExposedDropdownMenu(
                         expanded = isSubjectDropdownExpanded,
@@ -279,18 +262,12 @@ fun AddEventDialog(
                             }
                         )
                         subjects.forEach { item ->
-                            val color = parseColorFromHex(item.subject.colorHex)
                             DropdownMenuItem(
                                 text = {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Box(
-                                            modifier = Modifier
-                                                .size(10.dp)
-                                                .clip(CircleShape)
-                                                .background(color)
-                                        )
-                                        Spacer(modifier = Modifier.width(8.dp))
-                                        Text(item.subject.name)
+                                        Box(modifier = Modifier.size(10.dp).clip(CircleShape).background(parseColorFromHex(item.subject.colorHex)))
+                                        Spacer(modifier = Modifier.width(12.dp))
+                                        Text(item.subject.name, fontWeight = FontWeight.Medium)
                                     }
                                 },
                                 onClick = {
@@ -302,411 +279,164 @@ fun AddEventDialog(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(14.dp))
+                Spacer(modifier = Modifier.height(28.dp))
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    CalendarDateField(
-                        value = startDate,
-                        onDateSelected = {
-                            val previous = startDate
-                            startDate = it
-                            if (endDate == previous) endDate = it
-                        },
-                        label = "Fecha inicial",
-                        isError = !DateTimeUtils.isValidDate(startDate),
-                        modifier = Modifier.weight(1f),
-                        testTag = "event_start_date_input"
-                    )
-                    CalendarDateField(
-                        value = endDate,
-                        onDateSelected = { endDate = it },
-                        label = "Fecha final",
-                        isError = DateTimeUtils.parseDate(endDate)?.let { end ->
-                            DateTimeUtils.parseDate(startDate)?.let { end.isBefore(it) } ?: true
-                        } ?: true,
-                        modifier = Modifier.weight(1f),
-                        testTag = "event_end_date_input"
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(6.dp))
-
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                // DateTime Block - Estilo Card Elevado sutil
+                Card(
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    items(quickDateChips) { (label, dayOffset) ->
-                        val chipDate = DateTimeUtils.today().plusDays(dayOffset.toLong()).toString()
-                        val isSelected = startDate == chipDate && endDate == chipDate
-
-                        Surface(
-                            shape = RoundedCornerShape(8.dp),
-                            color = if (isSelected) IndigoPrimary.copy(alpha = 0.2f) else MaterialTheme.colorScheme.surfaceVariant,
-                            modifier = Modifier.clickable {
-                                startDate = chipDate
-                                endDate = chipDate
-                            }
+                    Column(modifier = Modifier.padding(20.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(
-                                text = label,
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = if (isSelected) IndigoPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Surface(
+                                    shape = CircleShape,
+                                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                    modifier = Modifier.size(36.dp)
+                                ) {
+                                    Box(contentAlignment = Alignment.Center) {
+                                        Icon(Icons.Outlined.Schedule, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
+                                    }
+                                }
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Column {
+                                    Text("Todo el día", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, fontSize = 15.sp)
+                                    Text("Sin hora específica", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                }
+                            }
+                            Switch(
+                                checked = isAllDay,
+                                onCheckedChange = { isAllDay = it },
+                                colors = SwitchDefaults.colors(
+                                    checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                                    checkedTrackColor = MaterialTheme.colorScheme.primary,
+                                    uncheckedBorderColor = MaterialTheme.colorScheme.outlineVariant
+                                )
                             )
+                        }
+
+                        Spacer(modifier = Modifier.height(20.dp))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Surface(
+                                modifier = Modifier.weight(1.5f),
+                                shape = RoundedCornerShape(12.dp),
+                                color = MaterialTheme.colorScheme.surface,
+                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                            ) {
+                                CalendarDateField(
+                                    value = eventDate,
+                                    onDateSelected = { eventDate = it },
+                                    label = "Fecha",
+                                    modifier = Modifier.padding(4.dp)
+                                )
+                            }
+                            
+                            if (!isAllDay) {
+                                Surface(
+                                    modifier = Modifier.weight(1f),
+                                    shape = RoundedCornerShape(12.dp),
+                                    color = MaterialTheme.colorScheme.surface,
+                                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                                ) {
+                                    ClockTimeField(
+                                        value = eventTime,
+                                        onTimeSelected = { eventTime = it },
+                                        label = "Hora",
+                                        modifier = Modifier.padding(4.dp)
+                                    )
+                                }
+                            }
                         }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(14.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text("Evento de todo el día", fontWeight = FontWeight.SemiBold)
-                        Text("No requiere hora de inicio ni fin", style = MaterialTheme.typography.bodySmall)
-                    }
-                    Switch(checked = isAllDay, onCheckedChange = { isAllDay = it })
-                }
-
-                if (!isAllDay) {
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        ClockTimeField(
-                            value = startTime,
-                            onTimeSelected = {
-                                startTime = it
-                                endTime = oneHourAfter(it)
-                            },
-                            label = "Hora de inicio",
-                            isError = !DateTimeUtils.isValidTime(startTime),
-                            modifier = Modifier.weight(1f)
-                        )
-                        ClockTimeField(
-                            value = endTime,
-                            onTimeSelected = { endTime = it },
-                            label = "Hora de fin",
-                            isError = !DateTimeUtils.isValidTime(endTime) ||
-                                (startDate == endDate &&
-                                    !DateTimeUtils.endIsAfterStart(startTime, endTime)),
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(14.dp))
-
-                // Location / Salon
+                // Location
                 OutlinedTextField(
                     value = location,
                     onValueChange = { location = capitalizeFirstLetter(it) },
-                    label = { Text("Lugar o Aula (opcional)") },
-                    placeholder = { Text("Ej. Salón B12, Zoom, Plataforma") },
-                    leadingIcon = { Icon(Icons.Default.LocationOn, contentDescription = null, tint = IndigoPrimary) },
+                    placeholder = { Text("Ubicación o salón (Opcional)", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)) },
+                    leadingIcon = { Icon(Icons.Outlined.LocationOn, contentDescription = null, tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)) },
                     singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        capitalization = KeyboardCapitalization.Words
+                    shape = RoundedCornerShape(16.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant
                     ),
-                    shape = RoundedCornerShape(12.dp),
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                Spacer(modifier = Modifier.height(14.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-                // Description
+                // Notes
                 OutlinedTextField(
                     value = description,
                     onValueChange = { description = capitalizeFirstLetter(it) },
-                    label = { Text("Notas o descripción") },
-                    placeholder = { Text("Temas de estudio, enlaces, criterios...") },
-                    leadingIcon = { Icon(Icons.Default.Description, contentDescription = null, tint = IndigoPrimary) },
-                    maxLines = 3,
-                    keyboardOptions = KeyboardOptions(
-                        capitalization = KeyboardCapitalization.Sentences
+                    placeholder = { Text("Notas adicionales...", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)) },
+                    leadingIcon = { Icon(Icons.Outlined.Description, contentDescription = null, tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)) },
+                    minLines = 3,
+                    shape = RoundedCornerShape(16.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant
                     ),
-                    shape = RoundedCornerShape(12.dp),
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                Spacer(modifier = Modifier.height(14.dp))
+                Spacer(modifier = Modifier.height(32.dp))
 
-                OrganizationSelector(
-                    selectedTag = organizationTag,
-                    isImportant = isImportant,
-                    onTagSelected = { organizationTag = it },
-                    onImportantChanged = { isImportant = it }
-                )
-
-                Spacer(modifier = Modifier.height(14.dp))
-
-                Text("Prioridad", fontWeight = FontWeight.SemiBold)
-                Spacer(modifier = Modifier.height(6.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    EventPriority.entries.forEach { option ->
-                        val selected = priority == option
-                        val color = when (option) {
-                            EventPriority.LOW -> Color(0xFF10B981)
-                            EventPriority.MEDIUM -> Color(0xFFF59E0B)
-                            EventPriority.HIGH -> Color(0xFFEF4444)
-                        }
-                        Surface(
-                            shape = RoundedCornerShape(9.dp),
-                            color = if (selected) color else MaterialTheme.colorScheme.surfaceVariant,
-                            modifier = Modifier.weight(1f).clickable { priority = option }
-                        ) {
-                            Text(
-                                option.displayName,
-                                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                                color = if (selected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
-                                fontWeight = FontWeight.SemiBold,
-                                modifier = Modifier.padding(vertical = 7.dp)
+                // Action Buttons
+                Button(
+                    onClick = {
+                        if (title.isNotBlank()) {
+                            onSave(
+                                SchoolEventEntity(
+                                    id = initialEvent?.id ?: 0L,
+                                    title = title.trim(),
+                                    type = selectedType,
+                                    subjectId = selectedSubjectId,
+                                    startDate = eventDate,
+                                    endDate = eventDate,
+                                    startTime = if (isAllDay) null else eventTime,
+                                    endTime = if (isAllDay) null else eventTime,
+                                    isAllDay = isAllDay,
+                                    location = location.trim(),
+                                    description = description.trim(),
+                                    organizationTag = initialEvent?.organizationTag ?: "UNIVERSIDAD",
+                                    isImportant = initialEvent?.isImportant ?: false,
+                                    priority = initialEvent?.priority ?: EventPriority.MEDIUM,
+                                    recurrenceType = initialEvent?.recurrenceType ?: RecurrenceType.NONE,
+                                    isCompleted = initialEvent?.isCompleted ?: false,
+                                    syncCalendar = initialEvent?.syncCalendar ?: false,
+                                    createdAtMillis = initialEvent?.createdAtMillis ?: System.currentTimeMillis(),
+                                    updatedAtMillis = initialEvent?.updatedAtMillis ?: System.currentTimeMillis()
+                                ),
+                                emptyList()
                             )
                         }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(14.dp))
-                Text("Repetición", fontWeight = FontWeight.SemiBold)
-                Spacer(modifier = Modifier.height(6.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    },
+                    enabled = title.isNotBlank(),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                    modifier = Modifier.fillMaxWidth().height(56.dp)
                 ) {
-                    RecurrenceType.entries.forEach { option ->
-                        val selected = recurrenceType == option
-                        Surface(
-                            shape = RoundedCornerShape(9.dp),
-                            color = if (selected) IndigoPrimary else MaterialTheme.colorScheme.surfaceVariant,
-                            modifier = Modifier.weight(1f).clickable { recurrenceType = option }
-                        ) {
-                            Text(
-                                option.displayName,
-                                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                                color = if (selected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                modifier = Modifier.padding(vertical = 7.dp)
-                            )
-                        }
-                    }
-                }
-                if (recurrenceType != RecurrenceType.NONE) {
-                    Spacer(modifier = Modifier.height(10.dp))
-                    CalendarDateField(
-                        value = recurrenceEndDate,
-                        onDateSelected = { recurrenceEndDate = it },
-                        label = "Repetir hasta",
-                        isError = DateTimeUtils.parseDate(recurrenceEndDate)?.let { end ->
-                            DateTimeUtils.parseDate(startDate)?.let { end.isBefore(it) } ?: true
-                        } ?: true,
-                        modifier = Modifier.fillMaxWidth(),
-                        testTag = "event_recurrence_end_date"
-                    )
-                    if (initialEvent != null) {
-                        Text(
-                            "Al editar, este cambio se aplica solamente a esta ocurrencia.",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(top = 4.dp)
-                        )
-                    }
+                    Icon(imageVector = Icons.Rounded.Add, contentDescription = null, modifier = Modifier.size(22.dp))
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Text("GUARDAR ACTIVIDAD", fontWeight = FontWeight.Black, fontSize = 14.sp, letterSpacing = 1.sp)
                 }
 
-                Spacer(modifier = Modifier.height(14.dp))
-                Text("Pasos o subtareas", fontWeight = FontWeight.SemiBold)
-                Text(
-                    "Divide proyectos grandes y consulta su progreso.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Spacer(modifier = Modifier.height(6.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    OutlinedTextField(
-                        value = subtaskTitle,
-                        onValueChange = { subtaskTitle = capitalizeFirstLetter(it) },
-                        label = { Text("Nuevo paso") },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
-                        modifier = Modifier.weight(1f)
-                    )
-                    IconButton(
-                        enabled = subtaskTitle.isNotBlank(),
-                        onClick = {
-                            subtasks = subtasks + SubtaskEntity(
-                                title = subtaskTitle.trim(),
-                                sortOrder = subtasks.size
-                            )
-                            subtaskTitle = ""
-                        }
-                    ) { Icon(Icons.Default.Add, contentDescription = "Agregar subtarea") }
-                }
-                subtasks.forEachIndexed { index, item ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Checkbox(
-                            checked = item.isCompleted,
-                            onCheckedChange = { checked ->
-                                subtasks = subtasks.toMutableList().also {
-                                    it[index] = item.copy(isCompleted = checked)
-                                }
-                            }
-                        )
-                        Text(item.title, modifier = Modifier.weight(1f), maxLines = 2)
-                        IconButton(onClick = { subtasks = subtasks.filterIndexed { i, _ -> i != index } }) {
-                            Icon(Icons.Default.Delete, contentDescription = "Eliminar subtarea")
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(14.dp))
-
-                // Reminder Selector
-                Text(
-                    text = "Recordatorio antes del evento",
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Spacer(modifier = Modifier.height(6.dp))
-                val reminderOptions = listOf(15 to "15 min", 30 to "30 min", 60 to "1 hora", 1440 to "1 día")
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    reminderOptions.forEach { (mins, label) ->
-                        val isSelected = reminderMinutes == mins
-                        Surface(
-                            shape = RoundedCornerShape(8.dp),
-                            color = if (isSelected) IndigoPrimary else MaterialTheme.colorScheme.surfaceVariant,
-                            modifier = Modifier
-                                .weight(1f)
-                                .clickable { reminderMinutes = mins }
-                        ) {
-                            Text(
-                                text = label,
-                                fontSize = 11.sp,
-                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                                color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.padding(vertical = 6.dp),
-                                textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                            )
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(14.dp))
-
-                // Sync with Phone Calendar Toggle
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "Sincronizar con Google Calendar",
-                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Text(
-                            text = "Crear recordatorio en tu calendario del teléfono",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    Switch(
-                        checked = syncCalendar,
-                        onCheckedChange = { syncCalendar = it },
-                        colors = SwitchDefaults.colors(checkedThumbColor = IndigoPrimary)
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                // Actions: Cancel & Save
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    OutlinedButton(
-                        onClick = onDismiss,
-                        shape = RoundedCornerShape(12.dp),
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text("Cancelar")
-                    }
-
-                    Button(
-                        onClick = {
-                            if (title.isNotBlank()) {
-                                onSave(
-                                    SchoolEventEntity(
-                                        id = initialEvent?.id ?: 0L,
-                                        title = title.trim(),
-                                        type = selectedType,
-                                        subjectId = selectedSubjectId,
-                                        startDate = startDate.trim(),
-                                        endDate = endDate.trim(),
-                                        startTime = if (isAllDay) null else startTime.trim(),
-                                        endTime = if (isAllDay) null else endTime.trim(),
-                                        isAllDay = isAllDay,
-                                        location = location.trim(),
-                                        description = description.trim(),
-                                        organizationTag = organizationTag,
-                                        isImportant = isImportant,
-                                        priority = priority,
-                                        recurrenceType = recurrenceType,
-                                        recurrenceEndDate = recurrenceEndDate.takeIf { recurrenceType != RecurrenceType.NONE },
-                                        recurrenceGroupId = initialEvent?.recurrenceGroupId,
-                                        reminderMinutes = reminderMinutes,
-                                        isCompleted = initialEvent?.isCompleted ?: false,
-                                        syncCalendar = syncCalendar,
-                                        calendarEventId = initialEvent?.calendarEventId,
-                                        calendarId = initialEvent?.calendarId,
-                                        lastCalendarSyncMillis = initialEvent?.lastCalendarSyncMillis,
-                                        createdAtMillis = initialEvent?.createdAtMillis ?: System.currentTimeMillis(),
-                                        updatedAtMillis = initialEvent?.updatedAtMillis ?: System.currentTimeMillis()
-                                    ),
-                                    subtasks
-                                )
-                            }
-                        },
-                        enabled = title.isNotBlank() &&
-                            DateTimeUtils.parseDate(startDate) != null &&
-                            DateTimeUtils.parseDate(endDate)?.let { end ->
-                                DateTimeUtils.parseDate(startDate)?.let { !end.isBefore(it) } ?: false
-                            } == true &&
-                            (recurrenceType == RecurrenceType.NONE ||
-                                DateTimeUtils.parseDate(recurrenceEndDate)?.let { repeatEnd ->
-                                    DateTimeUtils.parseDate(startDate)?.let { !repeatEnd.isBefore(it) } ?: false
-                                } == true) &&
-                            (isAllDay || (
-                                DateTimeUtils.isValidTime(startTime) &&
-                                    DateTimeUtils.isValidTime(endTime) &&
-                                    (startDate != endDate || DateTimeUtils.endIsAfterStart(startTime, endTime))
-                                )),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = IndigoPrimary),
-                        modifier = Modifier
-                            .weight(1f)
-                            .testTag("save_event_button")
-                    ) {
-                        Text("Guardar", fontWeight = FontWeight.Bold)
-                    }
-                }
+                Spacer(modifier = Modifier.height(32.dp))
             }
         }
     }

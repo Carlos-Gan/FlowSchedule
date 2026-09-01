@@ -36,7 +36,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.mocas.ui.theme.IndigoPrimary
 import com.mocas.util.DateTimeUtils
 import java.time.Instant
 import java.time.LocalDate
@@ -179,7 +178,7 @@ private fun PickerField(
     onClick: () -> Unit,
     modifier: Modifier
 ) {
-    val accent = if (isError) MaterialTheme.colorScheme.error else IndigoPrimary
+    val accent = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
     Surface(
         modifier = modifier.clickable(onClick = onClick),
         shape = RoundedCornerShape(12.dp),

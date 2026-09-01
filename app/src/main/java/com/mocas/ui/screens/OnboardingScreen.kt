@@ -60,7 +60,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mocas.ui.model.AppSettings
 import com.mocas.ui.theme.IndigoLight
-import com.mocas.ui.theme.IndigoPrimary
 import com.mocas.ui.theme.TurquoiseSecondary
 import com.mocas.ui.util.capitalizeFirstLetter
 
@@ -100,7 +99,7 @@ fun OnboardingScreen(
                         .clip(RoundedCornerShape(24.dp))
                         .background(
                             Brush.linearGradient(
-                                colors = listOf(IndigoLight, IndigoPrimary, TurquoiseSecondary)
+                                colors = listOf(IndigoLight, MaterialTheme.colorScheme.primary, TurquoiseSecondary)
                             )
                         ),
                     contentAlignment = Alignment.Center
@@ -108,7 +107,7 @@ fun OnboardingScreen(
                     Icon(
                         imageVector = Icons.Default.School,
                         contentDescription = null,
-                        tint = Color.White,
+                        tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.size(40.dp)
                     )
                 }
@@ -245,7 +244,7 @@ fun OnboardingScreen(
                     .height(58.dp)
                     .testTag("onboarding_continue_button"),
                 shape = RoundedCornerShape(17.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = IndigoPrimary)
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
                 Text(
                     text = "Empezar",
@@ -406,9 +405,9 @@ private fun PreferenceToggle(
 
 @Composable
 private fun onboardingSwitchColors() = SwitchDefaults.colors(
-    checkedThumbColor = Color.White,
-    checkedTrackColor = IndigoPrimary,
-    checkedBorderColor = IndigoPrimary,
+    checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+    checkedTrackColor = MaterialTheme.colorScheme.primary,
+    checkedBorderColor = MaterialTheme.colorScheme.primary,
     uncheckedThumbColor = MaterialTheme.colorScheme.onSurfaceVariant,
     uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
     uncheckedBorderColor = MaterialTheme.colorScheme.outline

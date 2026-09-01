@@ -45,13 +45,13 @@ fun DailyFocusCard(
     }
 
     val backgroundColor =
-        if (isFinishedOrFree) Color(0xFFE8F5E9) else MaterialTheme.colorScheme.surfaceContainerLowest
+        if (isFinishedOrFree) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.surfaceContainerLowest
     val contentColor =
-        if (isFinishedOrFree) Color(0xFF2E7D32) else MaterialTheme.colorScheme.onSurface
+        if (isFinishedOrFree) MaterialTheme.colorScheme.onTertiaryContainer else MaterialTheme.colorScheme.onSurface
     val labelColor =
-        if (isFinishedOrFree) Color(0xFF2E7D32).copy(alpha = 0.8f) else MaterialTheme.colorScheme.onSurfaceVariant
+        if (isFinishedOrFree) MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.8f) else MaterialTheme.colorScheme.onSurfaceVariant
     val secondaryColor =
-        if (isFinishedOrFree) Color(0xFF2E7D32) else MaterialTheme.colorScheme.secondary
+        if (isFinishedOrFree) MaterialTheme.colorScheme.onTertiaryContainer else MaterialTheme.colorScheme.secondary
 
     Surface(
         modifier = Modifier
@@ -62,7 +62,7 @@ fun DailyFocusCard(
         shadowElevation = if (isFinishedOrFree) 0.dp else 2.dp,
         border = if (isFinishedOrFree) androidx.compose.foundation.BorderStroke(
             1.dp,
-            Color(0xFFA5D6A7)
+            MaterialTheme.colorScheme.tertiary.copy(alpha = 0.5f)
         ) else null
     ) {
         Column(

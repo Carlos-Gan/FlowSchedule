@@ -9,7 +9,7 @@ Aplicación Android para organizar materias, sesiones, tareas, exámenes, period
 ![Android](https://img.shields.io/badge/Android-8.0%2B-3DDC84?logo=android&logoColor=white)
 ![Kotlin](https://img.shields.io/badge/Kotlin-2.4-7F52FF?logo=kotlin&logoColor=white)
 ![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-Material%203-4285F4?logo=jetpackcompose&logoColor=white)
-![Version](https://img.shields.io/badge/versión-1.3.2-5847EB)
+![Version](https://img.shields.io/badge/versión-1.4.0-5847EB)
 
 </div>
 
@@ -19,6 +19,8 @@ Aplicación Android para organizar materias, sesiones, tareas, exámenes, period
 
 - Vista semanal, vista diaria y lista de materias.
 - Navegación entre semanas y regreso rápido a la semana actual.
+- *Rango horario dinámico que se ajusta a tus clases para ahorrar espacio vertical.**
+- *Línea de tiempo en tiempo real que indica la hora actual y la clase en curso.**
 - Varias sesiones por materia y varios días por sesión.
 - Selector de hora mediante reloj y cálculo automático de una hora de duración.
 - Validación de cruces para evitar dos clases en el mismo horario.
@@ -36,6 +38,9 @@ Aplicación Android para organizar materias, sesiones, tareas, exámenes, period
 ### Actividades y calendario
 
 - Tareas, exámenes, exposiciones, reuniones, eventos escolares, vacaciones y otros eventos.
+- *Carrusel de exámenes próximos con fechas relativas (Hoy, Mañana, etc.).**
+- *Formulario de creación simplificado: una sola fecha y hora para evitar confusiones.**
+- *Filtros inteligentes por categorías con iconos minimalistas de Material 3.**
 - Actividades de uno o varios días.
 - Actividades recurrentes semanales o mensuales con fecha de finalización.
 - Prioridad baja, media o alta para ordenar visualmente lo más importante.
@@ -44,8 +49,11 @@ Aplicación Android para organizar materias, sesiones, tareas, exámenes, period
 - Actividades vinculadas a una materia y control de completadas o pendientes.
 - Integración con el calendario del teléfono mediante `CalendarContract`.
 
-### Calificaciones
+### Perfil y Calificaciones
 
+- *Perfil académico personalizable: edita tu nombre, carrera/grado e institución.**
+- *Cálculo de promedio real basado en todas tus calificaciones registradas.**
+- *Conversión instantánea a escala GPA (4.0) desde los ajustes.**
 - Categorías ponderadas para parciales, tareas, proyectos u otros rubros.
 - Espacio independiente y compacto dentro de cada materia, con unidades persistentes que pueden crearse vacías.
 - Registro de evaluaciones con calificación sobre 100.
@@ -96,7 +104,9 @@ Aplicación Android para organizar materias, sesiones, tareas, exámenes, period
 ### Experiencia de uso
 
 - Pantalla de bienvenida y configuración inicial del estudiante.
-- Temas claro, oscuro y automático.
+- *Temas claro y oscuro (optimizado con True Black para pantallas OLED).**
+- *Diseño Material 3 de última generación (SegmentedButtons, Carruseles y Wavy Indicators).**
+- *Navegación diaria por fechas mediante carrusel horizontal.**
 - Diseño Material 3 adaptado a navegación por gestos.
 - Campos de texto con capitalización inicial automática.
 - Funciones de IA completamente desactivables desde Ajustes.
@@ -224,11 +234,11 @@ No subas archivos de firma, contraseñas, `local.properties` ni `.env` al reposi
 
 ## Estado del proyecto
 
-- Versión actual: **1.3.2**.
+- Versión actual: **1.4.0**.
 - `applicationId`: `com.gaco.snapmyschedule`.
 - SDK mínimo: **26**.
 - SDK objetivo: **37**.
 
 ## Licencia
 
-Este repositorio todavía no incluye una licencia de distribución. Agrega una antes de aceptar contribuciones o publicar el código para reutilización por terceros.
+Este proyecto está bajo la **Licencia MIT**. Puedes consultar el archivo [LICENSE](LICENSE) para más detalles. Esta licencia permite el uso, copia y modificación del código de forma gratuita, siempre que se mantenga el aviso de derechos de autor original.

@@ -64,7 +64,6 @@ import com.mocas.data.repository.CalendarSyncHelper
 import com.mocas.ui.components.EventItemCard
 import com.mocas.ui.components.GradesSection
 import com.mocas.ui.components.parseColorFromHex
-import com.mocas.ui.theme.IndigoPrimary
 import com.mocas.ui.util.showCalendarResult
 
 @Composable
@@ -134,11 +133,11 @@ fun SubjectDetailDialog(
                             if (subject.code.isNotBlank()) {
                                 Surface(
                                     shape = RoundedCornerShape(8.dp),
-                                    color = Color.White.copy(alpha = 0.25f)
+                                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.25f)
                                 ) {
                                     Text(
                                         text = subject.code,
-                                        color = Color.White,
+                                        color = MaterialTheme.colorScheme.onPrimary,
                                         fontSize = 12.sp,
                                         fontWeight = FontWeight.Bold,
                                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
@@ -152,7 +151,7 @@ fun SubjectDetailDialog(
                                 onClick = onDismiss,
                                 modifier = Modifier.size(32.dp)
                             ) {
-                                Icon(Icons.Default.Close, contentDescription = "Cerrar", tint = Color.White)
+                                Icon(Icons.Default.Close, contentDescription = "Cerrar", tint = MaterialTheme.colorScheme.onPrimary)
                             }
                         }
 
@@ -164,7 +163,7 @@ fun SubjectDetailDialog(
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 22.sp
                             ),
-                            color = Color.White
+                            color = MaterialTheme.colorScheme.onPrimary
                         )
 
                         if (subject.professor.isNotBlank()) {
@@ -173,13 +172,13 @@ fun SubjectDetailDialog(
                                 Icon(
                                     imageVector = Icons.Default.Person,
                                     contentDescription = null,
-                                    tint = Color.White.copy(alpha = 0.85f),
+                                    tint = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.85f),
                                     modifier = Modifier.size(16.dp)
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
                                 Text(
                                     text = subject.professor,
-                                    color = Color.White.copy(alpha = 0.9f),
+                                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.9f),
                                     fontSize = 14.sp
                                 )
                             }
@@ -350,7 +349,7 @@ fun SubjectDetailDialog(
                             text = "+ Agregar",
                             style = MaterialTheme.typography.bodySmall.copy(
                                 fontWeight = FontWeight.Bold,
-                                color = IndigoPrimary
+                                color = MaterialTheme.colorScheme.primary
                             ),
                             modifier = Modifier.clickable { onAddEventClick() }
                         )
@@ -400,7 +399,7 @@ fun SubjectDetailDialog(
                         OutlinedButton(
                             onClick = { showDeleteConfirmation = true },
                             shape = RoundedCornerShape(12.dp),
-                            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFEF4444)),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error),
                             modifier = Modifier.weight(1f)
                         ) {
                             Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(16.dp))
@@ -411,7 +410,7 @@ fun SubjectDetailDialog(
                         Button(
                             onClick = onEditClick,
                             shape = RoundedCornerShape(12.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = IndigoPrimary),
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                             modifier = Modifier.weight(1f)
                         ) {
                             Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(16.dp))

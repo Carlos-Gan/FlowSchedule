@@ -26,10 +26,10 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
+import androidx.compose.material3.MaterialTheme
 import com.mocas.data.local.AcademicPeriodEntity
 import com.mocas.ui.components.CalendarDateField
 import com.mocas.ui.components.SubjectColorPicker
-import com.mocas.ui.theme.IndigoPrimary
 import com.mocas.ui.util.capitalizeFirstLetter
 import com.mocas.util.DateTimeUtils
 
@@ -121,7 +121,7 @@ fun AcademicPeriodDialog(
                 },
                 enabled = name.isNotBlank() && validDates,
                 shape = RoundedCornerShape(10.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = IndigoPrimary)
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
                 Text("Guardar", fontWeight = FontWeight.Bold)
             }

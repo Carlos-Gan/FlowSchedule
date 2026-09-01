@@ -76,7 +76,6 @@ import androidx.compose.ui.window.PopupProperties
 import com.mocas.data.local.OrganizationTag
 import com.mocas.data.local.SchoolEventWithSubject
 import com.mocas.data.local.SubjectWithSlots
-import com.mocas.ui.theme.IndigoPrimary
 
 @Composable
 fun SnapTopAppBar(
@@ -198,7 +197,7 @@ fun SnapTopAppBar(
                                     Icon(
                                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                         contentDescription = "Cerrar búsqueda",
-                                        tint = IndigoPrimary
+                                        tint = MaterialTheme.colorScheme.primary
                                     )
                                 }
                             },
@@ -216,7 +215,7 @@ fun SnapTopAppBar(
                                 }
                             },
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = IndigoPrimary,
+                                focusedBorderColor = MaterialTheme.colorScheme.primary,
                                 unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
                             ),
                             modifier = Modifier
@@ -369,7 +368,7 @@ fun SnapTopAppBar(
                                 fontSize = if (isBrandHeader) 23.sp else 20.sp,
                                 letterSpacing = (-0.5).sp
                             ),
-                            color = if (isBrandHeader) IndigoPrimary else MaterialTheme.colorScheme.onSurface,
+                            color = if (isBrandHeader) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -393,7 +392,7 @@ fun SnapTopAppBar(
                         Icon(
                             imageVector = Icons.Outlined.Search,
                             contentDescription = "Buscar materias y actividades",
-                            tint = IndigoPrimary
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
 
@@ -402,19 +401,19 @@ fun SnapTopAppBar(
                             onClick = onScanClick,
                             modifier = Modifier.testTag("top_bar_scan_button"),
                             shape = RoundedCornerShape(18.dp),
-                            border = BorderStroke(1.dp, IndigoPrimary.copy(alpha = 0.28f)),
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.28f)),
                             contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Outlined.CameraAlt,
                                 contentDescription = "Escanear horario con foto",
-                                tint = IndigoPrimary,
+                                tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(17.dp)
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
                                 text = "Escanear",
-                                color = IndigoPrimary,
+                                color = MaterialTheme.colorScheme.primary,
                                 style = MaterialTheme.typography.labelMedium,
                                 fontWeight = FontWeight.Bold
                             )

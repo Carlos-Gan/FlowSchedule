@@ -30,7 +30,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mocas.ui.model.BottomNavTab
-import com.mocas.ui.theme.IndigoPrimary
 
 @Composable
 fun SnapBottomNavBar(
@@ -43,7 +42,7 @@ fun SnapBottomNavBar(
         color = MaterialTheme.colorScheme.surface,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.25f)),
         shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
-        tonalElevation = 4.dp
+        tonalElevation = 0.dp
     ) {
         Column(modifier = Modifier.fillMaxWidth()
             .padding(5.dp)) {
@@ -83,8 +82,8 @@ fun SnapBottomNavBar(
                             )
                         },
                         colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = IndigoPrimary,
-                            selectedTextColor = IndigoPrimary,
+                            selectedIconColor = MaterialTheme.colorScheme.primary,
+                            selectedTextColor = MaterialTheme.colorScheme.primary,
                             indicatorColor = MaterialTheme.colorScheme.primaryContainer,
                             unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(
                                 alpha = 0.7f

@@ -12,6 +12,9 @@ class AppSettingsStore(context: Context) {
 
     fun load(): AppSettings = AppSettings(
         userName = preferences.getString(KEY_USER_NAME, "Estudiante") ?: "Estudiante",
+        educationLevel = preferences.getString(KEY_EDUCATION_LEVEL, "Grado o Carrera") ?: "Grado o Carrera",
+        educationInstitution = preferences.getString(KEY_EDUCATION_INSTITUTION, "Escuela o Institución") ?: "Escuela o Institución",
+        useGpaScale = preferences.getBoolean(KEY_USE_GPA_SCALE, false),
         themeMode = preferences.getString(KEY_THEME_MODE, "LIGHT") ?: "LIGHT",
         defaultReminderMinutes = preferences.getInt(KEY_REMINDER_MINUTES, 15),
         firstDayOfWeek = preferences.getInt(KEY_FIRST_DAY_OF_WEEK, 1),
@@ -46,6 +49,9 @@ class AppSettingsStore(context: Context) {
     fun save(settings: AppSettings) {
         preferences.edit()
             .putString(KEY_USER_NAME, settings.userName)
+            .putString(KEY_EDUCATION_LEVEL, settings.educationLevel)
+            .putString(KEY_EDUCATION_INSTITUTION, settings.educationInstitution)
+            .putBoolean(KEY_USE_GPA_SCALE, settings.useGpaScale)
             .putString(KEY_THEME_MODE, settings.themeMode)
             .putInt(KEY_REMINDER_MINUTES, settings.defaultReminderMinutes)
             .putInt(KEY_FIRST_DAY_OF_WEEK, settings.firstDayOfWeek)
@@ -72,6 +78,9 @@ class AppSettingsStore(context: Context) {
     private companion object {
         const val PREFERENCES_NAME = "snap_my_schedule_settings"
         const val KEY_USER_NAME = "user_name"
+        const val KEY_EDUCATION_LEVEL = "education_level"
+        const val KEY_EDUCATION_INSTITUTION = "education_institution"
+        const val KEY_USE_GPA_SCALE = "use_gpa_scale"
         const val KEY_THEME_MODE = "theme_mode"
         const val KEY_REMINDER_MINUTES = "reminder_minutes"
         const val KEY_FIRST_DAY_OF_WEEK = "first_day_of_week"

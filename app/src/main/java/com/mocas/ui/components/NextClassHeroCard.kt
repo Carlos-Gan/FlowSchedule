@@ -115,7 +115,7 @@ fun NextClassHeroCard(
             .clickable { onCardClick() }
             .testTag("next_class_hero_card"),
         shape = RoundedCornerShape(24.dp),
-        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.2f)),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.2f)),
         elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
         colors = CardDefaults.cardColors(containerColor = Color.Transparent)
     ) {
@@ -136,7 +136,7 @@ fun NextClassHeroCard(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Surface(
                         shape = RoundedCornerShape(10.dp),
-                        color = if (nextClassInfo.isHappeningNow) Color(0xFFEF4444) else Color.White.copy(alpha = 0.22f)
+                        color = if (nextClassInfo.isHappeningNow) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.22f)
                     ) {
                         Row(
                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
@@ -147,12 +147,12 @@ fun NextClassHeroCard(
                                     modifier = Modifier
                                         .size(8.dp)
                                         .clip(CircleShape)
-                                        .background(Color.White)
+                                        .background(MaterialTheme.colorScheme.onPrimary)
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
                                 Text(
                                     text = "EN CURSO AHORA",
-                                    color = Color.White,
+                                    color = MaterialTheme.colorScheme.onPrimary,
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.ExtraBold,
                                     letterSpacing = 0.5.sp
@@ -161,7 +161,7 @@ fun NextClassHeroCard(
                                 Icon(
                                     imageVector = Icons.Default.AccessTime,
                                     contentDescription = null,
-                                    tint = Color.White,
+                                    tint = MaterialTheme.colorScheme.onPrimary,
                                     modifier = Modifier.size(14.dp)
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
@@ -171,7 +171,7 @@ fun NextClassHeroCard(
                                     } else {
                                         "SIGUIENTE CLASE (${nextClassInfo.dayName})"
                                     },
-                                    color = Color.White,
+                                    color = MaterialTheme.colorScheme.onPrimary,
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.ExtraBold
                                 )
@@ -192,7 +192,7 @@ fun NextClassHeroCard(
                         lineHeight = 28.sp,
                         letterSpacing = (-0.4).sp
                     ),
-                    color = Color.White
+                    color = MaterialTheme.colorScheme.onPrimary
                 )
 
                 Spacer(modifier = Modifier.height(14.dp))
@@ -205,7 +205,7 @@ fun NextClassHeroCard(
                 ) {
                     Surface(
                         shape = RoundedCornerShape(10.dp),
-                        color = Color.White.copy(alpha = 0.18f)
+                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.18f)
                     ) {
                         Row(
                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
@@ -214,13 +214,13 @@ fun NextClassHeroCard(
                             Icon(
                                 imageVector = Icons.Default.AccessTime,
                                 contentDescription = null,
-                                tint = Color.White,
+                                tint = MaterialTheme.colorScheme.onPrimary,
                                 modifier = Modifier.size(14.dp)
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
                                 text = nextClassInfo.timeRange,
-                                color = Color.White,
+                                color = MaterialTheme.colorScheme.onPrimary,
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -229,7 +229,7 @@ fun NextClassHeroCard(
 
                     Surface(
                         shape = RoundedCornerShape(10.dp),
-                        color = Color.White.copy(alpha = 0.18f)
+                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.18f)
                     ) {
                         Row(
                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
@@ -238,13 +238,13 @@ fun NextClassHeroCard(
                             Icon(
                                 imageVector = Icons.Default.LocationOn,
                                 contentDescription = null,
-                                tint = Color.White,
+                                tint = MaterialTheme.colorScheme.onPrimary,
                                 modifier = Modifier.size(14.dp)
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
                                 text = nextClassInfo.room,
-                                color = Color.White,
+                                color = MaterialTheme.colorScheme.onPrimary,
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -254,7 +254,7 @@ fun NextClassHeroCard(
 
                 if (nextClassInfo.subject.professor.isNotBlank()) {
                     Spacer(modifier = Modifier.height(14.dp))
-                    HorizontalDivider(color = Color.White.copy(alpha = 0.22f))
+                    HorizontalDivider(color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.22f))
                     Spacer(modifier = Modifier.height(12.dp))
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -263,20 +263,20 @@ fun NextClassHeroCard(
                         Icon(
                             imageVector = Icons.Default.Person,
                             contentDescription = null,
-                            tint = Color.White.copy(alpha = 0.8f),
+                            tint = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f),
                             modifier = Modifier.size(14.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Column {
                             Text(
                                 text = "PROFESOR",
-                                color = Color.White.copy(alpha = 0.68f),
+                                color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.68f),
                                 fontSize = 9.sp,
                                 fontWeight = FontWeight.Medium
                             )
                             Text(
                                 text = nextClassInfo.subject.professor,
-                                color = Color.White,
+                                color = MaterialTheme.colorScheme.onPrimary,
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold
                             )

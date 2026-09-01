@@ -126,11 +126,11 @@ fun ClassScheduleCard(
                     if (dayClassItem.isLiveNow) {
                         Surface(
                             shape = RoundedCornerShape(8.dp),
-                            color = Color(0xFFEF4444)
+                            color = MaterialTheme.colorScheme.error
                         ) {
                             Text(
                                 text = "EN VIVO",
-                                color = Color.White,
+                                color = MaterialTheme.colorScheme.onError,
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.ExtraBold,
                                 modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)

@@ -61,7 +61,6 @@ import com.mocas.data.local.SchoolEventType
 import com.mocas.data.local.SchoolEventWithSubject
 import com.mocas.data.local.EventPriority
 import com.mocas.data.local.RecurrenceType
-import com.mocas.ui.theme.IndigoPrimary
 import com.mocas.util.DateTimeUtils
 import java.util.Locale
 
@@ -371,7 +370,7 @@ fun EventItemCard(
                     Text(
                         text = if (subtasksExpanded) "Toca para ocultar" else "Toca para ver los pasos",
                         style = MaterialTheme.typography.labelSmall,
-                        color = IndigoPrimary,
+                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(top = 5.dp)
                     )
                     if (subtasksExpanded) {
@@ -424,7 +423,7 @@ fun EventItemCard(
                             Icons.Default.CalendarMonth,
                         contentDescription =
                             "Agregar al calendario del teléfono",
-                        tint = IndigoPrimary,
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(19.dp)
                     )
                 }

@@ -1,80 +1,47 @@
-package com.mocas.ui.dialogs
+package com.mocas.ui.screens
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AccessTime
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.School
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TimePicker
-import androidx.compose.material3.rememberTimePickerState
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
-import com.mocas.data.local.ScheduleSlotEntity
 import com.mocas.data.local.AcademicPeriodEntity
+import com.mocas.data.local.ScheduleSlotEntity
 import com.mocas.data.local.SubjectEntity
 import com.mocas.data.local.SubjectWithSlots
-import com.mocas.ui.components.SubjectColorPicker
-import com.mocas.ui.components.CalendarDateField
-import com.mocas.ui.components.OrganizationSelector
-import com.mocas.ui.theme.IndigoPrimary
-import com.mocas.ui.util.capitalizeFirstLetter
+import com.mocas.ui.add.subject.GeneralDetailsCard
+import com.mocas.ui.add.subject.PersonalizationCard
+import com.mocas.ui.add.subject.SchedulesCard
+import com.mocas.ui.add.subject.SessionTimePickerDialog
+import androidx.compose.material3.MaterialTheme
 import com.mocas.util.DateTimeUtils
+import com.mocas.util.Variants
 import java.util.Locale
 
+// --- Clases de Datos ---
 data class SlotDraft(
     val idsByDay: Map<Int, Long> = emptyMap(),
     val selectedDays: Set<Int> = setOf(1),
@@ -88,25 +55,26 @@ private data class TimePickerTarget(
     val isStartTime: Boolean
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddEditSubjectDialog(
+fun AddEditSubjectScreen(
     editingSubject: SubjectWithSlots?,
     academicPeriods: List<AcademicPeriodEntity>,
     existingSubjects: List<SubjectWithSlots>,
-    onDismiss: () -> Unit,
+    onBack: () -> Unit,
     onSavePeriod: (AcademicPeriodEntity) -> Unit,
     onSave: (SubjectEntity, List<ScheduleSlotEntity>) -> Unit
 ) {
     val initialSub = editingSubject?.subject
+
     var name by remember { mutableStateOf(initialSub?.name ?: "") }
     var code by remember { mutableStateOf(initialSub?.code ?: "") }
     var professor by remember { mutableStateOf(initialSub?.professor ?: "") }
     var defaultRoom by remember { mutableStateOf(initialSub?.defaultRoom ?: "") }
     var colorHex by remember { mutableStateOf(initialSub?.colorHex ?: "#3B82F6") }
-    var reminderMinutes by remember { mutableIntStateOf(initialSub?.reminderMinutesBefore ?: 15) }
-    var syncCalendar by remember { mutableStateOf(initialSub?.syncCalendar ?: false) }
     var organizationTag by remember { mutableStateOf(initialSub?.organizationTag ?: "UNIVERSIDAD") }
     var isImportant by remember { mutableStateOf(initialSub?.isImportant ?: false) }
+
     val suggestedPeriod = remember(academicPeriods) {
         val today = DateTimeUtils.today()
         academicPeriods.firstOrNull { period ->
@@ -115,17 +83,10 @@ fun AddEditSubjectDialog(
             start != null && end != null && today in start..end
         } ?: academicPeriods.firstOrNull()
     }
-    var semesterStart by remember {
-        mutableStateOf(
-            initialSub?.semesterStart ?: suggestedPeriod?.startDate ?: DateTimeUtils.todayString()
-        )
-    }
-    var semesterEnd by remember {
-        mutableStateOf(
-            initialSub?.semesterEnd ?: suggestedPeriod?.endDate
-            ?: DateTimeUtils.today().plusMonths(4).toString()
-        )
-    }
+
+    var semesterStart by remember { mutableStateOf(initialSub?.semesterStart ?: suggestedPeriod?.startDate ?: DateTimeUtils.todayString()) }
+    var semesterEnd by remember { mutableStateOf(initialSub?.semesterEnd ?: suggestedPeriod?.endDate ?: DateTimeUtils.today().plusMonths(4).toString()) }
+
     var timePickerTarget by remember { mutableStateOf<TimePickerTarget?>(null) }
 
     val slotsList = remember {
@@ -133,506 +94,47 @@ fun AddEditSubjectDialog(
             if (editingSubject?.slots.isNullOrEmpty()) {
                 add(SlotDraft())
             } else {
-                editingSubject.slots
-                    .groupBy { Triple(it.startTime, it.endTime, it.room) }
-                    .values
-                    .forEach { groupedSlots ->
+                editingSubject.slots.groupBy { Triple(it.startTime, it.endTime, it.room) }.values.forEach { groupedSlots ->
                     val firstSlot = groupedSlots.first()
-                    add(
-                        SlotDraft(
-                            idsByDay = groupedSlots.associate { it.dayOfWeek to it.id },
-                            selectedDays = groupedSlots.mapTo(sortedSetOf()) { it.dayOfWeek },
-                            startTime = firstSlot.startTime,
-                            endTime = firstSlot.endTime,
-                            room = firstSlot.room
-                        )
-                    )
+                    add(SlotDraft(
+                        idsByDay = groupedSlots.associate { it.dayOfWeek to it.id },
+                        selectedDays = groupedSlots.mapTo(sortedSetOf()) { it.dayOfWeek },
+                        startTime = firstSlot.startTime,
+                        endTime = firstSlot.endTime,
+                        room = firstSlot.room
+                    ))
                 }
             }
         }
     }
 
-    val daysOptions = listOf(
-        1 to "Lun",
-        2 to "Mar",
-        3 to "Mié",
-        4 to "Jue",
-        5 to "Vie",
-        6 to "Sáb",
-        7 to "Dom"
-    )
-    val slotConflicts = detectScheduleConflicts(
-        drafts = slotsList,
-        existingSubjects = existingSubjects,
-        excludedSubjectId = initialSub?.id,
-        periodStart = semesterStart,
-        periodEnd = semesterEnd
-    )
+    val slotConflicts = detectScheduleConflicts(slotsList, existingSubjects, initialSub?.id, semesterStart, semesterEnd)
 
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
-    ) {
-        Surface(
-            modifier = Modifier
-                .fillMaxWidth(0.94f)
-                .clip(RoundedCornerShape(24.dp))
-                .testTag("add_subject_dialog"),
-            color = MaterialTheme.colorScheme.surface,
-            tonalElevation = 6.dp
-        ) {
-            Column(
-                modifier = Modifier
-                    .padding(20.dp)
-                    .verticalScroll(rememberScrollState())
-            ) {
-                // Header
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
                     Text(
                         text = if (initialSub == null) "Nueva Materia" else "Editar Materia",
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
                     )
-                    IconButton(onClick = onDismiss, modifier = Modifier.size(32.dp)) {
-                        Icon(Icons.Default.Close, contentDescription = "Cerrar")
+                },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
                     }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "Periodo académico",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 15.sp
-                        )
-                        Text(
-                            text = "Selecciona uno guardado o define fechas exactas",
-                            fontSize = 11.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    OutlinedButton(
-                        onClick = {
-                            onSavePeriod(
-                                AcademicPeriodEntity(
-                                    name = buildPeriodName(semesterStart, semesterEnd),
-                                    startDate = semesterStart,
-                                    endDate = semesterEnd
-                                )
-                            )
-                        },
-                        enabled = DateTimeUtils.isValidDate(semesterStart) &&
-                            DateTimeUtils.parseDate(semesterEnd)?.let { end ->
-                                DateTimeUtils.parseDate(semesterStart)?.let { start ->
-                                    !end.isBefore(start)
-                                } ?: false
-                            } ?: false,
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Text("Guardar periodo", fontSize = 11.sp)
-                    }
-                }
-
-                if (academicPeriods.isNotEmpty()) {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        items(academicPeriods, key = { it.id }) { period ->
-                            val selected = period.startDate == semesterStart &&
-                                period.endDate == semesterEnd
-                            Surface(
-                                modifier = Modifier.clickable {
-                                    semesterStart = period.startDate
-                                    semesterEnd = period.endDate
-                                },
-                                shape = RoundedCornerShape(14.dp),
-                                color = if (selected) IndigoPrimary
-                                else MaterialTheme.colorScheme.surfaceVariant,
-                                border = BorderStroke(
-                                    1.dp,
-                                    if (selected) IndigoPrimary
-                                    else MaterialTheme.colorScheme.outlineVariant
-                                )
-                            ) {
-                                Text(
-                                    text = period.name,
-                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                                    color = if (selected) Color.White
-                                    else MaterialTheme.colorScheme.onSurface,
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    CalendarDateField(
-                        value = semesterStart,
-                        onDateSelected = { semesterStart = it },
-                        label = "Inicio del periodo",
-                        isError = !DateTimeUtils.isValidDate(semesterStart),
-                        modifier = Modifier.weight(1f)
-                    )
-                    CalendarDateField(
-                        value = semesterEnd,
-                        onDateSelected = { semesterEnd = it },
-                        label = "Fin del periodo",
-                        isError = DateTimeUtils.parseDate(semesterEnd)?.let { end ->
-                            DateTimeUtils.parseDate(semesterStart)?.let { end.isBefore(it) } ?: true
-                        } ?: true,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Name
-                OutlinedTextField(
-                    value = name,
-                    onValueChange = { name = capitalizeFirstLetter(it) },
-                    label = { Text("Nombre de la materia *") },
-                    placeholder = { Text("Ej. Desarrollo Móvil, Redes, Álgebra") },
-                    leadingIcon = { Icon(Icons.Default.School, contentDescription = null, tint = IndigoPrimary) },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        capitalization = KeyboardCapitalization.Words
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag("subject_name_input")
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                // Code and Room in one row
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    OutlinedTextField(
-                        value = code,
-                        onValueChange = { code = it.uppercase(Locale.ROOT) },
-                        label = { Text("Código / Siglas") },
-                        placeholder = { Text("DAM-501") },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(
-                            capitalization = KeyboardCapitalization.Characters
-                        ),
-                        shape = RoundedCornerShape(12.dp),
-                        modifier = Modifier.weight(1f)
-                    )
-
-                    OutlinedTextField(
-                        value = defaultRoom,
-                        onValueChange = { defaultRoom = capitalizeFirstLetter(it) },
-                        label = { Text("Salón principal") },
-                        placeholder = { Text("Aula B12") },
-                        leadingIcon = { Icon(Icons.Default.LocationOn, contentDescription = null, tint = IndigoPrimary) },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(
-                            capitalization = KeyboardCapitalization.Words
-                        ),
-                        shape = RoundedCornerShape(12.dp),
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                // Professor
-                OutlinedTextField(
-                    value = professor,
-                    onValueChange = { professor = capitalizeFirstLetter(it) },
-                    label = { Text("Profesor / Docente") },
-                    placeholder = { Text("Ing. Roberto Ramos") },
-                    leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = IndigoPrimary) },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        capitalization = KeyboardCapitalization.Words
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Color Picker
-                SubjectColorPicker(
-                    selectedHex = colorHex,
-                    onColorSelected = { colorHex = it }
-                )
-
-                Spacer(modifier = Modifier.height(14.dp))
-
-                OrganizationSelector(
-                    selectedTag = organizationTag,
-                    isImportant = isImportant,
-                    onTagSelected = { organizationTag = it },
-                    onImportantChanged = { isImportant = it }
-                )
-
-                Spacer(modifier = Modifier.height(18.dp))
-
-                // Schedule Slots Builder Section
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Horarios de clase (${slotsList.size})",
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
+                },
+                actions = {
+                    val isValid = name.isNotBlank() && slotsList.isNotEmpty() &&
+                            DateTimeUtils.isValidDate(semesterStart) && DateTimeUtils.isValidDate(semesterEnd) &&
+                            slotsList.all { it.selectedDays.isNotEmpty() } &&
+                            slotsList.all { DateTimeUtils.endIsAfterStart(it.startTime, it.endTime) } &&
+                            slotConflicts.isEmpty()
 
                     Button(
                         onClick = {
-                            slotsList.add(
-                                SlotDraft(
-                                    selectedDays = setOf(1),
-                                    startTime = "10:00",
-                                    endTime = "11:00"
-                                )
-                            )
-                        },
-                        shape = RoundedCornerShape(10.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = IndigoPrimary),
-                        modifier = Modifier.testTag("add_slot_draft_btn")
-                    ) {
-                        Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(14.dp))
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text("Horario", fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // Render each slot card
-                slotsList.forEachIndexed { index, slotDraft ->
-                    val conflicts = slotConflicts[index].orEmpty()
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp),
-                        shape = RoundedCornerShape(14.dp),
-                        border = if (conflicts.isNotEmpty()) {
-                            BorderStroke(1.dp, MaterialTheme.colorScheme.error)
-                        } else {
-                            null
-                        },
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
-                    ) {
-                        Column(modifier = Modifier.padding(12.dp)) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = "Sesión ${index + 1}",
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 13.sp,
-                                    color = IndigoPrimary
-                                )
-                                if (slotsList.size > 1) {
-                                    IconButton(
-                                        onClick = { slotsList.removeAt(index) },
-                                        modifier = Modifier.size(28.dp)
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Delete,
-                                            contentDescription = "Eliminar horario",
-                                            tint = Color(0xFFEF4444),
-                                            modifier = Modifier.size(18.dp)
-                                        )
-                                    }
-                                }
-                            }
-
-                            Spacer(modifier = Modifier.height(6.dp))
-
-                            // Day selector chips for this slot
-                            LazyRow(
-                                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                items(daysOptions) { (dayNum, dayLabel) ->
-                                    val isSelected = dayNum in slotDraft.selectedDays
-                                    Surface(
-                                        shape = RoundedCornerShape(8.dp),
-                                        color = if (isSelected) IndigoPrimary else MaterialTheme.colorScheme.surface,
-                                        modifier = Modifier.clickable {
-                                            val updatedDays = if (isSelected) {
-                                                if (slotDraft.selectedDays.size == 1) {
-                                                    slotDraft.selectedDays
-                                                } else {
-                                                    slotDraft.selectedDays - dayNum
-                                                }
-                                            } else {
-                                                slotDraft.selectedDays + dayNum
-                                            }
-                                            slotsList[index] = slotDraft.copy(selectedDays = updatedDays)
-                                        }
-                                    ) {
-                                        Text(
-                                            text = dayLabel,
-                                            fontSize = 11.sp,
-                                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                                            color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface,
-                                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
-                                        )
-                                    }
-                                }
-                            }
-
-                            Spacer(modifier = Modifier.height(8.dp))
-
-                            // Start & End Time
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                SessionTimeField(
-                                    label = "Inicio",
-                                    time = slotDraft.startTime,
-                                    onClick = {
-                                        timePickerTarget = TimePickerTarget(
-                                            slotIndex = index,
-                                            isStartTime = true
-                                        )
-                                    },
-                                    modifier = Modifier.weight(1f)
-                                )
-
-                                SessionTimeField(
-                                    label = "Fin",
-                                    time = slotDraft.endTime,
-                                    isError = !DateTimeUtils.endIsAfterStart(
-                                        slotDraft.startTime,
-                                        slotDraft.endTime
-                                    ),
-                                    onClick = {
-                                        timePickerTarget = TimePickerTarget(
-                                            slotIndex = index,
-                                            isStartTime = false
-                                        )
-                                    },
-                                    modifier = Modifier.weight(1f)
-                                )
-                            }
-
-                            if (!DateTimeUtils.endIsAfterStart(
-                                    slotDraft.startTime,
-                                    slotDraft.endTime
-                                )
-                            ) {
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    text = "La hora de fin debe ser posterior a la de inicio.",
-                                    color = MaterialTheme.colorScheme.error,
-                                    fontSize = 11.sp
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.height(8.dp))
-
-                            OutlinedTextField(
-                                value = slotDraft.room,
-                                onValueChange = {
-                                    slotsList[index] = slotDraft.copy(
-                                        room = capitalizeFirstLetter(it)
-                                    )
-                                },
-                                label = { Text("Salón de esta sesión") },
-                                placeholder = { Text(defaultRoom.ifBlank { "Usar salón principal" }) },
-                                singleLine = true,
-                                keyboardOptions = KeyboardOptions(
-                                    capitalization = KeyboardCapitalization.Words
-                                ),
-                                modifier = Modifier.fillMaxWidth()
-                            )
-
-                            conflicts.forEach { conflict ->
-                                Spacer(modifier = Modifier.height(5.dp))
-                                Text(
-                                    text = conflict,
-                                    color = MaterialTheme.colorScheme.error,
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Medium
-                                )
-                            }
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(14.dp))
-
-                // Sync to calendar
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "Recordatorios de clases",
-                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Text(
-                            text = "Avisar $reminderMinutes min antes de cada clase",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    Switch(
-                        checked = syncCalendar,
-                        onCheckedChange = { syncCalendar = it },
-                        colors = SwitchDefaults.colors(checkedThumbColor = IndigoPrimary)
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                // Actions: Cancel & Save
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    OutlinedButton(
-                        onClick = onDismiss,
-                        shape = RoundedCornerShape(12.dp),
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text("Cancelar")
-                    }
-
-                    Button(
-                        onClick = {
-                            if (name.isNotBlank()) {
+                            if (isValid) {
                                 val subject = SubjectEntity(
                                     id = initialSub?.id ?: 0L,
                                     name = name.trim(),
@@ -644,8 +146,8 @@ fun AddEditSubjectDialog(
                                     isImportant = isImportant,
                                     semesterStart = semesterStart.trim(),
                                     semesterEnd = semesterEnd.trim(),
-                                    reminderMinutesBefore = reminderMinutes,
-                                    syncCalendar = syncCalendar,
+                                    reminderMinutesBefore = initialSub?.reminderMinutesBefore ?: 15,
+                                    syncCalendar = initialSub?.syncCalendar ?: false,
                                     createdAtMillis = initialSub?.createdAtMillis ?: System.currentTimeMillis(),
                                     updatedAtMillis = initialSub?.updatedAtMillis ?: System.currentTimeMillis()
                                 )
@@ -664,23 +166,53 @@ fun AddEditSubjectDialog(
                                 onSave(subject, slots)
                             }
                         },
-                        enabled = name.isNotBlank() &&
-                            slotsList.isNotEmpty() &&
-                            DateTimeUtils.isValidDate(semesterStart) &&
-                            DateTimeUtils.isValidDate(semesterEnd) &&
-                            slotsList.all { it.selectedDays.isNotEmpty() } &&
-                            slotsList.all { DateTimeUtils.endIsAfterStart(it.startTime, it.endTime) } &&
-                            slotConflicts.isEmpty(),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = IndigoPrimary),
-                        modifier = Modifier
-                            .weight(1f)
-                            .testTag("save_subject_button")
+                        enabled = isValid,
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier.padding(end = 16.dp)
                     ) {
-                        Text("Guardar", fontWeight = FontWeight.Bold)
+                        Text("Guardar", fontWeight = FontWeight.Medium)
                     }
-                }
-            }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
+            )
+        },
+        containerColor = MaterialTheme.colorScheme.background
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
+            GeneralDetailsCard(
+                name = name, onNameChange = { name = it },
+                code = code, onCodeChange = { code = it },
+                professor = professor, onProfessorChange = { professor = it },
+                defaultRoom = defaultRoom, onRoomChange = { defaultRoom = it },
+                semesterStart = semesterStart, onStartChange = { semesterStart = it },
+                semesterEnd = semesterEnd, onEndChange = { semesterEnd = it },
+                academicPeriods = academicPeriods,
+                onSavePeriod = onSavePeriod
+            )
+
+            PersonalizationCard(
+                colorHex = colorHex, onColorChange = { colorHex = it },
+                organizationTag = organizationTag, onTagChange = { organizationTag = it },
+                isImportant = isImportant, onImportantChange = { isImportant = it }
+            )
+
+            SchedulesCard(
+                slotsList = slotsList,
+                slotConflicts = slotConflicts,
+                defaultRoom = defaultRoom,
+                onTimeClick = { index, isStart -> timePickerTarget = TimePickerTarget(index, isStart) },
+                onAddSlot = { slotsList.add(SlotDraft(selectedDays = setOf(1), startTime = "10:00", endTime = "11:00")) },
+                onRemoveSlot = { index -> slotsList.removeAt(index) },
+                onUpdateSlot = { index, newDraft -> slotsList[index] = newDraft }
+            )
         }
     }
 
@@ -688,25 +220,14 @@ fun AddEditSubjectDialog(
         val draft = slotsList.getOrNull(target.slotIndex)
         if (draft != null) {
             SessionTimePickerDialog(
-                title = if (target.isStartTime) {
-                    "Hora de inicio"
-                } else {
-                    "Hora de fin"
-                },
-                initialTime = if (target.isStartTime) {
-                    draft.startTime
-                } else {
-                    draft.endTime
-                },
+                title = if (target.isStartTime) "Hora de inicio" else "Hora de fin",
+                initialTime = if (target.isStartTime) draft.startTime else draft.endTime,
                 onDismiss = { timePickerTarget = null },
                 onTimeSelected = { selectedTime ->
                     val currentDraft = slotsList.getOrNull(target.slotIndex)
                     if (currentDraft != null) {
                         slotsList[target.slotIndex] = if (target.isStartTime) {
-                            currentDraft.copy(
-                                startTime = selectedTime,
-                                endTime = oneHourAfter(selectedTime)
-                            )
+                            currentDraft.copy(startTime = selectedTime, endTime = oneHourAfter(selectedTime))
                         } else {
                             currentDraft.copy(endTime = selectedTime)
                         }
@@ -718,112 +239,17 @@ fun AddEditSubjectDialog(
     }
 }
 
-@Composable
-private fun SessionTimeField(
-    label: String,
-    time: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    isError: Boolean = false
-) {
-    val borderColor = if (isError) {
-        MaterialTheme.colorScheme.error
-    } else {
-        MaterialTheme.colorScheme.outline
-    }
 
-    Surface(
-        modifier = modifier.clickable(onClick = onClick),
-        shape = RoundedCornerShape(12.dp),
-        color = MaterialTheme.colorScheme.surface,
-        border = BorderStroke(1.dp, borderColor)
-    ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = label,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = if (isError) {
-                        MaterialTheme.colorScheme.error
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant
-                    }
-                )
-                Text(
-                    text = DateTimeUtils.formatTime(time, use24Hour = false) ?: time,
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 1
-                )
-            }
-            Spacer(modifier = Modifier.width(6.dp))
-            Icon(
-                imageVector = Icons.Default.AccessTime,
-                contentDescription = "Elegir $label",
-                tint = if (isError) MaterialTheme.colorScheme.error else IndigoPrimary,
-                modifier = Modifier.size(20.dp)
-            )
-        }
-    }
-}
+// --- Funciones Auxiliares ---
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun SessionTimePickerDialog(
-    title: String,
-    initialTime: String,
-    onDismiss: () -> Unit,
-    onTimeSelected: (String) -> Unit
-) {
-    val (initialHour, initialMinute) = parseTime(initialTime)
-    val pickerState = rememberTimePickerState(
-        initialHour = initialHour,
-        initialMinute = initialMinute,
-        is24Hour = false
-    )
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(text = title, fontWeight = FontWeight.Bold)
-        },
-        text = {
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                TimePicker(state = pickerState)
-            }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onTimeSelected(formatTime(pickerState.hour, pickerState.minute))
-                }
-            ) {
-                Text("Aceptar", fontWeight = FontWeight.Bold)
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancelar")
-            }
-        }
-    )
-}
-
-private fun parseTime(value: String): Pair<Int, Int> {
+fun parseTime(value: String): Pair<Int, Int> {
     val parts = value.split(":")
     val hour = parts.getOrNull(0)?.toIntOrNull()?.coerceIn(0, 23) ?: 8
     val minute = parts.getOrNull(1)?.toIntOrNull()?.coerceIn(0, 59) ?: 0
     return hour to minute
 }
 
-private fun formatTime(hour: Int, minute: Int): String =
+fun formatTime(hour: Int, minute: Int): String =
     String.format(Locale.ROOT, "%02d:%02d", hour, minute)
 
 internal fun oneHourAfter(startTime: String): String {
@@ -840,7 +266,7 @@ internal fun buildPeriodName(startDate: String, endDate: String): String {
         "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
     )
     return "${months[start.monthValue - 1]} ${start.year} – " +
-        "${months[end.monthValue - 1]} ${end.year}"
+            "${months[end.monthValue - 1]} ${end.year}"
 }
 
 internal fun detectScheduleConflicts(
@@ -879,7 +305,7 @@ internal fun detectScheduleConflicts(
                 val existingStart = DateTimeUtils.parseDate(existing.subject.semesterStart)
                 val existingEnd = DateTimeUtils.parseDate(existing.subject.semesterEnd)
                 existingStart != null && existingEnd != null &&
-                    !existingEnd.isBefore(newStart) && !newEnd.isBefore(existingStart)
+                        !existingEnd.isBefore(newStart) && !newEnd.isBefore(existingStart)
             }
             .forEach { existing ->
                 drafts.forEachIndexed { draftIndex, draft ->
@@ -895,8 +321,8 @@ internal fun detectScheduleConflicts(
                         ) {
                             conflicts.getOrPut(draftIndex) { mutableListOf() }.add(
                                 "Se cruza con ${existing.subject.name} el " +
-                                    "${shortDayName(savedSlot.dayOfWeek)} " +
-                                    "(${savedSlot.startTime}–${savedSlot.endTime})."
+                                        "${shortDayName(savedSlot.dayOfWeek)} " +
+                                        "(${savedSlot.startTime}–${savedSlot.endTime})."
                             )
                         }
                     }

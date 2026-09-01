@@ -66,7 +66,6 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.mocas.ui.components.parseColorFromHex
 import com.mocas.ui.components.CalendarDateField
-import com.mocas.ui.theme.IndigoPrimary
 import com.mocas.ui.viewmodel.ScheduleViewModel
 import com.mocas.util.DateTimeUtils
 
@@ -145,13 +144,13 @@ fun ImportScheduleDialog(
                             modifier = Modifier
                                 .size(36.dp)
                                 .clip(RoundedCornerShape(10.dp))
-                                .background(IndigoPrimary.copy(alpha = 0.15f)),
+                                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 imageVector = Icons.Default.AutoAwesome,
                                 contentDescription = null,
-                                tint = IndigoPrimary,
+                                tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(20.dp)
                             )
                         }
@@ -181,7 +180,7 @@ fun ImportScheduleDialog(
                     Button(
                         onClick = { cameraLauncher.launch(null) },
                         shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = IndigoPrimary),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                         modifier = Modifier
                             .weight(1f)
                             .testTag("import_camera_btn")
@@ -223,13 +222,13 @@ fun ImportScheduleDialog(
                                     semesterEnd = period.endDate
                                 },
                                 shape = RoundedCornerShape(14.dp),
-                                color = if (selected) IndigoPrimary
+                                color = if (selected) MaterialTheme.colorScheme.primary
                                 else MaterialTheme.colorScheme.surfaceVariant
                             ) {
                                 Text(
                                     text = period.name,
                                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                                    color = if (selected) Color.White
+                                    color = if (selected) MaterialTheme.colorScheme.onPrimary
                                     else MaterialTheme.colorScheme.onSurface,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold
@@ -281,7 +280,7 @@ fun ImportScheduleDialog(
                             verticalArrangement = Arrangement.Center
                         ) {
                             CircularProgressIndicator(
-                                color = IndigoPrimary,
+                                color = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(44.dp)
                             )
                             Spacer(modifier = Modifier.height(16.dp))
@@ -321,7 +320,7 @@ fun ImportScheduleDialog(
                             Icon(
                                 imageVector = Icons.Default.CameraAlt,
                                 contentDescription = null,
-                                tint = IndigoPrimary,
+                                tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(36.dp)
                             )
                             Spacer(modifier = Modifier.height(10.dp))
@@ -400,7 +399,7 @@ fun ImportScheduleDialog(
                                         onCheckedChange = { newValue ->
                                             viewModel.updateDetectedItem(index, item.copy(isSelected = newValue))
                                         },
-                                        colors = CheckboxDefaults.colors(checkedColor = IndigoPrimary)
+                                        colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.primary)
                                     )
 
                                     Spacer(modifier = Modifier.width(6.dp))
@@ -465,7 +464,7 @@ fun ImportScheduleDialog(
                                 DateTimeUtils.parseDate(semesterStart)?.let { !end.isBefore(it) } ?: false
                             } == true,
                         shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = IndigoPrimary),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                         modifier = Modifier
                             .weight(1f)
                             .testTag("confirm_import_btn")

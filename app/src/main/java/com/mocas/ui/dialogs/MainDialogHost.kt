@@ -5,58 +5,28 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mocas.ui.viewmodel.ScheduleViewModel
+import com.mocas.ui.screens.AddEditSubjectScreen // Importante: Nueva ruta de la pantalla
 
 @Composable
 fun MainDialogHost(
     viewModel: ScheduleViewModel
 ) {
-    val isAddSubjectOpen by
-    viewModel.isAddSubjectOpen.collectAsStateWithLifecycle()
-
-    val isAddEventOpen by
-    viewModel.isAddEventOpen.collectAsStateWithLifecycle()
-
-    val isImportScheduleOpen by
-    viewModel.isImportScheduleOpen.collectAsStateWithLifecycle()
-
-    val isGlobalSearchOpen by
-    viewModel.isGlobalSearchOpen.collectAsStateWithLifecycle()
-
-    val settings by
-    viewModel.appSettings.collectAsStateWithLifecycle()
-
-    val selectedDetailId by
-    viewModel.selectedSubjectDetailId.collectAsStateWithLifecycle()
-
-    val subjectsWithSlots by
-    viewModel.subjectsWithSlots.collectAsStateWithLifecycle()
-
-    val allEventsWithSubject by
-    viewModel.allEventsWithSubject.collectAsStateWithLifecycle()
-
-    val academicPeriods by
-    viewModel.academicPeriods.collectAsStateWithLifecycle()
-
-    val editingSubject by
-    viewModel.editingSubject.collectAsStateWithLifecycle()
-
-    val editingEvent by
-    viewModel.editingEvent.collectAsStateWithLifecycle()
-
-    val newEventSubjectId by
-    viewModel.newEventSubjectId.collectAsStateWithLifecycle()
-
-    val newEventDate by
-    viewModel.newEventDate.collectAsStateWithLifecycle()
-
-    val newEventType by
-    viewModel.newEventType.collectAsStateWithLifecycle()
-
-    val newEventTitle by
-    viewModel.newEventTitle.collectAsStateWithLifecycle()
-
-    val selectedClassOccurrence by
-    viewModel.selectedClassOccurrence.collectAsStateWithLifecycle()
+    val isAddSubjectOpen by viewModel.isAddSubjectOpen.collectAsStateWithLifecycle()
+    val isAddEventOpen by viewModel.isAddEventOpen.collectAsStateWithLifecycle()
+    val isImportScheduleOpen by viewModel.isImportScheduleOpen.collectAsStateWithLifecycle()
+    val isGlobalSearchOpen by viewModel.isGlobalSearchOpen.collectAsStateWithLifecycle()
+    val settings by viewModel.appSettings.collectAsStateWithLifecycle()
+    val selectedDetailId by viewModel.selectedSubjectDetailId.collectAsStateWithLifecycle()
+    val subjectsWithSlots by viewModel.subjectsWithSlots.collectAsStateWithLifecycle()
+    val allEventsWithSubject by viewModel.allEventsWithSubject.collectAsStateWithLifecycle()
+    val academicPeriods by viewModel.academicPeriods.collectAsStateWithLifecycle()
+    val editingSubject by viewModel.editingSubject.collectAsStateWithLifecycle()
+    val editingEvent by viewModel.editingEvent.collectAsStateWithLifecycle()
+    val newEventSubjectId by viewModel.newEventSubjectId.collectAsStateWithLifecycle()
+    val newEventDate by viewModel.newEventDate.collectAsStateWithLifecycle()
+    val newEventType by viewModel.newEventType.collectAsStateWithLifecycle()
+    val newEventTitle by viewModel.newEventTitle.collectAsStateWithLifecycle()
+    val selectedClassOccurrence by viewModel.selectedClassOccurrence.collectAsStateWithLifecycle()
 
     val gradeCategories by viewModel.gradeCategories.collectAsStateWithLifecycle()
     val gradeItems by viewModel.gradeItems.collectAsStateWithLifecycle()
@@ -85,12 +55,13 @@ fun MainDialogHost(
         }
     }
 
+    // Llamada actualizada a la nueva pantalla de Materia
     if (isAddSubjectOpen) {
-        AddEditSubjectDialog(
+        AddEditSubjectScreen(
             editingSubject = editingSubject,
             academicPeriods = academicPeriods,
             existingSubjects = subjectsWithSlots,
-            onDismiss = viewModel::closeAddSubject,
+            onBack = viewModel::closeAddSubject, // Actualizado de onDismiss a onBack
             onSavePeriod = viewModel::saveAcademicPeriod,
             onSave = viewModel::saveSubject
         )
@@ -113,10 +84,7 @@ fun MainDialogHost(
         ImportScheduleDialog(
             viewModel = viewModel,
             onDismiss = viewModel::closeImportSchedule,
-            onConfirmImport = {
-                    semesterStart,
-                    semesterEnd ->
-
+            onConfirmImport = { semesterStart, semesterEnd ->
                 viewModel.confirmImportDetectedSchedule(
                     semesterStart = semesterStart,
                     semesterEnd = semesterEnd
@@ -124,22 +92,6 @@ fun MainDialogHost(
             }
         )
     }
-
-//    if (isGlobalSearchOpen) {
-//        GlobalSearchDialog(
-//            subjects = subjectsWithSlots,
-//            events = allEventsWithSubject,
-//            onDismiss = viewModel::closeGlobalSearch,
-//            onSubjectClick = { subjectId ->
-//                viewModel.closeGlobalSearch()
-//                viewModel.openSubjectDetail(subjectId)
-//            },
-//            onEventClick = { event ->
-//                viewModel.closeGlobalSearch()
-//                viewModel.openAddEvent(eventToEdit = event)
-//            }
-//        )
-//    }
 
     selectedClassOccurrence?.let { occurrence ->
         ClassExceptionDialog(
@@ -163,27 +115,16 @@ fun MainDialogHost(
                 viewModel.openAddSubject(selectedSubject)
             },
             onDeleteClick = {
-                val subjectId =
-                    selectedSubject.subject.id
-
+                val subjectId = selectedSubject.subject.id
                 viewModel.closeSubjectDetail()
                 viewModel.deleteSubject(subjectId)
             },
             onAddEventClick = {
-                val subjectId =
-                    selectedSubject.subject.id
-
-                // Evita tener dos diálogos superpuestos.
+                val subjectId = selectedSubject.subject.id
                 viewModel.closeSubjectDetail()
-
-                viewModel.openAddEvent(
-                    subjectId = subjectId
-                )
+                viewModel.openAddEvent(subjectId = subjectId)
             },
-            onToggleEventCompleted = {
-                    eventId,
-                    isCompleted ->
-
+            onToggleEventCompleted = { eventId, isCompleted ->
                 viewModel.toggleEventCompleted(
                     eventId = eventId,
                     completed = isCompleted

@@ -22,11 +22,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
+import androidx.compose.material3.MaterialTheme
 import com.mocas.data.local.ClassExceptionEntity
 import com.mocas.data.local.ClassExceptionType
 import com.mocas.ui.components.ClockTimeField
 import com.mocas.ui.model.ClassOccurrenceInfo
-import com.mocas.ui.theme.IndigoPrimary
 import com.mocas.ui.util.capitalizeFirstLetter
 import com.mocas.util.DateTimeUtils
 
@@ -131,8 +131,8 @@ fun ClassExceptionDialog(
                 enabled = validTime,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (type == ClassExceptionType.CANCELED) {
-                        androidx.compose.ui.graphics.Color(0xFFEF4444)
-                    } else IndigoPrimary
+                        MaterialTheme.colorScheme.error
+                    } else MaterialTheme.colorScheme.primary
                 )
             ) { Text("Guardar", fontWeight = FontWeight.Bold) }
         },
