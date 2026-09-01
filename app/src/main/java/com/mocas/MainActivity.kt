@@ -19,6 +19,7 @@ import com.mocas.ui.screens.MainAppScreen
 import com.mocas.ui.screens.OnboardingScreen
 import com.mocas.ui.theme.SnapMyScheduleTheme
 import com.mocas.ui.viewmodel.ScheduleViewModel
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
 
@@ -34,6 +35,17 @@ class MainActivity : ComponentActivity() {
         setContent {
             val settings by
             viewModel.appSettings.collectAsStateWithLifecycle()
+
+            // Aplicar Idioma en Debug
+            LaunchedEffect(settings.language) {
+                if (com.mocas.BuildConfig.DEBUG) {
+                    val locale = if (settings.language == "English") Locale.ENGLISH else Locale("es", "MX")
+                    Locale.setDefault(locale)
+                    val config = resources.configuration
+                    config.setLocale(locale)
+                    resources.updateConfiguration(config, resources.displayMetrics)
+                }
+            }
 
             val notificationPermissionLauncher = rememberLauncherForActivityResult(
                 ActivityResultContracts.RequestPermission()

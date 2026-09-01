@@ -14,13 +14,17 @@ import java.util.Locale
 object DateTimeUtils {
     private val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
     private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
-    private val spanishLocale = Locale("es", "MX")
-    private val readableDateFormatter =
-        DateTimeFormatter.ofPattern("EEEE, d 'de' MMMM 'de' yyyy", spanishLocale)
-    private val shortDateFormatter =
-        DateTimeFormatter.ofPattern("d MMM yyyy", spanishLocale)
-    private val twelveHourFormatter =
-        DateTimeFormatter.ofPattern("h:mm a", spanishLocale)
+    
+    private val currentLocale: Locale get() = Locale.getDefault()
+    
+    private val readableDateFormatter: DateTimeFormatter get() =
+        DateTimeFormatter.ofPattern("EEEE, d 'de' MMMM 'de' yyyy", currentLocale)
+    
+    private val shortDateFormatter: DateTimeFormatter get() =
+        DateTimeFormatter.ofPattern("d MMM yyyy", currentLocale)
+    
+    private val twelveHourFormatter: DateTimeFormatter get() =
+        DateTimeFormatter.ofPattern("h:mm a", currentLocale)
 
     fun parseDate(value: String): LocalDate? = try {
         LocalDate.parse(value, dateFormatter)
@@ -47,14 +51,14 @@ object DateTimeUtils {
     fun formatDate(value: String, includeWeekday: Boolean = false): String {
         val date = parseDate(value) ?: return value
         return date.format(if (includeWeekday) readableDateFormatter else shortDateFormatter)
-            .replaceFirstChar { it.titlecase(spanishLocale) }
+            .replaceFirstChar { it.titlecase(currentLocale) }
     }
 
     fun formatTime(value: String?, use24Hour: Boolean = true): String? {
         if (value.isNullOrBlank()) return null
         val time = parseTime(value) ?: return value
         return time.format(if (use24Hour) timeFormatter else twelveHourFormatter)
-            .lowercase(spanishLocale)
+            .lowercase(currentLocale)
     }
 
     fun firstDateForDay(semesterStart: String, dayOfWeek: Int): LocalDate? {

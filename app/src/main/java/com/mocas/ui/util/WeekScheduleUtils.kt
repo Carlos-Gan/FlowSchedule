@@ -9,7 +9,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-private val weekLocale = Locale.forLanguageTag("es-MX")
+private val weekLocale get() = Locale.getDefault()
 
 internal fun weekRangeLabel(weekStart: LocalDate): String {
     val weekEnd = weekStart.plusDays(6)

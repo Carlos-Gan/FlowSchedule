@@ -24,12 +24,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mocas.R
 import com.mocas.data.local.SchoolEventEntity
 import com.mocas.data.local.SubjectEntity
 import com.mocas.ui.viewmodel.ScheduleViewModel
@@ -140,9 +142,11 @@ fun SettingsScreen(
             },
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-            modifier = Modifier.fillMaxWidth().height(48.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp)
         ) {
-            Text("Editar Perfil", fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.editar_perfil), fontWeight = FontWeight.Bold)
         }
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -155,11 +159,13 @@ fun SettingsScreen(
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
         ) {
             Column(
-                modifier = Modifier.padding(20.dp).fillMaxWidth(),
+                modifier = Modifier
+                    .padding(20.dp)
+                    .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = if (settings.useGpaScale) "GPA ACTUAL" else "PROMEDIO ACTUAL",
+                    text = if (settings.useGpaScale) stringResource(R.string.gpa_actual) else stringResource(R.string.promedio_actual),
                     style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black, letterSpacing = 1.sp),
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -181,7 +187,9 @@ fun SettingsScreen(
                             trackColor = MaterialTheme.colorScheme.surfaceContainerHigh
                         )
                         Text(
-                            text = if (realAverage > 90 || realAverage > 9.0) "Excelente" else "En progreso",
+                            text = if (realAverage > 90 || realAverage > 9.0) stringResource(R.string.excelente) else stringResource(
+                                R.string.en_progreso
+                            ),
                             style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.secondary
                         )
@@ -197,13 +205,13 @@ fun SettingsScreen(
             StatCard(
                 icon = Icons.Outlined.CheckCircle,
                 value = completedTasksCount.toString(),
-                label = "Actividades completadas",
+                label = stringResource(R.string.actividades_completadas),
                 modifier = Modifier.weight(1f)
             )
             StatCard(
                 icon = Icons.Outlined.Whatshot,
                 value = "0", // Could be implemented with real streak logic
-                label = "Días de racha",
+                label = stringResource(R.string.dias_de_racha),
                 modifier = Modifier.weight(1f)
             )
         }
@@ -219,7 +227,7 @@ fun SettingsScreen(
         ) {
             Column(modifier = Modifier.padding(vertical = 8.dp)) {
                 Text(
-                    text = "Preferencias y Ajustes",
+                    text = stringResource(R.string.preferencias_y_ajustes),
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Black),
                     modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp)
                 )
@@ -228,8 +236,8 @@ fun SettingsScreen(
 
                 SettingRow(
                     icon = Icons.Outlined.Notifications,
-                    title = "Notificaciones Push",
-                    subtitle = "Recordatorios de tareas y clases",
+                    title = stringResource(R.string.notificaciones_push),
+                    subtitle = stringResource(R.string.recordatorios_de_tareas_y_clases),
                     action = {
                         Switch(
                             checked = settings.notificationsEnabled,
@@ -241,8 +249,8 @@ fun SettingsScreen(
 
                 SettingRow(
                     icon = Icons.Outlined.DarkMode,
-                    title = "Tema Oscuro",
-                    subtitle = "Reduce el cansancio visual",
+                    title = stringResource(R.string.tema_oscuro),
+                    subtitle = stringResource(R.string.reduce_el_cansancio_visual),
                     action = {
                         Switch(
                             checked = settings.themeMode == "DARK",
@@ -256,8 +264,8 @@ fun SettingsScreen(
 
                 SettingRow(
                     icon = Icons.Default.TrendingUp,
-                    title = "Usar Escala GPA",
-                    subtitle = "Cambiar promedio de 0-10 a 0-4.0",
+                    title = stringResource(R.string.usar_escala_gpa),
+                    subtitle = stringResource(R.string.cambiar_promedio),
                     action = {
                         Switch(
                             checked = settings.useGpaScale,
@@ -271,17 +279,43 @@ fun SettingsScreen(
 
                 SettingRow(
                     icon = Icons.Outlined.RestoreFromTrash,
-                    title = "Papelera de Reciclaje",
-                    subtitle = "Recupera materias o eventos borrados",
+                    title = stringResource(R.string.papelera_de_reciclaje),
+                    subtitle = stringResource(R.string.recupera_materias),
                     onClick = { showTrashDialog = true }
                 )
 
                 SettingRow(
                     icon = Icons.Outlined.Backup,
-                    title = "Respaldos y Datos",
-                    subtitle = "Copia de seguridad e importación",
+                    title = stringResource(R.string.respaldos_y_datos),
+                    subtitle = stringResource(R.string.copia_de_seguridad),
                     onClick = { showBackupsDialog = true }
                 )
+
+                // --- DEBUG ONLY SECTION ---
+                if (com.mocas.BuildConfig.DEBUG) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                    Text(
+                        text = stringResource(R.string.ajustes_de_desarrollo_debug),
+                        style = MaterialTheme.typography.labelMedium.copy(color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold),
+                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)
+                    )
+
+                    SettingRow(
+                        icon = Icons.Default.Language,
+                        title = stringResource(R.string.idioma_de_prueba),
+                        subtitle = stringResource(R.string.cambiar_a_ingles),
+                        action = {
+                            Switch(
+                                checked = settings.language == "English",
+                                onCheckedChange = { 
+                                    viewModel.updateSettings(settings.copy(language = if (it) "English" else "Español"))
+                                },
+                                colors = SwitchDefaults.colors(checkedTrackColor = MaterialTheme.colorScheme.primary)
+                            )
+                        }
+                    )
+                }
             }
         }
 
@@ -292,29 +326,29 @@ fun SettingsScreen(
     if (showProfileDialog) {
         AlertDialog(
             onDismissRequest = { showProfileDialog = false },
-            title = { Text("Editar Perfil", fontWeight = FontWeight.Bold) },
+            title = { Text(stringResource(R.string.editar_perfil), fontWeight = FontWeight.Bold) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     OutlinedTextField(
                         value = tempName,
                         onValueChange = { tempName = it },
-                        label = { Text("Tu nombre") },
+                        label = { Text(stringResource(R.string.tu_nombre)) },
                         singleLine = true,
                         shape = RoundedCornerShape(12.dp)
                     )
                     OutlinedTextField(
                         value = tempEducation,
                         onValueChange = { tempEducation = it },
-                        label = { Text("Carrera / Grado") },
-                        placeholder = { Text("Ej. 4to Semestre") },
+                        label = { Text(stringResource(R.string.carrera_grado)) },
+                        placeholder = { Text(stringResource(R.string.ej_semestre)) },
                         singleLine = true,
                         shape = RoundedCornerShape(12.dp)
                     )
                     OutlinedTextField(
                         value = tempInstitution,
                         onValueChange = { tempInstitution = it },
-                        label = { Text("Institución") },
-                        placeholder = { Text("Ej. Preparatoria #1") },
+                        label = { Text(stringResource(R.string.institucion)) },
+                        placeholder = { Text(stringResource(R.string.ej_preparatoria)) },
                         singleLine = true,
                         shape = RoundedCornerShape(12.dp)
                     )
@@ -331,10 +365,10 @@ fun SettingsScreen(
                         showProfileDialog = false
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-                ) { Text("Guardar") }
+                ) { Text(stringResource(R.string.guardar)) }
             },
             dismissButton = {
-                TextButton(onClick = { showProfileDialog = false }) { Text("Cancelar") }
+                TextButton(onClick = { showProfileDialog = false }) { Text(stringResource(R.string.cancelar)) }
             }
         )
     }
@@ -348,10 +382,10 @@ fun SettingsScreen(
             onDismissRequest = { showTrashDialog = false },
             title = {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                    Text("Papelera", fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.papelera), fontWeight = FontWeight.Bold)
                     if (deletedSubjects.isNotEmpty() || deletedEvents.isNotEmpty()) {
                         IconButton(onClick = { showEmptyConfirm = true }) {
-                            Icon(Icons.Default.DeleteSweep, contentDescription = "Vaciar papelera", tint = MaterialTheme.colorScheme.error)
+                            Icon(Icons.Default.DeleteSweep, contentDescription = stringResource(R.string.vaciar_papelera), tint = MaterialTheme.colorScheme.error)
                         }
                     }
                 }
@@ -359,12 +393,12 @@ fun SettingsScreen(
             text = {
                 LazyColumn(modifier = Modifier.heightIn(max = 400.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     if (deletedSubjects.isEmpty() && deletedEvents.isEmpty()) {
-                        item { Text("La papelera está vacía.", color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                        item { Text(stringResource(R.string.la_papelera_esta_vacia), color = MaterialTheme.colorScheme.onSurfaceVariant) }
                     }
                     items(deletedSubjects) { sub ->
                         TrashRow(
                             title = sub.name,
-                            subtitle = "Materia",
+                            subtitle = stringResource(R.string.materia),
                             onRestore = { viewModel.restoreDeletedSubject(sub.id) },
                             onDelete = { viewModel.permanentlyDeleteSubject(sub.id) }
                         )
@@ -372,7 +406,7 @@ fun SettingsScreen(
                     items(deletedEvents) { ev ->
                         TrashRow(
                             title = ev.title,
-                            subtitle = "Actividad",
+                            subtitle = stringResource(R.string.actividad),
                             onRestore = { viewModel.restoreDeletedEvent(ev.id) },
                             onDelete = { viewModel.permanentlyDeleteEvent(ev.id) }
                         )
@@ -380,20 +414,20 @@ fun SettingsScreen(
                 }
             },
             confirmButton = {},
-            dismissButton = { OutlinedButton(onClick = { showTrashDialog = false }) { Text("Cerrar") } }
+            dismissButton = { OutlinedButton(onClick = { showTrashDialog = false }) { Text(stringResource(R.string.cerrar)) } }
         )
 
         if (showEmptyConfirm) {
             AlertDialog(
                 onDismissRequest = { showEmptyConfirm = false },
-                title = { Text("¿Vaciar papelera?", fontWeight = FontWeight.Bold) },
-                text = { Text("Esta acción eliminará todos los elementos permanentemente.") },
+                title = { Text(stringResource(R.string.confirmar_vaciar_papelera), fontWeight = FontWeight.Bold) },
+                text = { Text(stringResource(R.string.accion_eliminar_permanente)) },
                 confirmButton = {
                     Button(onClick = { viewModel.emptyTrash(); showEmptyConfirm = false }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)) {
-                        Text("Eliminar todo")
+                        Text(stringResource(R.string.eliminar_todo))
                     }
                 },
-                dismissButton = { TextButton(onClick = { showEmptyConfirm = false }) { Text("Cancelar") } }
+                dismissButton = { TextButton(onClick = { showEmptyConfirm = false }) { Text(stringResource(R.string.cancelar)) } }
             )
         }
     }
@@ -411,30 +445,30 @@ fun SettingsScreen(
 
         AlertDialog(
             onDismissRequest = { showBackupsDialog = false },
-            title = { Text("Respaldos y Datos", fontWeight = FontWeight.Bold) },
+            title = { Text(stringResource(R.string.respaldos_y_datos), fontWeight = FontWeight.Bold) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         Button(onClick = { exportLauncher.launch("SnapBackup_${System.currentTimeMillis()}.json") }, modifier = Modifier.weight(1f), shape = RoundedCornerShape(12.dp)) {
                             Icon(Icons.Default.FileUpload, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text("Exportar", fontSize = 12.sp)
+                            Text(stringResource(R.string.exportar), fontSize = 12.sp)
                         }
                         Button(onClick = { importLauncher.launch(arrayOf("application/json", "application/octet-stream")) }, modifier = Modifier.weight(1f), shape = RoundedCornerShape(12.dp)) {
                             Icon(Icons.Default.FileDownload, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text("Importar", fontSize = 12.sp)
+                            Text(stringResource(R.string.importar), fontSize = 12.sp)
                         }
                     }
                     
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                    Text("CÓPIAS AUTOMÁTICAS", style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black))
+                    Text(stringResource(R.string.copias_automaticas), style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black))
                     
                     val dateFormatter = remember { SimpleDateFormat("dd MMM, HH:mm", Locale.getDefault()) }
                     
                     LazyColumn(modifier = Modifier.heightIn(max = 250.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         if (automaticBackups.isEmpty()) {
-                            item { Text("No hay respaldos automáticos.", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                            item { Text(stringResource(R.string.no_hay_respaldos_automaticos), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant) }
                         }
                         items(automaticBackups) { backup ->
                             TrashRow(
@@ -448,20 +482,20 @@ fun SettingsScreen(
                 }
             },
             confirmButton = {},
-            dismissButton = { OutlinedButton(onClick = { showBackupsDialog = false }) { Text("Cerrar") } }
+            dismissButton = { OutlinedButton(onClick = { showBackupsDialog = false }) { Text(stringResource(R.string.cerrar)) } }
         )
 
         pendingRestore?.let { fileName ->
             AlertDialog(
                 onDismissRequest = { pendingRestore = null },
-                title = { Text("¿Restaurar respaldo?", fontWeight = FontWeight.Bold) },
-                text = { Text("Se reemplazará toda la información actual con la del respaldo.") },
+                title = { Text(stringResource(R.string.confirmar_restaurar_respaldo), fontWeight = FontWeight.Bold) },
+                text = { Text(stringResource(R.string.reemplazar_informacion_respaldo)) },
                 confirmButton = {
                     Button(onClick = { viewModel.restoreAutomaticBackup(fileName); pendingRestore = null; showBackupsDialog = false }) {
-                        Text("Restaurar ahora")
+                        Text(stringResource(R.string.restaurar_ahora))
                     }
                 },
-                dismissButton = { TextButton(onClick = { pendingRestore = null }) { Text("Cancelar") } }
+                dismissButton = { TextButton(onClick = { pendingRestore = null }) { Text(stringResource(R.string.cancelar)) } }
             )
         }
     }
@@ -521,7 +555,9 @@ private fun StatCard(icon: ImageVector, value: String, label: String, modifier: 
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(24.dp))

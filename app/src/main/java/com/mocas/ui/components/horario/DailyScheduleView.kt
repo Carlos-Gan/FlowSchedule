@@ -70,7 +70,7 @@ fun DailyScheduleView(
     }
 
     val monthName = remember(selectedDate) {
-        selectedDate.month.getDisplayName(java.time.format.TextStyle.FULL, java.util.Locale("es", "MX"))
+        selectedDate.month.getDisplayName(java.time.format.TextStyle.FULL, java.util.Locale.getDefault())
             .replaceFirstChar { it.uppercase() }
     }
 
@@ -150,10 +150,14 @@ fun DailyScheduleView(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        val emptyMessage = remember(selectedDate) {
+            "No tienes clases asignadas para el ${selectedDate.dayOfWeek.getDisplayName(java.time.format.TextStyle.FULL, java.util.Locale.getDefault())}."
+        }
+
         if (todayClasses.isEmpty()) {
             EmptyStateCard(
                 title = "Tu día está libre",
-                message = "No tienes clases asignadas para el ${selectedDate.dayOfWeek.getDisplayName(java.time.format.TextStyle.FULL, java.util.Locale("es", "MX"))}.",
+                message = emptyMessage,
                 icon = Icons.Default.School,
                 actionButtonText = "+ Agregar Clase",
                 onActionClick = onAddSubjectClick

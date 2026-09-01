@@ -88,8 +88,9 @@ fun CalendarScreen(
     var calendarMonth by remember { mutableStateOf(YearMonth.now()) }
 
     val currentMonthHeading = remember(calendarMonth) {
-        val str = calendarMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale("es", "MX")))
-        str.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale("es", "ES")) else it.toString() }
+        val locale = Locale.getDefault()
+        val str = calendarMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy", locale))
+        str.replaceFirstChar { if (it.isLowerCase()) it.titlecase(locale) else it.toString() }
     }
 
     // Parse day of week for selected date
