@@ -315,6 +315,15 @@ fun SettingsScreen(
                             )
                         }
                     )
+
+                    SettingRow(
+                        icon = Icons.Default.RestartAlt,
+                        title = stringResource(R.string.debug_reiniciar_bienvenida),
+                        subtitle = stringResource(R.string.debug_reiniciar_bienvenida_desc),
+                        onClick = {
+                            viewModel.updateSettings(settings.copy(onboardingCompleted = false))
+                        }
+                    )
                 }
             }
         }
