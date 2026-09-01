@@ -12,21 +12,22 @@ import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.mocas.R
 import com.mocas.data.local.ScheduleSlotEntity
 import com.mocas.data.local.ClassExceptionEntity
 import com.mocas.data.local.SchoolEventEntity
 import com.mocas.data.local.SubjectEntity
 
 enum class BottomNavTab(
-    val title: String,
+    val titleRes: Int,
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector
 ) {
-    INICIO("Inicio", Icons.Filled.Home, Icons.Outlined.Home),
-    HORARIO("Horario", Icons.Filled.CalendarViewWeek, Icons.Outlined.CalendarViewWeek),
-    CALENDARIO("Calendario", Icons.Filled.CalendarMonth, Icons.Outlined.CalendarMonth),
-    EVENTOS("Eventos", Icons.Filled.CheckCircle, Icons.Outlined.CheckCircle),
-    CONFIGURACION("Ajustes", Icons.Filled.Settings, Icons.Outlined.Settings)
+    INICIO(R.string.nav_inicio, Icons.Filled.Home, Icons.Outlined.Home),
+    HORARIO(R.string.nav_horario, Icons.Filled.CalendarViewWeek, Icons.Outlined.CalendarViewWeek),
+    CALENDARIO(R.string.nav_calendario, Icons.Filled.CalendarMonth, Icons.Outlined.CalendarMonth),
+    EVENTOS(R.string.nav_eventos, Icons.Filled.CheckCircle, Icons.Outlined.CheckCircle),
+    CONFIGURACION(R.string.nav_ajustes, Icons.Filled.Settings, Icons.Outlined.Settings)
 }
 
 enum class TimetableDisplayMode(val displayName: String) {

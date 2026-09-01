@@ -51,11 +51,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mocas.R
 import com.mocas.data.local.SchoolEventEntity
 import com.mocas.data.local.SchoolEventType
 import com.mocas.data.local.SchoolEventWithSubject
@@ -134,21 +136,10 @@ fun EventItemCard(
     var showDeleteConfirmation by remember(event.id) { mutableStateOf(false) }
     var subtasksExpanded by remember(event.id) { mutableStateOf(false) }
 
-    /*
-     * SchoolEventEntity.type debe ser SchoolEventType.
-     */
     val eventType = event.type
     val typeColor = getEventTypeColor(eventType)
 
-    val scheduleParts = remember(
-        event.startDate,
-        event.endDate,
-        event.startTime,
-        event.endTime,
-        event.isAllDay
-    ) {
-        formatEventSchedule(event)
-    }
+    val scheduleParts = formatEventSchedule(event)
 
     val isUrgent = remember(
         event.startDate,
@@ -174,7 +165,7 @@ fun EventItemCard(
                     }
                 },
                 onLongClick = onClick,
-                onLongClickLabel = "Editar actividad"
+                onLongClickLabel = stringResource(R.string.editar_actividad_desc)
             )
             .testTag("event_card_${event.id}"),
         shape = RoundedCornerShape(18.dp),
@@ -268,8 +259,9 @@ fun EventItemCard(
                             } else {
                                 Color(0xFF10B981)
                             }
+                            val priorityLabel = stringResource(event.priority.titleRes).lowercase()
                             Text(
-                                text = "Prioridad ${event.priority.displayName.lowercase()}",
+                                text = stringResource(R.string.prioridad_formato, priorityLabel),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = priorityColor,
                                 fontWeight = FontWeight.Bold
@@ -283,7 +275,7 @@ fun EventItemCard(
                                 modifier = Modifier.size(13.dp)
                             )
                             Text(
-                                text = event.recurrenceType.displayName,
+                                text = stringResource(event.recurrenceType.titleRes),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -357,7 +349,7 @@ fun EventItemCard(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text("Progreso", style = MaterialTheme.typography.labelSmall)
+                        Text(stringResource(R.string.progreso), style = MaterialTheme.typography.labelSmall)
                         Text("$completed/$total", style = MaterialTheme.typography.labelSmall)
                     }
                     Spacer(modifier = Modifier.height(3.dp))
@@ -368,7 +360,7 @@ fun EventItemCard(
                         trackColor = MaterialTheme.colorScheme.surfaceVariant
                     )
                     Text(
-                        text = if (subtasksExpanded) "Toca para ocultar" else "Toca para ver los pasos",
+                        text = if (subtasksExpanded) stringResource(R.string.toca_ocultar) else stringResource(R.string.toca_ver_pasos),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(top = 5.dp)
@@ -422,7 +414,7 @@ fun EventItemCard(
                         imageVector =
                             Icons.Default.CalendarMonth,
                         contentDescription =
-                            "Agregar al calendario del teléfono",
+                            stringResource(R.string.sincronizar_calendario_desc),
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(19.dp)
                     )
@@ -439,7 +431,7 @@ fun EventItemCard(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Delete,
-                            contentDescription = "Eliminar evento",
+                            contentDescription = stringResource(R.string.eliminar_evento_desc),
                             tint = MaterialTheme.colorScheme.error
                                 .copy(alpha = 0.8f),
                             modifier = Modifier.size(19.dp)
@@ -453,8 +445,8 @@ fun EventItemCard(
     if (showDeleteConfirmation && onDeleteClick != null) {
         AlertDialog(
             onDismissRequest = { showDeleteConfirmation = false },
-            title = { Text("¿Eliminar evento?") },
-            text = { Text("Esta acción no se puede deshacer.") },
+            title = { Text(stringResource(R.string.confirmar_eliminar_evento)) },
+            text = { Text(stringResource(R.string.accion_no_deshacer)) },
             confirmButton = {
                 Button(
                     onClick = {
@@ -465,12 +457,12 @@ fun EventItemCard(
                         containerColor = MaterialTheme.colorScheme.error,
                         contentColor = MaterialTheme.colorScheme.onError
                     )
-                ) { Text("Eliminar") }
+                ) { Text(stringResource(R.string.eliminar)) }
             },
             dismissButton = {
                 TextButton(
                     onClick = { showDeleteConfirmation = false }
-                ) { Text("Cancelar") }
+                ) { Text(stringResource(R.string.cancelar)) }
             }
         )
     }
@@ -501,10 +493,18 @@ private fun EventTypeChip(
 
             Spacer(modifier = Modifier.width(4.dp))
 
+            val typeRes = when(type) {
+                SchoolEventType.TAREA -> R.string.tipo_tarea
+                SchoolEventType.EXAMEN -> R.string.tipo_examen
+                SchoolEventType.EXPOSICION -> R.string.tipo_exposicion
+                SchoolEventType.EVENTO_ESCOLAR -> R.string.tipo_evento_escolar
+                SchoolEventType.REUNION -> R.string.tipo_reunion
+                SchoolEventType.VACACIONES -> R.string.legend_vacaciones
+                else -> R.string.tipo_otro
+            }
+
             Text(
-                text = type.displayName.uppercase(
-                    Locale("es", "MX")
-                ),
+                text = stringResource(typeRes).uppercase(),
                 color = color,
                 fontSize = 10.sp,
                 fontWeight = FontWeight.ExtraBold
@@ -582,7 +582,7 @@ private fun EventScheduleRow(
                 color = color,
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Clip
             )
         }
     }
@@ -616,6 +616,7 @@ private fun EventLocationRow(
     }
 }
 
+@Composable
 private fun formatEventSchedule(
     event: SchoolEventEntity
 ): Pair<String, String> {
@@ -629,7 +630,7 @@ private fun formatEventSchedule(
     }
 
     if (event.isAllDay) {
-        return dateText to "Todo el día"
+        return dateText to stringResource(R.string.todo_el_dia)
     }
 
     val startTimeText = formatTime(event.startTime)
@@ -643,7 +644,7 @@ private fun formatEventSchedule(
             startTimeText
 
         else ->
-            "Sin hora"
+            stringResource(R.string.sin_hora)
     }
 
     return dateText to timeText

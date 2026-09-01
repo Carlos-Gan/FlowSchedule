@@ -24,9 +24,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.mocas.R
 import com.mocas.ui.model.NextClassInfo
 
 @Composable
@@ -73,13 +75,13 @@ fun NextClassCard(
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
                         Text(
-                            text = nextClass?.subject?.name ?: "Sin clases",
+                            text = nextClass?.subject?.name ?: stringResource(R.string.sin_clases),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis
                         )
                         Text(
-                            text = "Siguiente clase",
+                            text = stringResource(R.string.siguiente_clase),
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.primary
                         )
@@ -93,7 +95,7 @@ fun NextClassCard(
                             style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold)
                         )
                         Text(
-                            text = "Aula ${nextClass.room.ifBlank { "--" }}",
+                            text = stringResource(R.string.aula_formato, nextClass.room.ifBlank { "--" }),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -122,12 +124,13 @@ fun NextClassCard(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     val relativeTimeText = when {
-                        nextClass.isHappeningNow -> "En curso"
-                        nextClass.minutesUntil < 60 -> "En ${nextClass.minutesUntil} min"
+                        nextClass.isHappeningNow -> stringResource(R.string.en_curso)
+                        nextClass.minutesUntil < 60 -> stringResource(R.string.en_minutos_formato, nextClass.minutesUntil)
                         else -> {
                             val hours = nextClass.minutesUntil / 60
                             val mins = nextClass.minutesUntil % 60
-                            if (mins == 0) "En $hours h" else "En ${hours}h ${mins}m"
+                            if (mins == 0) stringResource(R.string.en_horas_formato, hours) 
+                            else stringResource(R.string.en_horas_minutos_formato, hours, mins)
                         }
                     }
 

@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mocas.ui.components.AppTabContent
 import com.mocas.ui.components.SnapBottomNavBar
@@ -72,6 +73,13 @@ fun MainAppScreen(
         )
     }
 
+    val resolvedTitle = topBarConfig.title ?: topBarConfig.titleRes?.let { stringResource(it) } ?: ""
+    val resolvedSubtitle = topBarConfig.subtitle ?: topBarConfig.subtitleRes?.let { resId ->
+        topBarConfig.subtitleArgs?.let { args ->
+            stringResource(resId, *args)
+        } ?: stringResource(resId)
+    }
+
     UserMessageEffect(
         message = userMessage,
         snackbarHostState = snackbarHostState,
@@ -89,8 +97,8 @@ fun MainAppScreen(
         },
         topBar = {
             SnapTopAppBar(
-                title = topBarConfig.title,
-                subtitle = topBarConfig.subtitle,
+                title = resolvedTitle,
+                subtitle = resolvedSubtitle,
                 searchQuery = searchQuery,
                 onQueryChange = { text ->
                     searchQuery = text

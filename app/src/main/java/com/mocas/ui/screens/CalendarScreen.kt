@@ -48,10 +48,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mocas.R
 import com.mocas.data.local.SchoolEventType
 import com.mocas.data.local.ClassExceptionEntity
 import com.mocas.data.local.SchoolEventWithSubject
@@ -173,7 +175,7 @@ fun CalendarScreen(
                                 calendarMonth = calendarMonth.minusMonths(1)
                             }
                         ) {
-                            Icon(Icons.Default.ChevronLeft, contentDescription = "Mes anterior", tint = MaterialTheme.colorScheme.primary)
+                            Icon(Icons.Default.ChevronLeft, contentDescription = stringResource(R.string.mes_anterior_desc), tint = MaterialTheme.colorScheme.primary)
                         }
 
                         Text(
@@ -190,14 +192,22 @@ fun CalendarScreen(
                                 calendarMonth = calendarMonth.plusMonths(1)
                             }
                         ) {
-                            Icon(Icons.Default.ChevronRight, contentDescription = "Mes siguiente", tint = MaterialTheme.colorScheme.primary)
+                            Icon(Icons.Default.ChevronRight, contentDescription = stringResource(R.string.mes_siguiente_desc), tint = MaterialTheme.colorScheme.primary)
                         }
                     }
 
                     Spacer(modifier = Modifier.height(10.dp))
 
                     // Day of week labels (L M X J V S D)
-                    val daysHeader = listOf("L", "M", "M", "J", "V", "S", "D")
+                    val daysHeader = listOf(
+                        stringResource(R.string.dia_l),
+                        stringResource(R.string.dia_m),
+                        stringResource(R.string.dia_mi),
+                        stringResource(R.string.dia_j),
+                        stringResource(R.string.dia_v),
+                        stringResource(R.string.dia_s),
+                        stringResource(R.string.dia_d)
+                    )
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceAround
@@ -273,11 +283,11 @@ fun CalendarScreen(
                             horizontalArrangement = Arrangement.SpaceEvenly,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            LegendItem(color = Color(0xFF3B82F6), label = "Clases")
-                            LegendItem(color = Color(0xFF8B5CF6), label = "Tareas")
-                            LegendItem(color = Color(0xFFEF4444), label = "Exámenes")
-                            LegendItem(color = Color(0xFFF59E0B), label = "Eventos")
-                            LegendItem(color = Color(0xFF10B981), label = "Vacaciones")
+                            LegendItem(color = Color(0xFF3B82F6), label = stringResource(R.string.legend_clases))
+                            LegendItem(color = Color(0xFF8B5CF6), label = stringResource(R.string.legend_tareas))
+                            LegendItem(color = Color(0xFFEF4444), label = stringResource(R.string.legend_examenes))
+                            LegendItem(color = Color(0xFFF59E0B), label = stringResource(R.string.legend_eventos))
+                            LegendItem(color = Color(0xFF10B981), label = stringResource(R.string.legend_vacaciones))
                         }
                     }
                 }
@@ -301,7 +311,7 @@ fun CalendarScreen(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Actividades para $selectedDateStr",
+                            text = stringResource(R.string.actividades_para_formato, selectedDateStr),
                             style = MaterialTheme.typography.titleMedium.copy(
                                 fontWeight = FontWeight.ExtraBold,
                                 fontSize = 15.sp
@@ -309,7 +319,7 @@ fun CalendarScreen(
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
-                            text = "${classesForSelectedDay.size} clases • ${eventsForSelectedDay.size} actividades",
+                            text = stringResource(R.string.clases_actividades_conteo, classesForSelectedDay.size, eventsForSelectedDay.size),
                             style = MaterialTheme.typography.bodySmall.copy(
                                 fontSize = 12.sp
                             ),
@@ -346,7 +356,7 @@ fun CalendarScreen(
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text(text = "Sincronizar", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        Text(text = stringResource(R.string.sincronizar_boton), fontSize = 12.sp, fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -356,7 +366,7 @@ fun CalendarScreen(
         if (eventsForSelectedDay.isNotEmpty()) {
             item {
                 Text(
-                    text = "Tareas y eventos del día",
+                    text = stringResource(R.string.tareas_eventos_dia),
                     style = MaterialTheme.typography.titleSmall.copy(
                         fontWeight = FontWeight.ExtraBold,
                         fontSize = 15.sp
@@ -395,7 +405,7 @@ fun CalendarScreen(
         if (classesForSelectedDay.isNotEmpty()) {
             item {
                 Text(
-                    text = "Clases del día",
+                    text = stringResource(R.string.clases_dia),
                     style = MaterialTheme.typography.titleSmall.copy(
                         fontWeight = FontWeight.ExtraBold,
                         fontSize = 15.sp
@@ -438,14 +448,14 @@ fun CalendarScreen(
         if (classesForSelectedDay.isEmpty() && eventsForSelectedDay.isEmpty()) {
             item {
                 EmptyStateCard(
-                    title = if (selectedDateIsVacation) "Día de vacaciones" else "Sin actividades para este día",
+                    title = if (selectedDateIsVacation) stringResource(R.string.dia_vacaciones) else stringResource(R.string.sin_actividades_dia),
                     message = if (selectedDateIsVacation) {
-                        "Este día está fuera de tus periodos académicos."
+                        stringResource(R.string.mensaje_fuera_periodos)
                     } else {
-                        "¿Quieres programar una tarea o examen?"
+                        stringResource(R.string.mensaje_programar_actividad)
                     },
                     icon = Icons.Default.EventNote,
-                    actionButtonText = "+ Agregar Actividad",
+                    actionButtonText = stringResource(R.string.nueva_actividad_boton),
                     onActionClick = { viewModel.openAddEvent(defaultDate = selectedDateStr) }
                 )
             }

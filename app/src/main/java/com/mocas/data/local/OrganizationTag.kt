@@ -1,9 +1,11 @@
 package com.mocas.data.local
 
-enum class OrganizationTag(val displayName: String) {
-    UNIVERSIDAD("Universidad"),
-    TRABAJO("Trabajo"),
-    PERSONAL("Personal");
+import com.mocas.R
+
+enum class OrganizationTag(val titleRes: Int) {
+    UNIVERSIDAD(R.string.tag_universidad),
+    TRABAJO(R.string.tag_trabajo),
+    PERSONAL(R.string.tag_personal);
 
     companion object {
         fun fromStored(value: String): OrganizationTag =

@@ -25,10 +25,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.mocas.R
 import com.mocas.data.local.EventPriority
 import com.mocas.data.local.SchoolEventWithSubject
 
@@ -111,7 +113,7 @@ fun TaskItemRow(
                         )
 
                         Text(
-                            text = eventWithSubject.subject?.name ?: "Sin materia",
+                            text = eventWithSubject.subject?.name ?: stringResource(R.string.sin_materia),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
                                 alpha = if (isDone) 0.6f else 1f
@@ -131,7 +133,7 @@ fun TaskItemRow(
                     color = MaterialTheme.colorScheme.errorContainer
                 ) {
                     Text(
-                        text = "Prioridad alta",
+                        text = stringResource(R.string.prioridad_alta),
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
                         style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onErrorContainer
@@ -143,7 +145,7 @@ fun TaskItemRow(
                     color = MaterialTheme.colorScheme.surfaceContainer
                 ) {
                     Text(
-                        text = "Listo",
+                        text = stringResource(R.string.listo),
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant

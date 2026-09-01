@@ -16,9 +16,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mocas.R
 import com.mocas.ui.model.DailyClassStats
 
 @ExperimentalMaterial3Api
@@ -31,17 +33,18 @@ fun DailyFocusCard(
     val remainingLabel = if (stats.remainingHours > 0) {
         val wholeHours = stats.remainingHours.toInt()
         val minutes = ((stats.remainingHours - wholeHours) * 60).toInt()
-        if (wholeHours > 0) "${wholeHours}h ${minutes}m restan" else "${minutes}min restan"
+        if (wholeHours > 0) stringResource(R.string.horas_restan_formato, wholeHours, minutes) 
+        else stringResource(R.string.minutos_restan_formato, minutes)
     } else if (stats.totalHours > 0) {
-        "Día terminado"
+        stringResource(R.string.dia_terminado)
     } else {
-        "Día libre"
+        stringResource(R.string.dia_libre)
     }
 
     val footerText = if (stats.totalHours > 0) {
-        "Total hoy: ${String.format(java.util.Locale.US, "%.1f", stats.totalHours)}h"
+        stringResource(R.string.total_hoy_formato, String.format(java.util.Locale.US, "%.1f", stats.totalHours))
     } else {
-        "Sin clases hoy"
+        stringResource(R.string.sin_clases_hoy)
     }
 
     val backgroundColor =
@@ -70,7 +73,7 @@ fun DailyFocusCard(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Progreso del día",
+                text = stringResource(R.string.progreso_del_dia),
                 style = MaterialTheme.typography.labelMedium,
                 color = labelColor,
                 modifier = Modifier.align(Alignment.Start)

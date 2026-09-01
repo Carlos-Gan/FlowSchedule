@@ -32,10 +32,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mocas.R
 import com.mocas.data.local.ScheduleSlotEntity
 import com.mocas.data.local.SubjectEntity
 import com.mocas.ui.components.EmptyStateCard
@@ -57,17 +59,15 @@ fun DailyScheduleView(
     val todayClasses by viewModel.todayClasses.collectAsStateWithLifecycle()
     val weekStart by viewModel.selectedWeekStart.collectAsStateWithLifecycle()
 
-    val daysList = remember {
-        listOf(
-            1 to "LUN",
-            2 to "MAR",
-            3 to "MIÉ",
-            4 to "JUE",
-            5 to "VIE",
-            6 to "SÁB",
-            7 to "DOM"
-        )
-    }
+    val daysList = listOf(
+        1 to stringResource(R.string.dia_l),
+        2 to stringResource(R.string.dia_m),
+        3 to stringResource(R.string.dia_mi),
+        4 to stringResource(R.string.dia_j),
+        5 to stringResource(R.string.dia_v),
+        6 to stringResource(R.string.dia_s),
+        7 to stringResource(R.string.dia_d)
+    )
 
     val monthName = remember(selectedDate) {
         selectedDate.month.getDisplayName(java.time.format.TextStyle.FULL, java.util.Locale.getDefault())
@@ -99,7 +99,7 @@ fun DailyScheduleView(
             ) {
                 Icon(
                     Icons.Default.CalendarMonth,
-                    contentDescription = "Hoy",
+                    contentDescription = stringResource(R.string.hoy_boton),
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(24.dp)
                 )
@@ -151,15 +151,16 @@ fun DailyScheduleView(
         Spacer(modifier = Modifier.height(16.dp))
 
         val emptyMessage = remember(selectedDate) {
-            "No tienes clases asignadas para el ${selectedDate.dayOfWeek.getDisplayName(java.time.format.TextStyle.FULL, java.util.Locale.getDefault())}."
+            val dayName = selectedDate.dayOfWeek.getDisplayName(java.time.format.TextStyle.FULL, java.util.Locale.getDefault())
+            "No tienes clases asignadas para el $dayName." // Dinámico con Locale
         }
 
         if (todayClasses.isEmpty()) {
             EmptyStateCard(
-                title = "Tu día está libre",
+                title = stringResource(R.string.tu_dia_libre),
                 message = emptyMessage,
                 icon = Icons.Default.School,
-                actionButtonText = "+ Agregar Clase",
+                actionButtonText = stringResource(R.string.agregar_clase_boton),
                 onActionClick = onAddSubjectClick
             )
         } else {

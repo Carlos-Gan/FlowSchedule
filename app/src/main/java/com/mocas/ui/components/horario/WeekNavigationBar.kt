@@ -19,10 +19,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mocas.R
 import com.mocas.ui.util.weekRangeLabel
 import java.time.LocalDate
 
@@ -45,7 +47,7 @@ fun WeekNavigationBar(
         IconButton(onClick = onPreviousWeek) {
             Icon(
                 imageVector = Icons.Default.ChevronLeft,
-                contentDescription = "Semana anterior",
+                contentDescription = stringResource(R.string.semana_anterior_desc),
                 tint = MaterialTheme.colorScheme.primary
             )
         }
@@ -54,7 +56,7 @@ fun WeekNavigationBar(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Semana",
+                text = stringResource(R.string.semana_label),
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -73,7 +75,7 @@ fun WeekNavigationBar(
             color = MaterialTheme.colorScheme.primaryContainer
         ) {
             Text(
-                text = "Hoy",
+                text = stringResource(R.string.hoy_boton),
                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 7.dp),
                 fontSize = 11.sp,
                 fontWeight = FontWeight.ExtraBold,
@@ -83,12 +85,12 @@ fun WeekNavigationBar(
         IconButton(onClick = onNextWeek) {
             Icon(
                 imageVector = Icons.Default.ChevronRight,
-                contentDescription = "Semana siguiente",
+                contentDescription = stringResource(R.string.semana_siguiente_desc),
                 tint = MaterialTheme.colorScheme.primary
             )
         }
         IconButton(onClick = onShare) {
-            Icon(Icons.Default.Share, contentDescription = "Compartir horario", tint = MaterialTheme.colorScheme.primary)
+            Icon(Icons.Default.Share, contentDescription = stringResource(R.string.compartir_horario_desc), tint = MaterialTheme.colorScheme.primary)
         }
     }
 }

@@ -49,11 +49,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.mocas.R
 import com.mocas.data.local.SchoolEventWithSubject
 import com.mocas.data.local.SubjectWithSlots
 import com.mocas.data.local.GradeCategoryEntity
@@ -151,7 +153,7 @@ fun SubjectDetailDialog(
                                 onClick = onDismiss,
                                 modifier = Modifier.size(32.dp)
                             ) {
-                                Icon(Icons.Default.Close, contentDescription = "Cerrar", tint = MaterialTheme.colorScheme.onPrimary)
+                                Icon(Icons.Default.Close, contentDescription = stringResource(R.string.cerrar), tint = MaterialTheme.colorScheme.onPrimary)
                             }
                         }
 
@@ -199,13 +201,13 @@ fun SubjectDetailDialog(
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
                         ) {
                             Column(modifier = Modifier.padding(12.dp)) {
-                                Text("Salones", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(stringResource(R.string.salones_label), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 Text(
                                     text = slots.map { it.room.ifBlank { subject.defaultRoom } }
                                         .filter { it.isNotBlank() }
                                         .distinct()
                                         .joinToString(" · ")
-                                        .ifBlank { "No especificado" },
+                                        .ifBlank { stringResource(R.string.no_especificado) },
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 14.sp,
                                     color = MaterialTheme.colorScheme.onSurface
@@ -219,9 +221,9 @@ fun SubjectDetailDialog(
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
                         ) {
                             Column(modifier = Modifier.padding(12.dp)) {
-                                Text("Recordatorio", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(stringResource(R.string.recordatorio_label), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 Text(
-                                    text = "${subject.reminderMinutesBefore} min antes",
+                                    text = stringResource(R.string.min_antes_formato, subject.reminderMinutesBefore),
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 14.sp,
                                     color = MaterialTheme.colorScheme.onSurface
@@ -240,7 +242,7 @@ fun SubjectDetailDialog(
                         .toList()
                         .sortedBy { (_, group) -> group.minOf { it.dayOfWeek } }
                     Text(
-                        text = "Horario (${slots.size} sesiones/semana)",
+                        text = stringResource(R.string.horario_sesiones_formato, slots.size),
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold,
                             fontSize = 15.sp
@@ -252,9 +254,19 @@ fun SubjectDetailDialog(
 
                     groupedSlots.forEach { (schedule, group) ->
                         val (startTime, endTime, room) = schedule
-                        val days = group
-                            .sortedBy { it.dayOfWeek }
-                            .joinToString(", ") { dayName(it.dayOfWeek) }
+                        
+                        // Obtenemos los nombres de los días de forma dinámica
+                        val dayNames = group.sortedBy { it.dayOfWeek }.map { slot ->
+                            when(slot.dayOfWeek) {
+                                1 -> stringResource(R.string.lunes)
+                                2 -> stringResource(R.string.martes)
+                                3 -> stringResource(R.string.miercoles)
+                                4 -> stringResource(R.string.jueves)
+                                5 -> stringResource(R.string.viernes)
+                                6 -> stringResource(R.string.sabado)
+                                else -> stringResource(R.string.domingo)
+                            }
+                        }.joinToString(", ")
 
                         Surface(
                             modifier = Modifier
@@ -280,7 +292,7 @@ fun SubjectDetailDialog(
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Column {
                                         Text(
-                                            text = days,
+                                            text = dayNames,
                                             fontWeight = FontWeight.SemiBold,
                                             fontSize = 13.sp
                                         )
@@ -301,7 +313,7 @@ fun SubjectDetailDialog(
                                     )
                                     Spacer(modifier = Modifier.width(4.dp))
                                     Text(
-                                        text = room.ifBlank { "Sin salón" },
+                                        text = room.ifBlank { stringResource(R.string.sin_salon) },
                                         fontSize = 12.sp,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
@@ -337,7 +349,7 @@ fun SubjectDetailDialog(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Tareas y Exámenes (${linkedEvents.size})",
+                            text = stringResource(R.string.tareas_examenes_conteo_formato, linkedEvents.size),
                             style = MaterialTheme.typography.titleMedium.copy(
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 15.sp
@@ -346,7 +358,7 @@ fun SubjectDetailDialog(
                         )
 
                         Text(
-                            text = "+ Agregar",
+                            text = stringResource(R.string.agregar_corto),
                             style = MaterialTheme.typography.bodySmall.copy(
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.primary
@@ -359,7 +371,7 @@ fun SubjectDetailDialog(
 
                     if (linkedEvents.isEmpty()) {
                         Text(
-                            text = "No hay tareas ni exámenes registrados para esta materia.",
+                            text = stringResource(R.string.sin_tareas_materia),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -404,7 +416,7 @@ fun SubjectDetailDialog(
                         ) {
                             Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text("Eliminar")
+                            Text(stringResource(R.string.eliminar))
                         }
 
                         Button(
@@ -415,7 +427,7 @@ fun SubjectDetailDialog(
                         ) {
                             Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text("Editar")
+                            Text(stringResource(R.string.editar))
                         }
                     }
                 }
@@ -426,8 +438,8 @@ fun SubjectDetailDialog(
     if (showDeleteConfirmation) {
         AlertDialog(
             onDismissRequest = { showDeleteConfirmation = false },
-            title = { Text("¿Eliminar materia?") },
-            text = { Text("Se eliminarán sus horarios. Los eventos vinculados se conservarán sin materia.") },
+            title = { Text(stringResource(R.string.confirmar_eliminar_materia)) },
+            text = { Text(stringResource(R.string.mensaje_eliminar_materia)) },
             confirmButton = {
                 Button(
                     onClick = {
@@ -435,21 +447,11 @@ fun SubjectDetailDialog(
                         onDeleteClick()
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
-                ) { Text("Eliminar") }
+                ) { Text(stringResource(R.string.eliminar)) }
             },
             dismissButton = {
-                OutlinedButton(onClick = { showDeleteConfirmation = false }) { Text("Cancelar") }
+                OutlinedButton(onClick = { showDeleteConfirmation = false }) { Text(stringResource(R.string.cancelar)) }
             }
         )
     }
-}
-
-private fun dayName(dayOfWeek: Int): String = when (dayOfWeek) {
-    1 -> "Lunes"
-    2 -> "Martes"
-    3 -> "Miércoles"
-    4 -> "Jueves"
-    5 -> "Viernes"
-    6 -> "Sábado"
-    else -> "Domingo"
 }

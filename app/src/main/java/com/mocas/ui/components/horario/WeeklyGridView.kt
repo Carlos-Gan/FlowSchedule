@@ -34,10 +34,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mocas.R
 import com.mocas.data.local.AcademicPeriodEntity
 import com.mocas.data.local.ClassExceptionEntity
 import com.mocas.data.local.ScheduleSlotEntity
@@ -66,13 +68,13 @@ fun WeeklyGridView(
     onAddClassClick: () -> Unit
 ) {
     val days = listOf(
-        1 to "LUN",
-        2 to "MAR",
-        3 to "MIÉ",
-        4 to "JUE",
-        5 to "VIE",
-        6 to "SÁB",
-        7 to "DOM"
+        1 to stringResource(R.string.dia_l),
+        2 to stringResource(R.string.dia_m),
+        3 to stringResource(R.string.dia_mi),
+        4 to stringResource(R.string.dia_j),
+        5 to stringResource(R.string.dia_v),
+        6 to stringResource(R.string.dia_s),
+        7 to stringResource(R.string.dia_d)
     )
 
     val allSlots = subjectsWithSlots.flatMap { item ->
@@ -89,14 +91,14 @@ fun WeeklyGridView(
             contentAlignment = Alignment.Center
         ) {
             EmptyStateCard(
-                title = "No hay clases esta semana",
+                title = stringResource(R.string.no_hay_clases_semana),
                 message = if (subjectsWithSlots.isEmpty()) {
-                    "Agrega tus materias o importa una foto de tu horario escolar."
+                    stringResource(R.string.mensaje_sin_clases_semana)
                 } else {
-                    "Elige otra semana o revisa las fechas de tus periodos académicos."
+                    stringResource(R.string.mensaje_revisar_periodos)
                 },
                 icon = Icons.Default.School,
-                actionButtonText = "+ Agregar Materia",
+                actionButtonText = stringResource(R.string.agregar_materia_boton),
                 onActionClick = onAddClassClick
             )
         }
@@ -331,7 +333,7 @@ fun WeeklyGridView(
                                                                 color = MaterialTheme.colorScheme.error
                                                             ) {
                                                                 Text(
-                                                                    text = "AHORA",
+                                                                    text = stringResource(R.string.ahora_label),
                                                                     color = MaterialTheme.colorScheme.onError,
                                                                     fontSize = 8.sp,
                                                                     fontWeight = FontWeight.ExtraBold,

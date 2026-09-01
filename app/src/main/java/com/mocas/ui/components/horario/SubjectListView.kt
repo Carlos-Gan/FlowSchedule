@@ -34,11 +34,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mocas.R
 import com.mocas.data.local.SubjectWithSlots
 import com.mocas.ui.components.EmptyStateCard
 import com.mocas.ui.components.parseColorFromHex
@@ -58,10 +60,10 @@ fun SubjectListView(
             contentAlignment = Alignment.Center
         ) {
             EmptyStateCard(
-                title = "No hay materias registradas",
-                message = "Agrega tu primera materia para armar tu semestre.",
+                title = stringResource(R.string.no_hay_materias_registradas),
+                message = stringResource(R.string.mensaje_primera_materia),
                 icon = Icons.Default.School,
-                actionButtonText = "+ Agregar Materia",
+                actionButtonText = stringResource(R.string.agregar_materia_boton),
                 onActionClick = onAddNewSubject
             )
         }
@@ -183,13 +185,13 @@ fun SubjectListView(
                         ) {
                             subWithSlots.slots.forEach { slot ->
                                 val dayAbbr = when (slot.dayOfWeek) {
-                                    1 -> "Lun"
-                                    2 -> "Mar"
-                                    3 -> "Mié"
-                                    4 -> "Jue"
-                                    5 -> "Vie"
-                                    6 -> "Sáb"
-                                    else -> "Dom"
+                                    1 -> stringResource(R.string.dia_l)
+                                    2 -> stringResource(R.string.dia_m)
+                                    3 -> stringResource(R.string.dia_mi)
+                                    4 -> stringResource(R.string.dia_j)
+                                    5 -> stringResource(R.string.dia_v)
+                                    6 -> stringResource(R.string.dia_s)
+                                    else -> stringResource(R.string.dia_d)
                                 }
                                 Surface(
                                     shape = RoundedCornerShape(8.dp),

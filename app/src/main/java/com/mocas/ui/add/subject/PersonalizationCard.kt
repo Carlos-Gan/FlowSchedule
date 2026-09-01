@@ -8,7 +8,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.mocas.R
 import com.mocas.ui.components.OrganizationSelector
 import com.mocas.ui.components.SubjectColorPicker
 
@@ -18,8 +20,8 @@ fun PersonalizationCard(
     organizationTag: String, onTagChange: (String) -> Unit,
     isImportant: Boolean, onImportantChange: (Boolean) -> Unit
 ) {
-    BaseCard("Personalización y Categorías") {
-        Text("Color de la Materia", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f))
+    BaseCard(stringResource(R.string.personalizacion_categorias_titulo)) {
+        Text(stringResource(R.string.color_materia_label), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f))
         SubjectColorPicker(selectedHex = colorHex, onColorSelected = onColorChange)
 
         Spacer(modifier = Modifier.height(8.dp))

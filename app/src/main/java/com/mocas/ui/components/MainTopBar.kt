@@ -1,10 +1,14 @@
 package com.mocas.ui.components
 
+import com.mocas.R
 import com.mocas.ui.model.BottomNavTab
 
 data class TopBarConfig(
-    val title: String,
-    val subtitle: String?,
+    val title: String? = null,
+    val titleRes: Int? = null,
+    val subtitle: String? = null,
+    val subtitleRes: Int? = null,
+    val subtitleArgs: Array<Any>? = null,
     val showScanAction: Boolean,
     val showAddAction: Boolean
 )
@@ -17,43 +21,45 @@ fun getTopBarConfig(
     return when (currentTab) {
         BottomNavTab.INICIO -> TopBarConfig(
             title = "SnapMySchedule",
-            subtitle = "Tu día de un vistazo",
+            subtitleRes = R.string.sub_inicio,
             showScanAction = true,
             showAddAction = false
         )
 
         BottomNavTab.HORARIO -> TopBarConfig(
-            title = "Horario",
-            subtitle = when (subjectCount) {
-                0 -> "Todavía no tienes materias"
-                1 -> "1 materia registrada"
-                else -> "$subjectCount materias registradas"
+            titleRes = R.string.nav_horario,
+            subtitleRes = when (subjectCount) {
+                0 -> R.string.sub_horario_vacio
+                1 -> R.string.materia_singular
+                else -> R.string.sub_horario_materias_formato
             },
+            subtitleArgs = if (subjectCount > 1) arrayOf(subjectCount) else null,
             showScanAction = true,
             showAddAction = true
         )
 
         BottomNavTab.CALENDARIO -> TopBarConfig(
-            title = "Calendario",
-            subtitle = "Fechas importantes del semestre",
+            titleRes = R.string.nav_calendario,
+            subtitleRes = R.string.sub_calendario,
             showScanAction = false,
             showAddAction = true
         )
 
         BottomNavTab.EVENTOS -> TopBarConfig(
-            title = "Actividades",
-            subtitle = when (pendingEventCount) {
-                0 -> "No tienes actividades pendientes"
-                1 -> "1 actividad pendiente"
-                else -> "$pendingEventCount actividades pendientes"
+            titleRes = R.string.nav_eventos,
+            subtitleRes = when (pendingEventCount) {
+                0 -> R.string.sub_actividades_vacio
+                1 -> R.string.actividad_singular
+                else -> R.string.sub_actividades_pendientes_formato
             },
+            subtitleArgs = if (pendingEventCount > 1) arrayOf(pendingEventCount) else null,
             showScanAction = false,
             showAddAction = true
         )
 
         BottomNavTab.CONFIGURACION -> TopBarConfig(
-            title = "Configuración",
-            subtitle = "Personaliza tu experiencia",
+            titleRes = R.string.titulo_configuracion,
+            subtitleRes = R.string.sub_configuracion,
             showScanAction = false,
             showAddAction = false
         )

@@ -25,14 +25,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mocas.R
 import com.mocas.data.local.AcademicPeriodEntity
 import com.mocas.ui.add.CustomInputField
 import com.mocas.ui.components.CalendarDateField
 import com.mocas.ui.screens.buildPeriodName
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.platform.LocalContext
 import com.mocas.ui.util.capitalizeFirstLetter
 import com.mocas.util.DateTimeUtils
 import java.util.Locale
@@ -48,7 +51,8 @@ fun GeneralDetailsCard(
     academicPeriods: List<AcademicPeriodEntity>,
     onSavePeriod: (AcademicPeriodEntity) -> Unit
 ) {
-    BaseCard("Detalles Generales") {
+    val context = LocalContext.current
+    BaseCard(stringResource(R.string.detalles_generales_titulo)) {
 
         // --- RESTAURADO: Sección de Periodos Guardados ---
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -59,13 +63,13 @@ fun GeneralDetailsCard(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Periodo académico",
+                        text = stringResource(R.string.periodo_academico_default),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant // on-surface-variant
                     )
                     Text(
-                        text = "Selecciona uno guardado o define fechas",
+                        text = stringResource(R.string.selecciona_periodo_instruccion),
                         fontSize = 11.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                     )
@@ -82,7 +86,7 @@ fun GeneralDetailsCard(
                     onClick = {
                         onSavePeriod(
                             AcademicPeriodEntity(
-                                name = buildPeriodName(semesterStart, semesterEnd),
+                                name = buildPeriodName(context, semesterStart, semesterEnd),
                                 startDate = semesterStart,
                                 endDate = semesterEnd
                             )
@@ -93,7 +97,7 @@ fun GeneralDetailsCard(
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
                     modifier = Modifier.height(32.dp)
                 ) {
-                    Text("Guardar periodo", fontSize = 11.sp)
+                    Text(stringResource(R.string.guardar_periodo_boton), fontSize = 11.sp)
                 }
             }
 
@@ -132,12 +136,12 @@ fun GeneralDetailsCard(
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 CalendarDateField(
                     value = semesterStart, onDateSelected = onStartChange,
-                    label = "Inicio periodo", isError = !DateTimeUtils.isValidDate(semesterStart),
+                    label = stringResource(R.string.inicio_periodo_label), isError = !DateTimeUtils.isValidDate(semesterStart),
                     modifier = Modifier.weight(1f)
                 )
                 CalendarDateField(
                     value = semesterEnd, onDateSelected = onEndChange,
-                    label = "Fin periodo", isError = !DateTimeUtils.isValidDate(semesterEnd),
+                    label = stringResource(R.string.fin_periodo_label), isError = !DateTimeUtils.isValidDate(semesterEnd),
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -147,30 +151,30 @@ fun GeneralDetailsCard(
 
         // --- CAMPOS DE TEXTO CON DISEÑO CORREGIDO (Etiqueta arriba, fondo gris) ---
         CustomInputField(
-            label = "Nombre de la Materia *",
-            placeholder = "Ej. Cálculo Integral",
+            label = stringResource(R.string.nombre_materia_label),
+            placeholder = stringResource(R.string.nombre_materia_placeholder),
             value = name,
             onValueChange = { onNameChange(capitalizeFirstLetter(it)) }
         )
 
         CustomInputField(
-            label = "Código / Abreviatura",
-            placeholder = "Ej. MAT-102",
+            label = stringResource(R.string.codigo_label),
+            placeholder = stringResource(R.string.codigo_placeholder),
             value = code,
             onValueChange = { onCodeChange(it.uppercase(Locale.ROOT)) }
         )
 
         CustomInputField(
-            label = "Profesor/a",
-            placeholder = "Nombre del docente",
+            label = stringResource(R.string.profesor_label),
+            placeholder = stringResource(R.string.profesor_placeholder),
             value = professor,
             onValueChange = { onProfessorChange(capitalizeFirstLetter(it)) },
             leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)) }
         )
 
         CustomInputField(
-            label = "Aula Principal",
-            placeholder = "Ej. Edificio B - Aula 402",
+            label = stringResource(R.string.aula_principal_label),
+            placeholder = stringResource(R.string.aula_principal_placeholder),
             value = defaultRoom,
             onValueChange = { onRoomChange(capitalizeFirstLetter(it)) },
             leadingIcon = { Icon(Icons.Default.LocationOn, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)) }

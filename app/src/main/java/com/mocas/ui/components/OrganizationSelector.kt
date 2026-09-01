@@ -18,8 +18,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.mocas.R
 import com.mocas.data.local.OrganizationTag
 
 @Composable
@@ -31,13 +33,13 @@ fun OrganizationSelector(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
-        Text("Organización", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
+        Text(stringResource(R.string.organizacion_label), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             items(OrganizationTag.entries) { tag ->
                 FilterChip(
                     selected = selectedTag == tag.name,
                     onClick = { onTagSelected(tag.name) },
-                    label = { Text(tag.displayName) }
+                    label = { Text(stringResource(tag.titleRes)) }
                 )
             }
         }
@@ -52,7 +54,7 @@ fun OrganizationSelector(
                     contentDescription = null,
                     tint = if (isImportant) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                Text("Marcar como importante", modifier = Modifier.padding(start = 8.dp))
+                Text(stringResource(R.string.marcar_importante), modifier = Modifier.padding(start = 8.dp))
             }
             Switch(checked = isImportant, onCheckedChange = onImportantChanged)
         }

@@ -51,6 +51,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextOverflow
@@ -58,6 +59,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.mocas.R
 import com.mocas.data.local.SchoolEventEntity
 import com.mocas.data.local.SchoolEventType
 import com.mocas.data.local.SchoolEventWithSubject
@@ -128,7 +130,7 @@ fun AddEventDialog(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = if (initialEvent == null) "Nueva Actividad" else "Editar Actividad",
+                            text = if (initialEvent == null) stringResource(R.string.nueva_actividad_titulo) else stringResource(R.string.editar_actividad_titulo),
                             style = MaterialTheme.typography.headlineSmall.copy(
                                 fontWeight = FontWeight.Black,
                                 fontSize = 26.sp,
@@ -137,7 +139,7 @@ fun AddEventDialog(
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
-                            text = "Organiza tu semestre de forma inteligente.",
+                            text = stringResource(R.string.organiza_semestre_subtitulo),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -149,7 +151,7 @@ fun AddEventDialog(
                         modifier = Modifier.size(36.dp)
                     ) {
                         Box(contentAlignment = Alignment.Center) {
-                            Icon(Icons.Rounded.Close, contentDescription = "Cerrar", tint = MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(20.dp))
+                            Icon(Icons.Rounded.Close, contentDescription = stringResource(R.string.cerrar), tint = MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(20.dp))
                         }
                     }
                 }
@@ -160,7 +162,7 @@ fun AddEventDialog(
                 OutlinedTextField(
                     value = title,
                     onValueChange = { title = capitalizeFirstLetter(it) },
-                    placeholder = { Text("¿Qué tienes que hacer?", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)) },
+                    placeholder = { Text(stringResource(R.string.que_tienes_que_hacer_placeholder), color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)) },
                     singleLine = true,
                     textStyle = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                     keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
@@ -177,7 +179,7 @@ fun AddEventDialog(
 
                 // Activity Type - Usando SegmentedButton Row
                 Text(
-                    text = "CATEGORÍA",
+                    text = stringResource(R.string.categoria_label),
                     style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black, letterSpacing = 1.sp),
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -185,10 +187,10 @@ fun AddEventDialog(
                 
                 SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
                     val types = listOf(
-                        SchoolEventType.TAREA to "Tarea",
-                        SchoolEventType.EXAMEN to "Examen",
-                        SchoolEventType.EXPOSICION to "Expo",
-                        SchoolEventType.EVENTO_ESCOLAR to "Evento"
+                        SchoolEventType.TAREA to stringResource(R.string.filtro_tareas),
+                        SchoolEventType.EXAMEN to stringResource(R.string.filtro_examenes),
+                        SchoolEventType.EXPOSICION to stringResource(R.string.filtro_expos),
+                        SchoolEventType.EVENTO_ESCOLAR to stringResource(R.string.filtro_eventos)
                     )
                     types.forEachIndexed { index, (type, label) ->
                         SegmentedButton(
@@ -211,7 +213,7 @@ fun AddEventDialog(
 
                 // Subject Selection
                 Text(
-                    text = "ASIGNATURA",
+                    text = stringResource(R.string.asignatura_label),
                     style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black, letterSpacing = 1.sp),
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -221,7 +223,7 @@ fun AddEventDialog(
                     onExpandedChange = { isSubjectDropdownExpanded = !isSubjectDropdownExpanded },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    val currentSubjectName = subjects.find { it.subject.id == selectedSubjectId }?.subject?.name ?: "Seleccionar materia..."
+                    val currentSubjectName = subjects.find { it.subject.id == selectedSubjectId }?.subject?.name ?: stringResource(R.string.seleccionar_materia_placeholder)
                     Surface(
                         modifier = Modifier.fillMaxWidth().menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
                         shape = RoundedCornerShape(16.dp),
@@ -255,7 +257,7 @@ fun AddEventDialog(
                         onDismissRequest = { isSubjectDropdownExpanded = false }
                     ) {
                         DropdownMenuItem(
-                            text = { Text("Ninguna (General / Escolar)") },
+                            text = { Text(stringResource(R.string.ninguna_materia)) },
                             onClick = {
                                 selectedSubjectId = null
                                 isSubjectDropdownExpanded = false
@@ -306,8 +308,8 @@ fun AddEventDialog(
                                 }
                                 Spacer(modifier = Modifier.width(12.dp))
                                 Column {
-                                    Text("Todo el día", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, fontSize = 15.sp)
-                                    Text("Sin hora específica", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    Text(stringResource(R.string.todo_el_dia), fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, fontSize = 15.sp)
+                                    Text(stringResource(R.string.sin_hora_especifica), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 }
                             }
                             Switch(
@@ -336,7 +338,7 @@ fun AddEventDialog(
                                 CalendarDateField(
                                     value = eventDate,
                                     onDateSelected = { eventDate = it },
-                                    label = "Fecha",
+                                    label = stringResource(R.string.fecha_label),
                                     modifier = Modifier.padding(4.dp)
                                 )
                             }
@@ -351,7 +353,7 @@ fun AddEventDialog(
                                     ClockTimeField(
                                         value = eventTime,
                                         onTimeSelected = { eventTime = it },
-                                        label = "Hora",
+                                        label = stringResource(R.string.hora_label),
                                         modifier = Modifier.padding(4.dp)
                                     )
                                 }
@@ -366,7 +368,7 @@ fun AddEventDialog(
                 OutlinedTextField(
                     value = location,
                     onValueChange = { location = capitalizeFirstLetter(it) },
-                    placeholder = { Text("Ubicación o salón (Opcional)", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)) },
+                    placeholder = { Text(stringResource(R.string.ubicacion_placeholder), color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)) },
                     leadingIcon = { Icon(Icons.Outlined.LocationOn, contentDescription = null, tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)) },
                     singleLine = true,
                     shape = RoundedCornerShape(16.dp),
@@ -383,7 +385,7 @@ fun AddEventDialog(
                 OutlinedTextField(
                     value = description,
                     onValueChange = { description = capitalizeFirstLetter(it) },
-                    placeholder = { Text("Notas adicionales...", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)) },
+                    placeholder = { Text(stringResource(R.string.notas_placeholder), color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)) },
                     leadingIcon = { Icon(Icons.Outlined.Description, contentDescription = null, tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)) },
                     minLines = 3,
                     shape = RoundedCornerShape(16.dp),
@@ -433,7 +435,7 @@ fun AddEventDialog(
                 ) {
                     Icon(imageVector = Icons.Rounded.Add, contentDescription = null, modifier = Modifier.size(22.dp))
                     Spacer(modifier = Modifier.width(12.dp))
-                    Text("GUARDAR ACTIVIDAD", fontWeight = FontWeight.Black, fontSize = 14.sp, letterSpacing = 1.sp)
+                    Text(stringResource(R.string.guardar_actividad_boton), fontWeight = FontWeight.Black, fontSize = 14.sp, letterSpacing = 1.sp)
                 }
 
                 Spacer(modifier = Modifier.height(32.dp))

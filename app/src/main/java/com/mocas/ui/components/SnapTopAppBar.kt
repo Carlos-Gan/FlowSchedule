@@ -64,6 +64,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -73,6 +74,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
+import com.mocas.R
 import com.mocas.data.local.OrganizationTag
 import com.mocas.data.local.SchoolEventWithSubject
 import com.mocas.data.local.SubjectWithSlots
@@ -181,7 +183,7 @@ fun SnapTopAppBar(
                             },
                             placeholder = {
                                 Text(
-                                    "Buscar materias o actividades...",
+                                    stringResource(R.string.buscar_placeholder),
                                     fontSize = 14.sp
                                 )
                             },
@@ -196,7 +198,7 @@ fun SnapTopAppBar(
                                 }) {
                                     Icon(
                                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                        contentDescription = "Cerrar búsqueda",
+                                        contentDescription = stringResource(R.string.cerrar_busqueda_desc),
                                         tint = MaterialTheme.colorScheme.primary
                                     )
                                 }
@@ -208,7 +210,7 @@ fun SnapTopAppBar(
                                     }) {
                                         Icon(
                                             imageVector = Icons.Default.Close,
-                                            contentDescription = "Limpiar texto",
+                                            contentDescription = stringResource(R.string.limpiar_texto_desc),
                                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                     }
@@ -250,7 +252,7 @@ fun SnapTopAppBar(
                                     if (filteredSubjects.isNotEmpty()) {
                                         item {
                                             Text(
-                                                text = "Materias (${filteredSubjects.size})",
+                                                text = stringResource(R.string.materias_con_conteo, filteredSubjects.size),
                                                 style = MaterialTheme.typography.labelLarge,
                                                 fontWeight = FontWeight.Bold,
                                                 color = MaterialTheme.colorScheme.primary,
@@ -263,13 +265,13 @@ fun SnapTopAppBar(
                                         items(
                                             filteredSubjects,
                                             key = { "subject-${it.subject.id}" }) { item ->
-                                            val subtitle = remember(item) {
-                                                listOf(
-                                                    OrganizationTag.fromStored(item.subject.organizationTag).displayName,
-                                                    item.subject.code,
-                                                    item.subject.professor
-                                                ).filter { it.isNotBlank() }.joinToString(" · ")
-                                            }
+                                            val orgTag = OrganizationTag.fromStored(item.subject.organizationTag)
+                                            val subtitle = listOf(
+                                                stringResource(orgTag.titleRes),
+                                                item.subject.code,
+                                                item.subject.professor
+                                            ).filter { it.isNotBlank() }.joinToString(" · ")
+                                            
                                             SearchResultRow(
                                                 title = item.subject.name,
                                                 subtitle = subtitle,
@@ -288,7 +290,7 @@ fun SnapTopAppBar(
                                     if (filteredEvents.isNotEmpty()) {
                                         item {
                                             Text(
-                                                text = "Actividades (${filteredEvents.size})",
+                                                text = stringResource(R.string.actividades_con_conteo, filteredEvents.size),
                                                 style = MaterialTheme.typography.labelLarge,
                                                 fontWeight = FontWeight.Bold,
                                                 color = MaterialTheme.colorScheme.primary,
@@ -301,13 +303,13 @@ fun SnapTopAppBar(
                                         items(
                                             filteredEvents,
                                             key = { "event-${it.event.id}" }) { item ->
-                                            val subtitle = remember(item) {
-                                                listOf(
-                                                    OrganizationTag.fromStored(item.event.organizationTag).displayName,
-                                                    item.event.startDate,
-                                                    item.subject?.name.orEmpty()
-                                                ).filter { it.isNotBlank() }.joinToString(" · ")
-                                            }
+                                            val orgTag = OrganizationTag.fromStored(item.event.organizationTag)
+                                            val subtitle = listOf(
+                                                stringResource(orgTag.titleRes),
+                                                item.event.startDate,
+                                                item.subject?.name.orEmpty()
+                                            ).filter { it.isNotBlank() }.joinToString(" · ")
+
                                             SearchResultRow(
                                                 title = item.event.title,
                                                 subtitle = subtitle,
@@ -340,7 +342,7 @@ fun SnapTopAppBar(
                                                     )
                                                     Spacer(modifier = Modifier.height(8.dp))
                                                     Text(
-                                                        text = "No se encontraron resultados",
+                                                        text = stringResource(R.string.no_se_encontraron_resultados),
                                                         style = MaterialTheme.typography.bodyMedium,
                                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                                         textAlign = TextAlign.Center
@@ -391,7 +393,7 @@ fun SnapTopAppBar(
                     }) {
                         Icon(
                             imageVector = Icons.Outlined.Search,
-                            contentDescription = "Buscar materias y actividades",
+                            contentDescription = stringResource(R.string.buscar_materias_actividades_desc),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -406,13 +408,13 @@ fun SnapTopAppBar(
                         ) {
                             Icon(
                                 imageVector = Icons.Outlined.CameraAlt,
-                                contentDescription = "Escanear horario con foto",
+                                contentDescription = stringResource(R.string.escanear_horario_desc),
                                 tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(17.dp)
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = "Escanear",
+                                text = stringResource(R.string.escanear_boton),
                                 color = MaterialTheme.colorScheme.primary,
                                 style = MaterialTheme.typography.labelMedium,
                                 fontWeight = FontWeight.Bold
@@ -436,7 +438,7 @@ fun SnapTopAppBar(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Add,
-                                contentDescription = "Agregar",
+                                contentDescription = stringResource(R.string.agregar_desc),
                                 modifier = Modifier.size(21.dp)
                             )
 
@@ -499,7 +501,7 @@ private fun SearchResultRow(
             if (isImportant) {
                 Icon(
                     imageVector = Icons.Default.Star,
-                    contentDescription = "Importante",
+                    contentDescription = stringResource(R.string.importante_desc),
                     tint = MaterialTheme.colorScheme.tertiary,
                     modifier = Modifier.size(18.dp)
                 )

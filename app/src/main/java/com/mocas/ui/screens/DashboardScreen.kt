@@ -33,8 +33,10 @@ import androidx.compose.material.icons.filled.LibraryAdd
 import androidx.compose.material3.Icon
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mocas.R
 import com.mocas.data.local.SchoolEventWithSubject
 import com.mocas.ui.components.dashboard.DailyFocusCard
 import com.mocas.ui.components.dashboard.NextClassCard
@@ -105,7 +107,7 @@ fun DashboardContent(
         item {
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    text = "Buenos días, $userName.",
+                    text = stringResource(R.string.buenos_dias_formato, userName),
                     style = MaterialTheme.typography.headlineLarge.copy(
                         fontWeight = FontWeight.Bold,
                         letterSpacing = (-0.5).sp
@@ -114,9 +116,9 @@ fun DashboardContent(
                 )
                 Text(
                     text = if (dueTodayEvents.isEmpty())
-                        "Todo al día. Disfruta tu mañana."
+                        stringResource(R.string.todo_al_dia_mensaje)
                     else
-                        "Mantén el enfoque. Tienes ${dueTodayEvents.size} tareas para hoy.",
+                        stringResource(R.string.tareas_hoy_conteo_formato, dueTodayEvents.size),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -131,7 +133,7 @@ fun DashboardContent(
             ) {
                 QuickActionButton(
                     icon = Icons.Default.AddTask,
-                    label = "Añadir Tarea",
+                    label = stringResource(R.string.añadir_tarea),
                     containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.1f),
                     contentColor = MaterialTheme.colorScheme.primary,
                     onClick = onAddTaskClick,
@@ -139,7 +141,7 @@ fun DashboardContent(
                 )
                 QuickActionButton(
                     icon = Icons.Default.LibraryAdd,
-                    label = "Añadir Materia",
+                    label = stringResource(R.string.añadir_materia),
                     containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.2f),
                     contentColor = MaterialTheme.colorScheme.secondary,
                     onClick = onAddSubjectClick,
@@ -174,7 +176,7 @@ fun DashboardContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Tareas para hoy",
+                        text = stringResource(R.string.tareas_para_hoy),
                         style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -183,7 +185,7 @@ fun DashboardContent(
                         contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
                     ) {
                         Text(
-                            "Ver todo",
+                            stringResource(R.string.ver_todo),
                             style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.primary
                         )
@@ -198,7 +200,7 @@ fun DashboardContent(
                         shadowElevation = 2.dp
                     ) {
                         Text(
-                            "No hay tareas pendientes para hoy.",
+                            stringResource(R.string.no_hay_tareas_hoy),
                             modifier = Modifier.padding(16.dp),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant

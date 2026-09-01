@@ -29,8 +29,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.mocas.R
 import com.mocas.ui.screens.SlotDraft
 import com.mocas.util.DateTimeUtils
 
@@ -44,7 +46,7 @@ fun SchedulesCard(
     onRemoveSlot: (Int) -> Unit,
     onUpdateSlot: (Int, SlotDraft) -> Unit
 ) {
-    BaseCard("Horarios de Clase") {
+    BaseCard(stringResource(R.string.horarios_clase_titulo)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.End
@@ -52,7 +54,7 @@ fun SchedulesCard(
             TextButton(onClick = onAddSlot) {
                 Icon(Icons.Default.Add, contentDescription = null)
                 Spacer(modifier = Modifier.width(4.dp))
-                Text("Añadir sesión")
+                Text(stringResource(R.string.añadir_sesion_boton))
             }
         }
 
@@ -74,9 +76,9 @@ fun SchedulesCard(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("Sesión ${index + 1}", fontWeight = FontWeight.Medium, style = MaterialTheme.typography.labelLarge)
+                        Text(stringResource(R.string.sesion_n_formato, index + 1), fontWeight = FontWeight.Medium, style = MaterialTheme.typography.labelLarge)
                         IconButton(onClick = { onRemoveSlot(index) }, modifier = Modifier.size(24.dp)) {
-                            Icon(Icons.Default.Close, contentDescription = "Eliminar", tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f))
+                            Icon(Icons.Default.Close, contentDescription = stringResource(R.string.eliminar), tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f))
                         }
                     }
 
@@ -101,7 +103,15 @@ fun SchedulesCard(
                         Spacer(modifier = Modifier.height(12.dp))
                     }
 
-                    val dayInitials = listOf(1 to "L", 2 to "M", 3 to "X", 4 to "J", 5 to "V", 6 to "S", 7 to "D")
+                    val dayInitials = listOf(
+                        1 to stringResource(R.string.dia_l),
+                        2 to stringResource(R.string.dia_m),
+                        3 to stringResource(R.string.dia_mi),
+                        4 to stringResource(R.string.dia_j),
+                        5 to stringResource(R.string.dia_v),
+                        6 to stringResource(R.string.dia_s),
+                        7 to stringResource(R.string.dia_d)
+                    )
                     Row(
                         horizontalArrangement = Arrangement.SpaceEvenly,
                         modifier = Modifier.fillMaxWidth()
@@ -142,12 +152,12 @@ fun SchedulesCard(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         SessionTimeField(
-                            label = "Inicio", time = slotDraft.startTime,
+                            label = stringResource(R.string.inicio_label), time = slotDraft.startTime,
                             onClick = { onTimeClick(index, true) }, modifier = Modifier.weight(1f)
                         )
                         Text("-", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f))
                         SessionTimeField(
-                            label = "Fin", time = slotDraft.endTime,
+                            label = stringResource(R.string.fin_label), time = slotDraft.endTime,
                             onClick = { onTimeClick(index, false) }, modifier = Modifier.weight(1f),
                             isError = !DateTimeUtils.endIsAfterStart(slotDraft.startTime, slotDraft.endTime)
                         )

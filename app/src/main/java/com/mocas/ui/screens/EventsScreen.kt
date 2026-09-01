@@ -39,11 +39,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mocas.R
 import com.mocas.data.local.SchoolEventType
 import com.mocas.data.local.SchoolEventWithSubject
 import com.mocas.ui.components.EmptyStateCard
@@ -73,11 +75,11 @@ fun EventsScreen(
     }
 
     val filterOptions = listOf(
-        "TODOS" to (null to "Todos"),
-        SchoolEventType.TAREA.name to (Icons.Default.Assignment to "Tareas"),
-        SchoolEventType.EXAMEN.name to (Icons.Default.Quiz to "Exámenes"),
-        SchoolEventType.EXPOSICION.name to (Icons.Default.CoPresent to "Expos"),
-        SchoolEventType.EVENTO_ESCOLAR.name to (Icons.Default.School to "Eventos")
+        "TODOS" to (null to stringResource(R.string.filtro_todos)),
+        SchoolEventType.TAREA.name to (Icons.Default.Assignment to stringResource(R.string.filtro_tareas)),
+        SchoolEventType.EXAMEN.name to (Icons.Default.Quiz to stringResource(R.string.filtro_examenes)),
+        SchoolEventType.EXPOSICION.name to (Icons.Default.CoPresent to stringResource(R.string.filtro_expos)),
+        SchoolEventType.EVENTO_ESCOLAR.name to (Icons.Default.School to stringResource(R.string.filtro_eventos))
     )
 
     val filteredList = remember(allEvents, activeFilter) {
@@ -128,12 +130,12 @@ fun EventsScreen(
                         ) {
                             Column {
                                 Text(
-                                    text = "Progreso del Semestre",
+                                    text = stringResource(R.string.progreso_del_semestre),
                                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
-                                    text = "$completedCount de $totalCount actividades completadas",
+                                    text = stringResource(R.string.actividades_completadas_formato, completedCount, totalCount),
                                     style = MaterialTheme.typography.labelMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -172,7 +174,7 @@ fun EventsScreen(
             if (urgentExams.isNotEmpty()) {
                 item {
                     Text(
-                        text = "Exámenes próximos",
+                        text = stringResource(R.string.examenes_proximos),
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.error,
                         modifier = Modifier.padding(bottom = 8.dp)
@@ -268,10 +270,10 @@ fun EventsScreen(
             if (filteredList.isEmpty()) {
                 item {
                     EmptyStateCard(
-                        title = "No hay actividades",
-                        message = "Puedes registrar tareas, exposiciones o exámenes.",
+                        title = stringResource(R.string.no_hay_actividades),
+                        message = stringResource(R.string.mensaje_sin_actividades),
                         icon = Icons.Default.Assignment,
-                        actionButtonText = "+ Nueva Actividad",
+                        actionButtonText = stringResource(R.string.nueva_actividad_boton),
                         onActionClick = { viewModel.openAddEvent() }
                     )
                 }
@@ -279,7 +281,7 @@ fun EventsScreen(
                 if (pendingEvents.isNotEmpty()) {
                     item {
                         Text(
-                            text = "Pendientes",
+                            text = stringResource(R.string.pendientes),
                             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.ExtraBold),
                             color = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
@@ -303,7 +305,7 @@ fun EventsScreen(
                 if (completedEvents.isNotEmpty()) {
                     item {
                         Text(
-                            text = "Completadas",
+                            text = stringResource(R.string.completadas),
                             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.ExtraBold),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
@@ -411,8 +413,16 @@ private fun CustomEventCard(
                             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)) {
                                 Icon(typeIcon, contentDescription = null, tint = typeColor, modifier = Modifier.size(14.dp))
                                 Spacer(modifier = Modifier.width(6.dp))
+                                val typeLabel = when(eventWithSubject.event.type) {
+                                    SchoolEventType.TAREA -> stringResource(R.string.tipo_tarea)
+                                    SchoolEventType.EXAMEN -> stringResource(R.string.tipo_examen)
+                                    SchoolEventType.EXPOSICION -> stringResource(R.string.tipo_exposicion)
+                                    SchoolEventType.EVENTO_ESCOLAR -> stringResource(R.string.tipo_evento_escolar)
+                                    SchoolEventType.REUNION -> stringResource(R.string.tipo_reunion)
+                                    else -> stringResource(R.string.tipo_otro)
+                                }
                                 Text(
-                                    text = eventWithSubject.event.type.name,
+                                    text = typeLabel.uppercase(),
                                     fontSize = 10.sp,
                                     fontWeight = FontWeight.ExtraBold,
                                     color = typeColor
@@ -451,9 +461,9 @@ private fun CustomEventCard(
                     // Fecha y Hora
                     val dateDisplay = when {
                         isCompleted -> DateTimeUtils.formatDate(eventWithSubject.event.startDate)
-                        eventDate == today -> "Hoy"
-                        eventDate == today.minusDays(1) -> "Vencido (Ayer)"
-                        eventDate.isBefore(today) -> "Vencido (${DateTimeUtils.formatDate(eventWithSubject.event.startDate)})"
+                        eventDate == today -> stringResource(R.string.hoy)
+                        eventDate == today.minusDays(1) -> stringResource(R.string.vencido_ayer)
+                        eventDate.isBefore(today) -> stringResource(R.string.vencido_formato, DateTimeUtils.formatDate(eventWithSubject.event.startDate))
                         else -> DateTimeUtils.formatDate(eventWithSubject.event.startDate)
                     }
 
@@ -500,11 +510,10 @@ private fun CustomEventCard(
                 // Botón Editar
                 if (!isCompleted) {
                     IconButton(onClick = onEditClick, modifier = Modifier.size(28.dp).padding(top = 0.dp)) {
-                        Icon(Icons.Default.Edit, contentDescription = "Editar", tint = MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(20.dp))
+                        Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.editar), tint = MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(20.dp))
                     }
                 }
             }
         }
     }
 }
-

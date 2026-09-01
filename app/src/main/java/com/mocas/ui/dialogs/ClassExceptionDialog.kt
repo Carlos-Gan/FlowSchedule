@@ -19,10 +19,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.MaterialTheme
+import com.mocas.R
 import com.mocas.data.local.ClassExceptionEntity
 import com.mocas.data.local.ClassExceptionType
 import com.mocas.ui.components.ClockTimeField
@@ -50,7 +52,7 @@ fun ClassExceptionDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Cambiar solo esta clase", fontWeight = FontWeight.ExtraBold) },
+        title = { Text(stringResource(R.string.cambiar_esta_clase), fontWeight = FontWeight.ExtraBold) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(
@@ -61,19 +63,19 @@ fun ClassExceptionDialog(
                     FilterChip(
                         selected = type == ClassExceptionType.CANCELED,
                         onClick = { type = ClassExceptionType.CANCELED },
-                        label = { Text("Cancelar clase") }
+                        label = { Text(stringResource(R.string.cancelar_clase)) }
                     )
                     FilterChip(
                         selected = type == ClassExceptionType.MODIFIED,
                         onClick = { type = ClassExceptionType.MODIFIED },
-                        label = { Text("Cambiar") }
+                        label = { Text(stringResource(R.string.cambiar)) }
                     )
                 }
                 if (type == ClassExceptionType.MODIFIED) {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         ClockTimeField(
                             value = startTime,
-                            label = "Inicio",
+                            label = stringResource(R.string.inicio_label),
                             onTimeSelected = { selected ->
                                 startTime = selected
                                 if (!DateTimeUtils.endIsAfterStart(startTime, endTime)) {
@@ -85,7 +87,7 @@ fun ClassExceptionDialog(
                         )
                         ClockTimeField(
                             value = endTime,
-                            label = "Fin",
+                            label = stringResource(R.string.fin_label),
                             onTimeSelected = { endTime = it },
                             isError = !validTime,
                             modifier = Modifier.weight(1f)
@@ -94,7 +96,7 @@ fun ClassExceptionDialog(
                     OutlinedTextField(
                         value = room,
                         onValueChange = { room = it.uppercase() },
-                        label = { Text("Aula para esta fecha") },
+                        label = { Text(stringResource(R.string.aula_fecha_label)) },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp)
@@ -103,7 +105,7 @@ fun ClassExceptionDialog(
                 OutlinedTextField(
                     value = note,
                     onValueChange = { note = capitalizeFirstLetter(it) },
-                    label = { Text("Nota opcional") },
+                    label = { Text(stringResource(R.string.nota_opcional)) },
                     keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp)
@@ -134,14 +136,14 @@ fun ClassExceptionDialog(
                         MaterialTheme.colorScheme.error
                     } else MaterialTheme.colorScheme.primary
                 )
-            ) { Text("Guardar", fontWeight = FontWeight.Bold) }
+            ) { Text(stringResource(R.string.guardar), fontWeight = FontWeight.Bold) }
         },
         dismissButton = {
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 if (saved != null && onRestore != null) {
-                    OutlinedButton(onClick = { onRestore(saved.id) }) { Text("Restaurar") }
+                    OutlinedButton(onClick = { onRestore(saved.id) }) { Text(stringResource(R.string.restaurar)) }
                 }
-                OutlinedButton(onClick = onDismiss) { Text("Cerrar") }
+                OutlinedButton(onClick = onDismiss) { Text(stringResource(R.string.cerrar)) }
             }
         }
     )

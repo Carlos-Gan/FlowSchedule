@@ -75,11 +75,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mocas.R
 import com.mocas.data.local.ScheduleSlotEntity
 import com.mocas.data.local.AcademicPeriodEntity
 import com.mocas.data.local.ClassExceptionEntity
@@ -147,15 +149,21 @@ fun TimetableScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 12.dp)
             ) {
-                TimetableDisplayMode.entries.forEachIndexed { index, mode ->
+                val modes = listOf(
+                    TimetableDisplayMode.SEMANAL to stringResource(R.string.vista_semanal),
+                    TimetableDisplayMode.DIARIA to stringResource(R.string.vista_diaria),
+                    TimetableDisplayMode.MATERIAS to stringResource(R.string.lista_materias)
+                )
+
+                modes.forEachIndexed { index, (mode, label) ->
                     val isSelected = currentMode == mode
                     SegmentedButton(
-                        shape = SegmentedButtonDefaults.itemShape(index = index, count = TimetableDisplayMode.entries.size),
+                        shape = SegmentedButtonDefaults.itemShape(index = index, count = modes.size),
                         onClick = { viewModel.setTimetableMode(mode) },
                         selected = isSelected,
                         label = {
                             Text(
-                                text = mode.displayName,
+                                text = label,
                                 fontSize = 12.sp,
                                 fontWeight = if (isSelected) FontWeight.ExtraBold else FontWeight.Medium
                             )

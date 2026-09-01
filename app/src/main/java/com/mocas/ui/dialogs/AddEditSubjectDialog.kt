@@ -1,5 +1,6 @@
 package com.mocas.ui.screens
 
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,8 +27,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.mocas.R
 import com.mocas.data.local.AcademicPeriodEntity
 import com.mocas.data.local.ScheduleSlotEntity
 import com.mocas.data.local.SubjectEntity
@@ -115,14 +118,14 @@ fun AddEditSubjectScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = if (initialSub == null) "Nueva Materia" else "Editar Materia",
+                        text = if (initialSub == null) stringResource(R.string.nueva_materia_titulo) else stringResource(R.string.editar_materia_titulo),
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
                     )
                 },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.volver_desc))
                     }
                 },
                 actions = {
@@ -171,7 +174,7 @@ fun AddEditSubjectScreen(
                         shape = RoundedCornerShape(8.dp),
                         modifier = Modifier.padding(end = 16.dp)
                     ) {
-                        Text("Guardar", fontWeight = FontWeight.Medium)
+                        Text(stringResource(R.string.guardar), fontWeight = FontWeight.Medium)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
@@ -220,7 +223,7 @@ fun AddEditSubjectScreen(
         val draft = slotsList.getOrNull(target.slotIndex)
         if (draft != null) {
             SessionTimePickerDialog(
-                title = if (target.isStartTime) "Hora de inicio" else "Hora de fin",
+                title = if (target.isStartTime) stringResource(R.string.hora_inicio_titulo) else stringResource(R.string.hora_fin_titulo),
                 initialTime = if (target.isStartTime) draft.startTime else draft.endTime,
                 onDismiss = { timePickerTarget = null },
                 onTimeSelected = { selectedTime ->
@@ -258,9 +261,9 @@ internal fun oneHourAfter(startTime: String): String {
     return formatTime(endMinutes / 60, endMinutes % 60)
 }
 
-internal fun buildPeriodName(startDate: String, endDate: String): String {
-    val start = DateTimeUtils.parseDate(startDate) ?: return "Periodo académico"
-    val end = DateTimeUtils.parseDate(endDate) ?: return "Periodo académico"
+fun buildPeriodName(context: Context, startDate: String, endDate: String): String {
+    val start = DateTimeUtils.parseDate(startDate) ?: return context.getString(R.string.periodo_academico_default)
+    val end = DateTimeUtils.parseDate(endDate) ?: return context.getString(R.string.periodo_academico_default)
     val months = listOf(
         "Ene", "Feb", "Mar", "Abr", "May", "Jun",
         "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
@@ -269,6 +272,7 @@ internal fun buildPeriodName(startDate: String, endDate: String): String {
             "${months[end.monthValue - 1]} ${end.year}"
 }
 
+@Composable
 internal fun detectScheduleConflicts(
     drafts: List<SlotDraft>,
     existingSubjects: List<SubjectWithSlots>,
@@ -286,11 +290,12 @@ internal fun detectScheduleConflicts(
             }
             val sharedDays = first.selectedDays intersect second.selectedDays
             sharedDays.forEach { day ->
+                val dayNameStr = shortDayName(day)
                 conflicts.getOrPut(firstIndex) { mutableListOf() }.add(
-                    "Se cruza con la sesión ${secondIndex + 1} el ${shortDayName(day)}."
+                    stringResource(R.string.error_cruce_sesion, secondIndex + 1, dayNameStr)
                 )
                 conflicts.getOrPut(secondIndex) { mutableListOf() }.add(
-                    "Se cruza con la sesión ${firstIndex + 1} el ${shortDayName(day)}."
+                    stringResource(R.string.error_cruce_sesion, firstIndex + 1, dayNameStr)
                 )
             }
         }
@@ -320,9 +325,13 @@ internal fun detectScheduleConflicts(
                             )
                         ) {
                             conflicts.getOrPut(draftIndex) { mutableListOf() }.add(
-                                "Se cruza con ${existing.subject.name} el " +
-                                        "${shortDayName(savedSlot.dayOfWeek)} " +
-                                        "(${savedSlot.startTime}–${savedSlot.endTime})."
+                                stringResource(
+                                    R.string.error_cruce_materia,
+                                    existing.subject.name,
+                                    shortDayName(savedSlot.dayOfWeek),
+                                    savedSlot.startTime,
+                                    savedSlot.endTime
+                                )
                             )
                         }
                     }
@@ -350,12 +359,13 @@ private fun timeRangesOverlap(
     return firstStart < secondEnd && firstEnd > secondStart
 }
 
+@Composable
 private fun shortDayName(day: Int): String = when (day) {
-    1 -> "lunes"
-    2 -> "martes"
-    3 -> "miércoles"
-    4 -> "jueves"
-    5 -> "viernes"
-    6 -> "sábado"
-    else -> "domingo"
+    1 -> stringResource(R.string.lunes).lowercase()
+    2 -> stringResource(R.string.martes).lowercase()
+    3 -> stringResource(R.string.miercoles).lowercase()
+    4 -> stringResource(R.string.jueves).lowercase()
+    5 -> stringResource(R.string.viernes).lowercase()
+    6 -> stringResource(R.string.sabado).lowercase()
+    else -> stringResource(R.string.domingo).lowercase()
 }
