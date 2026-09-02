@@ -361,5 +361,7 @@
     <string name="onboarding_calendario_subtitulo">Phone synchronization</string>
     <string name="onboarding_ia_titulo">AI Features</string>
     <string name="onboarding_ia_subtitulo">Scan schedules with photo</string>
+    <string name="funciones_ia">AI Features</string>
+    <string name="funciones_ia_desc">Use Gemini to import schedules</string>
     <string name="onboarding_error_nombre">Enter your name to continue</string>
 </resources>

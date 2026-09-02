@@ -601,6 +601,12 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     companion object {
         fun getCurrentDayOfWeekNumber(): Int = DateTimeUtils.currentDayOfWeek()
         fun getTodayDateString(): String = DateTimeUtils.todayString()
+        
+        fun isAiAvailable(): Boolean {
+            val apiKey = com.mocas.BuildConfig.GEMINI_API_KEY
+            return apiKey.isNotBlank() && !apiKey.contains("MY_GEMINI_API_KEY")
+        }
+
         fun getFormattedTodayHeading(): String = DateTimeUtils.formatDate(getTodayDateString(), true)
         fun getGreetingText(name: String): String {
             val greeting = when (LocalTime.now().hour) {

@@ -262,6 +262,23 @@ fun SettingsScreen(
                     }
                 )
 
+                if (ScheduleViewModel.isAiAvailable()) {
+                    SettingRow(
+                        icon = Icons.Default.AutoAwesome,
+                        title = stringResource(R.string.funciones_ia),
+                        subtitle = stringResource(R.string.funciones_ia_desc),
+                        action = {
+                            Switch(
+                                checked = settings.aiFeaturesEnabled,
+                                onCheckedChange = { 
+                                    viewModel.updateSettings(settings.copy(aiFeaturesEnabled = it))
+                                },
+                                colors = SwitchDefaults.colors(checkedTrackColor = MaterialTheme.colorScheme.primary)
+                            )
+                        }
+                    )
+                }
+
                 SettingRow(
                     icon = Icons.Default.TrendingUp,
                     title = stringResource(R.string.usar_escala_gpa),

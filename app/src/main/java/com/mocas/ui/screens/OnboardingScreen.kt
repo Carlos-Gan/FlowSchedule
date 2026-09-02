@@ -40,6 +40,7 @@ import com.mocas.ui.model.AppSettings
 import com.mocas.ui.theme.IndigoLight
 import com.mocas.ui.theme.TurquoiseSecondary
 import com.mocas.ui.util.capitalizeFirstLetter
+import com.mocas.ui.viewmodel.ScheduleViewModel
 
 @Composable
 fun OnboardingScreen(
@@ -56,7 +57,8 @@ fun OnboardingScreen(
     var themeMode by remember { mutableStateOf("AUTO") }
     var notificationsEnabled by remember { mutableStateOf(true) }
     var calendarSyncEnabled by remember { mutableStateOf(true) }
-    var aiFeaturesEnabled by remember { mutableStateOf(true) }
+    val isAiAvailable = ScheduleViewModel.isAiAvailable()
+    var aiFeaturesEnabled by remember { mutableStateOf(isAiAvailable) }
 
     val focusManager = LocalFocusManager.current
 
@@ -311,16 +313,19 @@ private fun PreferencesStep(
                 subtitle = stringResource(R.string.onboarding_calendario_subtitulo),
                 icon = Icons.Default.CalendarMonth,
                 checked = cal,
-                onCheckedChange = onCalChange
+                onCheckedChange = onCalChange,
+                showDivider = ScheduleViewModel.isAiAvailable()
             )
-            PreferenceToggleItem(
-                title = stringResource(R.string.onboarding_ia_titulo),
-                subtitle = stringResource(R.string.onboarding_ia_subtitulo),
-                icon = Icons.Default.AutoAwesome,
-                checked = ai,
-                onCheckedChange = onAiChange,
-                showDivider = false
-            )
+            if (ScheduleViewModel.isAiAvailable()) {
+                PreferenceToggleItem(
+                    title = stringResource(R.string.onboarding_ia_titulo),
+                    subtitle = stringResource(R.string.onboarding_ia_subtitulo),
+                    icon = Icons.Default.AutoAwesome,
+                    checked = ai,
+                    onCheckedChange = onAiChange,
+                    showDivider = false
+                )
+            }
         }
     }
 }

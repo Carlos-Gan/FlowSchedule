@@ -360,5 +360,7 @@
     <string name="onboarding_calendario_subtitulo">Sincronización con el teléfono</string>
     <string name="onboarding_ia_titulo">Funciones de IA</string>
     <string name="onboarding_ia_subtitulo">Escaneo de horarios con foto</string>
+    <string name="funciones_ia">Funciones de IA</string>
+    <string name="funciones_ia_desc">Usar Gemini para importar horarios</string>
     <string name="onboarding_error_nombre">Escribe tu nombre para continuar</string>
 </resources>
