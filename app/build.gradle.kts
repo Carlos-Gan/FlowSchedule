@@ -14,8 +14,8 @@ android {
     applicationId = "com.mocas.flowschedule"
     minSdk = 26
     targetSdk = 37
-    versionCode = 3
-    versionName = "1.4.6"
+    versionCode = 4
+    versionName = "1.5.0"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }

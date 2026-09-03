@@ -9,7 +9,7 @@ Aplicación Android para organizar materias, sesiones, tareas, exámenes, period
 ![Android](https://img.shields.io/badge/Android-8.0%2B-3DDC84?logo=android&logoColor=white)
 ![Kotlin](https://img.shields.io/badge/Kotlin-2.4-7F52FF?logo=kotlin&logoColor=white)
 ![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-Material%203-4285F4?logo=jetpackcompose&logoColor=white)
-![Version](https://img.shields.io/badge/versión-1.4.0-5847EB)
+![Version](https://img.shields.io/badge/versión-1.5.0-5847EB)
 
 </div>
 
@@ -19,12 +19,12 @@ Aplicación Android para organizar materias, sesiones, tareas, exámenes, period
 
 - Vista semanal, vista diaria y lista de materias.
 - Navegación entre semanas y regreso rápido a la semana actual.
-- *Rango horario dinámico que se ajusta a tus clases para ahorrar espacio vertical.**
-- *Línea de tiempo en tiempo real que indica la hora actual y la clase en curso.**
-- Varias sesiones por materia y varios días por sesión.
-- Selector de hora mediante reloj y cálculo automático de una hora de duración.
+- *Rango horario dinámico que se ajusta a tus clases para ahorrar espacio vertical.*
+- *Línea de tiempo en tiempo real que indica la hora actual y la clase en curso.*
+- Varias sesiones por materia con **salón independiente por sesión**.
+- Selector de hora con **ajuste automático de duración (+1h)** para evitar errores.
 - Validación de cruces para evitar dos clases en el mismo horario.
-- Colores, profesor, código, salón y recordatorio individual por materia.
+- Colores, profesor, código y recordatorio individual por materia.
 - Excepciones para cancelar o modificar una sola clase sin cambiar toda la materia.
 
 ### Periodos académicos y vacaciones
@@ -38,207 +38,67 @@ Aplicación Android para organizar materias, sesiones, tareas, exámenes, period
 ### Actividades y calendario
 
 - Tareas, exámenes, exposiciones, reuniones, eventos escolares, vacaciones y otros eventos.
-- *Carrusel de exámenes próximos con fechas relativas (Hoy, Mañana, etc.).**
-- *Formulario de creación simplificado: una sola fecha y hora para evitar confusiones.**
-- *Filtros inteligentes por categorías con iconos minimalistas de Material 3.**
-- Actividades de uno o varios días.
+- *Sistema de **Advertencia Visual**: Borde y línea lateral que cambia a rojo/ámbar según la urgencia.*
+- *Carrusel de exámenes próximos con fechas relativas (Hoy, Mañana, etc.).*
+- *Formulario inteligente: Sugiere automáticamente la hora basada en tus clases del día.*
+- *Filtros inteligentes por categorías con iconos minimalistas de Material 3.*
 - Actividades recurrentes semanales o mensuales con fecha de finalización.
-- Prioridad baja, media o alta para ordenar visualmente lo más importante.
-- Subtareas persistentes para dividir proyectos en pasos, con barra de progreso.
-- Selectores de fecha con calendario y selectores de hora con reloj.
-- Actividades vinculadas a una materia y control de completadas o pendientes.
+- Prioridad con etiquetas visuales y subtareas persistentes con barra de progreso.
 - Integración con el calendario del teléfono mediante `CalendarContract`.
 
 ### Perfil y Calificaciones
 
-- *Perfil académico personalizable: edita tu nombre, carrera/grado e institución.**
-- *Cálculo de promedio real basado en todas tus calificaciones registradas.**
-- *Conversión instantánea a escala GPA (4.0) desde los ajustes.**
-- Categorías ponderadas para parciales, tareas, proyectos u otros rubros.
-- Espacio independiente y compacto dentro de cada materia, con unidades persistentes que pueden crearse vacías.
-- Registro de evaluaciones con calificación sobre 100.
-- Promedio actual, meta editable y calificación necesaria para aprobar.
-- Promedio combinado de la materia, promedio independiente por unidad y promedio general por periodo con desglose por materia.
-- Simulador guiado por unidad y categoría, con control de nota y comparación entre promedio actual y proyectado.
+- *Perfil académico personalizable: edita tu nombre, carrera/grado e institución.*
+- *Contador de **Racha Productiva**: Días consecutivos completando actividades (se pierde si hay tareas vencidas).*
+- *Cálculo de promedio real basado en todas tus calificaciones registradas.*
+- *Conversión instantánea a escala GPA (4.0) desde los ajustes.*
+- Espacio independiente de calificaciones por materia con unidades y categorías ponderadas.
+- Simulador guiado con comparación entre promedio actual y proyectado.
 
 ### Compartir el horario
 
-- Imagen PNG semanal con diseño limpio.
+- Imagen PNG semanal con diseño limpio y marca de agua de **FlowSchedule**.
 - Documento PDF listo para imprimir o enviar.
 - Archivo `.ics` compatible con calendarios de compañeros.
-- Controles para ocultar profesor, salón y actividades personales.
-
-### Notificaciones
-
-- Próxima clase.
-- Tareas, exámenes y eventos.
-- Actividades vencidas.
-- Resumen de las actividades del día siguiente.
-- Configuración independiente por categoría.
-- Anticipación personalizable: minutos, horas o días antes.
-- Restauración automática de recordatorios después de reiniciar el teléfono.
-- Acciones para completar o posponer una actividad durante una hora sin abrir la aplicación.
-
-### Organización y búsqueda
-
-- Etiquetas `Universidad`, `Trabajo` y `Personal`.
-- Marcado de materias y actividades como importantes.
-- Búsqueda global por materia, actividad, profesor, salón o código.
-- Filtros por etiqueta e importancia.
-
-### Exportación y respaldos
-
-- Respaldo portátil en JSON con periodos, materias, sesiones, excepciones, actividades recurrentes y subtareas.
-- Restauración completa en el mismo dispositivo o en otro teléfono.
-- Validación del archivo antes de reemplazar los datos actuales.
-- Exportación `.ics` independiente para Google Calendar, Apple Calendar y Outlook.
-- Papelera recuperable para materias y actividades, con retención de 30 días.
-- Hasta cinco respaldos automáticos antes de importar, restaurar o borrar todos los datos.
-
-### Widgets
-
-- **Próxima clase:** muestra materia, hora, salón, tiempo restante y total de pendientes.
-- **Horario del día (4×2):** lista desplazable con las clases de hoy, salón, indicador de clase actual y pendientes vinculados a cada materia.
-- Actualización automática al modificar el horario, las actividades o las excepciones.
+- Controles de privacidad para ocultar profesor o salón.
 
 ### Experiencia de uso
 
-- Pantalla de bienvenida y configuración inicial del estudiante.
-- *Temas claro y oscuro (optimizado con True Black para pantallas OLED).**
-- *Diseño Material 3 de última generación (SegmentedButtons, Carruseles y Wavy Indicators).**
-- *Navegación diaria por fechas mediante carrusel horizontal.**
-- Diseño Material 3 adaptado a navegación por gestos.
-- Campos de texto con capitalización inicial automática.
-- Funciones de IA completamente desactivables desde Ajustes.
+- **Soporte Multi-idioma**: Traducción completa al **Inglés** y Español.
+- **Modo OLED (True Black)**: Tema oscuro optimizado para ahorrar batería y reducir fatiga.
+- **Onboarding Interactivo**: Nuevo asistente de configuración por pasos con animaciones.
+- Diseño Material 3 avanzado (`SegmentedButtons`, `Wavy Indicators`, `Carousels`).
+- Funciones de IA detectan automáticamente la disponibilidad de la API Key.
 
 ## Importación de horarios con IA
 
-La importación desde foto utiliza Gemini 2.5 Flash para reconocer materias, días, horarios, profesores y salones. Esta función es opcional: el resto de FlowSchedule funciona sin una clave de API.
+La importación desde foto utiliza Gemini 2.5 Flash para reconocer materias, días, horarios, profesores y salones. 
 
 1. Copia `.env.example` como `.env` en la raíz del proyecto.
-2. Agrega tu clave:
-
-```properties
-GEMINI_API_KEY=tu_clave_de_gemini
-```
-
-3. Sincroniza nuevamente el proyecto con Gradle.
-
-Puedes crear una clave desde [Google AI Studio](https://aistudio.google.com/app/apikey). El archivo `.env` está excluido de Git y no debe subirse al repositorio.
-
-> [!IMPORTANT]
-> Las claves incluidas en una aplicación cliente pueden extraerse del APK. Para una publicación real, restringe la clave y considera mover las solicitudes de IA a un backend propio.
+2. Agrega tu clave: `GEMINI_API_KEY=tu_clave_de_gemini`.
+3. Sincroniza el proyecto. Si no se detecta la clave, la opción se ocultará automáticamente por seguridad.
 
 ## Tecnologías
 
-- Kotlin y Coroutines.
-- Jetpack Compose con Material 3.
+- Kotlin, Coroutines y Jetpack Compose (M3).
 - Room para almacenamiento local.
 - ViewModel y StateFlow para estado reactivo.
 - AlarmManager y notificaciones nativas de Android.
-- App Widgets con `RemoteViews`.
-- OkHttp para la integración opcional con Gemini.
-- KSP para generación de código de Room.
-- JUnit, Robolectric, Compose UI Test y Roborazzi.
-
-## Arquitectura
-
-El proyecto mantiene una arquitectura por capas sencilla:
-
-```text
-app/src/main/java/com/mocas/
-├── data/
-│   ├── ai/             # Lectura opcional de horarios con Gemini
-│   ├── local/          # Entidades, DAO, Room y migraciones
-│   ├── notifications/  # Planificación y publicación de recordatorios
-│   ├── preferences/    # Preferencias de la aplicación
-│   ├── repository/     # Operaciones de datos y calendario
-│   └── widget/         # Widgets de próxima clase y horario diario
-├── ui/
-│   ├── components/     # Componentes reutilizables
-│   ├── dialogs/        # Formularios y selectores
-│   ├── model/          # Modelos de presentación
-│   ├── screens/        # Pantallas principales
-│   ├── theme/          # Colores, tipografía y temas
-│   ├── util/           # Utilidades de interfaz
-│   └── viewmodel/      # Estado y acciones de la aplicación
-└── util/               # Utilidades generales de fecha y hora
-```
-
-Los datos del usuario se almacenan localmente. Solo la importación de horarios con IA envía la imagen seleccionada al servicio de Gemini.
+- OkHttp para integración con Gemini.
+- KSP, JUnit, Robolectric y Roborazzi.
 
 ## Requisitos
 
-- Android Studio con soporte para AGP 9.3.
-- JDK 17.
-- Android SDK 37 para compilar.
-- Dispositivo o emulador con Android 8.0 (API 26) o superior.
-- Clave de Gemini únicamente si se utilizará la importación con IA.
-
-## Ejecutar el proyecto
-
-1. Clona el repositorio:
-
-```bash
-git clone URL_DE_TU_REPOSITORIO.git
-cd flowschedule
-```
-
-2. Abre la carpeta en Android Studio.
-3. Espera la sincronización de Gradle.
-4. Opcionalmente configura `GEMINI_API_KEY` en `.env`.
-5. Ejecuta la configuración `app` en un emulador o dispositivo físico.
-
-También puedes compilar desde la terminal:
-
-```bash
-# Windows
-gradlew.bat assembleDebug
-
-# macOS o Linux
-./gradlew assembleDebug
-```
-
-El APK de desarrollo se genera en:
-
-```text
-app/build/outputs/apk/debug/app-debug.apk
-```
-
-## Pruebas y calidad
-
-```bash
-# Pruebas unitarias
-./gradlew testDebugUnitTest
-
-# Análisis estático
-./gradlew lintDebug
-
-# Validación completa
-./gradlew testDebugUnitTest lintDebug assembleDebug
-```
-
-## Firma de publicación
-
-La compilación `release` lee los siguientes valores del entorno:
-
-```text
-KEYSTORE_PATH
-STORE_PASSWORD
-KEY_PASSWORD
-```
-
-La configuración actual utiliza `upload` como alias de la clave.
-
-No subas archivos de firma, contraseñas, `local.properties` ni `.env` al repositorio.
+- Android Studio 2026.1.3 o superior.
+- SDK 37 (compilación) / Android 8.0+ (ejecución).
 
 ## Estado del proyecto
 
-- Versión actual: **1.4.0**.
+- Versión actual: **1.5.0**.
 - `applicationId`: `com.mocas.flowschedule`.
 - SDK mínimo: **26**.
 - SDK objetivo: **37**.
 
 ## Licencia
 
-Este proyecto está bajo la **Licencia MIT**. Puedes consultar el archivo [LICENSE](LICENSE) para más detalles. Esta licencia permite el uso, copia y modificación del código de forma gratuita, siempre que se mantenga el aviso de derechos de autor original.
+Este proyecto está bajo la **Licencia MIT**. Puedes consultar el archivo [LICENSE](LICENSE) para más detalles.
