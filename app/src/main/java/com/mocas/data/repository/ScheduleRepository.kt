@@ -260,7 +260,12 @@ class ScheduleRepository(private val database: AppDatabase) {
         subtasks: List<SubtaskEntity> = emptyList()
     ): Long = database.withTransaction {
         validateEvent(event)
-        val occurrences = EventRecurrenceGenerator.generate(event)
+        val now = System.currentTimeMillis()
+        val preparedEvent = if (event.isCompleted && event.completedAtMillis == null) {
+            event.copy(completedAtMillis = now, updatedAtMillis = now)
+        } else event
+
+        val occurrences = EventRecurrenceGenerator.generate(preparedEvent)
         var firstId = 0L
         occurrences.forEachIndexed { index, occurrence ->
             val eventId = eventDao.insertEvent(occurrence.copy(id = 0))
@@ -277,14 +282,27 @@ class ScheduleRepository(private val database: AppDatabase) {
         require(event.id > 0) { "No se puede actualizar un evento sin ID." }
         validateEvent(event)
         val previous = requireNotNull(eventDao.getEventById(event.id)) { "La actividad ya no existe." }
+        
+        val now = System.currentTimeMillis()
+        val completedAt = when {
+            event.isCompleted && !previous.isCompleted -> now // Recién completado
+            event.isCompleted -> previous.completedAtMillis // Ya estaba completado
+            else -> null // No completado
+        }
+        
+        val eventToSave = event.copy(
+            completedAtMillis = completedAt,
+            updatedAtMillis = now
+        )
+
         val turnsIntoSeries = previous.recurrenceType == com.mocas.data.local.RecurrenceType.NONE &&
             event.recurrenceType != com.mocas.data.local.RecurrenceType.NONE
         if (turnsIntoSeries) {
-            val occurrences = EventRecurrenceGenerator.generate(event.copy(id = 0))
+            val occurrences = EventRecurrenceGenerator.generate(eventToSave.copy(id = 0))
             val first = occurrences.first().copy(
                 id = event.id,
                 createdAtMillis = previous.createdAtMillis,
-                updatedAtMillis = System.currentTimeMillis()
+                updatedAtMillis = now
             )
             check(eventDao.updateEvent(first) > 0)
             subtaskDao.deleteForEvent(event.id)
@@ -295,7 +313,7 @@ class ScheduleRepository(private val database: AppDatabase) {
             }
             true
         } else {
-            val updated = eventDao.updateEvent(event.copy(updatedAtMillis = System.currentTimeMillis())) > 0
+            val updated = eventDao.updateEvent(eventToSave) > 0
             if (updated) {
                 subtaskDao.deleteForEvent(event.id)
                 insertSubtasksForEvent(event.id, subtasks)
@@ -369,7 +387,8 @@ class ScheduleRepository(private val database: AppDatabase) {
 
     suspend fun setEventCompleted(eventId: Long, completed: Boolean): Boolean = database.withTransaction {
         val now = System.currentTimeMillis()
-        val changed = eventDao.setEventCompleted(eventId, completed, now) > 0
+        val completedAt = if (completed) now else null
+        val changed = eventDao.setEventCompleted(eventId, completed, now, completedAt) > 0
         if (changed) subtaskDao.setAllCompletedForEvent(eventId, completed, now)
         changed
     }
@@ -397,7 +416,8 @@ class ScheduleRepository(private val database: AppDatabase) {
             if (!changed) return@withTransaction false
             val subtasks = subtaskDao.getForEvent(eventId)
             if (subtasks.isNotEmpty()) {
-                eventDao.setEventCompleted(eventId, subtasks.all { it.isCompleted }, now)
+                val allCompleted = subtasks.all { it.isCompleted }
+                eventDao.setEventCompleted(eventId, allCompleted, now, if (allCompleted) now else null)
             }
             true
         }

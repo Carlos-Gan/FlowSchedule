@@ -78,10 +78,8 @@ fun ClassExceptionDialog(
                             label = stringResource(R.string.inicio_label),
                             onTimeSelected = { selected ->
                                 startTime = selected
-                                if (!DateTimeUtils.endIsAfterStart(startTime, endTime)) {
-                                    endTime = DateTimeUtils.parseTime(selected)?.plusHours(1)?.toString()
-                                        ?: endTime
-                                }
+                                // Siempre sumamos una hora al cambiar el inicio para evitar errores de validación
+                                endTime = DateTimeUtils.getEndTime(selected)
                             },
                             modifier = Modifier.weight(1f)
                         )

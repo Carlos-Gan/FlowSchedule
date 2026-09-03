@@ -334,23 +334,28 @@ private fun CustomEventCard(
     val eventDate = DateTimeUtils.parseDate(eventWithSubject.event.startDate) ?: LocalDate.now()
     val today = LocalDate.now()
     val isOverdue = !isCompleted && eventDate.isBefore(today)
+    val daysLeft = DateTimeUtils.daysRemaining(eventWithSubject.event.startDate) ?: 99L
 
-    // Colores según estado
+    // Colores según estado y urgencia (el borde se pone rojo al acercarse la fecha)
     val sideStripColor = when {
         isCompleted -> Color.Transparent
         isOverdue -> MaterialTheme.colorScheme.error
+        daysLeft <= 0L -> MaterialTheme.colorScheme.error // Hoy o vencido
+        daysLeft <= 1L -> Color(0xFFF59E0B) // Mañana (Naranja/Ámbar)
+        daysLeft <= 3L -> MaterialTheme.colorScheme.tertiary // Próximamente
         else -> MaterialTheme.colorScheme.primary
     }
 
     val cardBg = when {
-        isCompleted -> MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.3f)
-        isOverdue -> MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.3f)
+        isCompleted -> MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.2f)
+        isOverdue || daysLeft <= 0L -> MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.15f)
+        daysLeft <= 1L -> MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.15f)
         else -> MaterialTheme.colorScheme.surfaceContainerLowest
     }
 
     val borderColor = when {
         isCompleted -> MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f)
-        isOverdue -> MaterialTheme.colorScheme.error.copy(alpha = 0.2f)
+        isOverdue || daysLeft <= 1L -> sideStripColor.copy(alpha = 0.5f)
         else -> MaterialTheme.colorScheme.outlineVariant
     }
 

@@ -11,11 +11,11 @@ android {
   compileSdk = 37
 
   defaultConfig {
-    applicationId = "com.gaco.snapmyschedule"
+    applicationId = "com.mocas.snapmyschedule"
     minSdk = 26
     targetSdk = 37
     versionCode = 3
-    versionName = "1.4.0"
+    versionName = "1.4.6"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }

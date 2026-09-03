@@ -39,12 +39,7 @@ import androidx.compose.material.icons.outlined.Schedule
 import androidx.compose.material.icons.outlined.School
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Close
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -99,7 +94,31 @@ fun AddEventDialog(
     var isAllDay by remember {
         mutableStateOf(initialEvent?.isAllDay ?: (defaultType == SchoolEventType.VACACIONES))
     }
-    var eventTime by remember { mutableStateOf(initialEvent?.startTime ?: "09:00") }
+
+    // Lógica para determinar la hora por defecto basada en la clase del día
+    val calculatedDefaultTime = remember(selectedSubjectId, eventDate, subjects) {
+        if (initialEvent != null) return@remember initialEvent.startTime ?: "09:00"
+
+        val date = DateTimeUtils.parseDate(eventDate)
+        val dow = date?.dayOfWeek?.value ?: DateTimeUtils.currentDayOfWeek()
+        
+        // Buscamos la clase de esa materia en ese día
+        val classStart = subjects.find { it.subject.id == selectedSubjectId }
+            ?.slots?.find { it.dayOfWeek == dow }
+            ?.startTime
+
+        classStart ?: "09:00"
+    }
+
+    var eventTime by remember { mutableStateOf(calculatedDefaultTime) }
+
+    // Si es una nueva actividad y cambia la materia/fecha, actualizamos la hora sugerida
+    LaunchedEffect(calculatedDefaultTime) {
+        if (initialEvent == null) {
+            eventTime = calculatedDefaultTime
+        }
+    }
+
     var location by remember { mutableStateOf(initialEvent?.location ?: "") }
     var description by remember { mutableStateOf(initialEvent?.description ?: "") }
 
@@ -402,6 +421,9 @@ fun AddEventDialog(
                 Button(
                     onClick = {
                         if (title.isNotBlank()) {
+                            val finalStartTime = if (isAllDay) null else eventTime
+                            val finalEndTime = if (isAllDay) null else DateTimeUtils.getEndTime(eventTime)
+
                             onSave(
                                 SchoolEventEntity(
                                     id = initialEvent?.id ?: 0L,
@@ -410,8 +432,8 @@ fun AddEventDialog(
                                     subjectId = selectedSubjectId,
                                     startDate = eventDate,
                                     endDate = eventDate,
-                                    startTime = if (isAllDay) null else eventTime,
-                                    endTime = if (isAllDay) null else eventTime,
+                                    startTime = finalStartTime,
+                                    endTime = finalEndTime,
                                     isAllDay = isAllDay,
                                     location = location.trim(),
                                     description = description.trim(),

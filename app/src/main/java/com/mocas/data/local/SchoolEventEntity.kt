@@ -70,6 +70,8 @@ data class SchoolEventEntity(
 
     val lastCalendarSyncMillis: Long? = null,
 
+    val completedAtMillis: Long? = null,
+
     val isDeleted: Boolean = false,
     val deletedAtMillis: Long? = null,
 

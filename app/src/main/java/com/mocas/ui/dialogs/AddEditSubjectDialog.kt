@@ -230,7 +230,8 @@ fun AddEditSubjectScreen(
                     val currentDraft = slotsList.getOrNull(target.slotIndex)
                     if (currentDraft != null) {
                         slotsList[target.slotIndex] = if (target.isStartTime) {
-                            currentDraft.copy(startTime = selectedTime, endTime = oneHourAfter(selectedTime))
+                            // Al cambiar el inicio, siempre sumamos una hora automáticamente
+                            currentDraft.copy(startTime = selectedTime, endTime = DateTimeUtils.getEndTime(selectedTime))
                         } else {
                             currentDraft.copy(endTime = selectedTime)
                         }
@@ -254,12 +255,6 @@ fun parseTime(value: String): Pair<Int, Int> {
 
 fun formatTime(hour: Int, minute: Int): String =
     String.format(Locale.ROOT, "%02d:%02d", hour, minute)
-
-internal fun oneHourAfter(startTime: String): String {
-    val (hour, minute) = parseTime(startTime)
-    val endMinutes = (hour * 60 + minute + 60).coerceAtMost(23 * 60 + 59)
-    return formatTime(endMinutes / 60, endMinutes % 60)
-}
 
 fun buildPeriodName(context: Context, startDate: String, endDate: String): String {
     val start = DateTimeUtils.parseDate(startDate) ?: return context.getString(R.string.periodo_academico_default)

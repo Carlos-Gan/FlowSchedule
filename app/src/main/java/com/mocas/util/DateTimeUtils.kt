@@ -83,6 +83,11 @@ object DateTimeUtils {
     fun timeToMinutes(value: String): Int? =
         parseTime(value)?.let { it.hour * 60 + it.minute }
 
+    fun getEndTime(startTime: String): String {
+        val time = parseTime(startTime) ?: return startTime
+        return time.plusHours(1).format(timeFormatter)
+    }
+
     fun endIsAfterStart(startTime: String, endTime: String): Boolean {
         val start = parseTime(startTime) ?: return false
         val end = parseTime(endTime) ?: return false

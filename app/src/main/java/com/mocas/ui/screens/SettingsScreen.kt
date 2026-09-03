@@ -74,6 +74,8 @@ fun SettingsScreen(
         ) ?: 0.0
     }
 
+    val currentStreak by viewModel.currentStreak.collectAsStateWithLifecycle()
+
     val displayAverage = remember(realAverage, settings.useGpaScale) {
         if (settings.useGpaScale) {
             // Conversión a escala 4.0
@@ -210,7 +212,7 @@ fun SettingsScreen(
             )
             StatCard(
                 icon = Icons.Outlined.Whatshot,
-                value = "0", // Could be implemented with real streak logic
+                value = currentStreak.toString(),
                 label = stringResource(R.string.dias_de_racha),
                 modifier = Modifier.weight(1f)
             )

@@ -170,10 +170,12 @@ class NotificationActionReceiver : BroadcastReceiver() {
             try {
                 when (intent.action) {
                     NotificationScheduler.ACTION_COMPLETE -> {
+                        val now = System.currentTimeMillis()
                         AppDatabase.getDatabase(context).schoolEventDao().setEventCompleted(
                             eventId,
                             true,
-                            System.currentTimeMillis()
+                            now,
+                            now
                         )
                         ReminderRescheduler.reschedule(context)
                         ScheduleWidgetProvider.requestUpdate(context)

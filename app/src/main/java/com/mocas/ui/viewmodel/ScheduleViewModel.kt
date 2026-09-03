@@ -42,6 +42,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -147,6 +148,11 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     ) { subjects, exceptions ->
         computeDailyClassStats(subjects, LocalDate.now(), exceptions)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), DailyClassStats())
+    
+    val currentStreak: StateFlow<Int> = allEventsWithSubject
+        .map { list -> com.mocas.data.repository.StreakCalculator.calculateCurrentStreak(list.map { it.event }) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
+    
     val nextClassInfo: StateFlow<NextClassInfo?> = subjectsWithSlots
         .combine(_selectedDayOfWeek) { subjects, _ -> computeNextClass(subjects) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)

@@ -200,14 +200,16 @@ interface SchoolEventDao {
         """
         UPDATE school_events
         SET isCompleted = :completed,
-            updatedAtMillis = :updatedAtMillis
+            updatedAtMillis = :updatedAtMillis,
+            completedAtMillis = :completedAtMillis
         WHERE id = :eventId AND isDeleted = 0
         """
     )
     suspend fun setEventCompleted(
         eventId: Long,
         completed: Boolean,
-        updatedAtMillis: Long
+        updatedAtMillis: Long,
+        completedAtMillis: Long?
     ): Int
 
     @Query(

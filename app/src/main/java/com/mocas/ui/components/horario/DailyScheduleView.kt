@@ -106,6 +106,8 @@ fun DailyScheduleView(
             }
         }
 
+        Spacer(modifier = Modifier.height(8.dp))
+
         // --- Compact Horizontal Date Strip ---
         Row(
             modifier = Modifier
@@ -166,7 +168,7 @@ fun DailyScheduleView(
         } else {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(top = 4.dp, bottom = 100.dp),
+                contentPadding = PaddingValues(top = 16.dp, bottom = 100.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(todayClasses, key = { it.slot.id }) { classItem ->
