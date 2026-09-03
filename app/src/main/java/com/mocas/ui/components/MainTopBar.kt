@@ -20,7 +20,7 @@ fun getTopBarConfig(
 ): TopBarConfig {
     return when (currentTab) {
         BottomNavTab.INICIO -> TopBarConfig(
-            title = "SnapMySchedule",
+            title = "FlowSchedule",
             subtitleRes = R.string.sub_inicio,
             showScanAction = true,
             showAddAction = false

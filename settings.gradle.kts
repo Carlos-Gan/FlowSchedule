@@ -22,6 +22,6 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "SnapMySchedule"
+rootProject.name = "FlowSchedule"
 
 include(":app")

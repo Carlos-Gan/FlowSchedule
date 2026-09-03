@@ -17,7 +17,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mocas.ui.screens.MainAppScreen
 import com.mocas.ui.screens.OnboardingScreen
-import com.mocas.ui.theme.SnapMyScheduleTheme
+import com.mocas.ui.theme.FlowScheduleTheme
 import com.mocas.ui.viewmodel.ScheduleViewModel
 import java.util.Locale
 
@@ -73,7 +73,7 @@ class MainActivity : ComponentActivity() {
                 systemDarkTheme = isSystemInDarkTheme()
             )
 
-            SnapMyScheduleTheme(
+            FlowScheduleTheme(
                 darkTheme = darkTheme
             ) {
                 if (settings.onboardingCompleted) {

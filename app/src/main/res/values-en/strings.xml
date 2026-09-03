@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SnapMySchedule</string>
+    <string name="app_name">FlowSchedule</string>
     <string name="widget_description">Next class and pending activities</string>
     <string name="next_class_widget_name">Next Class</string>
     <string name="daily_widget_name">Daily Schedule</string>
@@ -333,7 +333,7 @@
     <string name="sin_hora">No time</string>
     <string name="organizacion_label">Organization</string>
     <string name="marcar_importante">Mark as important</string>
-    <string name="onboarding_bienvenida_titulo">Welcome to SnapMySchedule!</string>
+    <string name="onboarding_bienvenida_titulo">Welcome to FlowSchedule!</string>
     <string name="onboarding_bienvenida_subtitulo">Your semester, intelligently organized.</string>
     <string name="onboarding_comenzar_boton">Get Started</string>
     <string name="onboarding_paso_identidad_titulo">What should we call you?</string>

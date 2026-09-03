@@ -109,7 +109,7 @@ class ReminderReceiver : BroadcastReceiver() {
         )
         val notification = NotificationCompat.Builder(context, channel)
             .setSmallIcon(R.drawable.ic_notification)
-            .setContentTitle(intent.getStringExtra("title") ?: "SnapMySchedule")
+            .setContentTitle(intent.getStringExtra("title") ?: "FlowSchedule")
             .setContentText(intent.getStringExtra("message").orEmpty())
             .setStyle(NotificationCompat.BigTextStyle().bigText(intent.getStringExtra("message").orEmpty()))
             .setContentIntent(openApp)

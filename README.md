@@ -1,6 +1,6 @@
 <div align="center">
 
-# SnapMySchedule
+# FlowSchedule
 
 ### Tu horario, actividades y recordatorios en un solo lugar
 
@@ -113,7 +113,7 @@ Aplicación Android para organizar materias, sesiones, tareas, exámenes, period
 
 ## Importación de horarios con IA
 
-La importación desde foto utiliza Gemini 2.5 Flash para reconocer materias, días, horarios, profesores y salones. Esta función es opcional: el resto de SnapMySchedule funciona sin una clave de API.
+La importación desde foto utiliza Gemini 2.5 Flash para reconocer materias, días, horarios, profesores y salones. Esta función es opcional: el resto de FlowSchedule funciona sin una clave de API.
 
 1. Copia `.env.example` como `.env` en la raíz del proyecto.
 2. Agrega tu clave:
@@ -181,7 +181,7 @@ Los datos del usuario se almacenan localmente. Solo la importación de horarios 
 
 ```bash
 git clone URL_DE_TU_REPOSITORIO.git
-cd snapmyschedule
+cd flowschedule
 ```
 
 2. Abre la carpeta en Android Studio.
@@ -235,7 +235,7 @@ No subas archivos de firma, contraseñas, `local.properties` ni `.env` al reposi
 ## Estado del proyecto
 
 - Versión actual: **1.4.0**.
-- `applicationId`: `com.gaco.snapmyschedule`.
+- `applicationId`: `com.mocas.flowschedule`.
 - SDK mínimo: **26**.
 - SDK objetivo: **37**.
 

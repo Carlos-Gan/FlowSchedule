@@ -95,7 +95,7 @@ fun SnapTopAppBar(
     onScanClick: (() -> Unit)? = null,
     onAddClick: (() -> Unit)? = null
 ) {
-    val isBrandHeader = title == "SnapMySchedule"
+    val isBrandHeader = title == "FlowSchedule"
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
 

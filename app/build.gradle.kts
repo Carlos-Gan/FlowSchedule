@@ -11,7 +11,7 @@ android {
   compileSdk = 37
 
   defaultConfig {
-    applicationId = "com.mocas.snapmyschedule"
+    applicationId = "com.mocas.flowschedule"
     minSdk = 26
     targetSdk = 37
     versionCode = 3

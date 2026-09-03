@@ -76,7 +76,7 @@ class AppSettingsStore(context: Context) {
     }
 
     private companion object {
-        const val PREFERENCES_NAME = "snap_my_schedule_settings"
+        const val PREFERENCES_NAME = "flow_schedule_settings"
         const val KEY_USER_NAME = "user_name"
         const val KEY_EDUCATION_LEVEL = "education_level"
         const val KEY_EDUCATION_INSTITUTION = "education_institution"

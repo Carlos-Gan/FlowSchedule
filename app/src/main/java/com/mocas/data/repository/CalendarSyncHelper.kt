@@ -256,7 +256,7 @@ object CalendarSyncHelper {
                     appendLine("Salón: $selectedRoom")
                 }
 
-                append("Agregado desde SnapMySchedule")
+                append("Agregado desde FlowSchedule")
             }
 
             val intent = Intent(
@@ -341,10 +341,10 @@ object CalendarSyncHelper {
 
         lines += "BEGIN:VCALENDAR"
         lines += "VERSION:2.0"
-        lines += "PRODID:-//SnapMySchedule//Android//ES"
+        lines += "PRODID:-//FlowSchedule//Android//ES"
         lines += "CALSCALE:GREGORIAN"
         lines += "METHOD:PUBLISH"
-        lines += "X-WR-CALNAME:SnapMySchedule"
+        lines += "X-WR-CALNAME:FlowSchedule"
         lines += "X-WR-TIMEZONE:${escapeIcs(zoneId.id)}"
 
         val generatedAt = utcFormatter.format(Instant.now())
@@ -412,7 +412,7 @@ object CalendarSyncHelper {
                     append(subject.id)
                     append("-slot-")
                     append(slot.id)
-                    append("@snapmyschedule")
+                    append("@flowschedule")
                 }
 
                 val description = buildString {
@@ -471,7 +471,7 @@ object CalendarSyncHelper {
         showRoom: Boolean = true
     ): Intent {
         val exportDirectory = File(context.cacheDir, "exports").apply { mkdirs() }
-        val file = File(exportDirectory, "horario-snapmyschedule.ics")
+        val file = File(exportDirectory, "horario-flowschedule.ics")
         var content = exportScheduleAsIcsText(subjectsWithSlots, zoneId)
         if (!showProfessor) content = content.replace(Regex("DESCRIPTION:Profesor:[^\\r\\n]*"), "DESCRIPTION:")
         if (!showRoom) content = content.replace(Regex("LOCATION:[^\\r\\n]*"), "LOCATION:")

@@ -65,7 +65,7 @@ private val LightColorScheme = lightColorScheme(
 )
 
 @Composable
-fun SnapMyScheduleTheme(
+fun FlowScheduleTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = false, // Use our handcrafted student theme for cohesive aesthetic
     content: @Composable () -> Unit
