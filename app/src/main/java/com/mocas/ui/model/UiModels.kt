@@ -103,5 +103,6 @@ data class AppSettings(
     val showVacationsInTimetable: Boolean = true,
     val targetCalendarName: String = "Google Calendar (Escolar)",
     val language: String = "Español",
+    val colorTheme: String = "DEFAULT", // DEFAULT, TOTORO
     val onboardingCompleted: Boolean = false
 )

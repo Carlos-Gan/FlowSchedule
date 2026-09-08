@@ -6,6 +6,8 @@ import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mocas.ui.viewmodel.ScheduleViewModel
 import com.mocas.ui.screens.AddEditSubjectScreen // Importante: Nueva ruta de la pantalla
+import com.mocas.ui.screens.AppearanceScreen
+import com.mocas.ui.dialogs.ImportTaskDialog
 
 @Composable
 fun MainDialogHost(
@@ -14,6 +16,8 @@ fun MainDialogHost(
     val isAddSubjectOpen by viewModel.isAddSubjectOpen.collectAsStateWithLifecycle()
     val isAddEventOpen by viewModel.isAddEventOpen.collectAsStateWithLifecycle()
     val isImportScheduleOpen by viewModel.isImportScheduleOpen.collectAsStateWithLifecycle()
+    val isImportTasksOpen by viewModel.isImportTasksOpen.collectAsStateWithLifecycle()
+    val isAppearanceOpen by viewModel.isAppearanceOpen.collectAsStateWithLifecycle()
     val isGlobalSearchOpen by viewModel.isGlobalSearchOpen.collectAsStateWithLifecycle()
     val settings by viewModel.appSettings.collectAsStateWithLifecycle()
     val selectedDetailId by viewModel.selectedSubjectDetailId.collectAsStateWithLifecycle()
@@ -90,6 +94,20 @@ fun MainDialogHost(
                     semesterEnd = semesterEnd
                 )
             }
+        )
+    }
+
+    if (isImportTasksOpen && settings.aiFeaturesEnabled) {
+        ImportTaskDialog(
+            viewModel = viewModel,
+            onDismiss = viewModel::closeImportTasks
+        )
+    }
+
+    if (isAppearanceOpen) {
+        AppearanceScreen(
+            viewModel = viewModel,
+            onBack = viewModel::closeAppearance
         )
     }
 

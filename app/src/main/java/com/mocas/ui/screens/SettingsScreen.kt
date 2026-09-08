@@ -24,6 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.mocas.ui.theme.ThemeConfig
+import com.mocas.ui.theme.ThemeOption
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -262,6 +264,13 @@ fun SettingsScreen(
                             colors = SwitchDefaults.colors(checkedTrackColor = MaterialTheme.colorScheme.primary)
                         )
                     }
+                )
+
+                SettingRow(
+                    icon = Icons.Outlined.Palette,
+                    title = stringResource(R.string.tema_visual),
+                    subtitle = ThemeConfig.themes.find { it.id == settings.colorTheme }?.let { stringResource(it.nameRes) } ?: stringResource(R.string.tema_estandar),
+                    onClick = { viewModel.openAppearance() }
                 )
 
                 if (ScheduleViewModel.isAiAvailable()) {

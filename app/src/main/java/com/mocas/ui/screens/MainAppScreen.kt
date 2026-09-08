@@ -130,7 +130,18 @@ fun MainAppScreen(
                     topBarConfig.showScanAction &&
                     settings.aiFeaturesEnabled
                 ) {
-                    viewModel::openImportSchedule
+                    {
+                        when (currentTab) {
+                            BottomNavTab.HORARIO -> viewModel.openImportSchedule()
+                            BottomNavTab.CALENDARIO, BottomNavTab.EVENTOS -> viewModel.openImportTasks()
+                            BottomNavTab.INICIO -> {
+                                // En inicio, si no hay materias, escanear horario. Si ya hay, escanear tareas.
+                                if (subjectsWithSlots.isEmpty()) viewModel.openImportSchedule()
+                                else viewModel.openImportTasks()
+                            }
+                            else -> {}
+                        }
+                    }
                 } else {
                     null
                 },

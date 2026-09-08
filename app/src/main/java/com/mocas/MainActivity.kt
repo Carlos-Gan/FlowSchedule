@@ -74,7 +74,8 @@ class MainActivity : ComponentActivity() {
             )
 
             FlowScheduleTheme(
-                darkTheme = darkTheme
+                darkTheme = darkTheme,
+                colorTheme = settings.colorTheme
             ) {
                 if (settings.onboardingCompleted) {
                     MainAppScreen(viewModel = viewModel)

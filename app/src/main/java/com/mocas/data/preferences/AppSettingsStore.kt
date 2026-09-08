@@ -43,6 +43,7 @@ class AppSettingsStore(context: Context) {
             "Google Calendar (Escolar)"
         ) ?: "Google Calendar (Escolar)",
         language = preferences.getString(KEY_LANGUAGE, "Español") ?: "Español",
+        colorTheme = preferences.getString(KEY_COLOR_THEME, "DEFAULT") ?: "DEFAULT",
         onboardingCompleted = preferences.getBoolean(KEY_ONBOARDING_COMPLETED, false)
     )
 
@@ -71,6 +72,7 @@ class AppSettingsStore(context: Context) {
             .putBoolean(KEY_SHOW_VACATIONS_IN_TIMETABLE, settings.showVacationsInTimetable)
             .putString(KEY_TARGET_CALENDAR_NAME, settings.targetCalendarName)
             .putString(KEY_LANGUAGE, settings.language)
+            .putString(KEY_COLOR_THEME, settings.colorTheme)
             .putBoolean(KEY_ONBOARDING_COMPLETED, settings.onboardingCompleted)
             .apply()
     }
@@ -100,6 +102,7 @@ class AppSettingsStore(context: Context) {
         const val KEY_SHOW_VACATIONS_IN_TIMETABLE = "show_vacations_in_timetable"
         const val KEY_TARGET_CALENDAR_NAME = "target_calendar_name"
         const val KEY_LANGUAGE = "language"
+        const val KEY_COLOR_THEME = "color_theme"
         const val KEY_ONBOARDING_COMPLETED = "onboarding_completed"
     }
 }

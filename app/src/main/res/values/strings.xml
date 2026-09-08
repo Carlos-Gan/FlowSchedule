@@ -363,4 +363,17 @@
     <string name="funciones_ia">Funciones de IA</string>
     <string name="funciones_ia_desc">Usar Gemini para importar horarios</string>
     <string name="onboarding_error_nombre">Escribe tu nombre para continuar</string>
+    <string name="tema_visual">Tema Visual</string>
+    <string name="seleccionar_paleta_colores">Seleccionar paleta de colores</string>
+    <string name="tema_estandar">Estándar</string>
+    <string name="tema_totoro">Totoro</string>
+    <string name="tema_asuka">Asuka</string>
+    <string name="tema_itsuka">Itsuka</string>
+    <string name="tema_kanade">Kanade</string>
+    <string name="tema_mamimi">Mamimi</string>
+    <string name="tema_miku">Miku</string>
+    <string name="tema_mion">Mion</string>
+    <string name="tema_rikka">Rikka</string>
+    <string name="tema_sakura">Sakura</string>
+    <string name="tema_dinamico">Dinámico</string>
 </resources>

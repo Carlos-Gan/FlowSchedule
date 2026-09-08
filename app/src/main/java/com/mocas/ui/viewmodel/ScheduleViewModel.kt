@@ -6,6 +6,7 @@ import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.mocas.data.ai.DetectedSubjectItem
+import com.mocas.data.ai.DetectedTaskItem
 import com.mocas.data.ai.ScheduleScannerService
 import com.mocas.data.backup.AutomaticBackupInfo
 import com.mocas.data.backup.AutomaticBackupManager
@@ -79,8 +80,12 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     val isAddEventOpen = _isAddEventOpen.asStateFlow()
     private val _isImportScheduleOpen = MutableStateFlow(false)
     val isImportScheduleOpen = _isImportScheduleOpen.asStateFlow()
+    private val _isImportTasksOpen = MutableStateFlow(false)
+    val isImportTasksOpen = _isImportTasksOpen.asStateFlow()
     private val _isGlobalSearchOpen = MutableStateFlow(false)
     val isGlobalSearchOpen = _isGlobalSearchOpen.asStateFlow()
+    private val _isAppearanceOpen = MutableStateFlow(false)
+    val isAppearanceOpen = _isAppearanceOpen.asStateFlow()
     private val _selectedSubjectDetailId = MutableStateFlow<Long?>(null)
     val selectedSubjectDetailId = _selectedSubjectDetailId.asStateFlow()
     private val _editingSubject = MutableStateFlow<SubjectWithSlots?>(null)
@@ -102,6 +107,8 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     val isScanning = _isScanning.asStateFlow()
     private val _detectedSubjects = MutableStateFlow<List<DetectedSubjectItem>>(emptyList())
     val detectedSubjects = _detectedSubjects.asStateFlow()
+    private val _detectedTasks = MutableStateFlow<List<DetectedTaskItem>>(emptyList())
+    val detectedTasks = _detectedTasks.asStateFlow()
     private val _capturedPhotoBitmap = MutableStateFlow<Bitmap?>(null)
     val capturedPhotoBitmap = _capturedPhotoBitmap.asStateFlow()
     private val _userMessage = MutableStateFlow<String?>(null)
@@ -242,7 +249,15 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         defaultTitle: String? = null
     ) {
         _editingEvent.value = eventToEdit
-        _newEventSubjectId.value = eventToEdit?.event?.subjectId ?: subjectId
+        
+        // Si no se especifica materia y no se está editando, intentamos detectar la clase actual
+        val detectedSubjectId = if (eventToEdit == null && subjectId == null) {
+            nextClassInfo.value?.let { info ->
+                if (info.isHappeningNow) info.subject.id else null
+            }
+        } else null
+
+        _newEventSubjectId.value = eventToEdit?.event?.subjectId ?: subjectId ?: detectedSubjectId
         _newEventDate.value = defaultDate?.takeIf(DateTimeUtils::isValidDate)
         _newEventType.value = defaultType
         _newEventTitle.value = defaultTitle
@@ -259,13 +274,24 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     fun openImportSchedule() {
         if (!_appSettings.value.aiFeaturesEnabled) return
         _detectedSubjects.value = emptyList()
+        _detectedTasks.value = emptyList()
         _capturedPhotoBitmap.value = null
         _isScanning.value = false
         _isImportScheduleOpen.value = true
     }
     fun closeImportSchedule() { _isImportScheduleOpen.value = false }
+    fun openImportTasks() {
+        if (!_appSettings.value.aiFeaturesEnabled) return
+        _detectedTasks.value = emptyList()
+        _capturedPhotoBitmap.value = null
+        _isScanning.value = false
+        _isImportTasksOpen.value = true
+    }
+    fun closeImportTasks() { _isImportTasksOpen.value = false }
     fun openGlobalSearch() { _isGlobalSearchOpen.value = true }
     fun closeGlobalSearch() { _isGlobalSearchOpen.value = false }
+    fun openAppearance() { _isAppearanceOpen.value = true }
+    fun closeAppearance() { _isAppearanceOpen.value = false }
     fun openSubjectDetail(subjectId: Long) { _selectedSubjectDetailId.value = subjectId }
     fun closeSubjectDetail() { _selectedSubjectDetailId.value = null }
     fun openClassOccurrence(
@@ -469,6 +495,72 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
 
     fun deleteGradeItem(item: GradeItemEntity) {
         viewModelScope.launch { runOperation { repository.deleteGradeItem(item) } }
+    }
+
+    fun scanTaskImage(bitmap: Bitmap?) {
+        if (!_appSettings.value.aiFeaturesEnabled) return
+        if (bitmap == null) {
+            _userMessage.value = "No se pudo leer la imagen seleccionada."
+            return
+        }
+        _capturedPhotoBitmap.value = bitmap
+        _isScanning.value = true
+        _detectedTasks.value = emptyList()
+        
+        viewModelScope.launch {
+            try {
+                _detectedTasks.value = ScheduleScannerService.analyzeTaskImage(bitmap)
+            } catch (error: Exception) {
+                _detectedTasks.value = emptyList()
+                _userMessage.value = error.message ?: "No se pudo analizar la imagen de tareas."
+            } finally {
+                _isScanning.value = false
+            }
+        }
+    }
+
+    fun toggleDetectedTaskSelection(index: Int) {
+        val current = _detectedTasks.value.toMutableList()
+        if (index in current.indices) {
+            current[index] = current[index].copy(isSelected = !current[index].isSelected)
+            _detectedTasks.value = current
+        }
+    }
+
+    fun confirmImportDetectedTasks() {
+        val selected = _detectedTasks.value.filter { it.isSelected }
+        if (selected.isEmpty()) {
+            closeImportTasks()
+            return
+        }
+
+        viewModelScope.launch {
+            runOperation {
+                selected.forEach { item ->
+                    val matchedSubjectId = item.subjectName?.let { name ->
+                        subjectsWithSlots.value.find { 
+                            it.subject.name.contains(name, ignoreCase = true) 
+                        }?.subject?.id
+                    }
+
+                    val event = SchoolEventEntity(
+                        subjectId = matchedSubjectId,
+                        title = item.title,
+                        description = item.description,
+                        startDate = item.dueDate,
+                        endDate = item.dueDate,
+                        startTime = item.dueTime,
+                        endTime = item.dueTime,
+                        type = SchoolEventType.TAREA,
+                        isCompleted = false
+                    )
+                    repository.insertEvent(event)
+                }
+                _userMessage.value = "Se agregaron ${selected.size} tareas exitosamente."
+                closeImportTasks()
+                _currentTab.value = BottomNavTab.EVENTOS
+            }
+        }
     }
 
     fun scanScheduleImage(bitmap: Bitmap?) {

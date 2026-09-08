@@ -41,7 +41,7 @@ fun getTopBarConfig(
         BottomNavTab.CALENDARIO -> TopBarConfig(
             titleRes = R.string.nav_calendario,
             subtitleRes = R.string.sub_calendario,
-            showScanAction = false,
+            showScanAction = true,
             showAddAction = true
         )
 
@@ -53,7 +53,7 @@ fun getTopBarConfig(
                 else -> R.string.sub_actividades_pendientes_formato
             },
             subtitleArgs = if (pendingEventCount > 1) arrayOf(pendingEventCount) else null,
-            showScanAction = false,
+            showScanAction = true,
             showAddAction = true
         )
 
