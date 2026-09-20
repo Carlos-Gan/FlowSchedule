@@ -4,7 +4,6 @@ import androidx.room.withTransaction
 import com.mocas.data.backup.BackupImportSummary
 import com.mocas.data.backup.ScheduleBackupCodec
 import com.mocas.data.backup.ScheduleBackupData
-import com.mocas.data.ai.DetectedSubjectItem
 import com.mocas.data.local.AcademicPeriodEntity
 import com.mocas.data.local.ClassExceptionEntity
 import com.mocas.data.local.ClassExceptionType
@@ -421,85 +420,6 @@ class ScheduleRepository(private val database: AppDatabase) {
             }
             true
         }
-
-    suspend fun importDetectedSubjects(
-        items: List<DetectedSubjectItem>,
-        semesterStart: String,
-        semesterEnd: String
-    ) = database.withTransaction {
-        val start = requireDate(semesterStart, "inicio del semestre")
-        val end = requireDate(semesterEnd, "fin del semestre")
-        require(!end.isBefore(start)) { "El fin del semestre no puede ser anterior al inicio." }
-
-        val groupedItems = items.asSequence()
-            .filter { it.isSelected && it.name.isNotBlank() }
-            .onEach { item ->
-                require(item.dayOfWeek in 1..7) { "Día inválido para ${item.name}." }
-                require(DateTimeUtils.endIsAfterStart(item.startTime, item.endTime)) {
-                    "Horario inválido para ${item.name}."
-                }
-            }
-            .groupBy { buildSubjectKey(it.name, it.professor) }
-
-        val subjectsByKey = subjectDao.getAllSubjectsOnce()
-            .associateByTo(mutableMapOf()) {
-                buildPeriodSubjectKey(
-                    it.name,
-                    it.professor,
-                    it.semesterStart,
-                    it.semesterEnd
-                )
-            }
-
-        groupedItems.forEach { (key, subjectItems) ->
-            val first = subjectItems.first()
-            val periodKey = "$key|$semesterStart|$semesterEnd"
-            val existingSubject = subjectsByKey[periodKey]
-            val candidateSlots = subjectItems.map { item ->
-                ScheduleSlotEntity(
-                    subjectId = existingSubject?.id ?: 0,
-                    dayOfWeek = item.dayOfWeek,
-                    startTime = item.startTime,
-                    endTime = item.endTime,
-                    room = item.room.trim()
-                )
-            }.distinctBy { Triple(it.dayOfWeek, it.startTime, it.endTime) }
-
-            if (existingSubject == null) {
-                val prepared = validateAndPrepareSlots(0, candidateSlots)
-                ensureNoExternalConflicts(prepared, -1, semesterStart, semesterEnd)
-                val subject = SubjectEntity(
-                    name = first.name.trim(),
-                    professor = first.professor.trim(),
-                    defaultRoom = first.room.trim(),
-                    colorHex = first.colorHex,
-                    semesterStart = semesterStart,
-                    semesterEnd = semesterEnd
-                )
-                val subjectId = subjectDao.insertSubject(subject)
-                if (prepared.isNotEmpty()) {
-                    slotDao.insertSlots(prepared.map { it.copy(id = 0, subjectId = subjectId) })
-                }
-                subjectsByKey[periodKey] = subject.copy(id = subjectId)
-            } else {
-                val currentSlots = slotDao.getSlotsForSubjectOnce(existingSubject.id)
-                val exactKeys = currentSlots.mapTo(mutableSetOf()) {
-                    Triple(it.dayOfWeek, it.startTime, it.endTime)
-                }
-                val newSlots = candidateSlots.filter {
-                    Triple(it.dayOfWeek, it.startTime, it.endTime) !in exactKeys
-                }.map { it.copy(subjectId = existingSubject.id) }
-                validateAndPrepareSlots(existingSubject.id, currentSlots + newSlots)
-                ensureNoExternalConflicts(
-                    newSlots,
-                    existingSubject.id,
-                    existingSubject.semesterStart,
-                    existingSubject.semesterEnd
-                )
-                if (newSlots.isNotEmpty()) slotDao.insertSlots(newSlots)
-            }
-        }
-    }
 
     suspend fun exportScheduleBackup(): String = ScheduleBackupCodec.encode(
         ScheduleBackupData(

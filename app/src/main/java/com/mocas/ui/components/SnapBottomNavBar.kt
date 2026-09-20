@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -23,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
@@ -30,13 +33,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mocas.ui.model.BadgeStyle
 import com.mocas.ui.model.BottomNavTab
 
 @Composable
 fun SnapBottomNavBar(
     selectedTab: BottomNavTab,
     onTabSelected: (BottomNavTab) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    pendingEventCount: Int = 0,
+    badgeStyle: BadgeStyle = BadgeStyle.NUMBER
 ) {
     Surface(
         modifier = modifier,
@@ -64,16 +70,41 @@ fun SnapBottomNavBar(
                         selected = isSelected,
                         onClick = { onTabSelected(tab) },
                         icon = {
-                            Icon(
-                                imageVector = if (isSelected) tab.selectedIcon else tab.unselectedIcon,
-                                contentDescription = stringResource(tab.titleRes),
-                                modifier = Modifier
-                                    .size(22.dp)
-                                    .graphicsLayer {
-                                        scaleX = iconScale
-                                        scaleY = iconScale
+                            BadgedBox(
+                                badge = {
+                                    if (tab == BottomNavTab.EVENTOS && pendingEventCount > 0) {
+                                        when (badgeStyle) {
+                                            BadgeStyle.DOT -> {
+                                                // Small badge: Punto rojo de 6dp (especificación M3)
+                                                Badge(
+                                                    containerColor = MaterialTheme.colorScheme.error
+                                                )
+                                            }
+                                            BadgeStyle.NUMBER -> {
+                                                // Large badge: 16dp de altura con texto (especificación M3)
+                                                Badge(
+                                                    containerColor = MaterialTheme.colorScheme.error,
+                                                    contentColor = Color.White
+                                                ) {
+                                                    Text(pendingEventCount.toString())
+                                                }
+                                            }
+                                            BadgeStyle.NONE -> { /* No mostrar nada */ }
+                                        }
                                     }
-                            )
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = if (isSelected) tab.selectedIcon else tab.unselectedIcon,
+                                    contentDescription = stringResource(tab.titleRes),
+                                    modifier = Modifier
+                                        .size(22.dp)
+                                        .graphicsLayer {
+                                            scaleX = iconScale
+                                            scaleY = iconScale
+                                        }
+                                )
+                            }
                         },
                         label = {
                             Text(

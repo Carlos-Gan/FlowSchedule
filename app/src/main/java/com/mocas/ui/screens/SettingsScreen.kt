@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.mocas.ui.model.BadgeStyle
 import com.mocas.ui.theme.ThemeConfig
 import com.mocas.ui.theme.ThemeOption
 import androidx.compose.ui.res.stringResource
@@ -36,10 +37,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mocas.R
 import com.mocas.data.local.SchoolEventEntity
 import com.mocas.data.local.SubjectEntity
+import com.mocas.ui.components.settings.RemindersConfigDialog
+import com.mocas.ui.components.settings.SettingRow
+import com.mocas.ui.components.settings.StatCard
+import com.mocas.ui.components.settings.TrashRow
+import com.mocas.ui.model.AppSettings
 import com.mocas.ui.viewmodel.ScheduleViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     viewModel: ScheduleViewModel,
@@ -222,7 +229,7 @@ fun SettingsScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // --- PREFERENCES SECTION ---
+        // --- PERSONALIZATION SECTION ---
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(24.dp),
@@ -231,11 +238,159 @@ fun SettingsScreen(
         ) {
             Column(modifier = Modifier.padding(vertical = 8.dp)) {
                 Text(
-                    text = stringResource(R.string.preferencias_y_ajustes),
+                    text = stringResource(R.string.personalizacion),
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Black),
                     modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp)
                 )
-                
+
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+
+                var showThemeModeDialog by remember { mutableStateOf(false) }
+                SettingRow(
+                    icon = when(settings.themeMode.uppercase()) {
+                        "LIGHT" -> Icons.Outlined.LightMode
+                        "DARK" -> Icons.Outlined.DarkMode
+                        else -> Icons.Outlined.BrightnessAuto
+                    },
+                    title = stringResource(R.string.modo_apariencia),
+                    subtitle = when(settings.themeMode.uppercase()) {
+                        "LIGHT" -> stringResource(R.string.tema_claro)
+                        "DARK" -> stringResource(R.string.tema_oscuro)
+                        else -> stringResource(R.string.tema_sistema)
+                    },
+                    onClick = { showThemeModeDialog = true }
+                )
+
+                if (showThemeModeDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showThemeModeDialog = false },
+                        title = { Text(stringResource(R.string.modo_apariencia), fontWeight = FontWeight.Bold) },
+                        text = {
+                            Column {
+                                listOf("AUTO", "LIGHT", "DARK").forEach { mode ->
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable {
+                                                viewModel.updateSettings(settings.copy(themeMode = mode))
+                                                showThemeModeDialog = false
+                                            }
+                                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        RadioButton(
+                                            selected = settings.themeMode.uppercase() == mode,
+                                            onClick = null
+                                        )
+                                        Spacer(modifier = Modifier.width(12.dp))
+                                        Column {
+                                            Text(
+                                                text = when(mode) {
+                                                    "LIGHT" -> stringResource(R.string.tema_claro)
+                                                    "DARK" -> stringResource(R.string.tema_oscuro)
+                                                    else -> stringResource(R.string.tema_sistema)
+                                                }
+                                            )
+                                            Text(
+                                                text = when(mode) {
+                                                    "LIGHT" -> stringResource(R.string.tema_desc_claro)
+                                                    "DARK" -> stringResource(R.string.tema_desc_oscuro)
+                                                    else -> stringResource(R.string.tema_desc_sistema)
+                                                },
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        confirmButton = {
+                            TextButton(onClick = { showThemeModeDialog = false }) {
+                                Text(stringResource(R.string.cerrar))
+                            }
+                        }
+                    )
+                }
+
+                SettingRow(
+                    icon = Icons.Outlined.Palette,
+                    title = stringResource(R.string.tema_visual),
+                    subtitle = ThemeConfig.themes.find { it.id == settings.colorTheme }?.let { stringResource(it.nameRes) } ?: stringResource(R.string.tema_estandar),
+                    onClick = { viewModel.openAppearance() }
+                )
+
+                var showBadgeStyleDialog by remember { mutableStateOf(false) }
+                SettingRow(
+                    icon = Icons.Outlined.NotificationsActive,
+                    title = stringResource(R.string.estilo_indicador),
+                    subtitle = when(settings.badgeStyle) {
+                        BadgeStyle.NONE -> "Oculto"
+                        BadgeStyle.DOT -> "Solo punto"
+                        BadgeStyle.NUMBER -> "Con número"
+                    },
+                    onClick = { showBadgeStyleDialog = true }
+                )
+
+                if (showBadgeStyleDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showBadgeStyleDialog = false },
+                        title = { Text(stringResource(R.string.estilo_indicador), fontWeight = FontWeight.Bold) },
+                        text = {
+                            Column {
+                                BadgeStyle.entries.forEach { style ->
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable {
+                                                viewModel.updateSettings(settings.copy(badgeStyle = style))
+                                                showBadgeStyleDialog = false
+                                            }
+                                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        RadioButton(
+                                            selected = settings.badgeStyle == style,
+                                            onClick = null
+                                        )
+                                        Spacer(modifier = Modifier.width(12.dp))
+                                        Text(
+                                            text = when(style) {
+                                                BadgeStyle.NONE -> "Oculto"
+                                                BadgeStyle.DOT -> "Solo punto rojo"
+                                                BadgeStyle.NUMBER -> "Punto rojo con número"
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+                        },
+                        confirmButton = {
+                            TextButton(onClick = { showBadgeStyleDialog = false }) {
+                                Text(stringResource(R.string.cerrar))
+                            }
+                        }
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        // --- GENERAL & DATA SECTION ---
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        ) {
+            Column(modifier = Modifier.padding(vertical = 8.dp)) {
+                Text(
+                    text = stringResource(R.string.general_y_datos),
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Black),
+                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp)
+                )
+
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
 
                 SettingRow(
@@ -251,42 +406,19 @@ fun SettingsScreen(
                     }
                 )
 
+                var showRemindersDialog by remember { mutableStateOf(false) }
                 SettingRow(
-                    icon = Icons.Outlined.DarkMode,
-                    title = stringResource(R.string.tema_oscuro),
-                    subtitle = stringResource(R.string.reduce_el_cansancio_visual),
-                    action = {
-                        Switch(
-                            checked = settings.themeMode == "DARK",
-                            onCheckedChange = { 
-                                viewModel.updateSettings(settings.copy(themeMode = if (it) "DARK" else "LIGHT"))
-                            },
-                            colors = SwitchDefaults.colors(checkedTrackColor = MaterialTheme.colorScheme.primary)
-                        )
-                    }
+                    icon = Icons.Outlined.Alarm,
+                    title = stringResource(R.string.configurar_recordatorios),
+                    subtitle = stringResource(R.string.configurar_recordatorios_desc),
+                    onClick = { showRemindersDialog = true }
                 )
 
-                SettingRow(
-                    icon = Icons.Outlined.Palette,
-                    title = stringResource(R.string.tema_visual),
-                    subtitle = ThemeConfig.themes.find { it.id == settings.colorTheme }?.let { stringResource(it.nameRes) } ?: stringResource(R.string.tema_estandar),
-                    onClick = { viewModel.openAppearance() }
-                )
-
-                if (ScheduleViewModel.isAiAvailable()) {
-                    SettingRow(
-                        icon = Icons.Default.AutoAwesome,
-                        title = stringResource(R.string.funciones_ia),
-                        subtitle = stringResource(R.string.funciones_ia_desc),
-                        action = {
-                            Switch(
-                                checked = settings.aiFeaturesEnabled,
-                                onCheckedChange = { 
-                                    viewModel.updateSettings(settings.copy(aiFeaturesEnabled = it))
-                                },
-                                colors = SwitchDefaults.colors(checkedTrackColor = MaterialTheme.colorScheme.primary)
-                            )
-                        }
+                if (showRemindersDialog) {
+                    RemindersConfigDialog(
+                        settings = settings,
+                        onUpdate = viewModel::updateSettings,
+                        onDismiss = { showRemindersDialog = false }
                     )
                 }
 
@@ -297,7 +429,7 @@ fun SettingsScreen(
                     action = {
                         Switch(
                             checked = settings.useGpaScale,
-                            onCheckedChange = { 
+                            onCheckedChange = {
                                 viewModel.updateSettings(settings.copy(useGpaScale = it))
                             },
                             colors = SwitchDefaults.colors(checkedTrackColor = MaterialTheme.colorScheme.primary)
@@ -534,120 +666,6 @@ fun SettingsScreen(
                 },
                 dismissButton = { TextButton(onClick = { pendingRestore = null }) { Text(stringResource(R.string.cancelar)) } }
             )
-        }
-    }
-}
-
-@Composable
-private fun TrashRow(
-    title: String,
-    subtitle: String,
-    onRestore: () -> Unit,
-    onDelete: () -> Unit
-) {
-    Surface(
-        shape = RoundedCornerShape(12.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerHigh,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Row(
-            modifier = Modifier.padding(10.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(title, fontWeight = FontWeight.Bold, fontSize = 14.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                Text(subtitle, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
-            IconButton(onClick = onRestore, modifier = Modifier.size(36.dp)) {
-                Icon(Icons.Default.Restore, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
-            }
-            IconButton(onClick = onDelete, modifier = Modifier.size(36.dp)) {
-                Icon(Icons.Default.Delete, contentDescription = null, tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(20.dp))
-            }
-        }
-    }
-}
-
-@Composable
-private fun BadgeChip(text: String, color: Color) {
-    Surface(
-        shape = RoundedCornerShape(8.dp),
-        color = color.copy(alpha = 0.15f)
-    ) {
-        Text(
-            text = text,
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
-            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-            color = color
-        )
-    }
-}
-
-@Composable
-private fun StatCard(icon: ImageVector, value: String, label: String, modifier: Modifier = Modifier) {
-    Card(
-        modifier = modifier,
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(24.dp))
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = value, style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Black))
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-    }
-}
-
-@Composable
-private fun SettingRow(
-    icon: ImageVector,
-    title: String,
-    subtitle: String,
-    onClick: (() -> Unit)? = null,
-    action: (@Composable () -> Unit)? = null
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(enabled = onClick != null) { onClick?.invoke() }
-            .padding(horizontal = 20.dp, vertical = 16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Surface(
-            shape = CircleShape,
-            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-            modifier = Modifier.size(40.dp)
-        ) {
-            Box(contentAlignment = Alignment.Center) {
-                Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
-            }
-        }
-        
-        Spacer(modifier = Modifier.width(16.dp))
-        
-        Column(modifier = Modifier.weight(1f)) {
-            Text(text = title, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-            Text(text = subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        }
-        
-        if (action != null) {
-            action()
-        } else if (onClick != null) {
-            Icon(Icons.AutoMirrored.Filled.ArrowForwardIos, contentDescription = null, tint = MaterialTheme.colorScheme.outlineVariant, modifier = Modifier.size(14.dp))
         }
     }
 }

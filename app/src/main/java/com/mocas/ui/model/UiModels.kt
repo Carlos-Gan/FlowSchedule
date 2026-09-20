@@ -30,6 +30,12 @@ enum class BottomNavTab(
     CONFIGURACION(R.string.nav_ajustes, Icons.Filled.Settings, Icons.Outlined.Settings)
 }
 
+enum class BadgeStyle {
+    NONE,    // Sin indicador
+    DOT,     // Solo un punto rojo
+    NUMBER   // Punto rojo con el número de pendientes
+}
+
 enum class TimetableDisplayMode(val displayName: String) {
     SEMANAL("Vista Semanal"),
     DIARIA("Vista Diaria"),
@@ -97,12 +103,14 @@ data class AppSettings(
     val taskReminderMinutes: Int = 2 * 24 * 60,
     val examReminderMinutes: Int = 24 * 60,
     val eventReminderMinutes: Int = 24 * 60,
+    val examPrepReminderEnabled: Boolean = false,
+    val examPrepReminderMinutes: Int = 3 * 24 * 60,
     val calendarSyncEnabled: Boolean = true,
-    val aiFeaturesEnabled: Boolean = true,
-    val outsidePeriodsAreVacations: Boolean = false,
+    val outsidePeriodsAreVacations: Boolean = true,
     val showVacationsInTimetable: Boolean = true,
     val targetCalendarName: String = "Google Calendar (Escolar)",
     val language: String = "Español",
     val colorTheme: String = "DEFAULT", // DEFAULT, TOTORO
+    val badgeStyle: BadgeStyle = BadgeStyle.NUMBER,
     val onboardingCompleted: Boolean = false
 )

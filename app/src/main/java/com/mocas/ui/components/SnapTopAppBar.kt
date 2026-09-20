@@ -92,7 +92,6 @@ fun SnapTopAppBar(
     onSubjectClick: ((Long) -> Unit)? = null,
     onEventClick: ((SchoolEventWithSubject) -> Unit)? = null,
     onSearchClick: (() -> Unit)? = null,
-    onScanClick: (() -> Unit)? = null,
     onAddClick: (() -> Unit)? = null
 ) {
     val isBrandHeader = title == "FlowSchedule"
@@ -398,33 +397,7 @@ fun SnapTopAppBar(
                         )
                     }
 
-                    if (onScanClick != null) {
-                        OutlinedButton(
-                            onClick = onScanClick,
-                            modifier = Modifier.testTag("top_bar_scan_button"),
-                            shape = RoundedCornerShape(18.dp),
-                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.28f)),
-                            contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.CameraAlt,
-                                contentDescription = stringResource(R.string.escanear_horario_desc),
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(17.dp)
-                            )
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(
-                                text = stringResource(R.string.escanear_boton),
-                                color = MaterialTheme.colorScheme.primary,
-                                style = MaterialTheme.typography.labelMedium,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
-
                     if (onAddClick != null) {
-                        if (onScanClick != null) Spacer(modifier = Modifier.width(6.dp))
-
                         FilledIconButton(
                             onClick = onAddClick,
                             modifier = Modifier
@@ -441,7 +414,6 @@ fun SnapTopAppBar(
                                 contentDescription = stringResource(R.string.agregar_desc),
                                 modifier = Modifier.size(21.dp)
                             )
-
                         }
                     }
                 }

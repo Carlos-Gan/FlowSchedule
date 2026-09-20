@@ -359,10 +359,6 @@
     <string name="onboarding_notificaciones_subtitulo">Class and task reminders</string>
     <string name="onboarding_calendario_titulo">Calendar</string>
     <string name="onboarding_calendario_subtitulo">Phone synchronization</string>
-    <string name="onboarding_ia_titulo">AI Features</string>
-    <string name="onboarding_ia_subtitulo">Scan schedules with photo</string>
-    <string name="funciones_ia">AI Features</string>
-    <string name="funciones_ia_desc">Use Gemini to import schedules</string>
     <string name="onboarding_error_nombre">Enter your name to continue</string>
     <string name="tema_visual">Visual Theme</string>
     <string name="seleccionar_paleta_colores">Select color palette</string>
@@ -377,4 +373,23 @@
     <string name="tema_rikka">Rikka</string>
     <string name="tema_sakura">Sakura</string>
     <string name="tema_dinamico">Dynamic</string>
+    <string name="personalizacion">Personalization</string>
+    <string name="general_y_datos">General &amp; Data</string>
+    <string name="estilo_indicador">Badge style</string>
+    <string name="estilo_indicador_desc">Customize how pending items look</string>
+    <string name="configurar_recordatorios">Configure Reminders</string>
+    <string name="configurar_recordatorios_desc">Choose how far in advance to be notified</string>
+    <string name="recordatorio_preparacion">Preparation reminder</string>
+    <string name="recordatorio_preparacion_desc">Extra reminder days before for exams</string>
+    <string name="aviso_antes_de">Notify before...</string>
+    <string name="minutos">Minutes</string>
+    <string name="horas">Hours</string>
+    <string name="dias">Days</string>
+    <string name="modo_apariencia">Appearance Mode</string>
+    <string name="tema_claro">Light</string>
+    <string name="tema_sistema">System (Follow phone)</string>
+    <string name="tema_desc_claro">Always light</string>
+    <string name="tema_desc_oscuro">Always dark</string>
+    <string name="tema_desc_sistema">Automatic based on your device</string>
+    <string name="dia">Day</string>
 </resources>

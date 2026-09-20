@@ -5,9 +5,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mocas.ui.viewmodel.ScheduleViewModel
-import com.mocas.ui.screens.AddEditSubjectScreen // Importante: Nueva ruta de la pantalla
+import com.mocas.ui.screens.AddEditSubjectScreen
 import com.mocas.ui.screens.AppearanceScreen
-import com.mocas.ui.dialogs.ImportTaskDialog
 
 @Composable
 fun MainDialogHost(
@@ -15,11 +14,7 @@ fun MainDialogHost(
 ) {
     val isAddSubjectOpen by viewModel.isAddSubjectOpen.collectAsStateWithLifecycle()
     val isAddEventOpen by viewModel.isAddEventOpen.collectAsStateWithLifecycle()
-    val isImportScheduleOpen by viewModel.isImportScheduleOpen.collectAsStateWithLifecycle()
-    val isImportTasksOpen by viewModel.isImportTasksOpen.collectAsStateWithLifecycle()
     val isAppearanceOpen by viewModel.isAppearanceOpen.collectAsStateWithLifecycle()
-    val isGlobalSearchOpen by viewModel.isGlobalSearchOpen.collectAsStateWithLifecycle()
-    val settings by viewModel.appSettings.collectAsStateWithLifecycle()
     val selectedDetailId by viewModel.selectedSubjectDetailId.collectAsStateWithLifecycle()
     val subjectsWithSlots by viewModel.subjectsWithSlots.collectAsStateWithLifecycle()
     val allEventsWithSubject by viewModel.allEventsWithSubject.collectAsStateWithLifecycle()
@@ -59,13 +54,12 @@ fun MainDialogHost(
         }
     }
 
-    // Llamada actualizada a la nueva pantalla de Materia
     if (isAddSubjectOpen) {
         AddEditSubjectScreen(
             editingSubject = editingSubject,
             academicPeriods = academicPeriods,
             existingSubjects = subjectsWithSlots,
-            onBack = viewModel::closeAddSubject, // Actualizado de onDismiss a onBack
+            onBack = viewModel::closeAddSubject,
             onSavePeriod = viewModel::saveAcademicPeriod,
             onSave = viewModel::saveSubject
         )
@@ -81,26 +75,6 @@ fun MainDialogHost(
             subjects = subjectsWithSlots,
             onDismiss = viewModel::closeAddEvent,
             onSave = viewModel::saveEvent
-        )
-    }
-
-    if (isImportScheduleOpen && settings.aiFeaturesEnabled) {
-        ImportScheduleDialog(
-            viewModel = viewModel,
-            onDismiss = viewModel::closeImportSchedule,
-            onConfirmImport = { semesterStart, semesterEnd ->
-                viewModel.confirmImportDetectedSchedule(
-                    semesterStart = semesterStart,
-                    semesterEnd = semesterEnd
-                )
-            }
-        )
-    }
-
-    if (isImportTasksOpen && settings.aiFeaturesEnabled) {
-        ImportTaskDialog(
-            viewModel = viewModel,
-            onDismiss = viewModel::closeImportTasks
         )
     }
 

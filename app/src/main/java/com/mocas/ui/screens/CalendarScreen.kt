@@ -134,15 +134,14 @@ fun CalendarScreen(
     val selectedDateIsVacation = remember(
         selectedDateStr,
         academicPeriods,
-        allEvents,
-        settings.outsidePeriodsAreVacations
+        allEvents
     ) {
         DateTimeUtils.parseDate(selectedDateStr)?.let { date ->
             isVacationDate(
                 date = date,
                 academicPeriods = academicPeriods,
                 events = allEvents,
-                outsidePeriodsAreVacations = settings.outsidePeriodsAreVacations
+                outsidePeriodsAreVacations = true // Forzado a true para marcar días fuera de periodo
             )
         } ?: false
     }
@@ -233,7 +232,6 @@ fun CalendarScreen(
                         allEvents,
                         subjectsWithSlots,
                         academicPeriods,
-                        settings.outsidePeriodsAreVacations,
                         classExceptions
                     ) {
                         generateMonthDays(
@@ -242,7 +240,6 @@ fun CalendarScreen(
                             allEvents = allEvents,
                             subjectsWithSlots = subjectsWithSlots,
                             academicPeriods = academicPeriods,
-                            outsidePeriodsAreVacations = settings.outsidePeriodsAreVacations,
                             classExceptions = classExceptions
                         )
                     }
@@ -559,7 +556,6 @@ private fun generateMonthDays(
     allEvents: List<SchoolEventWithSubject>,
     subjectsWithSlots: List<SubjectWithSlots>,
     academicPeriods: List<com.mocas.data.local.AcademicPeriodEntity>,
-    outsidePeriodsAreVacations: Boolean,
     classExceptions: List<ClassExceptionEntity>
 ): List<com.mocas.ui.model.CalendarDayItem> {
     val list = mutableListOf<com.mocas.ui.model.CalendarDayItem>()
@@ -608,7 +604,7 @@ private fun generateMonthDays(
             date = date,
             academicPeriods = academicPeriods,
             events = allEvents,
-            outsidePeriodsAreVacations = outsidePeriodsAreVacations
+            outsidePeriodsAreVacations = true // Forzado a true para el calendario
         )
 
         list.add(

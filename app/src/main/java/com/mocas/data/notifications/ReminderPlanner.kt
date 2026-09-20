@@ -124,6 +124,23 @@ internal fun planReminders(
                 eventId = event.id
             )
         }
+
+        // Recordatorio de preparación (especialmente para exámenes)
+        if (event.type == SchoolEventType.EXAMEN && settings.examPrepReminderEnabled) {
+            val prepTrigger = LocalDateTime.of(eventDate, eventTime)
+                .minusMinutes(settings.examPrepReminderMinutes.toLong())
+            if (categoryEnabled && prepTrigger.isAfter(now) && eventDate <= horizon) {
+                reminders += PlannedReminder(
+                    id = "event_prep_${event.id}",
+                    triggerAtMillis = prepTrigger.atZone(zoneId).toInstant().toEpochMilli(),
+                    title = "Preparación: ${event.title}",
+                    message = "¡Faltan pocos días para tu examen! Empieza a repasar.",
+                    channel = NotificationScheduler.CHANNEL_ACTIVITIES,
+                    eventId = event.id
+                )
+            }
+        }
+
         val dueDate = DateTimeUtils.parseDate(event.endDate) ?: return@forEach
         val dueTime = if (event.isAllDay) LocalTime.of(20, 0)
         else DateTimeUtils.parseTime(event.endTime.orEmpty()) ?: LocalTime.of(20, 0)

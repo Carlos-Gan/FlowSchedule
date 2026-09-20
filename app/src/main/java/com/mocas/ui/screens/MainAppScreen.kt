@@ -41,11 +41,11 @@ fun MainAppScreen(
     val userMessage by
     viewModel.userMessage.collectAsStateWithLifecycle()
 
-    val settings by
-    viewModel.appSettings.collectAsStateWithLifecycle()
-
     val isSearchActive by
     viewModel.isGlobalSearchOpen.collectAsStateWithLifecycle()
+
+    val appSettings by
+    viewModel.appSettings.collectAsStateWithLifecycle()
 
     val snackbarHostState = remember {
         SnackbarHostState()
@@ -126,25 +126,6 @@ fun MainAppScreen(
                     viewModel.closeGlobalSearch()
                     viewModel.openAddEvent(eventToEdit = eventItem)
                 },
-                onScanClick = if (
-                    topBarConfig.showScanAction &&
-                    settings.aiFeaturesEnabled
-                ) {
-                    {
-                        when (currentTab) {
-                            BottomNavTab.HORARIO -> viewModel.openImportSchedule()
-                            BottomNavTab.CALENDARIO, BottomNavTab.EVENTOS -> viewModel.openImportTasks()
-                            BottomNavTab.INICIO -> {
-                                // En inicio, si no hay materias, escanear horario. Si ya hay, escanear tareas.
-                                if (subjectsWithSlots.isEmpty()) viewModel.openImportSchedule()
-                                else viewModel.openImportTasks()
-                            }
-                            else -> {}
-                        }
-                    }
-                } else {
-                    null
-                },
                 onAddClick = if (
                     topBarConfig.showAddAction
                 ) {
@@ -172,6 +153,8 @@ fun MainAppScreen(
         bottomBar = {
             SnapBottomNavBar(
                 selectedTab = currentTab,
+                pendingEventCount = pendingEventCount,
+                badgeStyle = appSettings.badgeStyle,
                 onTabSelected = {tab->
                     // Cierra la búsqueda activa al cambiar de pestaña
                     searchQuery=""

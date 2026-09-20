@@ -4,7 +4,7 @@
 
 ### Tu horario, actividades y recordatorios en un solo lugar
 
-Aplicación Android para organizar materias, sesiones, tareas, exámenes, periodos académicos y vacaciones. Incluye notificaciones configurables, widgets para la pantalla de inicio e importación opcional de horarios mediante una fotografía.
+Aplicación Android para organizar materias, sesiones, tareas, exámenes, periodos académicos y vacaciones. Incluye notificaciones configurables, widgets para la pantalla de inicio y herramientas de productividad.
 
 ![Android](https://img.shields.io/badge/Android-8.0%2B-3DDC84?logo=android&logoColor=white)
 ![Kotlin](https://img.shields.io/badge/Kotlin-2.4-7F52FF?logo=kotlin&logoColor=white)
@@ -68,15 +68,6 @@ Aplicación Android para organizar materias, sesiones, tareas, exámenes, period
 - **Modo OLED (True Black)**: Tema oscuro optimizado para ahorrar batería y reducir fatiga.
 - **Onboarding Interactivo**: Nuevo asistente de configuración por pasos con animaciones.
 - Diseño Material 3 avanzado (`SegmentedButtons`, `Wavy Indicators`, `Carousels`).
-- Funciones de IA detectan automáticamente la disponibilidad de la API Key.
-
-## Importación de horarios con IA
-
-La importación desde foto utiliza Gemini 2.5 Flash para reconocer materias, días, horarios, profesores y salones. 
-
-1. Copia `.env.example` como `.env` en la raíz del proyecto.
-2. Agrega tu clave: `GEMINI_API_KEY=tu_clave_de_gemini`.
-3. Sincroniza el proyecto. Si no se detecta la clave, la opción se ocultará automáticamente por seguridad.
 
 ## Tecnologías
 
@@ -84,8 +75,7 @@ La importación desde foto utiliza Gemini 2.5 Flash para reconocer materias, dí
 - Room para almacenamiento local.
 - ViewModel y StateFlow para estado reactivo.
 - AlarmManager y notificaciones nativas de Android.
-- OkHttp para integración con Gemini.
-- KSP, JUnit, Robolectric y Roborazzi.
+- OkHttp, KSP, JUnit, Robolectric y Roborazzi.
 
 ## Requisitos
 

@@ -3,6 +3,7 @@ package com.mocas.data.preferences
 import android.content.Context
 import android.content.SharedPreferences
 import com.mocas.ui.model.AppSettings
+import com.mocas.ui.model.BadgeStyle
 
 class AppSettingsStore(context: Context) {
     private val preferences: SharedPreferences = context.getSharedPreferences(
@@ -28,8 +29,9 @@ class AppSettingsStore(context: Context) {
         taskReminderMinutes = preferences.getInt(KEY_TASK_REMINDER_MINUTES, 2 * 24 * 60),
         examReminderMinutes = preferences.getInt(KEY_EXAM_REMINDER_MINUTES, 24 * 60),
         eventReminderMinutes = preferences.getInt(KEY_EVENT_REMINDER_MINUTES, 24 * 60),
+        examPrepReminderEnabled = preferences.getBoolean(KEY_EXAM_PREP_REMINDER_ENABLED, false),
+        examPrepReminderMinutes = preferences.getInt(KEY_EXAM_PREP_REMINDER_MINUTES, 3 * 24 * 60),
         calendarSyncEnabled = preferences.getBoolean(KEY_CALENDAR_SYNC_ENABLED, true),
-        aiFeaturesEnabled = preferences.getBoolean(KEY_AI_FEATURES_ENABLED, true),
         outsidePeriodsAreVacations = preferences.getBoolean(
             KEY_OUTSIDE_PERIODS_ARE_VACATIONS,
             false
@@ -44,6 +46,11 @@ class AppSettingsStore(context: Context) {
         ) ?: "Google Calendar (Escolar)",
         language = preferences.getString(KEY_LANGUAGE, "Español") ?: "Español",
         colorTheme = preferences.getString(KEY_COLOR_THEME, "DEFAULT") ?: "DEFAULT",
+        badgeStyle = try {
+            BadgeStyle.valueOf(preferences.getString(KEY_BADGE_STYLE, BadgeStyle.NUMBER.name) ?: BadgeStyle.NUMBER.name)
+        } catch (e: Exception) {
+            BadgeStyle.NUMBER
+        },
         onboardingCompleted = preferences.getBoolean(KEY_ONBOARDING_COMPLETED, false)
     )
 
@@ -66,13 +73,15 @@ class AppSettingsStore(context: Context) {
             .putInt(KEY_TASK_REMINDER_MINUTES, settings.taskReminderMinutes)
             .putInt(KEY_EXAM_REMINDER_MINUTES, settings.examReminderMinutes)
             .putInt(KEY_EVENT_REMINDER_MINUTES, settings.eventReminderMinutes)
+            .putBoolean(KEY_EXAM_PREP_REMINDER_ENABLED, settings.examPrepReminderEnabled)
+            .putInt(KEY_EXAM_PREP_REMINDER_MINUTES, settings.examPrepReminderMinutes)
             .putBoolean(KEY_CALENDAR_SYNC_ENABLED, settings.calendarSyncEnabled)
-            .putBoolean(KEY_AI_FEATURES_ENABLED, settings.aiFeaturesEnabled)
             .putBoolean(KEY_OUTSIDE_PERIODS_ARE_VACATIONS, settings.outsidePeriodsAreVacations)
             .putBoolean(KEY_SHOW_VACATIONS_IN_TIMETABLE, settings.showVacationsInTimetable)
             .putString(KEY_TARGET_CALENDAR_NAME, settings.targetCalendarName)
             .putString(KEY_LANGUAGE, settings.language)
             .putString(KEY_COLOR_THEME, settings.colorTheme)
+            .putString(KEY_BADGE_STYLE, settings.badgeStyle.name)
             .putBoolean(KEY_ONBOARDING_COMPLETED, settings.onboardingCompleted)
             .apply()
     }
@@ -96,13 +105,15 @@ class AppSettingsStore(context: Context) {
         const val KEY_TASK_REMINDER_MINUTES = "task_reminder_minutes"
         const val KEY_EXAM_REMINDER_MINUTES = "exam_reminder_minutes"
         const val KEY_EVENT_REMINDER_MINUTES = "event_reminder_minutes"
+        const val KEY_EXAM_PREP_REMINDER_ENABLED = "exam_prep_reminder_enabled"
+        const val KEY_EXAM_PREP_REMINDER_MINUTES = "exam_prep_reminder_minutes"
         const val KEY_CALENDAR_SYNC_ENABLED = "calendar_sync_enabled"
-        const val KEY_AI_FEATURES_ENABLED = "ai_features_enabled"
         const val KEY_OUTSIDE_PERIODS_ARE_VACATIONS = "outside_periods_are_vacations"
         const val KEY_SHOW_VACATIONS_IN_TIMETABLE = "show_vacations_in_timetable"
         const val KEY_TARGET_CALENDAR_NAME = "target_calendar_name"
         const val KEY_LANGUAGE = "language"
         const val KEY_COLOR_THEME = "color_theme"
+        const val KEY_BADGE_STYLE = "badge_style"
         const val KEY_ONBOARDING_COMPLETED = "onboarding_completed"
     }
 }

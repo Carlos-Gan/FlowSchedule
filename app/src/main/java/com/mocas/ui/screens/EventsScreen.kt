@@ -43,12 +43,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mocas.R
 import com.mocas.data.local.SchoolEventType
 import com.mocas.data.local.SchoolEventWithSubject
 import com.mocas.ui.components.EmptyStateCard
+import com.mocas.ui.components.events.CustomEventCard
 import com.mocas.ui.viewmodel.ScheduleViewModel
 import com.mocas.util.DateTimeUtils
 import java.time.LocalDate
@@ -119,7 +121,7 @@ fun EventsScreen(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
                     elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
@@ -317,205 +319,6 @@ fun EventsScreen(
                             onToggleCompleted = { viewModel.toggleEventCompleted(eventWithSubject.event.id, it) },
                             onEditClick = { viewModel.openAddEvent(eventWithSubject) }
                         )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun CustomEventCard(
-    eventWithSubject: SchoolEventWithSubject,
-    onToggleCompleted: (Boolean) -> Unit,
-    onEditClick: () -> Unit
-) {
-    val isCompleted = eventWithSubject.event.isCompleted
-    val eventDate = DateTimeUtils.parseDate(eventWithSubject.event.startDate) ?: LocalDate.now()
-    val today = LocalDate.now()
-    val isOverdue = !isCompleted && eventDate.isBefore(today)
-    val daysLeft = DateTimeUtils.daysRemaining(eventWithSubject.event.startDate) ?: 99L
-
-    // Colores según estado y urgencia (el borde se pone rojo al acercarse la fecha)
-    val sideStripColor = when {
-        isCompleted -> Color.Transparent
-        isOverdue -> MaterialTheme.colorScheme.error
-        daysLeft <= 0L -> MaterialTheme.colorScheme.error // Hoy o vencido
-        daysLeft <= 1L -> Color(0xFFF59E0B) // Mañana (Naranja/Ámbar)
-        daysLeft <= 3L -> MaterialTheme.colorScheme.tertiary // Próximamente
-        else -> MaterialTheme.colorScheme.primary
-    }
-
-    val cardBg = when {
-        isCompleted -> MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.2f)
-        isOverdue || daysLeft <= 0L -> MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.15f)
-        daysLeft <= 1L -> MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.15f)
-        else -> MaterialTheme.colorScheme.surfaceContainerLowest
-    }
-
-    val borderColor = when {
-        isCompleted -> MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f)
-        isOverdue || daysLeft <= 1L -> sideStripColor.copy(alpha = 0.5f)
-        else -> MaterialTheme.colorScheme.outlineVariant
-    }
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onEditClick() },
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = cardBg),
-        border = BorderStroke(1.dp, borderColor),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-    ) {
-        Row(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
-            // Línea de color lateral
-            Box(modifier = Modifier.fillMaxHeight().width(5.dp).background(sideStripColor))
-
-            Row(
-                modifier = Modifier.padding(16.dp).fillMaxWidth(),
-                verticalAlignment = Alignment.Top
-            ) {
-                // Checkbox
-                Box(
-                    modifier = Modifier
-                        .padding(top = 2.dp)
-                        .size(24.dp)
-                        .clip(RoundedCornerShape(6.dp))
-                        .background(if (isCompleted) MaterialTheme.colorScheme.secondary else Color.Transparent)
-                        .border(
-                            width = 2.dp,
-                            color = if (isCompleted) MaterialTheme.colorScheme.secondary else if (isOverdue) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outline,
-                            shape = RoundedCornerShape(6.dp)
-                        )
-                        .clickable { onToggleCompleted(!isCompleted) },
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (isCompleted) {
-                        Icon(Icons.Default.Check, contentDescription = null, tint = MaterialTheme.colorScheme.onSecondary, modifier = Modifier.size(16.dp))
-                    }
-                }
-
-                Spacer(modifier = Modifier.width(16.dp))
-
-                Column(modifier = Modifier.weight(1f)) {
-                    // Etiquetas
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(bottom = 8.dp)) {
-                        val typeIcon = when(eventWithSubject.event.type) {
-                            SchoolEventType.EXAMEN -> Icons.Default.Quiz
-                            else -> Icons.Default.Assignment
-                        }
-                        val typeColor = when(eventWithSubject.event.type) {
-                            SchoolEventType.EXAMEN -> MaterialTheme.colorScheme.error
-                            else -> MaterialTheme.colorScheme.primary
-                        }
-
-                        // Tag Tipo
-                        Surface(
-                            shape = RoundedCornerShape(6.dp),
-                            color = typeColor.copy(alpha = 0.15f)
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)) {
-                                Icon(typeIcon, contentDescription = null, tint = typeColor, modifier = Modifier.size(14.dp))
-                                Spacer(modifier = Modifier.width(6.dp))
-                                val typeLabel = when(eventWithSubject.event.type) {
-                                    SchoolEventType.TAREA -> stringResource(R.string.tipo_tarea)
-                                    SchoolEventType.EXAMEN -> stringResource(R.string.tipo_examen)
-                                    SchoolEventType.EXPOSICION -> stringResource(R.string.tipo_exposicion)
-                                    SchoolEventType.EVENTO_ESCOLAR -> stringResource(R.string.tipo_evento_escolar)
-                                    SchoolEventType.REUNION -> stringResource(R.string.tipo_reunion)
-                                    else -> stringResource(R.string.tipo_otro)
-                                }
-                                Text(
-                                    text = typeLabel.uppercase(),
-                                    fontSize = 10.sp,
-                                    fontWeight = FontWeight.ExtraBold,
-                                    color = typeColor
-                                )
-                            }
-                        }
-
-                        // Tag Materia
-                        if (eventWithSubject.subject != null) {
-                            Surface(
-                                shape = RoundedCornerShape(6.dp),
-                                color = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.2f)
-                            ) {
-                                Text(
-                                    text = eventWithSubject.subject.name,
-                                    fontSize = 10.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onTertiaryContainer,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp).widthIn(max = 140.dp)
-                                )
-                            }
-                        }
-                    }
-
-                    // Título
-                    Text(
-                        text = eventWithSubject.event.title,
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                        color = MaterialTheme.colorScheme.onSurface,
-                        textDecoration = if (isCompleted) TextDecoration.LineThrough else TextDecoration.None,
-                        modifier = Modifier.padding(bottom = 6.dp)
-                    )
-
-                    // Fecha y Hora
-                    val dateDisplay = when {
-                        isCompleted -> DateTimeUtils.formatDate(eventWithSubject.event.startDate)
-                        eventDate == today -> stringResource(R.string.hoy)
-                        eventDate == today.minusDays(1) -> stringResource(R.string.vencido_ayer)
-                        eventDate.isBefore(today) -> stringResource(R.string.vencido_formato, DateTimeUtils.formatDate(eventWithSubject.event.startDate))
-                        else -> DateTimeUtils.formatDate(eventWithSubject.event.startDate)
-                    }
-
-                    val dateColor = if (isOverdue || (eventDate == today && !isCompleted)) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant
-                    val dateIcon = if (isOverdue) Icons.Default.EventBusy else Icons.Default.CalendarToday
-
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(dateIcon, contentDescription = null, tint = dateColor, modifier = Modifier.size(14.dp))
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = dateDisplay,
-                                fontSize = 12.sp,
-                                fontWeight = if (isOverdue || eventDate == today) FontWeight.Bold else FontWeight.Medium,
-                                color = dateColor
-                            )
-                        }
-
-                        if (!eventWithSubject.event.startTime.isNullOrBlank()) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(Icons.Default.Schedule, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(14.dp))
-                                Spacer(modifier = Modifier.width(4.dp))
-                                val formattedStartTime = DateTimeUtils.formatTime(eventWithSubject.event.startTime, false)
-                                val formattedEndTime = eventWithSubject.event.endTime?.let { DateTimeUtils.formatTime(it, false) }
-                                val timeText = if (formattedEndTime != null) {
-                                    "$formattedStartTime - $formattedEndTime"
-                                } else {
-                                    formattedStartTime ?: ""
-                                }
-                                Text(
-                                    text = timeText,
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        }
-                    }
-                }
-
-                // Botón Editar
-                if (!isCompleted) {
-                    IconButton(onClick = onEditClick, modifier = Modifier.size(28.dp).padding(top = 0.dp)) {
-                        Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.editar), tint = MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(20.dp))
                     }
                 }
             }

@@ -95,8 +95,8 @@
     <string name="actividades_con_conteo">Actividades (%1$d)</string>
     <string name="no_se_encontraron_resultados">No se encontraron resultados</string>
     <string name="buscar_materias_actividades_desc">Buscar materias y actividades</string>
-    <string name="escanear_horario_desc">Escanear horario con foto</string>
-    <string name="escanear_boton">Escanear</string>
+    <string name="escanear_horario_desc">Importar horario desde archivo</string>
+    <string name="escanear_boton">Importar</string>
     <string name="agregar_desc">Agregar</string>
     <string name="importante_desc">Importante</string>
     <string name="mes_anterior_desc">Mes anterior</string>
@@ -358,10 +358,6 @@
     <string name="onboarding_notificaciones_subtitulo">Recordatorios de clases y tareas</string>
     <string name="onboarding_calendario_titulo">Calendario</string>
     <string name="onboarding_calendario_subtitulo">Sincronización con el teléfono</string>
-    <string name="onboarding_ia_titulo">Funciones de IA</string>
-    <string name="onboarding_ia_subtitulo">Escaneo de horarios con foto</string>
-    <string name="funciones_ia">Funciones de IA</string>
-    <string name="funciones_ia_desc">Usar Gemini para importar horarios</string>
     <string name="onboarding_error_nombre">Escribe tu nombre para continuar</string>
     <string name="tema_visual">Tema Visual</string>
     <string name="seleccionar_paleta_colores">Seleccionar paleta de colores</string>
@@ -376,4 +372,23 @@
     <string name="tema_rikka">Rikka</string>
     <string name="tema_sakura">Sakura</string>
     <string name="tema_dinamico">Dinámico</string>
+    <string name="personalizacion">Personalización</string>
+    <string name="general_y_datos">General y Datos</string>
+    <string name="estilo_indicador">Estilo de indicador</string>
+    <string name="estilo_indicador_desc">Personaliza cómo se ven los pendientes</string>
+    <string name="configurar_recordatorios">Configurar Recordatorios</string>
+    <string name="configurar_recordatorios_desc">Elige cuánto tiempo antes recibir avisos</string>
+    <string name="recordatorio_preparacion">Recordatorio de preparación</string>
+    <string name="recordatorio_preparacion_desc">Aviso extra días antes para exámenes</string>
+    <string name="aviso_antes_de">Aviso antes de...</string>
+    <string name="minutos">Minutos</string>
+    <string name="horas">Horas</string>
+    <string name="dias">Días</string>
+    <string name="modo_apariencia">Modo de Apariencia</string>
+    <string name="tema_claro">Claro</string>
+    <string name="tema_sistema">Sistema (Seguir teléfono)</string>
+    <string name="tema_desc_claro">Siempre claro</string>
+    <string name="tema_desc_oscuro">Siempre oscuro</string>
+    <string name="tema_desc_sistema">Automático según tu dispositivo</string>
+    <string name="dia">Dia</string>
 </resources>

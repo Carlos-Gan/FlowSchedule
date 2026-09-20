@@ -1,20 +1,19 @@
 package com.mocas.ui.screens
 
-import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.*
+import androidx.compose.animation.core.EaseInOutCubic
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
@@ -57,8 +56,6 @@ fun OnboardingScreen(
     var themeMode by remember { mutableStateOf("AUTO") }
     var notificationsEnabled by remember { mutableStateOf(true) }
     var calendarSyncEnabled by remember { mutableStateOf(true) }
-    val isAiAvailable = ScheduleViewModel.isAiAvailable()
-    var aiFeaturesEnabled by remember { mutableStateOf(isAiAvailable) }
 
     val focusManager = LocalFocusManager.current
 
@@ -66,7 +63,12 @@ fun OnboardingScreen(
         modifier = modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
-            if (currentStep > 0) {
+            // Animamos la aparición/desaparición de la barra inferior
+            AnimatedVisibility(
+                visible = currentStep > 0,
+                enter = slideInVertically { it } + fadeIn(),
+                exit = slideOutVertically { it } + fadeOut()
+            ) {
                 OnboardingBottomBar(
                     currentStep = currentStep,
                     totalSteps = 4,
@@ -85,7 +87,6 @@ fun OnboardingScreen(
                                     themeMode = themeMode,
                                     notificationsEnabled = notificationsEnabled,
                                     calendarSyncEnabled = calendarSyncEnabled,
-                                    aiFeaturesEnabled = aiFeaturesEnabled,
                                     onboardingCompleted = true
                                 )
                             )
@@ -96,19 +97,24 @@ fun OnboardingScreen(
             }
         }
     ) { padding ->
-        Box(modifier = Modifier.padding(padding)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
             AnimatedContent(
                 targetState = currentStep,
                 transitionSpec = {
                     if (targetState > initialState) {
-                        (slideInHorizontally { it } + fadeIn(tween(300)))
-                            .togetherWith(slideOutHorizontally { -it } + fadeOut(tween(300)))
+                        (slideInHorizontally(animationSpec = tween(500, easing = EaseInOutCubic)) { it } + fadeIn(tween(500)))
+                            .togetherWith(slideOutHorizontally(animationSpec = tween(500, easing = EaseInOutCubic)) { -it } + fadeOut(tween(500)))
                     } else {
-                        (slideInHorizontally { -it } + fadeIn(tween(300)))
-                            .togetherWith(slideOutHorizontally { it } + fadeOut(tween(300)))
+                        (slideInHorizontally(animationSpec = tween(500, easing = EaseInOutCubic)) { -it } + fadeIn(tween(500)))
+                            .togetherWith(slideOutHorizontally(animationSpec = tween(500, easing = EaseInOutCubic)) { it } + fadeOut(tween(500)))
                     }
                 },
-                label = "onboarding_step_transition"
+                label = "onboarding_step_transition",
+                modifier = Modifier.fillMaxSize()
             ) { step ->
                 when (step) {
                     0 -> WelcomeStep(onStart = { currentStep = 1 })
@@ -121,8 +127,7 @@ fun OnboardingScreen(
                     3 -> AppearanceStep(themeMode, onThemeChange = { themeMode = it })
                     4 -> PreferencesStep(
                         notificationsEnabled, onNotifChange = { notificationsEnabled = it },
-                        calendarSyncEnabled, onCalChange = { calendarSyncEnabled = it },
-                        aiFeaturesEnabled, onAiChange = { aiFeaturesEnabled = it }
+                        calendarSyncEnabled, onCalChange = { calendarSyncEnabled = it }
                     )
                 }
             }
@@ -139,7 +144,7 @@ private fun WelcomeStep(onStart: () -> Unit) {
     ) {
         Box(
             modifier = Modifier
-                .size(100.dp)
+                .size(110.dp)
                 .clip(RoundedCornerShape(32.dp))
                 .background(
                     Brush.linearGradient(
@@ -152,7 +157,7 @@ private fun WelcomeStep(onStart: () -> Unit) {
                 imageVector = Icons.Default.School,
                 contentDescription = null,
                 tint = Color.White,
-                modifier = Modifier.size(54.dp)
+                modifier = Modifier.size(58.dp)
             )
         }
 
@@ -292,8 +297,7 @@ private fun AppearanceStep(current: String, onThemeChange: (String) -> Unit) {
 @Composable
 private fun PreferencesStep(
     notif: Boolean, onNotifChange: (Boolean) -> Unit,
-    cal: Boolean, onCalChange: (Boolean) -> Unit,
-    ai: Boolean, onAiChange: (Boolean) -> Unit
+    cal: Boolean, onCalChange: (Boolean) -> Unit
 ) {
     StepLayout(
         title = stringResource(R.string.onboarding_paso_preferencias_titulo),
@@ -314,18 +318,8 @@ private fun PreferencesStep(
                 icon = Icons.Default.CalendarMonth,
                 checked = cal,
                 onCheckedChange = onCalChange,
-                showDivider = ScheduleViewModel.isAiAvailable()
+                showDivider = false
             )
-            if (ScheduleViewModel.isAiAvailable()) {
-                PreferenceToggleItem(
-                    title = stringResource(R.string.onboarding_ia_titulo),
-                    subtitle = stringResource(R.string.onboarding_ia_subtitulo),
-                    icon = Icons.Default.AutoAwesome,
-                    checked = ai,
-                    onCheckedChange = onAiChange,
-                    showDivider = false
-                )
-            }
         }
     }
 }
@@ -337,7 +331,7 @@ private fun StepLayout(
     icon: ImageVector,
     content: @Composable () -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxSize().padding(24.dp)) {
+    Column(modifier = Modifier.fillMaxSize().padding(24.dp).verticalScroll(rememberScrollState())) {
         Surface(
             shape = RoundedCornerShape(16.dp),
             color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
@@ -377,31 +371,39 @@ private fun OnboardingBottomBar(
     onNext: () -> Unit,
     onBack: () -> Unit
 ) {
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        color = MaterialTheme.colorScheme.surface,
-        tonalElevation = 2.dp,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .navigationBarsPadding()
     ) {
         Row(
-            modifier = Modifier.padding(20.dp).fillMaxWidth().navigationBarsPadding(),
+            modifier = Modifier
+                .padding(horizontal = 24.dp, vertical = 20.dp)
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            TextButton(onClick = onBack) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, null, modifier = Modifier.size(18.dp))
+            TextButton(
+                onClick = onBack,
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
+            ) {
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, null, modifier = Modifier.size(20.dp))
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(stringResource(R.string.onboarding_atras_boton), fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.onboarding_atras_boton), fontWeight = FontWeight.Bold, fontSize = 15.sp)
             }
             
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 repeat(totalSteps) { i ->
                     val isCurrent = (i + 1) == currentStep
+                    val color by animateColorAsState(
+                        if (isCurrent) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
+                        label = "dot_color"
+                    )
                     Box(
                         modifier = Modifier
-                            .size(if (isCurrent) 10.dp else 6.dp)
+                            .size(if (isCurrent) 10.dp else 7.dp)
                             .clip(CircleShape)
-                            .background(if (isCurrent) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant)
+                            .background(color)
                     )
                 }
             }
@@ -409,15 +411,18 @@ private fun OnboardingBottomBar(
             Button(
                 onClick = onNext,
                 enabled = canContinue,
-                shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                shape = RoundedCornerShape(16.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
+                elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
             ) {
                 Text(
                     text = if (currentStep == totalSteps) stringResource(R.string.onboarding_finalizar_boton) else stringResource(R.string.onboarding_siguiente_boton),
-                    fontWeight = FontWeight.ExtraBold
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 15.sp
                 )
                 if (currentStep < totalSteps) {
-                    Icon(Icons.Default.ChevronRight, null, modifier = Modifier.padding(start = 4.dp))
+                    Icon(Icons.Default.ChevronRight, null, modifier = Modifier.padding(start = 4.dp).size(18.dp))
                 }
             }
         }
