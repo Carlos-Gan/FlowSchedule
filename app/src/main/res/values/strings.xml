@@ -371,6 +371,10 @@
     <string name="tema_mion">Mion</string>
     <string name="tema_rikka">Rikka</string>
     <string name="tema_sakura">Sakura</string>
+    <string name="tema_crimson">Crimson</string>
+    <string name="tema_coffee">Coffee</string>
+    <string name="tema_midnight">Midnight</string>
+    <string name="tema_forest">Forest</string>
     <string name="tema_dinamico">Dinámico</string>
     <string name="personalizacion">Personalización</string>
     <string name="general_y_datos">General y Datos</string>

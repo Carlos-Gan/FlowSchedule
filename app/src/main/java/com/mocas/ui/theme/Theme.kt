@@ -550,6 +550,78 @@ private val SakuraLightColorScheme = lightColorScheme(
     outlineVariant = SakuraOutlineVariant
 )
 
+// Crimson
+private val CrimsonLightColorScheme = lightColorScheme(
+    primary = CrimsonPrimary,
+    onPrimary = Color.White,
+    background = CrimsonBackground,
+    surface = CrimsonBackground,
+    onBackground = Color(0xFF1C1B1B),
+    onSurface = Color(0xFF1C1B1B)
+)
+private val CrimsonDarkColorScheme = darkColorScheme(
+    primary = CrimsonPrimaryDark,
+    onPrimary = Color(0xFF601410),
+    background = CrimsonBackgroundDark,
+    surface = CrimsonBackgroundDark,
+    onBackground = Color(0xFFE6E1E0),
+    onSurface = Color(0xFFE6E1E0)
+)
+
+// Coffee
+private val CoffeeLightColorScheme = lightColorScheme(
+    primary = CoffeePrimary,
+    onPrimary = Color.White,
+    background = CoffeeBackground,
+    surface = CoffeeBackground,
+    onBackground = Color(0xFF231B1B),
+    onSurface = Color(0xFF231B1B)
+)
+private val CoffeeDarkColorScheme = darkColorScheme(
+    primary = CoffeePrimaryDark,
+    onPrimary = Color(0xFF3E2723),
+    background = CoffeeBackgroundDark,
+    surface = CoffeeBackgroundDark,
+    onBackground = Color(0xFFE7E1E0),
+    onSurface = Color(0xFFE7E1E0)
+)
+
+// Midnight
+private val MidnightLightColorScheme = lightColorScheme(
+    primary = MidnightPrimary,
+    onPrimary = Color.White,
+    background = MidnightBackground,
+    surface = MidnightBackground,
+    onBackground = Color(0xFF1A1C1E),
+    onSurface = Color(0xFF1A1C1E)
+)
+private val MidnightDarkColorScheme = darkColorScheme(
+    primary = MidnightPrimaryDark,
+    onPrimary = Color(0xFF1A237E),
+    background = MidnightBackgroundDark,
+    surface = MidnightBackgroundDark,
+    onBackground = Color(0xFFE2E2E6),
+    onSurface = Color(0xFFE2E2E6)
+)
+
+// Forest
+private val ForestLightColorScheme = lightColorScheme(
+    primary = ForestPrimary,
+    onPrimary = Color.White,
+    background = ForestBackground,
+    surface = ForestBackground,
+    onBackground = Color(0xFF1A1C19),
+    onSurface = Color(0xFF1A1C19)
+)
+private val ForestDarkColorScheme = darkColorScheme(
+    primary = ForestPrimaryDark,
+    onPrimary = Color(0xFF00390A),
+    background = ForestBackgroundDark,
+    surface = ForestBackgroundDark,
+    onBackground = Color(0xFFE1E3DE),
+    onSurface = Color(0xFFE1E3DE)
+)
+
 @Composable
 fun FlowScheduleTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -571,6 +643,10 @@ fun FlowScheduleTheme(
         colorTheme == "MION" -> if (darkTheme) MionDarkColorScheme else MionLightColorScheme
         colorTheme == "RIKKA" -> if (darkTheme) RikkaDarkColorScheme else RikkaLightColorScheme
         colorTheme == "SAKURA" -> if (darkTheme) SakuraDarkColorScheme else SakuraLightColorScheme
+        colorTheme == "CRIMSON" -> if (darkTheme) CrimsonDarkColorScheme else CrimsonLightColorScheme
+        colorTheme == "COFFEE" -> if (darkTheme) CoffeeDarkColorScheme else CoffeeLightColorScheme
+        colorTheme == "MIDNIGHT" -> if (darkTheme) MidnightDarkColorScheme else MidnightLightColorScheme
+        colorTheme == "FOREST" -> if (darkTheme) ForestDarkColorScheme else ForestLightColorScheme
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }

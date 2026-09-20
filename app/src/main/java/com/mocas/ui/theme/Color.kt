@@ -546,3 +546,27 @@ val SakuraSurfaceDark = Color(0xFF22191C)
 val SakuraOnSurfaceDark = Color(0xFFEFDFE1)
 val SakuraSurfaceVariantDark = Color(0xFF514347)
 val SakuraOnSurfaceVariantDark = Color(0xFFD5C2C6)
+
+// Crimson Theme (High Contrast Red)
+val CrimsonPrimary = Color(0xFFD32F2F)
+val CrimsonPrimaryDark = Color(0xFFFF8A80)
+val CrimsonBackground = Color(0xFFFFF8F7)
+val CrimsonBackgroundDark = Color(0xFF1A1110)
+
+// Coffee Theme (Retro Vintage)
+val CoffeePrimary = Color(0xFF6F4E37)
+val CoffeePrimaryDark = Color(0xFFD7CCC8)
+val CoffeeBackground = Color(0xFFFDF5E6) // Old Lace / Cream
+val CoffeeBackgroundDark = Color(0xFF231B1B)
+
+// Midnight Theme (Deep Elegant Blue)
+val MidnightPrimary = Color(0xFF1A237E)
+val MidnightPrimaryDark = Color(0xFFC5CAE9)
+val MidnightBackground = Color(0xFFF0F2F5) // Soft Blue Gray
+val MidnightBackgroundDark = Color(0xFF0D1117)
+
+// Forest Theme (Deep Nature)
+val ForestPrimary = Color(0xFF1B5E20)
+val ForestPrimaryDark = Color(0xFFC8E6C9)
+val ForestBackground = Color(0xFFF1F8E9) // Very Light Green
+val ForestBackgroundDark = Color(0xFF0A1A0A)
