@@ -10,10 +10,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
 import androidx.core.content.ContextCompat
+import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mocas.ui.screens.MainAppScreen
 import com.mocas.ui.screens.OnboardingScreen
@@ -39,11 +41,10 @@ class MainActivity : ComponentActivity() {
             // Aplicar Idioma en Debug
             LaunchedEffect(settings.language) {
                 if (com.mocas.BuildConfig.DEBUG) {
-                    val locale = if (settings.language == "English") Locale.ENGLISH else Locale("es", "MX")
-                    Locale.setDefault(locale)
-                    val config = resources.configuration
-                    config.setLocale(locale)
-                    resources.updateConfiguration(config, resources.displayMetrics)
+                    val localeTag = if (settings.language == "English") "en" else "es-MX"
+                    AppCompatDelegate.setApplicationLocales(
+                        LocaleListCompat.forLanguageTags(localeTag)
+                    )
                 }
             }
 

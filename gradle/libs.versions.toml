@@ -8,21 +8,22 @@ lifecycleRuntimeKtx = "2.11.0"
 lifecycleViewmodelCompose = "2.11.0"
 lifecycleRuntimeCompose = "2.11.0"
 activityCompose = "1.13.0"
-kotlin = "2.4.10"
-composeBom = "2026.08.00"
+kotlin = "2.4.20"
+composeBom = "2026.09.00"
 googleDevtoolsKsp = "2.3.11"
-material3 = "1.5.0-alpha27"
-roomRuntime = "2.8.4"
-roomKtx = "2.8.4"
-roomCompiler = "2.8.4"
+material3 = "1.5.0-alpha28"
+roomRuntime = "2.8.5"
+roomKtx = "2.8.5"
+roomCompiler = "2.8.5"
 kotlinxCoroutinesTest = "1.11.0"
 core = "1.7.0"
 runner = "1.7.0"
 kotlinxCoroutinesAndroid = "1.11.0"
 okhttp = "5.5.0"
-robolectric = "4.16.1"
-roborazzi = "1.73.0"
+robolectric = "4.17"
+roborazzi = "1.74.0"
 secretsGradlePlugin = "2.0.1"
+appcompat = "1.8.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -57,6 +58,7 @@ robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "
 roborazzi = { group = "io.github.takahirom.roborazzi", name = "roborazzi", version.ref = "roborazzi" }
 roborazzi-compose = { group = "io.github.takahirom.roborazzi", name = "roborazzi-compose", version.ref = "roborazzi" }
 roborazzi-junit-rule = { group = "io.github.takahirom.roborazzi", name = "roborazzi-junit-rule", version.ref = "roborazzi" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 
 
 [plugins]
