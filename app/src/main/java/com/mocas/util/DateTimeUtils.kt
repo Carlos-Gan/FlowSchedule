@@ -97,14 +97,12 @@ object DateTimeUtils {
     fun formatRelativeDate(dateString: String): String {
         val date = parseDate(dateString) ?: return dateString
         val today = LocalDate.now()
-        val daysBetween = ChronoUnit.DAYS.between(today, date)
-
-        return when {
-            daysBetween == 0L -> "Hoy"
-            daysBetween == 1L -> "Mañana"
-            daysBetween == -1L -> "Ayer"
-            daysBetween in 2L..7L -> "En $daysBetween días"
-            daysBetween in -7L..-2L -> "Hace ${-daysBetween} días"
+        return when (val daysBetween = ChronoUnit.DAYS.between(today, date)) {
+            0L -> "Hoy"
+            1L -> "Mañana"
+            -1L -> "Ayer"
+            in 2L..7L -> "En $daysBetween días"
+            in -7L..-2L -> "Hace ${-daysBetween} días"
             else -> formatDate(dateString)
         }
     }

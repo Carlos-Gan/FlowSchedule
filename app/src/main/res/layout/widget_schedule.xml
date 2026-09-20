@@ -10,7 +10,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="SIGUIENTE CLASE"
+        android:text="@string/siguiente_clase"
         android:textColor="#CFC8FF"
         android:textSize="11sp"
         android:textStyle="bold" />
@@ -22,7 +22,7 @@
         android:layout_marginTop="5dp"
         android:ellipsize="end"
         android:maxLines="2"
-        android:text="Sin próximas clases"
+        android:text="@string/sin_pr_ximas_clases"
         android:textColor="#FFFFFF"
         android:textSize="19sp"
         android:textStyle="bold" />

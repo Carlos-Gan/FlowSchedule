@@ -1,4 +1,4 @@
-package com.mocas.ui.screens
+package com.mocas.ui.dialogs
 
 import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
@@ -26,7 +26,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -41,7 +40,6 @@ import com.mocas.ui.add.subject.SchedulesCard
 import com.mocas.ui.add.subject.SessionTimePickerDialog
 import androidx.compose.material3.MaterialTheme
 import com.mocas.util.DateTimeUtils
-import com.mocas.util.Variants
 import java.util.Locale
 
 // --- Clases de Datos ---

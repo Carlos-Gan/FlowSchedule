@@ -48,10 +48,10 @@ fun parseColorFromHex(hex: String, defaultColor: Color = Color(0xFF3B82F6)): Col
 
 @Composable
 fun SubjectColorPicker(
+    modifier: Modifier = Modifier,
     selectedHex: String,
     onColorSelected: (String) -> Unit,
     label: String = "Color de la materia",
-    modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(

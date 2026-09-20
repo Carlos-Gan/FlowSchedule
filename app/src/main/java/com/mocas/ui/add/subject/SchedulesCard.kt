@@ -35,7 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.mocas.R
-import com.mocas.ui.screens.SlotDraft
+import com.mocas.ui.dialogs.SlotDraft
 import com.mocas.util.DateTimeUtils
 
 @Composable

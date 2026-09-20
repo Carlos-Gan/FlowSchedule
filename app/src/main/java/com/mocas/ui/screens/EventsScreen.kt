@@ -54,6 +54,7 @@ import com.mocas.ui.components.events.CustomEventCard
 import com.mocas.ui.viewmodel.ScheduleViewModel
 import com.mocas.util.DateTimeUtils
 import java.time.LocalDate
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,7 +72,7 @@ fun EventsScreen(
     val onRefresh: () -> Unit = {
         scope.launch {
             isRefreshing = true
-            delay(1500) // Simulación de carga
+            delay(1500.milliseconds) // Simulación de carga
             isRefreshing = false
         }
     }

@@ -5,7 +5,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mocas.ui.viewmodel.ScheduleViewModel
-import com.mocas.ui.screens.AddEditSubjectScreen
 import com.mocas.ui.screens.AppearanceScreen
 
 @Composable

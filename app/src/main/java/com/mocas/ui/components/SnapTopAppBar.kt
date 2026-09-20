@@ -52,6 +52,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -139,8 +140,8 @@ fun SnapTopAppBar(
         derivedStateOf { isSearchActive && normalizedQuery.isNotEmpty() }
     }
 
-    var barHeightPx by remember { mutableStateOf(0) }
-    var barWidthPx by remember { mutableStateOf(0) }
+    var barHeightPx by remember { mutableIntStateOf(0) }
+    var barWidthPx by remember { mutableIntStateOf(0) }
     val density = LocalDensity.current
 
 

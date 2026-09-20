@@ -18,13 +18,11 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -33,7 +31,7 @@ import com.mocas.R
 import com.mocas.data.local.AcademicPeriodEntity
 import com.mocas.ui.add.CustomInputField
 import com.mocas.ui.components.CalendarDateField
-import com.mocas.ui.screens.buildPeriodName
+import com.mocas.ui.dialogs.buildPeriodName
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.platform.LocalContext
 import com.mocas.ui.util.capitalizeFirstLetter

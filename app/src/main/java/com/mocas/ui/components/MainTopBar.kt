@@ -11,7 +11,35 @@ data class TopBarConfig(
     val subtitleArgs: Array<Any>? = null,
     val showScanAction: Boolean,
     val showAddAction: Boolean
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as TopBarConfig
+
+        if (titleRes != other.titleRes) return false
+        if (subtitleRes != other.subtitleRes) return false
+        if (showScanAction != other.showScanAction) return false
+        if (showAddAction != other.showAddAction) return false
+        if (title != other.title) return false
+        if (subtitle != other.subtitle) return false
+        if (!subtitleArgs.contentEquals(other.subtitleArgs)) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = titleRes ?: 0
+        result = 31 * result + (subtitleRes ?: 0)
+        result = 31 * result + showScanAction.hashCode()
+        result = 31 * result + showAddAction.hashCode()
+        result = 31 * result + (title?.hashCode() ?: 0)
+        result = 31 * result + (subtitle?.hashCode() ?: 0)
+        result = 31 * result + (subtitleArgs?.contentHashCode() ?: 0)
+        return result
+    }
+}
 
 fun getTopBarConfig(
     currentTab: BottomNavTab,

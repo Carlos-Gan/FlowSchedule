@@ -12,8 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import com.mocas.ui.screens.formatTime
-import com.mocas.ui.screens.parseTime
+import com.mocas.ui.dialogs.formatTime
+import com.mocas.ui.dialogs.parseTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

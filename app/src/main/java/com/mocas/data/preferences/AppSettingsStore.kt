@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.mocas.ui.model.AppSettings
 import com.mocas.ui.model.BadgeStyle
+import androidx.core.content.edit
 
 class AppSettingsStore(context: Context) {
     private val preferences: SharedPreferences = context.getSharedPreferences(
@@ -55,35 +56,35 @@ class AppSettingsStore(context: Context) {
     )
 
     fun save(settings: AppSettings) {
-        preferences.edit()
-            .putString(KEY_USER_NAME, settings.userName)
-            .putString(KEY_EDUCATION_LEVEL, settings.educationLevel)
-            .putString(KEY_EDUCATION_INSTITUTION, settings.educationInstitution)
-            .putBoolean(KEY_USE_GPA_SCALE, settings.useGpaScale)
-            .putString(KEY_THEME_MODE, settings.themeMode)
-            .putInt(KEY_REMINDER_MINUTES, settings.defaultReminderMinutes)
-            .putInt(KEY_FIRST_DAY_OF_WEEK, settings.firstDayOfWeek)
-            .putBoolean(KEY_NOTIFICATIONS_ENABLED, settings.notificationsEnabled)
-            .putBoolean(KEY_CLASS_NOTIFICATIONS_ENABLED, settings.classNotificationsEnabled)
-            .putBoolean(KEY_TASK_NOTIFICATIONS_ENABLED, settings.taskNotificationsEnabled)
-            .putBoolean(KEY_EXAM_NOTIFICATIONS_ENABLED, settings.examNotificationsEnabled)
-            .putBoolean(KEY_EVENT_NOTIFICATIONS_ENABLED, settings.eventNotificationsEnabled)
-            .putBoolean(KEY_OVERDUE_NOTIFICATIONS_ENABLED, settings.overdueNotificationsEnabled)
-            .putBoolean(KEY_TOMORROW_SUMMARY_ENABLED, settings.tomorrowSummaryEnabled)
-            .putInt(KEY_TASK_REMINDER_MINUTES, settings.taskReminderMinutes)
-            .putInt(KEY_EXAM_REMINDER_MINUTES, settings.examReminderMinutes)
-            .putInt(KEY_EVENT_REMINDER_MINUTES, settings.eventReminderMinutes)
-            .putBoolean(KEY_EXAM_PREP_REMINDER_ENABLED, settings.examPrepReminderEnabled)
-            .putInt(KEY_EXAM_PREP_REMINDER_MINUTES, settings.examPrepReminderMinutes)
-            .putBoolean(KEY_CALENDAR_SYNC_ENABLED, settings.calendarSyncEnabled)
-            .putBoolean(KEY_OUTSIDE_PERIODS_ARE_VACATIONS, settings.outsidePeriodsAreVacations)
-            .putBoolean(KEY_SHOW_VACATIONS_IN_TIMETABLE, settings.showVacationsInTimetable)
-            .putString(KEY_TARGET_CALENDAR_NAME, settings.targetCalendarName)
-            .putString(KEY_LANGUAGE, settings.language)
-            .putString(KEY_COLOR_THEME, settings.colorTheme)
-            .putString(KEY_BADGE_STYLE, settings.badgeStyle.name)
-            .putBoolean(KEY_ONBOARDING_COMPLETED, settings.onboardingCompleted)
-            .apply()
+        preferences.edit {
+            putString(KEY_USER_NAME, settings.userName)
+                .putString(KEY_EDUCATION_LEVEL, settings.educationLevel)
+                .putString(KEY_EDUCATION_INSTITUTION, settings.educationInstitution)
+                .putBoolean(KEY_USE_GPA_SCALE, settings.useGpaScale)
+                .putString(KEY_THEME_MODE, settings.themeMode)
+                .putInt(KEY_REMINDER_MINUTES, settings.defaultReminderMinutes)
+                .putInt(KEY_FIRST_DAY_OF_WEEK, settings.firstDayOfWeek)
+                .putBoolean(KEY_NOTIFICATIONS_ENABLED, settings.notificationsEnabled)
+                .putBoolean(KEY_CLASS_NOTIFICATIONS_ENABLED, settings.classNotificationsEnabled)
+                .putBoolean(KEY_TASK_NOTIFICATIONS_ENABLED, settings.taskNotificationsEnabled)
+                .putBoolean(KEY_EXAM_NOTIFICATIONS_ENABLED, settings.examNotificationsEnabled)
+                .putBoolean(KEY_EVENT_NOTIFICATIONS_ENABLED, settings.eventNotificationsEnabled)
+                .putBoolean(KEY_OVERDUE_NOTIFICATIONS_ENABLED, settings.overdueNotificationsEnabled)
+                .putBoolean(KEY_TOMORROW_SUMMARY_ENABLED, settings.tomorrowSummaryEnabled)
+                .putInt(KEY_TASK_REMINDER_MINUTES, settings.taskReminderMinutes)
+                .putInt(KEY_EXAM_REMINDER_MINUTES, settings.examReminderMinutes)
+                .putInt(KEY_EVENT_REMINDER_MINUTES, settings.eventReminderMinutes)
+                .putBoolean(KEY_EXAM_PREP_REMINDER_ENABLED, settings.examPrepReminderEnabled)
+                .putInt(KEY_EXAM_PREP_REMINDER_MINUTES, settings.examPrepReminderMinutes)
+                .putBoolean(KEY_CALENDAR_SYNC_ENABLED, settings.calendarSyncEnabled)
+                .putBoolean(KEY_OUTSIDE_PERIODS_ARE_VACATIONS, settings.outsidePeriodsAreVacations)
+                .putBoolean(KEY_SHOW_VACATIONS_IN_TIMETABLE, settings.showVacationsInTimetable)
+                .putString(KEY_TARGET_CALENDAR_NAME, settings.targetCalendarName)
+                .putString(KEY_LANGUAGE, settings.language)
+                .putString(KEY_COLOR_THEME, settings.colorTheme)
+                .putString(KEY_BADGE_STYLE, settings.badgeStyle.name)
+                .putBoolean(KEY_ONBOARDING_COMPLETED, settings.onboardingCompleted)
+        }
     }
 
     private companion object {

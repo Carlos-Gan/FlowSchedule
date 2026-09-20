@@ -487,13 +487,18 @@ class ScheduleRepository(private val database: AppDatabase) {
             categoryIds[category.id] = newId
         }
         val unitIds = mutableMapOf<Long, Long>()
-        val unitsToRestore = if (backup.gradeUnits.isNotEmpty()) {
-            backup.gradeUnits
-        } else {
-            backup.gradeItems.distinctBy { it.categoryId to it.unitName }.mapIndexed { index, item ->
-                val oldSubjectId = backup.gradeCategories.first { it.id == item.categoryId }.subjectId
-                GradeUnitEntity(id = -(index + 1L), subjectId = oldSubjectId, name = item.unitName, sortOrder = index)
-            }.distinctBy { it.subjectId to it.name }
+        val unitsToRestore = backup.gradeUnits.ifEmpty {
+            backup.gradeItems.distinctBy { it.categoryId to it.unitName }
+                .mapIndexed { index, item ->
+                    val oldSubjectId =
+                        backup.gradeCategories.first { it.id == item.categoryId }.subjectId
+                    GradeUnitEntity(
+                        id = -(index + 1L),
+                        subjectId = oldSubjectId,
+                        name = item.unitName,
+                        sortOrder = index
+                    )
+                }.distinctBy { it.subjectId to it.name }
         }
         unitsToRestore.forEach { unit ->
             val newId = gradeDao.insertUnit(

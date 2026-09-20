@@ -20,6 +20,7 @@ import com.mocas.data.widget.ScheduleWidgetProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import androidx.core.content.edit
 
 object NotificationScheduler {
     const val ACTION_COMPLETE = "com.mocas.action.COMPLETE_EVENT"
@@ -44,11 +45,10 @@ object NotificationScheduler {
                 pendingIntent(context, reminder.id, reminder)
             )
         }
-        preferences.edit().putStringSet(KEY_IDS, reminders.mapTo(mutableSetOf()) { it.id }).apply()
+        preferences.edit { putStringSet(KEY_IDS, reminders.mapTo(mutableSetOf()) { it.id }) }
     }
 
     fun createChannels(context: Context) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
         val manager = context.getSystemService(NotificationManager::class.java)
         listOf(
             NotificationChannel(CHANNEL_CLASSES, "Clases", NotificationManager.IMPORTANCE_HIGH),
@@ -67,7 +67,7 @@ object NotificationScheduler {
         val preferences = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
         val ids = preferences.getStringSet(KEY_IDS, emptySet()).orEmpty().toMutableSet()
         ids += reminder.id
-        preferences.edit().putStringSet(KEY_IDS, ids).apply()
+        preferences.edit { putStringSet(KEY_IDS, ids) }
     }
 
     private fun pendingIntent(

@@ -1,6 +1,6 @@
 package com.mocas.ui.theme
 
-import android.app.Activity
+import android.content.ContextWrapper
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -14,7 +14,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.core.view.WindowCompat
+import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
 
 private val DarkColorScheme = darkColorScheme(
     primary = PrimaryDark,
@@ -654,14 +656,22 @@ fun FlowScheduleTheme(
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
-            val window = (view.context as Activity).window
-            window.statusBarColor = Color.Transparent.toArgb()
-            window.navigationBarColor = colorScheme.surface.toArgb()
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                window.isNavigationBarContrastEnforced = false
+            var context = view.context
+            while (context is ContextWrapper && context !is ComponentActivity) {
+                context = context.baseContext
             }
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
-            WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = !darkTheme
+            (context as? ComponentActivity)?.enableEdgeToEdge(
+                statusBarStyle = if (darkTheme) {
+                    SystemBarStyle.dark(Color.Transparent.toArgb())
+                } else {
+                    SystemBarStyle.light(Color.Transparent.toArgb(), Color.Transparent.toArgb())
+                },
+                navigationBarStyle = if (darkTheme) {
+                    SystemBarStyle.dark(colorScheme.surface.toArgb())
+                } else {
+                    SystemBarStyle.light(colorScheme.surface.toArgb(), colorScheme.surface.toArgb())
+                }
+            )
         }
     }
 

@@ -106,8 +106,8 @@ fun DailyClassRow(
                         val room = classItem.slot.room.ifBlank { classItem.subject.defaultRoom }
                         val professor = classItem.subject.professor
                         val metadata = listOfNotNull(
-                            if (room.isNotBlank()) room else null,
-                            if (professor.isNotBlank()) professor else null
+                            room.ifBlank { null },
+                            professor.ifBlank { null }
                         ).joinToString("  •  ")
 
                         if (metadata.isNotBlank()) {
