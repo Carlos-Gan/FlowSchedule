@@ -391,4 +391,22 @@
     <string name="tema_desc_oscuro">Siempre oscuro</string>
     <string name="tema_desc_sistema">Automático según tu dispositivo</string>
     <string name="dia">Dia</string>
+    <string name="notif_class_change_title">Cambio de clase: %1$s</string>
+    <string name="notif_next_class_title">Próxima clase: %1$s</string>
+    <string name="notif_summary_title">Resumen de mañana</string>
+    <string name="notif_summary_message">%1$d clases • %2$d actividades</string>
+    <string name="minuto_corto" translatable="false">%1$dm</string>
+    <string name="hora_corta" translatable="false">%1$dh</string>
+
+    <!-- Recordatorio de actividad (tarea/examen/exposición/evento) -->
+    <!-- %1$s = tipo (Tarea/Examen/Exposición/Actividad), %2$s = título de la actividad -->
+    <string name="notif_event_reminder_title">%1$s: %2$s</string>
+
+    <!-- Recordatorio de preparación de examen -->
+    <string name="notif_prep_title">Preparación: %1$s</string>
+    <string name="notif_prep_message">¡Faltan pocos días para tu examen! Empieza a repasar.</string>
+
+    <!-- Actividad vencida -->
+    <string name="notif_overdue_title">Actividad vencida</string>
+    <string name="notif_overdue_message">%1$s sigue pendiente.</string>
 </resources>

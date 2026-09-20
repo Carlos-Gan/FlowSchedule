@@ -13,6 +13,7 @@ object ReminderRescheduler {
     suspend fun reschedule(context: Context) {
         val database = AppDatabase.getDatabase(context)
         val reminders = planReminders(
+            context = context,
             subjects = database.subjectDao().getAllSubjectsWithSlotsOnce(),
             events = database.schoolEventDao().getAllEventsWithSubjectOnce(),
             exceptions = database.classExceptionDao().getAllOnce(),

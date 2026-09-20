@@ -392,4 +392,23 @@
     <string name="tema_desc_oscuro">Always dark</string>
     <string name="tema_desc_sistema">Automatic based on your device</string>
     <string name="dia">Day</string>
+    <!-- Upcoming class / class change reminder -->
+    <string name="notif_next_class_title">Next class: %1$s</string>
+    <string name="notif_class_change_title">Class change: %1$s</string>
+
+    <!-- Tomorrow's summary -->
+    <string name="notif_summary_title">Tomorrow\'s summary</string>
+    <string name="notif_summary_message">%1$d classes · %2$d activities</string>
+
+    <!-- Activity reminder (task/exam/presentation/event) -->
+    <!-- %1$s = type (Task/Exam/Presentation/Activity), %2$s = activity title -->
+    <string name="notif_event_reminder_title">%1$s: %2$s</string>
+
+    <!-- Exam prep reminder -->
+    <string name="notif_prep_title">Get ready: %1$s</string>
+    <string name="notif_prep_message">Your exam is coming up soon! Time to start reviewing.</string>
+
+    <!-- Overdue activity -->
+    <string name="notif_overdue_title">Overdue activity</string>
+    <string name="notif_overdue_message">%1$s is still pending.</string>
 </resources>
