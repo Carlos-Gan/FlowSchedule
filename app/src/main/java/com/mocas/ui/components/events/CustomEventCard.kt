@@ -158,8 +158,8 @@ fun CustomEventCard(
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
-                                    text = typeLabel.uppercase(),
-                                    fontSize = 11.sp,
+                                    text = typeLabel,
+                                    fontSize = 10.sp,
                                     fontWeight = FontWeight.Black,
                                     color = colors.onErrorContainer
                                 )
@@ -198,7 +198,7 @@ fun CustomEventCard(
                             ) {
                                 Text(
                                     text = eventWithSubject.subject.name,
-                                    fontSize = 11.sp,
+                                    fontSize = 10.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = colors.onSurface,
                                     maxLines = 1,
@@ -213,7 +213,7 @@ fun CustomEventCard(
                     // Título Principal
                     Text(
                         text = eventWithSubject.event.title,
-                        fontSize = 22.sp,
+                        fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = colors.onSurface,
                         textDecoration = if (isCompleted) TextDecoration.LineThrough else TextDecoration.None
@@ -223,7 +223,7 @@ fun CustomEventCard(
                     if (eventWithSubject.subject != null) {
                         Text(
                             text = eventWithSubject.subject.name,
-                            fontSize = 16.sp,
+                            fontSize = 12.sp,
                             fontWeight = FontWeight.Medium,
                             color = colors.onSurfaceVariant,
                             modifier = Modifier.padding(top = 2.dp, bottom = 8.dp)
@@ -246,7 +246,7 @@ fun CustomEventCard(
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
                                 text = DateTimeUtils.formatDate(eventWithSubject.event.startDate),
-                                fontSize = 13.sp,
+                                fontSize = 12.sp,
                                 color = colors.onSurfaceVariant
                             )
                         }
@@ -264,7 +264,7 @@ fun CustomEventCard(
                                 Text(
                                     text = if (daysLeft == 0L) "hoy" else "en $daysLeft días",
                                     color = urgencyColor,
-                                    fontSize = 13.sp,
+                                    fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold,
                                     maxLines = 1
                                 )
