@@ -10,11 +10,11 @@ android {
   compileSdk = 37
 
   defaultConfig {
-    applicationId = "com.mocas.flowschedule"
+    applicationId = "dev.charlesmoran.flowschedule"
     minSdk = 26
     targetSdk = 37
-    versionCode = 4
-    versionName = "1.5.0"
+    versionCode = 1
+    versionName = "1"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
@@ -38,7 +38,8 @@ android {
   buildTypes {
     release {
       isCrunchPngs = false
-      isMinifyEnabled = false
+      isMinifyEnabled = true
+      isShrinkResources = true
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
       signingConfig = signingConfigs.getByName("release")
     }
