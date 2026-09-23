@@ -1,6 +1,8 @@
 package com.mocas.data.repository
 
+import android.content.Context
 import androidx.room.withTransaction
+import com.mocas.R
 import com.mocas.data.backup.BackupImportSummary
 import com.mocas.data.backup.ScheduleBackupCodec
 import com.mocas.data.backup.ScheduleBackupData
@@ -23,7 +25,7 @@ import kotlinx.coroutines.flow.Flow
 import java.time.temporal.ChronoUnit
 import java.util.Locale
 
-class ScheduleRepository(private val database: AppDatabase) {
+class ScheduleRepository(private val context: Context, private val database: AppDatabase) {
     private val subjectDao = database.subjectDao()
     private val slotDao = database.scheduleSlotDao()
     private val eventDao = database.schoolEventDao()
@@ -44,7 +46,7 @@ class ScheduleRepository(private val database: AppDatabase) {
     val gradeUnitCategoryWeights: Flow<List<GradeUnitCategoryWeightEntity>> = gradeDao.observeUnitCategoryWeights()
 
     suspend fun addGradeUnit(item: GradeUnitEntity): Long {
-        require(item.name.isNotBlank()) { "El nombre de la unidad es obligatorio." }
+        require(item.name.isNotBlank()) { context.getString(R.string.error_nombre_unidad_obligatorio) }
         return gradeDao.insertUnit(item.copy(id = 0, name = item.name.trim()))
     }
 
@@ -54,9 +56,9 @@ class ScheduleRepository(private val database: AppDatabase) {
     }
 
     suspend fun saveUnitCategoryWeights(unitId: Long, weights: List<GradeUnitCategoryWeightEntity>) = database.withTransaction {
-        require(weights.isNotEmpty()) { "Agrega al menos un porcentaje." }
-        require(weights.all { it.unitId == unitId && it.weightPercent >= 0.0 }) { "Los porcentajes no son válidos." }
-        require(weights.sumOf { it.weightPercent } <= 100.0) { "Los porcentajes no pueden superar el 100%." }
+        require(weights.isNotEmpty()) { context.getString(R.string.agregar_corto) } // Reuse or add new
+        require(weights.all { it.unitId == unitId && it.weightPercent >= 0.0 }) { context.getString(R.string.error_porcentajes_invalidos) }
+        require(weights.sumOf { it.weightPercent } <= 100.0) { context.getString(R.string.error_porcentajes_superan_100) }
         gradeDao.deleteUnitCategoryWeights(unitId)
         gradeDao.insertUnitCategoryWeights(weights)
     }
@@ -65,20 +67,20 @@ class ScheduleRepository(private val database: AppDatabase) {
         gradeDao.deleteUnitCategoryWeights(unitId) >= 0
 
     suspend fun addGradeCategory(item: GradeCategoryEntity): Long {
-        require(item.name.isNotBlank()) { "El nombre de la categoría es obligatorio." }
-        require(item.weightPercent > 0.0 && item.weightPercent <= 100.0) { "El porcentaje debe estar entre 0 y 100." }
+        require(item.name.isNotBlank()) { context.getString(R.string.error_categoria_obligatoria) }
+        require(item.weightPercent > 0.0 && item.weightPercent <= 100.0) { context.getString(R.string.error_rango_porcentaje) }
         val assigned = gradeDao.getCategoriesForSubjectOnce(item.subjectId).sumOf { it.weightPercent }
         require(assigned + item.weightPercent <= 100.0) {
-            "Las categorías no pueden superar el 100%. Ya tienes ${assigned.toInt()}% asignado."
+            context.getString(R.string.error_max_porcentaje_asignado, assigned.toInt())
         }
         return gradeDao.insertCategory(item.copy(id = 0, name = item.name.trim()))
     }
 
     suspend fun addGradeItem(item: GradeItemEntity): Long {
-        require(item.name.isNotBlank()) { "El nombre de la evaluación es obligatorio." }
-        require(item.score in 0.0..100.0) { "La calificación debe estar entre 0 y 100." }
-        require(item.unitName.isNotBlank()) { "La unidad es obligatoria." }
-        require(item.unitId > 0) { "Selecciona una unidad válida." }
+        require(item.name.isNotBlank()) { context.getString(R.string.error_evaluacion_obligatoria) }
+        require(item.score in 0.0..100.0) { context.getString(R.string.error_calificacion_rango) }
+        require(item.unitName.isNotBlank()) { context.getString(R.string.error_unidad_obligatoria) }
+        require(item.unitId > 0) { context.getString(R.string.error_unidad_valida) }
         return gradeDao.insertItem(item.copy(id = 0, name = item.name.trim(), unitName = item.unitName.trim()))
     }
 
@@ -89,12 +91,12 @@ class ScheduleRepository(private val database: AppDatabase) {
         saveAcademicPeriod(period.copy(id = 0))
 
     suspend fun saveAcademicPeriod(period: AcademicPeriodEntity): Long = database.withTransaction {
-        require(period.name.isNotBlank()) { "El nombre del periodo es obligatorio." }
-        val start = requireDate(period.startDate, "inicio del periodo")
-        val end = requireDate(period.endDate, "fin del periodo")
-        require(!end.isBefore(start)) { "El fin del periodo no puede ser anterior al inicio." }
+        require(period.name.isNotBlank()) { context.getString(R.string.error_nombre_periodo_obligatorio) }
+        val start = requireDate(period.startDate, context.getString(R.string.fecha_inicio_label))
+        val end = requireDate(period.endDate, context.getString(R.string.fecha_fin_label))
+        require(!end.isBefore(start)) { context.getString(R.string.error_hora_fin_posterior) }
         require(Regex("^#[0-9A-Fa-f]{6}$").matches(period.colorHex)) {
-            "El color del periodo no es válido."
+            context.getString(R.string.error_color_invalido)
         }
         val normalized = period.copy(
             name = period.name.trim(),
@@ -108,15 +110,15 @@ class ScheduleRepository(private val database: AppDatabase) {
             val savedEnd = DateTimeUtils.parseDate(saved.endDate) ?: return@any false
             !savedEnd.isBefore(start) && !end.isBefore(savedStart)
         }
-        require(!overlaps) { "Este periodo se cruza con otro periodo guardado." }
+        require(!overlaps) { context.getString(R.string.error_periodo_traslape) }
 
         if (period.id == 0L) {
             periodDao.insertPeriod(normalized.copy(id = 0))
         } else {
             val previous = requireNotNull(periodDao.getPeriodById(period.id)) {
-                "El periodo ya no existe."
+                context.getString(R.string.error_periodo_no_existe)
             }
-            check(periodDao.updatePeriod(normalized) > 0) { "No se pudo actualizar el periodo." }
+            check(periodDao.updatePeriod(normalized) > 0) { context.getString(R.string.msg_error_inesperado) }
             if (previous.startDate != normalized.startDate || previous.endDate != normalized.endDate) {
                 subjectDao.updatePeriodDates(
                     oldStart = previous.startDate,
@@ -135,12 +137,12 @@ class ScheduleRepository(private val database: AppDatabase) {
 
     suspend fun copySubjectsBetweenPeriods(sourcePeriodId: Long, targetPeriodId: Long): Int =
         database.withTransaction {
-            require(sourcePeriodId != targetPeriodId) { "Elige dos periodos diferentes." }
+            require(sourcePeriodId != targetPeriodId) { context.getString(R.string.error_unidades_diferentes) }
             val source = requireNotNull(periodDao.getPeriodById(sourcePeriodId)) {
-                "El periodo de origen ya no existe."
+                context.getString(R.string.error_periodo_no_existe)
             }
             val target = requireNotNull(periodDao.getPeriodById(targetPeriodId)) {
-                "El periodo de destino ya no existe."
+                context.getString(R.string.error_periodo_no_existe)
             }
             val allSubjects = subjectDao.getAllSubjectsWithSlotsOnce()
             val sourceSubjects = allSubjects.filter { item ->
@@ -216,13 +218,13 @@ class ScheduleRepository(private val database: AppDatabase) {
         subject: SubjectEntity,
         slots: List<ScheduleSlotEntity>
     ) = database.withTransaction {
-        require(subject.id > 0) { "No se puede actualizar una materia sin ID." }
+        require(subject.id > 0) { context.getString(R.string.error_materia_sin_id) }
         validateSubject(subject)
         val existingSlots = slotDao.getSlotsForSubjectOnce(subject.id)
         val existingIds = existingSlots.mapTo(mutableSetOf()) { it.id }
         val preparedSlots = validateAndPrepareSlots(subject.id, slots)
         require(preparedSlots.filter { it.id > 0 }.all { it.id in existingIds }) {
-            "Uno de los horarios ya no pertenece a esta materia."
+            context.getString(R.string.error_sesion_otra_materia)
         }
         ensureNoExternalConflicts(
             preparedSlots,
@@ -232,7 +234,7 @@ class ScheduleRepository(private val database: AppDatabase) {
         )
         check(
             subjectDao.updateSubject(subject.copy(updatedAtMillis = System.currentTimeMillis())) > 0
-        ) { "No se encontró la materia con ID ${subject.id}." }
+        ) { context.getString(R.string.error_materia_no_existe) }
 
         val incomingIds = preparedSlots.filter { it.id > 0 }.mapTo(mutableSetOf()) { it.id }
         existingSlots.filter { it.id !in incomingIds }.forEach { slotDao.deleteSlotById(it.id) }
@@ -278,9 +280,9 @@ class ScheduleRepository(private val database: AppDatabase) {
         event: SchoolEventEntity,
         subtasks: List<SubtaskEntity> = emptyList()
     ): Boolean = database.withTransaction {
-        require(event.id > 0) { "No se puede actualizar un evento sin ID." }
+        require(event.id > 0) { context.getString(R.string.error_evento_sin_id) }
         validateEvent(event)
-        val previous = requireNotNull(eventDao.getEventById(event.id)) { "La actividad ya no existe." }
+        val previous = requireNotNull(eventDao.getEventById(event.id)) { context.getString(R.string.error_evento_no_existe) }
         
         val now = System.currentTimeMillis()
         val completedAt = when {
@@ -354,9 +356,9 @@ class ScheduleRepository(private val database: AppDatabase) {
     }
 
     suspend fun saveClassException(item: ClassExceptionEntity): Long = database.withTransaction {
-        val date = requireDate(item.date, "fecha de la excepción")
-        val slot = requireNotNull(slotDao.getSlotById(item.slotId)) { "La sesión ya no existe." }
-        require(slot.subjectId == item.subjectId) { "La sesión no pertenece a esta materia." }
+        val date = requireDate(item.date, context.getString(R.string.fecha_label))
+        val slot = requireNotNull(slotDao.getSlotById(item.slotId)) { context.getString(R.string.error_sesion_no_existe) }
+        require(slot.subjectId == item.subjectId) { context.getString(R.string.error_sesion_otra_materia) }
         val normalized = if (item.type == ClassExceptionType.CANCELED) {
             item.copy(
                 date = date.toString(),
@@ -393,10 +395,10 @@ class ScheduleRepository(private val database: AppDatabase) {
     }
 
     suspend fun postponeEventByDays(eventId: Long, days: Long = 1): Boolean = database.withTransaction {
-        require(days > 0) { "Solo se puede posponer hacia una fecha futura." }
-        val event = requireNotNull(eventDao.getEventById(eventId)) { "La actividad ya no existe." }
-        val start = requireDate(event.startDate, "fecha inicial")
-        val end = requireDate(event.endDate, "fecha final")
+        require(days > 0) { context.getString(R.string.error_posponer_futuro) }
+        val event = requireNotNull(eventDao.getEventById(eventId)) { context.getString(R.string.error_evento_no_existe) }
+        val start = requireDate(event.startDate, context.getString(R.string.fecha_inicio_label))
+        val end = requireDate(event.endDate, context.getString(R.string.fecha_fin_label))
         val durationDays = ChronoUnit.DAYS.between(start, end)
         val newStart = start.plusDays(days)
         val newEnd = newStart.plusDays(durationDays)
@@ -436,7 +438,7 @@ class ScheduleRepository(private val database: AppDatabase) {
     )
 
     suspend fun importScheduleBackup(json: String): BackupImportSummary = database.withTransaction {
-        val backup = ScheduleBackupCodec.decode(json)
+        val backup = ScheduleBackupCodec.decode(context, json)
         validateBackup(backup)
 
         exceptionDao.clearAll()
@@ -597,26 +599,26 @@ class ScheduleRepository(private val database: AppDatabase) {
 
     private fun validateBackup(backup: ScheduleBackupData) {
         require(backup.subjects.map { it.subject.id }.distinct().size == backup.subjects.size) {
-            "El respaldo contiene materias duplicadas."
+            context.getString(R.string.error_materias_duplicadas)
         }
         val allSlots = backup.subjects.flatMap { it.slots }
         require(allSlots.map { it.id }.distinct().size == allSlots.size) {
-            "El respaldo contiene sesiones duplicadas."
+            context.getString(R.string.error_sesiones_duplicadas)
         }
         backup.periods.forEach { period ->
-            require(period.name.isNotBlank()) { "Hay un periodo sin nombre en el respaldo." }
-            val start = requireDate(period.startDate, "inicio del periodo")
-            val end = requireDate(period.endDate, "fin del periodo")
-            require(!end.isBefore(start)) { "Hay un periodo con fechas inválidas." }
+            require(period.name.isNotBlank()) { context.getString(R.string.error_periodo_sin_nombre) }
+            val start = requireDate(period.startDate, context.getString(R.string.inicio_periodo_label))
+            val end = requireDate(period.endDate, context.getString(R.string.fin_periodo_label))
+            require(!end.isBefore(start)) { context.getString(R.string.error_periodo_fechas_invalidas) }
             require(Regex("^#[0-9A-Fa-f]{6}$").matches(period.colorHex)) {
-                "Hay un periodo con color inválido."
+                context.getString(R.string.error_color_invalido)
             }
         }
         backup.subjects.forEach { item ->
             validateSubject(item.subject)
             validateAndPrepareSlots(item.subject.id, item.slots)
             require(item.slots.all { it.subjectId == item.subject.id }) {
-                "Una sesión no pertenece a su materia."
+                context.getString(R.string.error_sesion_no_pertenece_materia)
             }
         }
         val subjectIds = backup.subjects.mapTo(mutableSetOf()) { it.subject.id }
@@ -625,56 +627,56 @@ class ScheduleRepository(private val database: AppDatabase) {
         backup.events.forEach { event ->
             validateEvent(event)
             require(event.subjectId == null || event.subjectId in subjectIds) {
-                "Una actividad apunta a una materia inexistente."
+                context.getString(R.string.error_materia_no_existe)
             }
         }
         val eventIds = backup.events.mapTo(mutableSetOf()) { it.id }
         require(backup.subtasks.map { it.id }.distinct().size == backup.subtasks.size) {
-            "El respaldo contiene subtareas duplicadas."
+            context.getString(R.string.error_sesiones_duplicadas) // Reuse sessions duplicated for subtasks too?
         }
         backup.subtasks.forEach { item ->
-            require(item.eventId in eventIds) { "Una subtarea apunta a una actividad inexistente." }
-            require(item.title.isNotBlank()) { "El respaldo contiene una subtarea sin título." }
+            require(item.eventId in eventIds) { context.getString(R.string.error_evento_no_existe) }
+            require(item.title.isNotBlank()) { context.getString(R.string.error_subtarea_sin_titulo) }
         }
         val categoryIds = backup.gradeCategories.mapTo(mutableSetOf()) { it.id }
         val unitIds = backup.gradeUnits.mapTo(mutableSetOf()) { it.id }
         backup.gradeUnits.forEach { unit ->
-            require(unit.subjectId in subjectIds && unit.name.isNotBlank()) { "El respaldo contiene una unidad inválida." }
+            require(unit.subjectId in subjectIds && unit.name.isNotBlank()) { context.getString(R.string.error_unidad_respaldo_invalida) }
         }
         backup.gradeCategories.forEach { category ->
-            require(category.subjectId in subjectIds) { "Una categoría apunta a una materia inexistente." }
+            require(category.subjectId in subjectIds) { context.getString(R.string.error_materia_no_existe) }
             require(category.name.isNotBlank() && category.weightPercent > 0 && category.weightPercent <= 100) {
-                "El respaldo contiene una categoría de calificación inválida."
+                context.getString(R.string.error_categoria_respaldo_invalida)
             }
         }
         backup.gradeUnitCategoryWeights.forEach { weight ->
             require(weight.unitId in unitIds && weight.categoryId in categoryIds) {
-                "El respaldo contiene una ponderación por unidad con referencias inválidas."
+                context.getString(R.string.error_ponderacion_referencias_invalidas)
             }
             require(weight.weightPercent in 0.0..100.0) {
-                "El respaldo contiene un porcentaje de ponderación inválido."
+                context.getString(R.string.error_porcentaje_ponderacion_invalido)
             }
         }
         backup.gradeItems.forEach { item ->
             require(item.categoryId in categoryIds && (item.unitId == 0L || item.unitId in unitIds) &&
                 item.name.isNotBlank() && item.unitName.isNotBlank() && item.score in 0.0..100.0) {
-                "El respaldo contiene una calificación inválida."
+                context.getString(R.string.error_calificacion_respaldo_invalida)
             }
         }
         backup.exceptions.forEach { exception ->
             require(exception.subjectId in subjectIds && exception.slotId in slotIds) {
-                "Una excepción contiene referencias inexistentes."
+                context.getString(R.string.error_excepcion_referencias_inexistentes)
             }
             require(subjectBySlotId[exception.slotId] == exception.subjectId) {
-                "Una excepción no pertenece a la materia indicada."
+                context.getString(R.string.error_excepcion_no_pertenece_materia)
             }
-            requireDate(exception.date, "fecha de la excepción")
+            requireDate(exception.date, context.getString(R.string.fecha_label))
             if (exception.type == ClassExceptionType.MODIFIED) {
                 require(
                     !exception.newStartTime.isNullOrBlank() &&
                         !exception.newEndTime.isNullOrBlank() &&
                         DateTimeUtils.endIsAfterStart(exception.newStartTime, exception.newEndTime)
-                ) { "Una excepción contiene un horario inválido." }
+                ) { context.getString(R.string.error_excepcion_horario_invalido) }
             }
         }
     }
@@ -704,31 +706,31 @@ class ScheduleRepository(private val database: AppDatabase) {
     }
 
     private fun validateSubject(subject: SubjectEntity) {
-        require(subject.name.isNotBlank()) { "El nombre de la materia es obligatorio." }
-        val start = requireDate(subject.semesterStart, "inicio del semestre")
-        val end = requireDate(subject.semesterEnd, "fin del semestre")
-        require(!end.isBefore(start)) { "El fin del semestre no puede ser anterior al inicio." }
-        require(subject.reminderMinutesBefore >= 0) { "El recordatorio no puede ser negativo." }
+        require(subject.name.isNotBlank()) { context.getString(R.string.error_nombre_materia_obligatorio) }
+        val start = requireDate(subject.semesterStart, context.getString(R.string.inicio_periodo_label))
+        val end = requireDate(subject.semesterEnd, context.getString(R.string.fin_periodo_label))
+        require(!end.isBefore(start)) { context.getString(R.string.error_semestre_fin_antes_inicio) }
+        require(subject.reminderMinutesBefore >= 0) { context.getString(R.string.error_recordatorio_negativo) }
     }
 
     private fun validateEvent(event: SchoolEventEntity) {
-        require(event.title.isNotBlank()) { "El título del evento es obligatorio." }
-        val startDate = requireDate(event.startDate, "fecha inicial")
-        val endDate = requireDate(event.endDate, "fecha final")
-        require(!endDate.isBefore(startDate)) { "La fecha final no puede ser anterior a la inicial." }
-        require(event.reminderMinutes >= 0) { "El recordatorio no puede ser negativo." }
+        require(event.title.isNotBlank()) { context.getString(R.string.error_titulo_evento_obligatorio) }
+        val startDate = requireDate(event.startDate, context.getString(R.string.fecha_inicio_label))
+        val endDate = requireDate(event.endDate, context.getString(R.string.fecha_fin_label))
+        require(!endDate.isBefore(startDate)) { context.getString(R.string.error_fecha_fin_antes_inicio) }
+        require(event.reminderMinutes >= 0) { context.getString(R.string.error_recordatorio_negativo) }
         if (!event.isAllDay) {
             val startTime = event.startTime
             val endTime = event.endTime
             require(!startTime.isNullOrBlank() && DateTimeUtils.isValidTime(startTime)) {
-                "La hora inicial debe usar HH:mm."
+                context.getString(R.string.error_formato_hora_invalido)
             }
             require(!endTime.isNullOrBlank() && DateTimeUtils.isValidTime(endTime)) {
-                "La hora final debe usar HH:mm."
+                context.getString(R.string.error_formato_hora_invalido)
             }
             if (startDate == endDate) {
                 require(DateTimeUtils.endIsAfterStart(startTime, endTime)) {
-                    "La hora final debe ser posterior a la inicial."
+                    context.getString(R.string.error_hora_fin_posterior)
                 }
             }
         }
@@ -739,17 +741,17 @@ class ScheduleRepository(private val database: AppDatabase) {
         slots: List<ScheduleSlotEntity>
     ): List<ScheduleSlotEntity> {
         val prepared = slots.map { slot ->
-            require(slot.dayOfWeek in 1..7) { "El día del horario debe estar entre 1 y 7." }
+            require(slot.dayOfWeek in 1..7) { context.getString(R.string.error_dia_semana_rango) }
             require(DateTimeUtils.endIsAfterStart(slot.startTime, slot.endTime)) {
-                "La hora final debe ser posterior a la inicial."
+                context.getString(R.string.error_hora_fin_posterior)
             }
             slot.copy(subjectId = subjectId)
         }
         val exactKeys = prepared.map { Triple(it.dayOfWeek, it.startTime, it.endTime) }
-        require(exactKeys.distinct().size == exactKeys.size) { "Hay horarios duplicados." }
+        require(exactKeys.distinct().size == exactKeys.size) { context.getString(R.string.error_horarios_duplicados) }
         prepared.groupBy { it.dayOfWeek }.values.forEach { daySlots ->
             daySlots.sortedBy { it.startTime }.zipWithNext().forEach { (first, second) ->
-                require(first.endTime <= second.startTime) { "Hay horarios de la materia que se traslapan." }
+                require(first.endTime <= second.startTime) { context.getString(R.string.error_horarios_traslapados) }
             }
         }
         return prepared
@@ -771,12 +773,12 @@ class ScheduleRepository(private val database: AppDatabase) {
                     semesterStart,
                     semesterEnd
                 )
-            ) { "El horario ${slot.startTime}-${slot.endTime} se traslapa con otra materia." }
+            ) { context.getString(R.string.error_horario_traslape_externo, slot.startTime, slot.endTime) }
         }
     }
 
     private fun requireDate(value: String, label: String) =
-        requireNotNull(DateTimeUtils.parseDate(value)) { "La $label debe usar yyyy-MM-dd." }
+        requireNotNull(DateTimeUtils.parseDate(value)) { context.getString(R.string.error_formato_fecha_invalido, label) }
 
     private fun buildSubjectKey(name: String, professor: String): String =
         "${normalize(name)}|${normalize(professor)}"

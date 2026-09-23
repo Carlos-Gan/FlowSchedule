@@ -51,9 +51,9 @@ object NotificationScheduler {
     fun createChannels(context: Context) {
         val manager = context.getSystemService(NotificationManager::class.java)
         listOf(
-            NotificationChannel(CHANNEL_CLASSES, "Clases", NotificationManager.IMPORTANCE_HIGH),
-            NotificationChannel(CHANNEL_ACTIVITIES, "Tareas y exámenes", NotificationManager.IMPORTANCE_HIGH),
-            NotificationChannel(CHANNEL_SUMMARY, "Resumen diario", NotificationManager.IMPORTANCE_DEFAULT)
+            NotificationChannel(CHANNEL_CLASSES, context.getString(R.string.channel_classes_name), NotificationManager.IMPORTANCE_HIGH),
+            NotificationChannel(CHANNEL_ACTIVITIES, context.getString(R.string.channel_activities_name), NotificationManager.IMPORTANCE_HIGH),
+            NotificationChannel(CHANNEL_SUMMARY, context.getString(R.string.channel_summary_name), NotificationManager.IMPORTANCE_DEFAULT)
         ).forEach(manager::createNotificationChannel)
     }
 
@@ -109,7 +109,7 @@ class ReminderReceiver : BroadcastReceiver() {
         )
         val notification = NotificationCompat.Builder(context, channel)
             .setSmallIcon(R.drawable.ic_notification)
-            .setContentTitle(intent.getStringExtra("title") ?: "FlowSchedule")
+            .setContentTitle(intent.getStringExtra("title") ?: context.getString(R.string.app_name))
             .setContentText(intent.getStringExtra("message").orEmpty())
             .setStyle(NotificationCompat.BigTextStyle().bigText(intent.getStringExtra("message").orEmpty()))
             .setContentIntent(openApp)
@@ -120,12 +120,12 @@ class ReminderReceiver : BroadcastReceiver() {
                 if (eventId > 0) {
                     addAction(
                         R.drawable.ic_notification,
-                        "Completar",
+                        context.getString(R.string.notif_action_complete),
                         notificationAction(context, NotificationScheduler.ACTION_COMPLETE, id, eventId, intent)
                     )
                     addAction(
                         R.drawable.ic_notification,
-                        "Posponer 1 h",
+                        context.getString(R.string.notif_action_snooze),
                         notificationAction(context, NotificationScheduler.ACTION_SNOOZE, id, eventId, intent)
                     )
                 }
@@ -187,7 +187,7 @@ class NotificationActionReceiver : BroadcastReceiver() {
                             PlannedReminder(
                                 id = "snooze_${eventId}_${System.currentTimeMillis()}",
                                 triggerAtMillis = System.currentTimeMillis() + 60 * 60 * 1000,
-                                title = intent.getStringExtra("title") ?: "Actividad pendiente",
+                                title = intent.getStringExtra("title") ?: context.getString(R.string.notif_pending_activity),
                                 message = intent.getStringExtra("message").orEmpty(),
                                 channel = intent.getStringExtra("channel")
                                     ?: NotificationScheduler.CHANNEL_ACTIVITIES,

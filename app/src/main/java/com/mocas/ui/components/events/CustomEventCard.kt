@@ -262,7 +262,7 @@ fun CustomEventCard(
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = if (daysLeft == 0L) "hoy" else "en $daysLeft días",
+                                    text = if (daysLeft == 0L) stringResource(R.string.hoy_boton) else "${stringResource(R.string.en)} $daysLeft ${stringResource(R.string.dias)}",
                                     color = urgencyColor,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold,

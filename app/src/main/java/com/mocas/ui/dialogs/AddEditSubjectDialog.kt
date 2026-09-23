@@ -73,7 +73,8 @@ fun AddEditSubjectScreen(
     var professor by remember { mutableStateOf(initialSub?.professor ?: "") }
     var defaultRoom by remember { mutableStateOf(initialSub?.defaultRoom ?: "") }
     var colorHex by remember { mutableStateOf(initialSub?.colorHex ?: "#3B82F6") }
-    var organizationTag by remember { mutableStateOf(initialSub?.organizationTag ?: "UNIVERSIDAD") }
+    val universityTag = stringResource(R.string.tag_universidad).uppercase(Locale.ROOT)
+    var organizationTag by remember { mutableStateOf(initialSub?.organizationTag ?: universityTag) }
     var isImportant by remember { mutableStateOf(initialSub?.isImportant ?: false) }
 
     val suggestedPeriod = remember(academicPeriods) {
@@ -258,8 +259,18 @@ fun buildPeriodName(context: Context, startDate: String, endDate: String): Strin
     val start = DateTimeUtils.parseDate(startDate) ?: return context.getString(R.string.periodo_academico_default)
     val end = DateTimeUtils.parseDate(endDate) ?: return context.getString(R.string.periodo_academico_default)
     val months = listOf(
-        "Ene", "Feb", "Mar", "Abr", "May", "Jun",
-        "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
+        context.getString(R.string.month_jan),
+        context.getString(R.string.month_feb),
+        context.getString(R.string.month_mar),
+        context.getString(R.string.month_apr),
+        context.getString(R.string.month_may),
+        context.getString(R.string.month_jun),
+        context.getString(R.string.month_jul),
+        context.getString(R.string.month_aug),
+        context.getString(R.string.month_sep),
+        context.getString(R.string.month_oct),
+        context.getString(R.string.month_nov),
+        context.getString(R.string.month_dec)
     )
     return "${months[start.monthValue - 1]} ${start.year} – " +
             "${months[end.monthValue - 1]} ${end.year}"

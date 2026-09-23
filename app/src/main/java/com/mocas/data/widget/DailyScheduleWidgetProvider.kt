@@ -23,11 +23,11 @@ import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 data class DailyWidgetClassItem(
     val id: Long,
     val subjectName: String,
+    val colorHex: String,
     val time: String,
     val room: String,
     val pendingCount: Int,
@@ -53,8 +53,9 @@ class DailyScheduleWidgetProvider : AppWidgetProvider() {
                 Intent(context, MainActivity::class.java),
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
             )
+            val locale = context.resources.configuration.locales[0]
             val dateLabel = LocalDate.now()
-                .format(DateTimeFormatter.ofPattern("EEEE d 'de' MMMM", Locale.forLanguageTag("es-MX")))
+                .format(DateTimeFormatter.ofPattern(context.getString(R.string.daily_widget_date_pattern), locale))
                 .replaceFirstChar { it.uppercase() }
             val views = RemoteViews(context.packageName, R.layout.widget_daily_schedule).apply {
                 setTextViewText(R.id.daily_widget_date, dateLabel)
@@ -114,21 +115,38 @@ private class DailyScheduleWidgetFactory(
     override fun getViewAt(position: Int): RemoteViews? {
         val item = items.getOrNull(position) ?: return null
         return RemoteViews(context.packageName, R.layout.widget_daily_schedule_item).apply {
+            val baseColor = try { Color.parseColor(item.colorHex) } catch (_: Exception) { Color.WHITE }
+            
+            // Aplicar color de fondo estilo pill (transparencia)
+            val pillColor = Color.argb(
+                45, // Opacidad baja
+                Color.red(baseColor),
+                Color.green(baseColor),
+                Color.blue(baseColor)
+            )
+            
+            // Tintamos el ImageView de fondo
+            setInt(R.id.daily_item_bg, "setColorFilter", pillColor)
+            
             setTextViewText(R.id.daily_item_time, item.time)
+            setTextColor(R.id.daily_item_time, baseColor)
+            
             setTextViewText(R.id.daily_item_subject, item.subjectName)
-            setTextViewText(R.id.daily_item_room, item.room.ifBlank { "Sin salón" })
+            setTextColor(R.id.daily_item_subject, baseColor)
+            
+            setTextViewText(R.id.daily_item_room, item.room.ifBlank { context.getString(R.string.sin_salon) })
+            setTextColor(R.id.daily_item_room, baseColor.adjustOpacity(0.8f))
+            
             setTextViewText(
                 R.id.daily_item_pending,
                 when (item.pendingCount) {
-                    0 -> "Al día"
-                    1 -> "1 pendiente"
-                    else -> "${item.pendingCount} pendientes"
+                    0 -> context.getString(R.string.widget_up_to_date)
+                    1 -> context.getString(R.string.widget_pending_count_singular)
+                    else -> context.getString(R.string.widget_pending_count_plural, item.pendingCount)
                 }
             )
-            setTextColor(
-                R.id.daily_item_pending,
-                Color.parseColor(if (item.pendingCount > 0) "#FBBF24" else "#A7F3D0")
-            )
+            setTextColor(R.id.daily_item_pending, baseColor)
+            
             setViewVisibility(R.id.daily_item_now, if (item.isHappeningNow) View.VISIBLE else View.GONE)
             setOnClickFillInIntent(R.id.daily_item_root, Intent())
         }
@@ -138,6 +156,15 @@ private class DailyScheduleWidgetFactory(
     override fun getViewTypeCount(): Int = 1
     override fun getItemId(position: Int): Long = items.getOrNull(position)?.id ?: position.toLong()
     override fun hasStableIds(): Boolean = true
+}
+
+private fun Int.adjustOpacity(alphaFactor: Float): Int {
+    return Color.argb(
+        (Color.alpha(this) * alphaFactor).toInt(),
+        Color.red(this),
+        Color.green(this),
+        Color.blue(this)
+    )
 }
 
 fun buildDailyWidgetItems(
@@ -166,9 +193,11 @@ fun buildDailyWidgetItems(
                 val endText = exception?.newEndTime ?: slot.endTime
                 val start = runCatching { LocalTime.parse(startText) }.getOrNull() ?: return@mapNotNull null
                 val end = runCatching { LocalTime.parse(endText) }.getOrNull() ?: return@mapNotNull null
+                
                 DailyWidgetClassItem(
                     id = slot.id,
                     subjectName = item.subject.name,
+                    colorHex = item.subject.colorHex,
                     time = "$startText–$endText",
                     room = (exception?.newRoom ?: slot.room).ifBlank { item.subject.defaultRoom },
                     pendingCount = pendingBySubject[item.subject.id] ?: 0,

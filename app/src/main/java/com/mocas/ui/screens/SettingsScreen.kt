@@ -325,9 +325,9 @@ fun SettingsScreen(
                     icon = Icons.Outlined.NotificationsActive,
                     title = stringResource(R.string.estilo_indicador),
                     subtitle = when(settings.badgeStyle) {
-                        BadgeStyle.NONE -> "Oculto"
-                        BadgeStyle.DOT -> "Solo punto"
-                        BadgeStyle.NUMBER -> "Con número"
+                        BadgeStyle.NONE -> stringResource(R.string.indicador_oculto)
+                        BadgeStyle.DOT -> stringResource(R.string.indicador_solo_punto)
+                        BadgeStyle.NUMBER -> stringResource(R.string.indicador_con_numero)
                     },
                     onClick = { showBadgeStyleDialog = true }
                 )
@@ -356,9 +356,9 @@ fun SettingsScreen(
                                         Spacer(modifier = Modifier.width(12.dp))
                                         Text(
                                             text = when(style) {
-                                                BadgeStyle.NONE -> "Oculto"
-                                                BadgeStyle.DOT -> "Solo punto rojo"
-                                                BadgeStyle.NUMBER -> "Punto rojo con número"
+                                                BadgeStyle.NONE -> stringResource(R.string.indicador_oculto)
+                                                BadgeStyle.DOT -> stringResource(R.string.indicador_solo_punto_rojo)
+                                                BadgeStyle.NUMBER -> stringResource(R.string.indicador_punto_con_numero)
                                             }
                                         )
                                     }
@@ -451,6 +451,7 @@ fun SettingsScreen(
                     onClick = { showBackupsDialog = true }
                 )
 
+                /*
                 // --- DEBUG ONLY SECTION ---
                 if (com.mocas.BuildConfig.DEBUG) {
                     Spacer(modifier = Modifier.height(16.dp))
@@ -485,6 +486,7 @@ fun SettingsScreen(
                         }
                     )
                 }
+                */
             }
         }
 

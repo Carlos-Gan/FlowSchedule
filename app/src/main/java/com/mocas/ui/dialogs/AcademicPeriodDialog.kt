@@ -27,6 +27,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.res.stringResource
+import com.mocas.R
 import com.mocas.data.local.AcademicPeriodEntity
 import com.mocas.ui.components.CalendarDateField
 import com.mocas.ui.components.SubjectColorPicker
@@ -60,7 +62,7 @@ fun AcademicPeriodDialog(
         modifier = Modifier.testTag("academic_period_dialog"),
         title = {
             Text(
-                text = if (editingPeriod == null) "Nuevo periodo" else "Editar periodo",
+                text = if (editingPeriod == null) stringResource(R.string.nuevo_periodo_titulo) else stringResource(R.string.editar_periodo_titulo),
                 fontWeight = FontWeight.ExtraBold
             )
         },
@@ -75,8 +77,8 @@ fun AcademicPeriodDialog(
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = capitalizeFirstLetter(it) },
-                    label = { Text("Nombre del periodo") },
-                    placeholder = { Text("Ej. Agosto – diciembre 2026") },
+                    label = { Text(stringResource(R.string.nombre_periodo_label)) },
+                    placeholder = { Text(stringResource(R.string.nombre_periodo_placeholder)) },
                     keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
                     singleLine = true,
                     shape = RoundedCornerShape(12.dp),
@@ -84,14 +86,14 @@ fun AcademicPeriodDialog(
                 )
                 CalendarDateField(
                     value = startDate,
-                    label = "Fecha de inicio",
+                    label = stringResource(R.string.fecha_inicio_label),
                     onDateSelected = { startDate = it },
                     isError = start == null,
                     modifier = Modifier.fillMaxWidth()
                 )
                 CalendarDateField(
                     value = endDate,
-                    label = "Fecha de fin",
+                    label = stringResource(R.string.fecha_fin_label),
                     onDateSelected = { endDate = it },
                     isError = !validDates,
                     modifier = Modifier.fillMaxWidth()
@@ -100,7 +102,7 @@ fun AcademicPeriodDialog(
                 SubjectColorPicker(
                     selectedHex = colorHex,
                     onColorSelected = { colorHex = it },
-                    label = "Color del periodo"
+                    label = stringResource(R.string.color_periodo_label)
                 )
             }
         },
@@ -123,12 +125,12 @@ fun AcademicPeriodDialog(
                 shape = RoundedCornerShape(10.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
-                Text("Guardar", fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.guardar), fontWeight = FontWeight.Bold)
             }
         },
         dismissButton = {
             OutlinedButton(onClick = onDismiss, shape = RoundedCornerShape(10.dp)) {
-                Text("Cancelar")
+                Text(stringResource(R.string.cancelar))
             }
         }
     )

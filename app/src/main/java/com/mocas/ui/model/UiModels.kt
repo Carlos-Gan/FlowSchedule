@@ -86,7 +86,7 @@ data class CalendarDayItem(
 )
 
 data class AppSettings(
-    val userName: String = "Estudiante",
+    val userName: String = "Estudiante", // Se sobreescribe con stringResource en UI
     val educationLevel: String = "Grado o Carrera",
     val educationInstitution: String = "Escuela o Institución",
     val useGpaScale: Boolean = false,

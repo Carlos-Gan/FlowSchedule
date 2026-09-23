@@ -1,8 +1,6 @@
 package com.mocas.ui.components.horario
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -22,10 +20,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.School
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -54,6 +55,7 @@ import com.mocas.ui.util.isActiveOn
 import com.mocas.ui.util.isVacationDate
 import com.mocas.ui.viewmodel.ScheduleViewModel
 import java.time.LocalDate
+import java.util.Locale
 
 @Composable
 fun WeeklyGridView(
@@ -115,9 +117,9 @@ fun WeeklyGridView(
     val finalEndHour = (gridEndHour + 1).coerceIn(finalStartHour + 1, 24)
 
     val hours = (finalStartHour until finalEndHour).toList()
-    val hourHeight = 84.dp
-    val timeColWidth = 56.dp
-    val dayColWidth = 140.dp
+    val hourHeight = 90.dp
+    val timeColWidth = 48.dp
+    val dayColWidth = 130.dp
 
     val hScrollState = rememberScrollState()
     val vScrollState = rememberScrollState()
@@ -130,60 +132,35 @@ fun WeeklyGridView(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        // Sticky Header: Days row Bento Style
+        // Sticky Header: Days row (Pill Style)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.surface)
-                .padding(start = timeColWidth)
+                .padding(start = timeColWidth, bottom = 16.dp)
                 .horizontalScroll(hScrollState)
         ) {
             days.forEach { (dayNum, label) ->
                 val date = weekStart.plusDays((dayNum - 1).toLong())
                 val isToday = date == LocalDate.now()
-                val isVacation = showVacations && isVacationDate(
-                    date = date,
-                    academicPeriods = academicPeriods,
-                    events = allEvents,
-                    outsidePeriodsAreVacations = outsidePeriodsAreVacations
-                )
+                
                 Box(
                     modifier = Modifier
                         .width(dayColWidth)
-                        .padding(vertical = 8.dp),
+                        .padding(horizontal = 4.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Surface(
-                        shape = RoundedCornerShape(10.dp),
-                        color = when {
-                            isVacation -> MaterialTheme.colorScheme.secondary
-                            isToday -> MaterialTheme.colorScheme.primary
-                            else -> MaterialTheme.colorScheme.surfaceVariant
-                        },
-                        border = BorderStroke(
-                            1.dp,
-                            when {
-                                isVacation -> MaterialTheme.colorScheme.secondary
-                                isToday -> MaterialTheme.colorScheme.primary
-                                else -> MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
-                            }
-                        )
+                        shape = CircleShape,
+                        color = if (isToday) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
+                        modifier = Modifier.size(width = 60.dp, height = 40.dp)
                     ) {
-                        Column(
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
+                        Box(contentAlignment = Alignment.Center) {
                             Text(
-                                text = label,
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.ExtraBold,
-                                color = if (isToday || isVacation) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
-                            )
-                            Text(
-                                text = compactDayDate(date),
-                                fontSize = 9.sp,
-                                color = if (isToday || isVacation) MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.85f)
-                                else MaterialTheme.colorScheme.onSurfaceVariant
+                                text = label.take(3), // "Lun", "Mar"...
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = if (isToday) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
@@ -208,14 +185,14 @@ fun WeeklyGridView(
                         modifier = Modifier
                             .height(hourHeight)
                             .fillMaxWidth()
-                            .padding(end = 8.dp, top = 8.dp),
+                            .padding(end = 12.dp, top = 0.dp),
                         contentAlignment = Alignment.TopEnd
                     ) {
                         Text(
-                            text = String.format(java.util.Locale.ROOT, "%02d:00", hour),
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            text = String.format(Locale.ROOT, "%02d", hour),
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                         )
                     }
                 }
@@ -244,26 +221,11 @@ fun WeeklyGridView(
                                     .background(
                                         when {
                                             isVacation -> MaterialTheme.colorScheme.secondary.copy(alpha = 0.05f)
-                                            isToday -> MaterialTheme.colorScheme.primary.copy(alpha = 0.02f)
+                                            isToday -> MaterialTheme.colorScheme.primary.copy(alpha = 0.03f)
                                             else -> Color.Transparent
                                         }
                                     )
-                                    .border(
-                                        0.5.dp,
-                                        MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.15f)
-                                    )
                             ) {
-                                // Hour horizontal divider lines
-                                hours.forEachIndexed { index, _ ->
-                                    HorizontalDivider(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .offset(y = hourHeight * index),
-                                        thickness = 1.dp,
-                                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.08f)
-                                    )
-                                }
-
                                 // Render Slots for this day
                                 for (subWithSlots in subjectsWithSlots) {
                                     for (slot in subWithSlots.slots) {
@@ -285,10 +247,7 @@ fun WeeklyGridView(
                                                 (topOffsetMins.toFloat() / 60f) * hourHeight.value
                                             val heightDp =
                                                 (duration.toFloat() / 60f) * hourHeight.value
-                                            val compactBlock = duration < 60
-                                            val showRoom = duration >= 50
 
-                                            val isNow = isToday && nowMins in startM..endM
                                             val subColor =
                                                 parseColorFromHex(subWithSlots.subject.colorHex)
 
@@ -297,7 +256,7 @@ fun WeeklyGridView(
                                                     .offset(y = topOffsetDp.dp)
                                                     .fillMaxWidth()
                                                     .height(heightDp.dp)
-                                                    .padding(horizontal = 4.dp, vertical = 3.dp)
+                                                    .padding(horizontal = 6.dp, vertical = 2.dp)
                                                     .clickable {
                                                         onClassClick(
                                                             subWithSlots.subject,
@@ -307,81 +266,50 @@ fun WeeklyGridView(
                                                         )
                                                     }
                                                     .testTag("grid_block_${subWithSlots.subject.id}_${slot.id}"),
-                                                shape = RoundedCornerShape(12.dp),
-                                                border = BorderStroke(
-                                                    1.dp,
-                                                    if (isNow) MaterialTheme.colorScheme.onPrimary else subColor.copy(alpha = 0.6f)
+                                                shape = RoundedCornerShape(16.dp),
+                                                colors = CardDefaults.cardColors(
+                                                    containerColor = subColor.copy(alpha = 0.15f)
                                                 ),
-                                                colors = CardDefaults.cardColors(containerColor = subColor),
-                                                elevation = CardDefaults.cardElevation(
-                                                    defaultElevation = if (isNow) 4.dp else 2.dp
-                                                )
+                                                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                                             ) {
                                                 Column(
                                                     modifier = Modifier
                                                         .fillMaxSize()
-                                                        .padding(
-                                                            horizontal = 7.dp,
-                                                            vertical = if (compactBlock) 4.dp else 7.dp
-                                                        ),
-                                                    verticalArrangement = Arrangement.SpaceBetween
+                                                        .padding(horizontal = 10.dp, vertical = 4.dp),
+                                                    verticalArrangement = Arrangement.Center
                                                 ) {
-                                                    Column {
-                                                        if (isNow) {
-                                                            Surface(
-                                                                shape = RoundedCornerShape(4.dp),
-                                                                color = MaterialTheme.colorScheme.error
-                                                            ) {
-                                                                Text(
-                                                                    text = stringResource(R.string.ahora_label),
-                                                                    color = MaterialTheme.colorScheme.onError,
-                                                                    fontSize = 8.sp,
-                                                                    fontWeight = FontWeight.ExtraBold,
-                                                                    modifier = Modifier.padding(
-                                                                        horizontal = 4.dp,
-                                                                        vertical = 1.dp
-                                                                    )
-                                                                )
-                                                            }
-                                                            Spacer(modifier = Modifier.height(2.dp))
-                                                        }
-
-                                                        Text(
-                                                            text = subWithSlots.subject.name,
-                                                            color = MaterialTheme.colorScheme.onPrimary, // Subject color contrast
-                                                            fontSize = 11.sp,
-                                                            fontWeight = FontWeight.ExtraBold,
-                                                            lineHeight = 13.sp,
-                                                            maxLines = if (compactBlock) 1 else 2,
-                                                            overflow = TextOverflow.Ellipsis
-                                                        )
-                                                    }
-
                                                     Row(
-                                                        modifier = Modifier.fillMaxWidth(),
                                                         verticalAlignment = Alignment.CenterVertically
                                                     ) {
                                                         Text(
-                                                            text = "${effectiveSlot.startTime}-${effectiveSlot.endTime}",
-                                                            color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.9f),
-                                                            fontSize = 9.sp,
-                                                            fontWeight = FontWeight.Bold,
-                                                            maxLines = 1,
-                                                            overflow = TextOverflow.Clip
+                                                            text = effectiveSlot.startTime,
+                                                            color = subColor,
+                                                            fontSize = 11.sp,
+                                                            fontWeight = FontWeight.ExtraBold
                                                         )
-                                                        val room =
-                                                            effectiveSlot.room.ifBlank { subWithSlots.subject.defaultRoom }
-                                                        if (showRoom && room.isNotBlank()) {
+                                                        
+                                                        val room = effectiveSlot.room.ifBlank { subWithSlots.subject.defaultRoom }
+                                                        if (room.isNotBlank()) {
                                                             Text(
-                                                                text = " · $room",
-                                                                color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.95f),
-                                                                fontSize = 9.sp,
+                                                                text = " • $room",
+                                                                color = subColor.copy(alpha = 0.7f),
+                                                                fontSize = 10.sp,
+                                                                fontWeight = FontWeight.Bold,
                                                                 maxLines = 1,
-                                                                overflow = TextOverflow.Ellipsis,
-                                                                modifier = Modifier.weight(1f)
+                                                                overflow = TextOverflow.Ellipsis
                                                             )
                                                         }
                                                     }
+                                                    
+                                                    Text(
+                                                        text = subWithSlots.subject.name,
+                                                        color = subColor,
+                                                        fontSize = 13.sp,
+                                                        fontWeight = FontWeight.Bold,
+                                                        lineHeight = 15.sp,
+                                                        maxLines = 3,
+                                                        overflow = TextOverflow.Ellipsis
+                                                    )
                                                 }
                                             }
                                         }

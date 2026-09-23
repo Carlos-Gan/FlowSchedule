@@ -12,6 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
+import com.mocas.R
 import com.mocas.ui.dialogs.formatTime
 import com.mocas.ui.dialogs.parseTime
 
@@ -49,12 +51,12 @@ fun SessionTimePickerDialog(
                     onTimeSelected(formatTime(pickerState.hour, pickerState.minute))
                 }
             ) {
-                Text("Aceptar", fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.aceptar_boton), fontWeight = FontWeight.Bold)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancelar")
+                Text(stringResource(R.string.cancelar_boton))
             }
         }
     )

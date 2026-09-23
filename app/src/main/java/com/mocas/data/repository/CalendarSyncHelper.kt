@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.provider.CalendarContract
 import androidx.core.content.FileProvider
+import com.mocas.R
 import com.mocas.data.local.ScheduleSlotEntity
 import com.mocas.data.local.SchoolEventEntity
 import com.mocas.data.local.SubjectEntity
@@ -175,9 +176,9 @@ object CalendarSyncHelper {
         } catch (error: ActivityNotFoundException) {
             CalendarActionResult.NoCompatibleApp
         } catch (error: IllegalArgumentException) {
-            CalendarActionResult.InvalidData(error.message ?: "Fecha u hora inválida.")
+            CalendarActionResult.InvalidData(error.message ?: context.getString(R.string.error_fecha_hora_invalida))
         } catch (error: Exception) {
-            CalendarActionResult.Failed(error.message ?: "No se pudo abrir el calendario.")
+            CalendarActionResult.Failed(error.message ?: context.getString(R.string.error_abrir_calendario))
         }
     }
 
@@ -191,7 +192,7 @@ object CalendarSyncHelper {
     ): CalendarActionResult {
         return try {
             require(slot.dayOfWeek in 1..7) {
-                "El día de la semana debe estar entre 1 y 7."
+                context.getString(R.string.error_dia_semana_rango)
             }
 
             val zoneId = ZoneId.systemDefault()
@@ -205,7 +206,7 @@ object CalendarSyncHelper {
             )
 
             if (firstClassDate.isAfter(semesterEnd)) {
-                return CalendarActionResult.InvalidData("No hay clases dentro del semestre.")
+                return CalendarActionResult.InvalidData(context.getString(R.string.error_sin_clases_semestre))
             }
 
             val startTime = LocalTime.parse(slot.startTime)
@@ -245,18 +246,18 @@ object CalendarSyncHelper {
 
             val description = buildString {
                 if (subject.professor.isNotBlank()) {
-                    appendLine("Profesor: ${subject.professor}")
+                    appendLine(context.getString(R.string.calendar_event_professor_label, subject.professor))
                 }
 
                 if (subject.code.isNotBlank()) {
-                    appendLine("Código: ${subject.code}")
+                    appendLine(context.getString(R.string.calendar_event_code_label, subject.code))
                 }
 
                 if (selectedRoom.isNotBlank()) {
-                    appendLine("Salón: $selectedRoom")
+                    appendLine(context.getString(R.string.calendar_event_room_label, selectedRoom))
                 }
 
-                append("Agregado desde FlowSchedule")
+                append(context.getString(R.string.calendar_description_footer))
             }
 
             val intent = Intent(
@@ -265,7 +266,7 @@ object CalendarSyncHelper {
             ).apply {
                 putExtra(
                     CalendarContract.Events.TITLE,
-                    "Clase: ${subject.name}"
+                    context.getString(R.string.calendar_event_class_title, subject.name)
                 )
 
                 putExtra(
@@ -324,9 +325,9 @@ object CalendarSyncHelper {
         } catch (error: ActivityNotFoundException) {
             CalendarActionResult.NoCompatibleApp
         } catch (error: IllegalArgumentException) {
-            CalendarActionResult.InvalidData(error.message ?: "Fecha u hora inválida.")
+            CalendarActionResult.InvalidData(error.message ?: context.getString(R.string.error_fecha_hora_invalida))
         } catch (error: Exception) {
-            CalendarActionResult.Failed(error.message ?: "No se pudo abrir el calendario.")
+            CalendarActionResult.Failed(error.message ?: context.getString(R.string.error_abrir_calendario))
         }
     }
 
@@ -334,6 +335,7 @@ object CalendarSyncHelper {
      * Genera el contenido de un archivo .ics.
      */
     fun exportScheduleAsIcsText(
+        context: Context,
         subjectsWithSlots: List<SubjectWithSlots>,
         zoneId: ZoneId = ZoneId.systemDefault()
     ): String {
@@ -417,12 +419,12 @@ object CalendarSyncHelper {
 
                 val description = buildString {
                     if (subject.professor.isNotBlank()) {
-                        append("Profesor: ${subject.professor}")
+                        append(context.getString(R.string.calendar_event_professor_label, subject.professor))
                     }
 
                     if (subject.code.isNotBlank()) {
                         if (isNotEmpty()) append('\n')
-                        append("Código: ${subject.code}")
+                        append(context.getString(R.string.calendar_event_code_label, subject.code))
                     }
                 }
 
@@ -472,7 +474,7 @@ object CalendarSyncHelper {
     ): Intent {
         val exportDirectory = File(context.cacheDir, "exports").apply { mkdirs() }
         val file = File(exportDirectory, "horario-flowschedule.ics")
-        var content = exportScheduleAsIcsText(subjectsWithSlots, zoneId)
+        var content = exportScheduleAsIcsText(context, subjectsWithSlots, zoneId)
         if (!showProfessor) content = content.replace(Regex("DESCRIPTION:Profesor:[^\\r\\n]*"), "DESCRIPTION:")
         if (!showRoom) content = content.replace(Regex("LOCATION:[^\\r\\n]*"), "LOCATION:")
         file.writeText(content, Charsets.UTF_8)

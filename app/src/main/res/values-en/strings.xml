@@ -3,7 +3,7 @@
     <string name="app_name">FlowSchedule</string>
     <string name="widget_description">Next class and pending activities</string>
     <string name="next_class_widget_name">Next Class</string>
-    <string name="daily_widget_name">Daily Schedule</string>
+    <string name="daily_widget_name">Today\'s Schedule</string>
     <string name="daily_widget_description">Today\'s classes and pending tasks for each subject</string>
     <string name="editar_perfil">Edit Profile</string>
     <string name="promedio_actual">CURRENT AVERAGE</string>
@@ -370,6 +370,11 @@
     <string name="personalizacion">Personalization</string>
     <string name="general_y_datos">General &amp; Data</string>
     <string name="estilo_indicador">Badge style</string>
+    <string name="indicador_oculto">Hidden</string>
+    <string name="indicador_solo_punto">Dot only</string>
+    <string name="indicador_solo_punto_rojo">Red dot only</string>
+    <string name="indicador_con_numero">With number</string>
+    <string name="indicador_punto_con_numero">Red dot with number</string>
     <string name="configurar_recordatorios">Configure Reminders</string>
     <string name="configurar_recordatorios_desc">Choose how far in advance to be notified</string>
     <string name="recordatorio_preparacion">Preparation reminder</string>
@@ -405,4 +410,152 @@
     <string name="ahora">Now</string>
     <string name="no_tienes_clases_hoy_n_tu_horario_est_libre">No classes today ¡Enjoy your free time!</string>
     <string name="sin_pr_ximas_clases">No upcoming classes</string>
+    <string name="en">Due</string>
+
+    <!-- UI Buttons -->
+    <string name="aceptar_boton">OK</string>
+    <string name="cancelar_boton">Cancel</string>
+
+    <!-- Academic Period Dialog -->
+    <string name="nuevo_periodo_titulo">New Period</string>
+    <string name="editar_periodo_titulo">Edit Period</string>
+    <string name="nombre_periodo_label">Period Name</string>
+    <string name="nombre_periodo_placeholder">e.g. August – December 2026</string>
+    <string name="fecha_inicio_label">Start Date</string>
+    <string name="fecha_fin_label">End Date</string>
+    <string name="color_periodo_label">Period Color</string>
+
+    <!-- Defaults -->
+    <string name="nombre_default">Student</string>
+    <string name="carrera_default">Degree or Major</string>
+    <string name="institucion_default">School or Institution</string>
+
+    <!-- Notifications -->
+    <string name="channel_classes_name">Classes</string>
+    <string name="channel_activities_name">Tasks &amp; Exams</string>
+    <string name="channel_summary_name">Daily Summary</string>
+    <string name="notif_action_complete">Complete</string>
+    <string name="notif_action_snooze">Snooze 1h</string>
+    <string name="notif_pending_activity">Pending activity</string>
+
+    <!-- Error Messages & UI Feedback -->
+    <string name="no_clases_dia_formato">No classes assigned for %1$s.</string>
+    <string name="error_nombre_unidad_obligatorio">Unit name is required.</string>
+    <string name="error_porcentajes_invalidos">Percentages are invalid.</string>
+    <string name="error_porcentajes_superan_100">Percentages cannot exceed 100%.</string>
+    <string name="error_categoria_obligatoria">Category name is required.</string>
+    <string name="error_rango_porcentaje">Percentage must be between 0 and 100.</string>
+    <string name="error_max_porcentaje_asignado">Categories cannot exceed 100%. You already have %1$d%% assigned.</string>
+    <string name="error_evaluacion_obligatoria">Evaluation name is required.</string>
+    <string name="error_calificacion_rango">Grade must be between 0 and 100.</string>
+    <string name="error_unidad_obligatoria">Unit is required.</string>
+    <string name="error_unidad_valida">Select a valid unit.</string>
+    <string name="error_nombre_periodo_obligatorio">Period name is required.</string>
+    <string name="error_color_invalido">Period color is invalid.</string>
+    <string name="error_periodo_no_existe">Period no longer exists.</string>
+    <string name="error_periodo_traslape">This period overlaps with another saved period.</string>
+    <string name="error_materia_sin_id">Cannot update a subject without ID.</string>
+    <string name="error_materia_no_existe">Subject no longer exists.</string>
+    <string name="error_evento_sin_id">Cannot update an event without ID.</string>
+    <string name="error_evento_no_existe">Activity no longer exists.</string>
+    <string name="error_sesion_no_existe">Session no longer exists.</string>
+    <string name="error_sesion_otra_materia">Session does not belong to this subject.</string>
+    <string name="error_hora_fin_posterior">End time must be after start time.</string>
+    <string name="error_respaldo_json_invalido">File does not contain a valid JSON backup.</string>
+    <string name="error_formato_invalido">File is not a FlowSchedule backup.</string>
+    <string name="error_version_incompatible">Backup version (%1$d) is not compatible with this app.</string>
+    <string name="error_unidades_diferentes">Choose two different periods.</string>
+    <string name="error_posponer_futuro">Can only postpone to a future date.</string>
+    <string name="error_materias_duplicadas">Backup contains duplicate subjects.</string>
+    <string name="error_sesiones_duplicadas">Backup contains duplicate sessions.</string>
+    <string name="error_periodo_sin_nombre">There is a period without a name in the backup.</string>
+    <string name="error_periodo_fechas_invalidas">There is a period with invalid dates.</string>
+    <string name="error_sesion_no_pertenece_materia">A session does not belong to its subject.</string>
+    <string name="error_subtarea_sin_titulo">Backup contains a subtask without a title.</string>
+    <string name="error_unidad_respaldo_invalida">Backup contains an invalid unit.</string>
+    <string name="error_categoria_respaldo_invalida">Backup contains an invalid grade category.</string>
+    <string name="error_ponderacion_referencias_invalidas">Backup contains a unit weighting with invalid references.</string>
+    <string name="error_porcentaje_ponderacion_invalido">Backup contains an invalid weighting percentage.</string>
+    <string name="error_calificacion_respaldo_invalida">Backup contains an invalid grade.</string>
+    <string name="error_excepcion_referencias_inexistentes">An exception contains non-existent references.</string>
+    <string name="error_excepcion_no_pertenece_materia">An exception does not belong to the indicated subject.</string>
+    <string name="error_excepcion_horario_invalido">An exception contains an invalid schedule.</string>
+    <string name="error_nombre_materia_obligatorio">Subject name is required.</string>
+    <string name="error_semestre_fin_antes_inicio">End of semester cannot be before start.</string>
+    <string name="error_recordatorio_negativo">Reminder cannot be negative.</string>
+    <string name="error_titulo_evento_obligatorio">Event title is required.</string>
+    <string name="error_fecha_fin_antes_inicio">End date cannot be before start date.</string>
+    <string name="error_formato_hora_invalido">Time must use HH:mm.</string>
+    <string name="error_dia_semana_rango">Schedule day must be between 1 and 7.</string>
+    <string name="error_horarios_duplicados">Duplicate schedules found.</string>
+    <string name="error_horarios_traslapados">Subject schedules overlap.</string>
+    <string name="error_horario_traslape_externo">Schedule %1$s-%2$s overlaps with another subject.</string>
+    <string name="error_formato_fecha_invalido">%1$s must use yyyy-MM-dd.</string>
+    <string name="unit_default_name">Unit 1</string>
+    <string name="error_fecha_hora_invalida">Invalid date or time.</string>
+    <string name="error_sin_clases_semestre">No classes within the semester.</string>
+    <string name="error_abrir_calendario">Could not open calendar.</string>
+
+    <!-- Calendar Sync -->
+    <string name="calendar_description_footer">Added from FlowSchedule</string>
+    <string name="calendar_event_class_title">Class: %1$s</string>
+    <string name="calendar_event_professor_label">Professor: %1$s</string>
+    <string name="calendar_event_code_label">Code: %1$s</string>
+    <string name="calendar_event_room_label">Room: %1$s</string>
+
+    <!-- ViewModel Messages -->
+    <string name="msg_clase_cancelada_fecha">Class canceled for this date only.</string>
+    <string name="msg_cambio_aplicado_fecha">Change applied to this date only.</string>
+    <string name="msg_clase_horario_habitual">The class returned to its usual schedule.</string>
+    <string name="msg_materia_papelera">Subject moved to recycle bin.</string>
+    <string name="msg_actividad_papelera">Activity moved to recycle bin.</string>
+    <string name="msg_materia_restaurada">Subject restored.</string>
+    <string name="msg_actividad_restaurada">Activity restored.</string>
+    <string name="msg_papelera_vaciada">Recycle bin emptied.</string>
+    <string name="msg_periodo_guardado">Period saved.</string>
+    <string name="msg_periodo_actualizado">Period updated.</string>
+    <string name="msg_no_materias_nuevas_copiar">No new subjects to copy.</string>
+    <string name="msg_copio_1_materia">1 subject copied to the period.</string>
+    <string name="msg_copiaron_n_materias">%1$d subjects copied to the period.</string>
+    <string name="msg_actividad_pospuesta_mañana">Activity postponed until tomorrow.</string>
+    <string name="msg_datos_borrados_respaldo">Data deleted. We saved an automatic backup.</string>
+    <string name="msg_respaldo_exportado">Backup exported successfully.</string>
+    <string name="msg_respaldo_restaurado_full">Backup restored: %1$d subjects, %2$d sessions, and %3$d activities.</string>
+    <string name="msg_respaldo_restaurado_simple">Backup restored: %1$d subjects and %2$d activities.</string>
+    <string name="msg_error_inesperado">An unexpected error occurred.</string>
+    <string name="greeting_morning">Good morning</string>
+    <string name="greeting_afternoon">Good afternoon</string>
+    <string name="greeting_night">Good night</string>
+
+    <!-- Months -->
+    <string name="month_jan">Jan</string>
+    <string name="month_feb">Feb</string>
+    <string name="month_mar">Mar</string>
+    <string name="month_apr">Apr</string>
+    <string name="month_may">May</string>
+    <string name="month_jun">Jun</string>
+    <string name="month_jul">Jul</string>
+    <string name="month_aug">Aug</string>
+    <string name="month_sep">Sep</string>
+    <string name="month_oct">Oct</string>
+    <string name="month_nov">Nov</string>
+    <string name="month_dec">Dec</string>
+
+    <!-- Widget Strings -->
+    <string name="widget_no_classes_title">No upcoming classes</string>
+    <string name="widget_no_classes_msg">Your schedule is free</string>
+    <string name="widget_no_classes_action">Open app to check</string>
+    <string name="widget_pending_singular">1 pending activity</string>
+    <string name="widget_pending_plural">%1$d pending activities</string>
+    <string name="widget_today">Today</string>
+    <string name="widget_tomorrow">Tomorrow</string>
+    <string name="widget_in_class_now">In class now</string>
+    <string name="widget_countdown_mins">In %1$d min</string>
+    <string name="widget_countdown_hours_mins">In %1$d h %2$d min</string>
+    <string name="widget_countdown_days">In %1$d days</string>
+    <string name="widget_date_pattern">EEE MMM d</string>
+    <string name="daily_widget_date_pattern">EEEE, MMMM d</string>
+    <string name="widget_up_to_date">Up to date</string>
+    <string name="widget_pending_count_singular">1 pending</string>
+    <string name="widget_pending_count_plural">%1$d pending</string>
 </resources>

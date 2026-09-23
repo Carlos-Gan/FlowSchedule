@@ -32,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -43,6 +44,8 @@ import com.mocas.data.local.SubjectEntity
 import com.mocas.ui.components.EmptyStateCard
 import com.mocas.ui.viewmodel.ScheduleViewModel
 import java.time.LocalDate
+import java.time.format.TextStyle
+import java.util.Locale
 
 @Composable
 fun DailyScheduleView(
@@ -152,9 +155,10 @@ fun DailyScheduleView(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        val context = LocalContext.current
         val emptyMessage = remember(selectedDate) {
-            val dayName = selectedDate.dayOfWeek.getDisplayName(java.time.format.TextStyle.FULL, java.util.Locale.getDefault())
-            "No tienes clases asignadas para el $dayName." // Dinámico con Locale
+            val dayName = selectedDate.dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault())
+            context.getString(R.string.no_clases_dia_formato, dayName)
         }
 
         if (todayClasses.isEmpty()) {

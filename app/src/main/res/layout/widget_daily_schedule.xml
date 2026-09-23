@@ -17,8 +17,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Horario de hoy"
-            android:textColor="#FFFFFF"
+            android:text="@string/daily_widget_name"
+            android:textColor="@color/widget_title"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textColor="#CFC8FF"
+            android:textColor="@color/widget_date"
             android:textSize="11sp" />
     </LinearLayout>
 
@@ -36,10 +36,10 @@
         android:id="@+id/daily_widget_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="10dp"
         android:layout_weight="1"
         android:divider="@android:color/transparent"
-        android:dividerHeight="4dp"
+        android:dividerHeight="6dp"
         android:scrollbars="none" />
 
     <TextView
@@ -49,6 +49,6 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="@string/no_tienes_clases_hoy_n_tu_horario_est_libre"
-        android:textColor="#E8E4FF"
+        android:textColor="@color/widget_empty_text"
         android:textSize="14sp" />
 </LinearLayout>

@@ -22,7 +22,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 data class WidgetSnapshot(
     val className: String,
@@ -38,6 +37,7 @@ class ScheduleWidgetProvider : AppWidgetProvider() {
             try {
                 val database = AppDatabase.getDatabase(context)
                 val snapshot = buildWidgetSnapshot(
+                    context = context,
                     subjects = database.subjectDao().getAllSubjectsWithSlotsOnce(),
                     exceptions = database.classExceptionDao().getAllOnce(),
                     pendingCount = database.schoolEventDao().getAllEventsWithSubjectOnce().count { !it.event.isCompleted },
@@ -76,7 +76,8 @@ class ScheduleWidgetProvider : AppWidgetProvider() {
                 setTextViewText(R.id.widget_countdown, snapshot.countdown)
                 setTextViewText(
                     R.id.widget_pending,
-                    if (snapshot.pendingCount == 1) "1 actividad pendiente" else "${snapshot.pendingCount} actividades pendientes"
+                    if (snapshot.pendingCount == 1) context.getString(R.string.widget_pending_singular)
+                    else context.getString(R.string.widget_pending_plural, snapshot.pendingCount)
                 )
                 setOnClickPendingIntent(R.id.widget_root, openApp)
             }
@@ -85,6 +86,7 @@ class ScheduleWidgetProvider : AppWidgetProvider() {
 }
 
 fun buildWidgetSnapshot(
+    context: Context,
     subjects: List<SubjectWithSlots>,
     exceptions: List<ClassExceptionEntity>,
     pendingCount: Int,
@@ -117,26 +119,31 @@ fun buildWidgetSnapshot(
     }.filter { it.end.isAfter(now) }.sortedBy { it.start }
 
     val next = candidates.firstOrNull()
-        ?: return WidgetSnapshot("Sin próximas clases", "Tu horario está libre", "Abre la app para revisar", pendingCount)
-    val locale = Locale("es", "MX")
+        ?: return WidgetSnapshot(
+            context.getString(R.string.widget_no_classes_title),
+            context.getString(R.string.widget_no_classes_msg),
+            context.getString(R.string.widget_no_classes_action),
+            pendingCount
+        )
+    val locale = context.resources.configuration.locales[0]
     val dayLabel = when (next.start.toLocalDate()) {
-        now.toLocalDate() -> "Hoy"
-        now.toLocalDate().plusDays(1) -> "Mañana"
-        else -> next.start.format(DateTimeFormatter.ofPattern("EEE d MMM", locale)).replaceFirstChar { it.uppercase(locale) }
+        now.toLocalDate() -> context.getString(R.string.widget_today)
+        now.toLocalDate().plusDays(1) -> context.getString(R.string.widget_tomorrow)
+        else -> next.start.format(DateTimeFormatter.ofPattern(context.getString(R.string.widget_date_pattern), locale)).replaceFirstChar { it.uppercase(locale) }
     }
     val time = next.start.format(DateTimeFormatter.ofPattern("HH:mm"))
     val details = listOf("$dayLabel · $time", next.room).filter { it.isNotBlank() }.joinToString(" · ")
-    return WidgetSnapshot(next.subject, details, formatCountdown(now, next.start, next.end), pendingCount)
+    return WidgetSnapshot(next.subject, details, formatCountdown(context, now, next.start, next.end), pendingCount)
 }
 
 private fun parseWidgetTime(value: String): LocalTime? = runCatching { LocalTime.parse(value) }.getOrNull()
 
-private fun formatCountdown(now: LocalDateTime, start: LocalDateTime, end: LocalDateTime): String {
-    if (!now.isBefore(start) && now.isBefore(end)) return "En clase ahora"
+private fun formatCountdown(context: Context, now: LocalDateTime, start: LocalDateTime, end: LocalDateTime): String {
+    if (!now.isBefore(start) && now.isBefore(end)) return context.getString(R.string.widget_in_class_now)
     val minutes = Duration.between(now, start).toMinutes().coerceAtLeast(0)
     return when {
-        minutes < 60 -> "En $minutes min"
-        minutes < 24 * 60 -> "En ${minutes / 60} h ${minutes % 60} min"
-        else -> "En ${minutes / (24 * 60)} días"
+        minutes < 60 -> context.getString(R.string.widget_countdown_mins, minutes)
+        minutes < 24 * 60 -> context.getString(R.string.widget_countdown_hours_mins, minutes / 60, minutes % 60)
+        else -> context.getString(R.string.widget_countdown_days, minutes / (24 * 60))
     }
 }

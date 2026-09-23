@@ -1,7 +1,7 @@
 <resources>
     <string name="widget_description">Próxima clase y actividades pendientes</string>
     <string name="next_class_widget_name">Próxima clase</string>
-    <string name="daily_widget_name">Horario del día</string>
+    <string name="daily_widget_name">Horario de hoy</string>
     <string name="daily_widget_description">Clases de hoy y pendientes de cada materia</string>
     <string name="app_name" translatable="false">FlowSchedule</string>
     <string name="editar_perfil">Editar Perfil</string>
@@ -369,6 +369,11 @@
     <string name="personalizacion">Personalización</string>
     <string name="general_y_datos">General y Datos</string>
     <string name="estilo_indicador">Estilo de indicador</string>
+    <string name="indicador_oculto">Oculto</string>
+    <string name="indicador_solo_punto">Solo punto</string>
+    <string name="indicador_solo_punto_rojo">Solo punto rojo</string>
+    <string name="indicador_con_numero">Con número</string>
+    <string name="indicador_punto_con_numero">Punto rojo con número</string>
     <string name="configurar_recordatorios">Configurar Recordatorios</string>
     <string name="configurar_recordatorios_desc">Elige cuánto tiempo antes recibir avisos</string>
     <string name="recordatorio_preparacion">Recordatorio de preparación</string>
@@ -403,4 +408,152 @@
     <string name="ahora">Ahora</string>
     <string name="no_tienes_clases_hoy_n_tu_horario_est_libre">No tienes clases hoy ¡Tu horario está libre!</string>
     <string name="sin_pr_ximas_clases">Sin próximas clases</string>
+    <string name="en">en</string>
+
+    <!-- UI Buttons -->
+    <string name="aceptar_boton">Aceptar</string>
+    <string name="cancelar_boton">Cancelar</string>
+
+    <!-- Academic Period Dialog -->
+    <string name="nuevo_periodo_titulo">Nuevo periodo</string>
+    <string name="editar_periodo_titulo">Editar periodo</string>
+    <string name="nombre_periodo_label">Nombre del periodo</string>
+    <string name="nombre_periodo_placeholder">Ej. Agosto – diciembre 2026</string>
+    <string name="fecha_inicio_label">Fecha de inicio</string>
+    <string name="fecha_fin_label">Fecha de fin</string>
+    <string name="color_periodo_label">Color del periodo</string>
+
+    <!-- Defaults -->
+    <string name="nombre_default">Estudiante</string>
+    <string name="carrera_default">Grado o Carrera</string>
+    <string name="institucion_default">Escuela o Institución</string>
+
+    <!-- Notifications -->
+    <string name="channel_classes_name">Clases</string>
+    <string name="channel_activities_name">Tareas y exámenes</string>
+    <string name="channel_summary_name">Resumen diario</string>
+    <string name="notif_action_complete">Completar</string>
+    <string name="notif_action_snooze">Posponer 1 h</string>
+    <string name="notif_pending_activity">Actividad pendiente</string>
+
+    <!-- Error Messages & UI Feedback -->
+    <string name="no_clases_dia_formato">No tienes clases asignadas para el %1$s.</string>
+    <string name="error_nombre_unidad_obligatorio">El nombre de la unidad es obligatorio.</string>
+    <string name="error_porcentajes_invalidos">Los porcentajes no son válidos.</string>
+    <string name="error_porcentajes_superan_100">Los porcentajes no pueden superar el 100%.</string>
+    <string name="error_categoria_obligatoria">El nombre de la categoría es obligatorio.</string>
+    <string name="error_rango_porcentaje">El porcentaje debe estar entre 0 y 100.</string>
+    <string name="error_max_porcentaje_asignado">Las categorías no pueden superar el 100%. Ya tienes %1$d%% asignado.</string>
+    <string name="error_evaluacion_obligatoria">El nombre de la evaluación es obligatorio.</string>
+    <string name="error_calificacion_rango">La calificación debe estar entre 0 y 100.</string>
+    <string name="error_unidad_obligatoria">La unidad es obligatoria.</string>
+    <string name="error_unidad_valida">Selecciona una unidad válida.</string>
+    <string name="error_nombre_periodo_obligatorio">El nombre del periodo es obligatorio.</string>
+    <string name="error_color_invalido">El color del periodo no es válido.</string>
+    <string name="error_periodo_no_existe">El periodo ya no existe.</string>
+    <string name="error_periodo_traslape">Este periodo se cruza con otro periodo guardado.</string>
+    <string name="error_materia_sin_id">No se puede actualizar una materia sin ID.</string>
+    <string name="error_materia_no_existe">La materia ya no existe.</string>
+    <string name="error_evento_sin_id">No se puede actualizar un evento sin ID.</string>
+    <string name="error_evento_no_existe">La actividad ya no existe.</string>
+    <string name="error_sesion_no_existe">La sesión ya no existe.</string>
+    <string name="error_sesion_otra_materia">La sesión no pertenece a esta materia.</string>
+    <string name="error_hora_fin_posterior">La hora final debe ser posterior a la inicial.</string>
+    <string name="error_respaldo_json_invalido">El archivo no contiene un respaldo JSON válido.</string>
+    <string name="error_formato_invalido">El archivo no es un respaldo de FlowSchedule.</string>
+    <string name="error_version_incompatible">La versión del respaldo (%1$d) no es compatible con esta aplicación.</string>
+    <string name="error_unidades_diferentes">Elige dos periodos diferentes.</string>
+    <string name="error_posponer_futuro">Solo se puede posponer hacia una fecha futura.</string>
+    <string name="error_materias_duplicadas">El respaldo contiene materias duplicadas.</string>
+    <string name="error_sesiones_duplicadas">El respaldo contiene sesiones duplicadas.</string>
+    <string name="error_periodo_sin_nombre">Hay un periodo sin nombre en el respaldo.</string>
+    <string name="error_periodo_fechas_invalidas">Hay un periodo con fechas inválidas.</string>
+    <string name="error_sesion_no_pertenece_materia">Una sesión no pertenece a su materia.</string>
+    <string name="error_subtarea_sin_titulo">El respaldo contiene una subtarea sin título.</string>
+    <string name="error_unidad_respaldo_invalida">El respaldo contiene una unidad inválida.</string>
+    <string name="error_categoria_respaldo_invalida">El respaldo contiene una categoría de calificación inválida.</string>
+    <string name="error_ponderacion_referencias_invalidas">El respaldo contiene una ponderación por unidad con referencias inválidas.</string>
+    <string name="error_porcentaje_ponderacion_invalido">El respaldo contiene un porcentaje de ponderación inválido.</string>
+    <string name="error_calificacion_respaldo_invalida">El respaldo contiene una calificación inválida.</string>
+    <string name="error_excepcion_referencias_inexistentes">Una excepción contiene referencias inexistentes.</string>
+    <string name="error_excepcion_no_pertenece_materia">Una excepción no pertenece a la materia indicada.</string>
+    <string name="error_excepcion_horario_invalido">Una excepción contiene un horario inválido.</string>
+    <string name="error_nombre_materia_obligatorio">El nombre de la materia es obligatorio.</string>
+    <string name="error_semestre_fin_antes_inicio">El fin del semestre no puede ser anterior al inicio.</string>
+    <string name="error_recordatorio_negativo">El recordatorio no puede ser negativo.</string>
+    <string name="error_titulo_evento_obligatorio">El título del evento es obligatorio.</string>
+    <string name="error_fecha_fin_antes_inicio">La fecha final no puede ser anterior a la inicial.</string>
+    <string name="error_formato_hora_invalido">La hora debe usar HH:mm.</string>
+    <string name="error_dia_semana_rango">El día del horario debe estar entre 1 y 7.</string>
+    <string name="error_horarios_duplicados">Hay horarios duplicados.</string>
+    <string name="error_horarios_traslapados">Hay horarios de la materia que se traslapan.</string>
+    <string name="error_horario_traslape_externo">El horario %1$s-%2$s se traslapa con otra materia.</string>
+    <string name="error_formato_fecha_invalido">La %1$s debe usar yyyy-MM-dd.</string>
+    <string name="unit_default_name">Unidad 1</string>
+    <string name="error_fecha_hora_invalida">Fecha u hora inválida.</string>
+    <string name="error_sin_clases_semestre">No hay clases dentro del semestre.</string>
+    <string name="error_abrir_calendario">No se pudo abrir el calendario.</string>
+
+    <!-- Calendar Sync -->
+    <string name="calendar_description_footer">Agregado desde FlowSchedule</string>
+    <string name="calendar_event_class_title">Clase: %1$s</string>
+    <string name="calendar_event_professor_label">Profesor: %1$s</string>
+    <string name="calendar_event_code_label">Código: %1$s</string>
+    <string name="calendar_event_room_label">Salón: %1$s</string>
+
+    <!-- ViewModel Messages -->
+    <string name="msg_clase_cancelada_fecha">Clase cancelada solamente para esta fecha.</string>
+    <string name="msg_cambio_aplicado_fecha">Cambio aplicado solamente a esta fecha.</string>
+    <string name="msg_clase_horario_habitual">La clase volvió a su horario habitual.</string>
+    <string name="msg_materia_papelera">Materia movida a la papelera.</string>
+    <string name="msg_actividad_papelera">Actividad movida a la papelera.</string>
+    <string name="msg_materia_restaurada">Materia restaurada.</string>
+    <string name="msg_actividad_restaurada">Actividad restaurada.</string>
+    <string name="msg_papelera_vaciada">Papelera vaciada.</string>
+    <string name="msg_periodo_guardado">Periodo guardado.</string>
+    <string name="msg_periodo_actualizado">Periodo actualizado.</string>
+    <string name="msg_no_materias_nuevas_copiar">No había materias nuevas para copiar.</string>
+    <string name="msg_copio_1_materia">Se copió 1 materia al periodo.</string>
+    <string name="msg_copiaron_n_materias">Se copiaron %1$d materias al periodo.</string>
+    <string name="msg_actividad_pospuesta_mañana">Actividad pospuesta para mañana.</string>
+    <string name="msg_datos_borrados_respaldo">Datos borrados. Guardamos un respaldo automático.</string>
+    <string name="msg_respaldo_exportado">Respaldo exportado correctamente.</string>
+    <string name="msg_respaldo_restaurado_full">Respaldo restaurado: %1$d materias, %2$d sesiones y %3$d actividades.</string>
+    <string name="msg_respaldo_restaurado_simple">Respaldo restaurado: %1$d materias y %2$d actividades.</string>
+    <string name="msg_error_inesperado">Ocurrió un error inesperado.</string>
+    <string name="greeting_morning">Buenos días</string>
+    <string name="greeting_afternoon">Buenas tardes</string>
+    <string name="greeting_night">Buenas noches</string>
+
+    <!-- Months -->
+    <string name="month_jan">Ene</string>
+    <string name="month_feb">Feb</string>
+    <string name="month_mar">Mar</string>
+    <string name="month_apr">Abr</string>
+    <string name="month_may">May</string>
+    <string name="month_jun">Jun</string>
+    <string name="month_jul">Jul</string>
+    <string name="month_aug">Ago</string>
+    <string name="month_sep">Sep</string>
+    <string name="month_oct">Oct</string>
+    <string name="month_nov">Nov</string>
+    <string name="month_dec">Dic</string>
+
+    <!-- Widget Strings -->
+    <string name="widget_no_classes_title">Sin próximas clases</string>
+    <string name="widget_no_classes_msg">Tu horario está libre</string>
+    <string name="widget_no_classes_action">Abre la app para revisar</string>
+    <string name="widget_pending_singular">1 actividad pendiente</string>
+    <string name="widget_pending_plural">%1$d actividades pendientes</string>
+    <string name="widget_today">Hoy</string>
+    <string name="widget_tomorrow">Mañana</string>
+    <string name="widget_in_class_now">En clase ahora</string>
+    <string name="widget_countdown_mins">En %1$d min</string>
+    <string name="widget_countdown_hours_mins">En %1$d h %2$d min</string>
+    <string name="widget_countdown_days">En %1$d días</string>
+    <string name="widget_date_pattern">EEE d MMM</string>
+    <string name="daily_widget_date_pattern">EEEE d \'de\' MMMM</string>
+    <string name="widget_up_to_date">Al día</string>
+    <string name="widget_pending_count_singular">1 pendiente</string>
+    <string name="widget_pending_count_plural">%1$d pendientes</string>
 </resources>

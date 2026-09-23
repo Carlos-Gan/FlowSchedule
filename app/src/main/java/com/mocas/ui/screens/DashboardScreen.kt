@@ -37,6 +37,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mocas.R
+import android.app.Application
+import androidx.compose.ui.platform.LocalContext
 import com.mocas.data.local.SchoolEventWithSubject
 import com.mocas.ui.components.dashboard.DailyFocusCard
 import com.mocas.ui.components.dashboard.NextClassCard
@@ -65,7 +67,7 @@ fun DashboardScreen(
     }
 
     DashboardContent(
-        userName = settings.userName,
+        greeting = ScheduleViewModel.getGreetingText(LocalContext.current.applicationContext as Application, settings.userName),
         nextClass = nextClass,
         dueTodayEvents = dueTodayEvents,
         classStats = classStats,
@@ -84,7 +86,7 @@ fun DashboardScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardContent(
-    userName: String,
+    greeting: String,
     nextClass: NextClassInfo?,
     dueTodayEvents: List<SchoolEventWithSubject>,
     classStats: DailyClassStats,
@@ -107,7 +109,7 @@ fun DashboardContent(
         item {
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    text = stringResource(R.string.buenos_dias_formato, userName),
+                    text = greeting,
                     style = MaterialTheme.typography.headlineLarge.copy(
                         fontWeight = FontWeight.Bold,
                         letterSpacing = (-0.5).sp

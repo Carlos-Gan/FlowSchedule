@@ -4,6 +4,7 @@ import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.mocas.R
 import com.mocas.data.backup.AutomaticBackupInfo
 import com.mocas.data.backup.AutomaticBackupManager
 import com.mocas.data.local.AcademicPeriodEntity
@@ -51,7 +52,7 @@ import java.time.temporal.TemporalAdjusters
 import java.util.Locale
 
 class ScheduleViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository = ScheduleRepository(AppDatabase.getDatabase(application))
+    private val repository = ScheduleRepository(application, AppDatabase.getDatabase(application))
     private val settingsStore = AppSettingsStore(application)
     private val automaticBackupManager = AutomaticBackupManager(application)
 
@@ -271,9 +272,9 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
                 repository.saveClassException(item)
                 closeClassOccurrence()
                 _userMessage.value = if (item.type == ClassExceptionType.CANCELED) {
-                    "Clase cancelada solamente para esta fecha."
+                    getApplication<Application>().getString(R.string.msg_clase_cancelada_fecha)
                 } else {
-                    "Cambio aplicado solamente a esta fecha."
+                    getApplication<Application>().getString(R.string.msg_cambio_aplicado_fecha)
                 }
             }
         }
@@ -282,9 +283,9 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     fun deleteClassException(id: Long) {
         viewModelScope.launch {
             runOperation {
-                check(repository.deleteClassException(id)) { "La excepción ya no existe." }
+                check(repository.deleteClassException(id)) { getApplication<Application>().getString(R.string.error_sesion_no_existe) }
                 closeClassOccurrence()
-                _userMessage.value = "La clase volvió a su horario habitual."
+                _userMessage.value = getApplication<Application>().getString(R.string.msg_clase_horario_habitual)
             }
         }
     }
@@ -302,9 +303,9 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     fun deleteSubject(subjectId: Long) {
         viewModelScope.launch {
             runOperation {
-                check(repository.deleteSubject(subjectId)) { "La materia ya no existe." }
+                check(repository.deleteSubject(subjectId)) { getApplication<Application>().getString(R.string.error_materia_no_existe) }
                 closeSubjectDetail()
-                _userMessage.value = "Materia movida a la papelera."
+                _userMessage.value = getApplication<Application>().getString(R.string.msg_materia_papelera)
             }
         }
     }
@@ -322,8 +323,8 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     fun deleteEvent(eventId: Long) {
         viewModelScope.launch {
             runOperation {
-                check(repository.deleteEvent(eventId)) { "El evento ya no existe." }
-                _userMessage.value = "Actividad movida a la papelera."
+                check(repository.deleteEvent(eventId)) { getApplication<Application>().getString(R.string.error_evento_no_existe) }
+                _userMessage.value = getApplication<Application>().getString(R.string.msg_actividad_papelera)
             }
         }
     }
@@ -331,8 +332,8 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     fun restoreDeletedSubject(subjectId: Long) {
         viewModelScope.launch {
             runOperation {
-                check(repository.restoreSubject(subjectId)) { "La materia ya no está en la papelera." }
-                _userMessage.value = "Materia restaurada."
+                check(repository.restoreSubject(subjectId)) { getApplication<Application>().getString(R.string.error_materia_no_existe) }
+                _userMessage.value = getApplication<Application>().getString(R.string.msg_materia_restaurada)
             }
         }
     }
@@ -340,8 +341,8 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     fun restoreDeletedEvent(eventId: Long) {
         viewModelScope.launch {
             runOperation {
-                check(repository.restoreEvent(eventId)) { "La actividad ya no está en la papelera." }
-                _userMessage.value = "Actividad restaurada."
+                check(repository.restoreEvent(eventId)) { getApplication<Application>().getString(R.string.error_evento_no_existe) }
+                _userMessage.value = getApplication<Application>().getString(R.string.msg_actividad_restaurada)
             }
         }
     }
@@ -362,7 +363,7 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch {
             runOperation {
                 repository.emptyTrash()
-                _userMessage.value = "Papelera vaciada."
+                _userMessage.value = getApplication<Application>().getString(R.string.msg_papelera_vaciada)
             }
         }
     }
@@ -371,7 +372,7 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch {
             runOperation {
                 repository.saveAcademicPeriod(period)
-                _userMessage.value = if (period.id == 0L) "Periodo guardado." else "Periodo actualizado."
+                _userMessage.value = if (period.id == 0L) getApplication<Application>().getString(R.string.msg_periodo_guardado) else getApplication<Application>().getString(R.string.msg_periodo_actualizado)
             }
         }
     }
@@ -380,7 +381,7 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch {
             runOperation {
                 check(repository.deleteAcademicPeriod(periodId)) {
-                    "El periodo ya no existe."
+                    getApplication<Application>().getString(R.string.error_periodo_no_existe)
                 }
             }
         }
@@ -391,9 +392,9 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
             runOperation {
                 val copied = repository.copySubjectsBetweenPeriods(sourcePeriodId, targetPeriodId)
                 _userMessage.value = when (copied) {
-                    0 -> "No había materias nuevas para copiar."
-                    1 -> "Se copió 1 materia al periodo."
-                    else -> "Se copiaron $copied materias al periodo."
+                    0 -> getApplication<Application>().getString(R.string.msg_no_materias_nuevas_copiar)
+                    1 -> getApplication<Application>().getString(R.string.msg_copio_1_materia)
+                    else -> getApplication<Application>().getString(R.string.msg_copiaron_n_materias, copied)
                 }
             }
         }
@@ -402,7 +403,7 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     fun toggleEventCompleted(eventId: Long, completed: Boolean) {
         viewModelScope.launch {
             runOperation {
-                check(repository.setEventCompleted(eventId, completed)) { "El evento ya no existe." }
+                check(repository.setEventCompleted(eventId, completed)) { getApplication<Application>().getString(R.string.error_evento_no_existe) }
             }
         }
     }
@@ -410,8 +411,8 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     fun postponeEventOneDay(eventId: Long) {
         viewModelScope.launch {
             runOperation {
-                check(repository.postponeEventByDays(eventId, 1)) { "No se pudo posponer la actividad." }
-                _userMessage.value = "Actividad pospuesta para mañana."
+                check(repository.postponeEventByDays(eventId, 1)) { getApplication<Application>().getString(R.string.error_evento_no_existe) }
+                _userMessage.value = getApplication<Application>().getString(R.string.msg_actividad_pospuesta_mañana)
             }
         }
     }
@@ -420,7 +421,7 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch {
             runOperation {
                 check(repository.setSubtaskCompleted(eventId, subtaskId, completed)) {
-                    "La subtarea ya no existe."
+                    getApplication<Application>().getString(R.string.error_evento_no_existe)
                 }
             }
         }
@@ -463,7 +464,7 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
             runOperation {
                 createAutomaticBackup("clear")
                 repository.clearAll()
-                _userMessage.value = "Datos borrados. Guardamos un respaldo automático."
+                _userMessage.value = getApplication<Application>().getString(R.string.msg_datos_borrados_respaldo)
             }
         }
     }
@@ -480,7 +481,7 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
                         "No se pudo abrir el archivo de destino."
                     }.bufferedWriter().use { writer -> writer.write(json) }
                 }
-                _userMessage.value = "Respaldo exportado correctamente."
+                _userMessage.value = getApplication<Application>().getString(R.string.msg_respaldo_exportado)
             }
         }
     }
@@ -496,9 +497,12 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
                 }
                 createAutomaticBackup("import")
                 val summary = repository.importScheduleBackup(json)
-                _userMessage.value =
-                    "Respaldo restaurado: ${summary.subjects} materias, " +
-                    "${summary.sessions} sesiones y ${summary.activities} actividades."
+                _userMessage.value = getApplication<Application>().getString(
+                    R.string.msg_respaldo_restaurado_full,
+                    summary.subjects,
+                    summary.sessions,
+                    summary.activities
+                )
             }
         }
     }
@@ -510,7 +514,11 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
                 createAutomaticBackup("restore")
                 val summary = repository.importScheduleBackup(json)
                 refreshAutomaticBackups()
-                _userMessage.value = "Respaldo restaurado: ${summary.subjects} materias y ${summary.activities} actividades."
+                _userMessage.value = getApplication<Application>().getString(
+                    R.string.msg_respaldo_restaurado_simple,
+                    summary.subjects,
+                    summary.activities
+                )
             }
         }
     }
@@ -541,7 +549,7 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         try {
             block()
         } catch (error: Exception) {
-            _userMessage.value = error.message ?: "Ocurrió un error inesperado."
+            _userMessage.value = error.message ?: getApplication<Application>().getString(R.string.msg_error_inesperado)
         }
     }
 
@@ -550,12 +558,13 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         fun getTodayDateString(): String = DateTimeUtils.todayString()
         
         fun getFormattedTodayHeading(): String = DateTimeUtils.formatDate(getTodayDateString(), true)
-        fun getGreetingText(name: String): String {
-            val greeting = when (LocalTime.now().hour) {
-                in 6..11 -> "Buenos días"
-                in 12..19 -> "Buenas tardes"
-                else -> "Buenas noches"
+        fun getGreetingText(application: Application, name: String): String {
+            val greetingRes = when (LocalTime.now().hour) {
+                in 6..11 -> R.string.greeting_morning
+                in 12..19 -> R.string.greeting_afternoon
+                else -> R.string.greeting_night
             }
+            val greeting = application.getString(greetingRes)
             return if (name.isBlank()) "¡$greeting!" else "¡$greeting, $name!"
         }
 

@@ -38,14 +38,12 @@ class MainActivity : ComponentActivity() {
             val settings by
             viewModel.appSettings.collectAsStateWithLifecycle()
 
-            // Aplicar Idioma en Debug
+            // Aplicar Idioma
             LaunchedEffect(settings.language) {
-                if (com.mocas.BuildConfig.DEBUG) {
-                    val localeTag = if (settings.language == "English") "en" else "es-MX"
-                    AppCompatDelegate.setApplicationLocales(
-                        LocaleListCompat.forLanguageTags(localeTag)
-                    )
-                }
+                val localeTag = if (settings.language == "English") "en" else "es-MX"
+                AppCompatDelegate.setApplicationLocales(
+                    LocaleListCompat.forLanguageTags(localeTag)
+                )
             }
 
             val notificationPermissionLauncher = rememberLauncherForActivityResult(

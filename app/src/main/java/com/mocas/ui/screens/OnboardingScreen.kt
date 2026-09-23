@@ -58,6 +58,8 @@ fun OnboardingScreen(
     var calendarSyncEnabled by remember { mutableStateOf(true) }
 
     val focusManager = LocalFocusManager.current
+    val carreraDef = stringResource(R.string.carrera_default)
+    val instDef = stringResource(R.string.institucion_default)
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -82,8 +84,8 @@ fun OnboardingScreen(
                             onComplete(
                                 initialSettings.copy(
                                     userName = name,
-                                    educationLevel = educationLevel.ifBlank { "Grado o Carrera" },
-                                    educationInstitution = educationInstitution.ifBlank { "Escuela o Institución" },
+                                    educationLevel = educationLevel.ifBlank { carreraDef },
+                                    educationInstitution = educationInstitution.ifBlank { instDef },
                                     themeMode = themeMode,
                                     notificationsEnabled = notificationsEnabled,
                                     calendarSyncEnabled = calendarSyncEnabled,

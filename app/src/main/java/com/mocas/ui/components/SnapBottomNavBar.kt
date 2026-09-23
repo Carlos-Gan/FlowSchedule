@@ -52,17 +52,17 @@ fun SnapBottomNavBar(
         tonalElevation = 0.dp
     ) {
         Column(modifier = Modifier.fillMaxWidth()
-            .padding(5.dp)) {
+            .padding(horizontal = 5.dp, vertical = 3.dp)) {
             NavigationBar(
-                modifier = Modifier.height(68.dp),
+                modifier = Modifier.height(80.dp),
                 containerColor = MaterialTheme.colorScheme.surface,
                 tonalElevation = 0.dp
             ) {
                 BottomNavTab.entries.forEach { tab ->
                     val isSelected = selectedTab == tab
                     val iconScale by animateFloatAsState(
-                        targetValue = if (isSelected) 1.1f else 1f,
-                        animationSpec = spring(dampingRatio = 0.5f),
+                        targetValue = if (isSelected) 1.25f else 1f,
+                        animationSpec = spring(dampingRatio = 0.4f, stiffness = 400f),
                         label = "iconScale"
                     )
 
@@ -98,7 +98,7 @@ fun SnapBottomNavBar(
                                     imageVector = if (isSelected) tab.selectedIcon else tab.unselectedIcon,
                                     contentDescription = stringResource(tab.titleRes),
                                     modifier = Modifier
-                                        .size(22.dp)
+                                        .size(24.dp)
                                         .graphicsLayer {
                                             scaleX = iconScale
                                             scaleY = iconScale
@@ -116,14 +116,13 @@ fun SnapBottomNavBar(
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = MaterialTheme.colorScheme.primary,
                             selectedTextColor = MaterialTheme.colorScheme.primary,
-                            indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                            indicatorColor = Color.Transparent,
                             unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(
-                                alpha = 0.7f
+                                alpha = 0.6f
                             ),
                             unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                         ),
                         modifier = Modifier.testTag("nav_tab_${tab.name.lowercase()}")
-
                     )
                 }
             }
