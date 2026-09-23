@@ -19,6 +19,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.mocas.R
 import com.mocas.ui.components.parseColorFromHex
 
 @Composable
@@ -59,80 +61,74 @@ fun DailyClassRow(
 
         Spacer(modifier = Modifier.width(16.dp))
 
-        // Card Block
+        // Card Block (Pill Style)
         Card(
             modifier = Modifier
                 .weight(1f)
                 .clickable { onClick() },
             shape = RoundedCornerShape(20.dp),
             colors = CardDefaults.cardColors(
-                containerColor = if (isNow) subjectColor.copy(alpha = 0.08f) else MaterialTheme.colorScheme.surfaceContainerLowest
+                containerColor = subjectColor.copy(alpha = 0.15f)
             ),
-            border = BorderStroke(
-                width = if (isNow) 1.5.dp else 1.dp,
-                color = if (isNow) subjectColor.copy(alpha = 0.6f) else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
-            ),
-            elevation = CardDefaults.cardElevation(defaultElevation = if (isNow) 3.dp else 0.dp)
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
         ) {
-            Row(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
-                // Colored Side Strip
-                Box(
+            Box(modifier = Modifier.fillMaxWidth()) {
+                Column(
                     modifier = Modifier
-                        .fillMaxHeight()
-                        .width(5.dp)
-                        .background(subjectColor)
-                )
+                        .padding(horizontal = 16.dp, vertical = 14.dp)
+                        .fillMaxWidth()
+                ) {
+                    Text(
+                        text = classItem.subject.name,
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Black,
+                            fontSize = 17.sp,
+                            letterSpacing = (-0.3).sp,
+                            lineHeight = 20.sp
+                        ),
+                        color = subjectColor,
+                        modifier = Modifier.padding(end = 12.dp),
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
 
-                Box(modifier = Modifier.fillMaxWidth()) {
-                    Column(
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .fillMaxWidth()
-                    ) {
+                    val room = classItem.slot.room.ifBlank { classItem.subject.defaultRoom }
+                    val professor = classItem.subject.professor
+                    val metadata = listOfNotNull(
+                        room.ifBlank { null },
+                        professor.ifBlank { null }
+                    ).joinToString("  •  ")
+
+                    if (metadata.isNotBlank()) {
+                        Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = classItem.subject.name,
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                fontWeight = FontWeight.Black,
-                                fontSize = 17.sp,
-                                letterSpacing = (-0.3).sp,
-                                lineHeight = 20.sp
+                            text = metadata,
+                            style = MaterialTheme.typography.bodySmall.copy(
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold
                             ),
-                            color = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.padding(end = 12.dp),
-                            maxLines = 2,
+                            color = subjectColor.copy(alpha = 0.8f),
+                            maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
-
-                        val room = classItem.slot.room.ifBlank { classItem.subject.defaultRoom }
-                        val professor = classItem.subject.professor
-                        val metadata = listOfNotNull(
-                            room.ifBlank { null },
-                            professor.ifBlank { null }
-                        ).joinToString("  •  ")
-
-                        if (metadata.isNotBlank()) {
-                            Spacer(modifier = Modifier.height(6.dp))
-                            Text(
-                                text = metadata,
-                                style = MaterialTheme.typography.bodySmall.copy(
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Medium
-                                ),
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
                     }
+                }
 
-                    // Red Dot Indicator
-                    if (isNow) {
-                        Box(
-                            modifier = Modifier
-                                .align(Alignment.TopEnd)
-                                .padding(12.dp)
-                                .size(8.dp)
-                                .background(Color.Red, CircleShape)
+                // Status Indicator
+                if (isNow) {
+                    Surface(
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(12.dp),
+                        shape = RoundedCornerShape(4.dp),
+                        color = Color.Red
+                    ) {
+                        Text(
+                            text = stringResource(R.string.ahora_label),
+                            color = Color.White,
+                            fontSize = 8.sp,
+                            fontWeight = FontWeight.Black,
+                            modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp)
                         )
                     }
                 }

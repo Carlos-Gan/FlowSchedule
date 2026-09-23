@@ -4,6 +4,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Modifier
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import com.mocas.ui.model.BottomNavTab
 import com.mocas.ui.screens.DashboardScreen
 import com.mocas.ui.screens.CalendarScreen
@@ -17,6 +18,7 @@ import com.mocas.ui.viewmodel.ScheduleViewModel
 fun AppTabContent(
     currentTab: BottomNavTab,
     viewModel: ScheduleViewModel,
+    windowSizeClass: WindowSizeClass,
     modifier: Modifier = Modifier
 ) {
     val stateHolder = rememberSaveableStateHolder()
@@ -31,7 +33,10 @@ fun AppTabContent(
         ) {
             when (tab) {
                 BottomNavTab.INICIO -> {
-                    DashboardScreen(viewModel = viewModel)
+                    DashboardScreen(
+                        viewModel = viewModel,
+                        windowSizeClass = windowSizeClass
+                    )
                 }
 
                 BottomNavTab.HORARIO -> {
@@ -39,7 +44,7 @@ fun AppTabContent(
                 }
 
                 BottomNavTab.CALENDARIO -> {
-                    CalendarScreen(viewModel = viewModel)
+                    CalendarScreen(viewModel = viewModel, windowSizeClass = windowSizeClass)
                 }
 
                 BottomNavTab.EVENTOS -> {

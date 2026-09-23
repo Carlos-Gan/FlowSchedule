@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,7 +35,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mocas.R
 import android.app.Application
@@ -49,11 +53,17 @@ import com.mocas.ui.model.DailyClassStats
 import com.mocas.ui.model.NextClassInfo
 import com.mocas.ui.viewmodel.ScheduleViewModel
 
+// Ancho máximo del contenido: en pantallas grandes (tablet/desktop/foldable
+// abierto) evita que el texto y las tarjetas se estiren de borde a borde.
+private val MAX_CONTENT_WIDTH: Dp = 900.dp
+
 @Composable
 fun DashboardScreen(
     viewModel: ScheduleViewModel,
+    windowSizeClass: WindowSizeClass,
     modifier: Modifier = Modifier
 ) {
+    val isCompact = windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact
     val settings by viewModel.appSettings.collectAsStateWithLifecycle()
     val nextClass by viewModel.nextClassInfo.collectAsStateWithLifecycle()
     val allEvents by viewModel.allEventsWithSubject.collectAsStateWithLifecycle()
@@ -67,10 +77,14 @@ fun DashboardScreen(
     }
 
     DashboardContent(
-        greeting = ScheduleViewModel.getGreetingText(LocalContext.current.applicationContext as Application, settings.userName),
+        greeting = ScheduleViewModel.getGreetingText(
+            LocalContext.current.applicationContext as Application,
+            settings.userName
+        ),
         nextClass = nextClass,
         dueTodayEvents = dueTodayEvents,
         classStats = classStats,
+        windowSizeClass = windowSizeClass,
         onNextClassClick = { nextClass?.subject?.id?.let(viewModel::openSubjectDetail) },
         onViewAllEvents = { viewModel.setTab(BottomNavTab.EVENTOS) },
         onToggleEventCompleted = { eventWithSubject, completed ->
@@ -90,6 +104,7 @@ fun DashboardContent(
     nextClass: NextClassInfo?,
     dueTodayEvents: List<SchoolEventWithSubject>,
     classStats: DailyClassStats,
+    windowSizeClass: WindowSizeClass,
     onNextClassClick: () -> Unit,
     onViewAllEvents: () -> Unit,
     onToggleEventCompleted: (SchoolEventWithSubject, Boolean) -> Unit,
@@ -98,126 +113,176 @@ fun DashboardContent(
     onAddSubjectClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn(
+    val widthClass = windowSizeClass.widthSizeClass
+    val isCompact = widthClass == WindowWidthSizeClass.Compact
+    // El padding horizontal crece un poco en pantallas medianas/grandes,
+    // acompañando el respiro extra que da el ancho máximo del contenido.
+    val horizontalPadding = when (widthClass) {
+        WindowWidthSizeClass.Compact -> 20.dp
+        WindowWidthSizeClass.Medium -> 32.dp
+        else -> 40.dp
+    }
+
+    Box(
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(13.dp)
+            .background(MaterialTheme.colorScheme.background)
     ) {
-        // Greeting Section
-        item {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    text = greeting,
-                    style = MaterialTheme.typography.headlineLarge.copy(
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = (-0.5).sp
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = if (dueTodayEvents.isEmpty())
-                        stringResource(R.string.todo_al_dia_mensaje)
-                    else
-                        stringResource(R.string.tareas_hoy_conteo_formato, dueTodayEvents.size),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
-
-        // Quick Actions Row
-        item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                QuickActionButton(
-                    icon = Icons.Default.AddTask,
-                    label = stringResource(R.string.añadir_tarea),
-                    containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.1f),
-                    contentColor = MaterialTheme.colorScheme.primary,
-                    onClick = onAddTaskClick,
-                    modifier = Modifier.weight(1f)
-                )
-                QuickActionButton(
-                    icon = Icons.Default.LibraryAdd,
-                    label = stringResource(R.string.añadir_materia),
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.2f),
-                    contentColor = MaterialTheme.colorScheme.secondary,
-                    onClick = onAddSubjectClick,
-                    modifier = Modifier.weight(1f)
-                )
-            }
-        }
-
-        // Next Class Section
-        if (nextClass != null) {
+        LazyColumn(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .widthIn(max = MAX_CONTENT_WIDTH)
+                .fillMaxWidth(),
+            contentPadding = PaddingValues(horizontal = horizontalPadding, vertical = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(13.dp)
+        ) {
+            // Greeting Section
             item {
-                NextClassCard(
-                    nextClass = nextClass,
-                    onClick = onNextClassClick
-                )
-            }
-        }
-
-        // Daily Focus Section
-        item {
-            DailyFocusCard(
-                stats = classStats
-            )
-        }
-
-        // Tasks Due Today Section
-        item {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
-                        text = stringResource(R.string.tareas_para_hoy),
-                        style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                        text = greeting,
+                        style = MaterialTheme.typography.headlineLarge.copy(
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = (-0.5).sp
+                        ),
                         color = MaterialTheme.colorScheme.onSurface
                     )
-                    TextButton(
-                        onClick = onViewAllEvents,
-                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
-                    ) {
-                        Text(
-                            stringResource(R.string.ver_todo),
-                            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.primary
+                    Text(
+                        text = if (dueTodayEvents.isEmpty())
+                            stringResource(R.string.todo_al_dia_mensaje)
+                        else
+                            stringResource(R.string.tareas_hoy_conteo_formato, dueTodayEvents.size),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            // Quick Actions Row
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    QuickActionButton(
+                        icon = Icons.Default.AddTask,
+                        label = stringResource(R.string.añadir_tarea),
+                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.1f),
+                        contentColor = MaterialTheme.colorScheme.primary,
+                        onClick = onAddTaskClick,
+                        modifier = Modifier.weight(1f)
+                    )
+                    QuickActionButton(
+                        icon = Icons.Default.LibraryAdd,
+                        label = stringResource(R.string.añadir_materia),
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.2f),
+                        contentColor = MaterialTheme.colorScheme.secondary,
+                        onClick = onAddSubjectClick,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
+
+            // Next Class & Daily Focus Section (Conditional Layout)
+            if (isCompact) {
+                if (nextClass != null) {
+                    item {
+                        NextClassCard(
+                            nextClass = nextClass,
+                            onClick = onNextClassClick
                         )
                     }
                 }
 
-                if (dueTodayEvents.isEmpty()) {
-                    Surface(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(12.dp),
-                        color = MaterialTheme.colorScheme.surfaceContainerLowest,
-                        shadowElevation = 2.dp
-                    ) {
-                        Text(
-                            stringResource(R.string.no_hay_tareas_hoy),
-                            modifier = Modifier.padding(16.dp),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                item {
+                    DailyFocusCard(
+                        stats = classStats,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            } else {
+                if (nextClass != null) {
+                    item {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            Box(modifier = Modifier.weight(1f)) {
+                                NextClassCard(
+                                    nextClass = nextClass,
+                                    onClick = onNextClassClick
+                                )
+                            }
+                            Box(modifier = Modifier.weight(1f)) {
+                                DailyFocusCard(
+                                    stats = classStats,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
+                        }
                     }
                 } else {
-                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        dueTodayEvents.take(5).forEach { eventWithSubject ->
-                            TaskItemRow(
-                                eventWithSubject = eventWithSubject,
-                                onToggleCompleted = { completed ->
-                                    onToggleEventCompleted(eventWithSubject, completed)
-                                },
-                                onClick = { onEventClick(eventWithSubject) }
+                    // Sin clase siguiente: DailyFocusCard ocupa todo el ancho
+                    // en vez de dejar medio espacio vacío al lado.
+                    item {
+                        DailyFocusCard(
+                            stats = classStats,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
+            }
+
+            // Tasks Due Today Section
+            item {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = stringResource(R.string.tareas_para_hoy),
+                            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        TextButton(
+                            onClick = onViewAllEvents,
+                            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
+                        ) {
+                            Text(
+                                stringResource(R.string.ver_todo),
+                                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                                color = MaterialTheme.colorScheme.primary
                             )
+                        }
+                    }
+
+                    if (dueTodayEvents.isEmpty()) {
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(12.dp),
+                            color = MaterialTheme.colorScheme.surfaceContainerLowest,
+                            shadowElevation = 2.dp
+                        ) {
+                            Text(
+                                stringResource(R.string.no_hay_tareas_hoy),
+                                modifier = Modifier.padding(16.dp),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    } else {
+                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                            dueTodayEvents.take(5).forEach { eventWithSubject ->
+                                TaskItemRow(
+                                    eventWithSubject = eventWithSubject,
+                                    onToggleCompleted = { completed ->
+                                        onToggleEventCompleted(eventWithSubject, completed)
+                                    },
+                                    onClick = { onEventClick(eventWithSubject) }
+                                )
+                            }
                         }
                     }
                 }

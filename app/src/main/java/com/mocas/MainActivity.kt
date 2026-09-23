@@ -14,6 +14,8 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.core.content.ContextCompat
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -27,6 +29,7 @@ class MainActivity : ComponentActivity() {
 
     private val viewModel: ScheduleViewModel by viewModels()
 
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(
         savedInstanceState: Bundle?
     ) {
@@ -72,12 +75,17 @@ class MainActivity : ComponentActivity() {
                 systemDarkTheme = isSystemInDarkTheme()
             )
 
+            val windowSizeClass = calculateWindowSizeClass(this)
+
             FlowScheduleTheme(
                 darkTheme = darkTheme,
                 colorTheme = settings.colorTheme
             ) {
                 if (settings.onboardingCompleted) {
-                    MainAppScreen(viewModel = viewModel)
+                    MainAppScreen(
+                        viewModel = viewModel,
+                        windowSizeClass = windowSizeClass
+                    )
                 } else {
                     OnboardingScreen(
                         initialSettings = settings,

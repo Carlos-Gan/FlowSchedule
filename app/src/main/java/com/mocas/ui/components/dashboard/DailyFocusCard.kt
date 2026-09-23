@@ -22,11 +22,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mocas.R
 import com.mocas.ui.model.DailyClassStats
+import java.util.Locale
 
 @ExperimentalMaterial3Api
 @Composable
 fun DailyFocusCard(
-    stats: DailyClassStats
+    stats: DailyClassStats,
+    modifier: Modifier
 ) {
     val isFinishedOrFree = stats.totalHours == 0.0 || stats.progress >= 1f
 
@@ -42,7 +44,7 @@ fun DailyFocusCard(
     }
 
     val footerText = if (stats.totalHours > 0) {
-        stringResource(R.string.total_hoy_formato, String.format(java.util.Locale.US, "%.1f", stats.totalHours))
+        stringResource(R.string.total_hoy_formato, String.format(Locale.US, "%.1f", stats.totalHours))
     } else {
         stringResource(R.string.sin_clases_hoy)
     }
@@ -62,11 +64,7 @@ fun DailyFocusCard(
             .height(140.dp),
         shape = RoundedCornerShape(16.dp),
         color = backgroundColor,
-        shadowElevation = if (isFinishedOrFree) 0.dp else 2.dp,
-        border = if (isFinishedOrFree) androidx.compose.foundation.BorderStroke(
-            1.dp,
-            MaterialTheme.colorScheme.tertiary.copy(alpha = 0.5f)
-        ) else null
+        shadowElevation = 0.dp
     ) {
         Column(
             modifier = Modifier.padding(12.dp),
