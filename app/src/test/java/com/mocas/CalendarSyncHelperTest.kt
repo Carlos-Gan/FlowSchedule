@@ -1,15 +1,30 @@
 package com.mocas
 
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
 import com.mocas.data.local.ScheduleSlotEntity
 import com.mocas.data.local.SubjectEntity
 import com.mocas.data.local.SubjectWithSlots
 import com.mocas.data.repository.CalendarSyncHelper
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 import java.time.ZoneId
 
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [36])
 class CalendarSyncHelperTest {
+    private lateinit var context: Context
+
+    @Before
+    fun setUp() {
+        context = ApplicationProvider.getApplicationContext()
+    }
+
     @Test
     fun exportsValidRecurringIcsWithEscapedTextAndCrLf() {
         val subject = SubjectEntity(
@@ -29,8 +44,9 @@ class CalendarSyncHelperTest {
         )
 
         val ics = CalendarSyncHelper.exportScheduleAsIcsText(
-            listOf(SubjectWithSlots(subject, listOf(slot))),
-            ZoneId.of("America/Mexico_City")
+            context = context,
+            subjectsWithSlots = listOf(SubjectWithSlots(subject, listOf(slot))),
+            zoneId = ZoneId.of("America/Mexico_City")
         )
 
         assertTrue(ics.startsWith("BEGIN:VCALENDAR\r\nVERSION:2.0\r\n"))

@@ -48,7 +48,6 @@ class AppSettingsStoreTest {
                 taskReminderMinutes = 3 * 24 * 60,
                 eventReminderMinutes = 12 * 60,
                 calendarSyncEnabled = false,
-                aiFeaturesEnabled = false,
                 outsidePeriodsAreVacations = true,
                 showVacationsInTimetable = false,
                 onboardingCompleted = true
@@ -66,7 +65,6 @@ class AppSettingsStoreTest {
         assertEquals(3 * 24 * 60, restored.taskReminderMinutes)
         assertEquals(12 * 60, restored.eventReminderMinutes)
         assertFalse(restored.calendarSyncEnabled)
-        assertFalse(restored.aiFeaturesEnabled)
         assertTrue(restored.outsidePeriodsAreVacations)
         assertFalse(restored.showVacationsInTimetable)
         assertTrue(restored.onboardingCompleted)

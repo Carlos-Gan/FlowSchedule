@@ -25,6 +25,7 @@ import com.mocas.data.preferences.AppSettingsStore
 import com.mocas.data.notifications.ReminderRescheduler
 import com.mocas.data.widget.ScheduleWidgetProvider
 import com.mocas.data.widget.DailyScheduleWidgetProvider
+import com.mocas.data.widget.AcademicPeriodWidgetProvider
 import com.mocas.data.repository.ScheduleRepository
 import com.mocas.ui.model.AppSettings
 import com.mocas.ui.model.ClassOccurrenceInfo
@@ -159,12 +160,14 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
                 repository.allSubjectsWithSlots,
                 repository.allEventsWithSubject,
                 repository.allClassExceptions,
+                repository.allAcademicPeriods,
                 _appSettings
-            ) { _, _, _, _ -> Unit }
+            ) { _, _, _, _, _ -> Unit }
                 .collectLatest {
                     ReminderRescheduler.reschedule(application)
                     ScheduleWidgetProvider.requestUpdate(application)
                     DailyScheduleWidgetProvider.requestUpdate(application)
+                    AcademicPeriodWidgetProvider.requestUpdate(application)
                 }
         }
     }

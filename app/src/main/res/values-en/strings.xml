@@ -558,4 +558,17 @@
     <string name="widget_up_to_date">Up to date</string>
     <string name="widget_pending_count_singular">1 pending</string>
     <string name="widget_pending_count_plural">%1$d pending</string>
+
+    <!-- Academic Period Widget Strings -->
+    <string name="academic_period_widget_name">Academic Period School Days</string>
+    <string name="academic_period_widget_description">Shows remaining and elapsed school days in the current academic period</string>
+    <string name="widget_no_academic_period">No academic period</string>
+    <string name="widget_no_academic_period_msg">Create a period in the app</string>
+    <string name="widget_school_days_remaining">school days remaining</string>
+    <string name="widget_school_days_remaining_unit">days</string>
+    <string name="widget_school_days_elapsed">school days elapsed</string>
+    <string name="widget_school_days_elapsed_unit">days</string>
+    <string name="widget_school_days_total_simple">Total: %1$d school days</string>
+    <string name="widget_school_days_total_progress">%1$d school days · %2$d%% completed</string>
+    <string name="widget_period_ended">Period ended</string>
 </resources>

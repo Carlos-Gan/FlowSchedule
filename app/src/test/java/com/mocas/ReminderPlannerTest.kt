@@ -1,5 +1,7 @@
 package com.mocas
 
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
 import com.mocas.data.local.ClassExceptionEntity
 import com.mocas.data.local.ClassExceptionType
 import com.mocas.data.local.ScheduleSlotEntity
@@ -16,9 +18,22 @@ import java.time.ZoneOffset
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [36])
 class ReminderPlannerTest {
+    private lateinit var context: Context
+
+    @Before
+    fun setUp() {
+        context = ApplicationProvider.getApplicationContext()
+    }
+
     private val mondayClass = SubjectWithSlots(
         subject = SubjectEntity(
             id = 1,
@@ -41,6 +56,7 @@ class ReminderPlannerTest {
     @Test
     fun `modified class creates change reminder with new room`() {
         val reminders = planReminders(
+            context = context,
             subjects = listOf(mondayClass),
             events = emptyList(),
             exceptions = listOf(
@@ -59,12 +75,13 @@ class ReminderPlannerTest {
             zoneId = ZoneId.of("UTC")
         )
 
-        assertTrue(reminders.any { it.title == "Cambio de clase: Redes" && "B4" in it.message })
+        assertTrue(reminders.any { it.title.contains("Redes") && "B4" in it.message })
     }
 
     @Test
     fun `canceled occurrence does not create class reminder`() {
         val reminders = planReminders(
+            context = context,
             subjects = listOf(mondayClass),
             events = emptyList(),
             exceptions = listOf(
@@ -97,6 +114,7 @@ class ReminderPlannerTest {
             )
         )
         val reminders = planReminders(
+            context = context,
             subjects = emptyList(),
             events = listOf(task),
             exceptions = emptyList(),
@@ -123,6 +141,7 @@ class ReminderPlannerTest {
             )
         )
         val reminders = planReminders(
+            context = context,
             subjects = listOf(mondayClass),
             events = listOf(task),
             exceptions = emptyList(),

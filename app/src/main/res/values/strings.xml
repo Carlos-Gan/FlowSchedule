@@ -556,4 +556,17 @@
     <string name="widget_up_to_date">Al día</string>
     <string name="widget_pending_count_singular">1 pendiente</string>
     <string name="widget_pending_count_plural">%1$d pendientes</string>
+
+    <!-- Academic Period Widget Strings -->
+    <string name="academic_period_widget_name">Días de clases del período</string>
+    <string name="academic_period_widget_description">Muestra los días de clases restantes y transcurridos del período académico actual</string>
+    <string name="widget_no_academic_period">Sin período académico</string>
+    <string name="widget_no_academic_period_msg">Crea un período en la app</string>
+    <string name="widget_school_days_remaining">días de clase restantes</string>
+    <string name="widget_school_days_remaining_unit">días</string>
+    <string name="widget_school_days_elapsed">días cursados</string>
+    <string name="widget_school_days_elapsed_unit">días</string>
+    <string name="widget_school_days_total_simple">Total: %1$d días lectivos</string>
+    <string name="widget_school_days_total_progress">%1$d días lectivos · %2$d%% completado</string>
+    <string name="widget_period_ended">Período finalizado</string>
 </resources>

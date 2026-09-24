@@ -495,44 +495,7 @@ fun CalendarScreen(
         )
     }
 
-    // Vacío solo para el lado de actividades (columna izquierda en pantalla grande).
-    @Composable
-    fun ActivitiesEmptyState() {
-        EmptyStateCard(
-            title = if (selectedDateIsVacation) stringResource(R.string.dia_vacaciones) else stringResource(
-                R.string.sin_actividades_dia
-            ),
-            message = if (selectedDateIsVacation) {
-                stringResource(R.string.mensaje_fuera_periodos)
-            } else {
-                stringResource(R.string.mensaje_programar_actividad)
-            },
-            icon = Icons.Default.EventNote,
-            actionButtonText = stringResource(R.string.nueva_actividad_boton),
-            onActionClick = { viewModel.openAddEvent(defaultDate = selectedDateStr) }
-        )
-    }
 
-    // Vacío solo para el lado de clases (columna derecha en pantalla grande).
-    // NOTA: el texto está fijo aquí; si quieres que respete el idioma del
-    // sistema como el resto de la pantalla, muévelo a strings.xml y pásalo
-    // con stringResource(...).
-    @Composable
-    fun ClassesEmptyState() {
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp),
-            color = MaterialTheme.colorScheme.surfaceContainerLowest,
-            shadowElevation = 2.dp
-        ) {
-            Text(
-                text = "No hay clases programadas para este día.",
-                modifier = Modifier.padding(16.dp),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-    }
 
     if (isCompact) {
         // ---- Pantalla angosta: una sola columna, orden original ----
@@ -559,7 +522,7 @@ fun CalendarScreen(
         }
     } else {
         // ---- Pantalla grande: dos columnas ----
-        // Izquierda: calendario + actividades del día. Derecha: clases del día.
+        // Izquierda: Calendario mensual. Derecha: Encabezado, eventos y clases del día seleccionado.
         Box(
             modifier = modifier
                 .fillMaxSize()
@@ -575,31 +538,7 @@ fun CalendarScreen(
                     .testTag("calendar_screen_row"),
                 horizontalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                // Columna izquierda: calendario fijo arriba, solo las
-                // actividades hacen scroll debajo.
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight(),
-                    verticalArrangement = Arrangement.spacedBy(14.dp)
-                ) {
-                    MonthNavigationCard()
-                    DayHeadingSyncCard()
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth()
-                            .verticalScroll(rememberScrollState())
-                    ) {
-                        if (eventsForSelectedDay.isNotEmpty()) {
-                            EventsListSection()
-                        } else {
-                            ActivitiesEmptyState()
-                        }
-                    }
-                }
-
-                // Columna derecha: clases del día
+                // Columna izquierda: calendario mensual navegable
                 Column(
                     modifier = Modifier
                         .weight(1f)
@@ -607,11 +546,29 @@ fun CalendarScreen(
                         .verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.spacedBy(14.dp)
                 ) {
+                    MonthNavigationCard()
+                }
+
+                // Columna derecha: encabezado del día, lista de tareas/eventos y clases
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(14.dp)
+                ) {
+                    DayHeadingSyncCard()
+
+                    if (eventsForSelectedDay.isNotEmpty()) {
+                        EventsListSection()
+                    }
                     if (classesForSelectedDay.isNotEmpty()) {
                         ClassesListSection()
-                    } else {
-                        ClassesEmptyState()
                     }
+                    if (eventsForSelectedDay.isEmpty() && classesForSelectedDay.isEmpty()) {
+                        CombinedEmptyState()
+                    }
+
                     Spacer(modifier = Modifier.height(24.dp))
                 }
             }

@@ -56,7 +56,7 @@
         <receiver
             android:name=".data.widget.ScheduleWidgetProvider"
             android:label="@string/next_class_widget_name"
-            android:exported="false">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -68,13 +68,25 @@
         <receiver
             android:name=".data.widget.DailyScheduleWidgetProvider"
             android:label="@string/daily_widget_name"
-            android:exported="false">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/daily_schedule_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".data.widget.AcademicPeriodWidgetProvider"
+            android:label="@string/academic_period_widget_name"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/academic_period_widget_info" />
         </receiver>
 
         <service

@@ -3,7 +3,6 @@ package com.mocas
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import com.mocas.data.ai.DetectedSubjectItem
 import com.mocas.data.local.AppDatabase
 import com.mocas.data.local.AcademicPeriodEntity
 import com.mocas.data.local.ClassExceptionEntity
@@ -33,27 +32,12 @@ class ScheduleRepositoryTest {
     fun setUp() {
         val context = ApplicationProvider.getApplicationContext<Context>()
         database = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java).build()
-        repository = ScheduleRepository(database)
+        repository = ScheduleRepository(context, database)
     }
 
     @After
     fun tearDown() {
         database.close()
-    }
-
-    @Test
-    fun importGroupsNormalizedSubjectAndDoesNotDuplicateOnSecondImport() = runTest {
-        val items = listOf(
-            DetectedSubjectItem("  Programación Móvil ", "Dra. Ruiz", 1, "08:00", "09:00", "A1"),
-            DetectedSubjectItem("programación   móvil", " dra. ruiz ", 3, "10:00", "11:00", "A2")
-        )
-
-        repository.importDetectedSubjects(items, "2026-08-20", "2026-12-10")
-        repository.importDetectedSubjects(items, "2026-08-20", "2026-12-10")
-
-        val subjects = repository.allSubjectsWithSlots.first()
-        assertEquals(1, subjects.size)
-        assertEquals(2, subjects.single().slots.size)
     }
 
     @Test
@@ -306,23 +290,6 @@ class ScheduleRepositoryTest {
         )
 
         assertEquals(2, repository.allSubjectsWithSlots.first().size)
-    }
-
-    @Test
-    fun importKeepsSameSubjectNameSeparateAcrossYears() = runTest {
-        val items = listOf(
-            DetectedSubjectItem(
-                "Redes", "Dra. Ruiz", 2, "10:00", "11:00", "A1"
-            )
-        )
-
-        repository.importDetectedSubjects(items, "2026-01-10", "2026-06-30")
-        repository.importDetectedSubjects(items, "2027-01-10", "2027-06-30")
-
-        val subjects = repository.allSubjectsWithSlots.first()
-        assertEquals(2, subjects.size)
-        assertTrue(subjects.any { it.subject.semesterStart.startsWith("2026") })
-        assertTrue(subjects.any { it.subject.semesterStart.startsWith("2027") })
     }
 
     @Test

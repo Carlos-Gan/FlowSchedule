@@ -3,9 +3,9 @@ package com.mocas
 import androidx.compose.material3.Text
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
-import com.mocas.ui.theme.SnapMyScheduleTheme
 import com.github.takahirom.roborazzi.RobolectricDeviceQualifiers
 import com.github.takahirom.roborazzi.captureRoboImage
+import com.mocas.ui.theme.FlowScheduleTheme
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -23,8 +23,8 @@ class GreetingScreenshotTest {
   @Test
   fun greeting_screenshot() {
     composeTestRule.setContent {
-      SnapMyScheduleTheme {
-        Text("SnapMySchedule")
+      FlowScheduleTheme {
+        Text(text = "SnapMySchedule")
       }
     }
 

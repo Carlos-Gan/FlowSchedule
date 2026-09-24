@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -100,12 +101,16 @@ fun SubjectDetailDialog(
 
     Dialog(
         onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false,
+            decorFitsSystemWindows = false
+        )
     ) {
         Surface(
             modifier = Modifier
                 .fillMaxWidth(0.94f)
                 .clip(RoundedCornerShape(24.dp))
+                .imePadding()
                 .testTag("subject_detail_dialog"),
             color = MaterialTheme.colorScheme.surface,
             tonalElevation = 6.dp
