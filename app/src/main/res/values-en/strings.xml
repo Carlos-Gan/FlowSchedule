@@ -6,7 +6,7 @@
     <string name="daily_widget_name">Today\'s Schedule</string>
     <string name="daily_widget_description">Today\'s classes and pending tasks for each subject</string>
     <string name="editar_perfil">Edit Profile</string>
-    <string name="promedio_actual">CURRENT AVERAGE</string>
+    <string name="promedio_actual">Current Average</string>
     <string name="excelente">Excellent</string>
     <string name="en_progreso">In progress</string>
     <string name="actividades_completadas">Completed activities</string>
@@ -44,7 +44,7 @@
     <string name="eliminar_todo">Delete all</string>
     <string name="exportar">Export</string>
     <string name="importar">Import</string>
-    <string name="copias_automaticas">AUTOMATIC BACKUPS</string>
+    <string name="copias_automaticas">Automatic Backups</string>
     <string name="no_hay_respaldos_automaticos">No automatic backups found.</string>
     <string name="confirmar_restaurar_respaldo">Restore backup?</string>
     <string name="reemplazar_informacion_respaldo">Current data will be replaced with backup data.</string>
@@ -73,8 +73,8 @@
     <string name="editar_actividad_titulo">Edit Activity</string>
     <string name="organiza_semestre_subtitulo">Organize your semester intelligently.</string>
     <string name="que_tienes_que_hacer_placeholder">What do you have to do?</string>
-    <string name="categoria_label">CATEGORY</string>
-    <string name="asignatura_label">SUBJECT</string>
+    <string name="categoria_label">Category</string>
+    <string name="asignatura_label">Subject</string>
     <string name="seleccionar_materia_placeholder">Select subject…</string>
     <string name="ninguna_materia">None (General / School)</string>
     <string name="todo_el_dia">All day</string>
@@ -83,7 +83,7 @@
     <string name="hora_label">Time</string>
     <string name="ubicacion_placeholder">Location or room (Optional)</string>
     <string name="notas_placeholder">Additional notes…</string>
-    <string name="guardar_actividad_boton">SAVE ACTIVITY</string>
+    <string name="guardar_actividad_boton">Save Activity</string>
     <string name="buscar_placeholder">Search subjects or activities…</string>
     <string name="cerrar_busqueda_desc">Close search</string>
     <string name="limpiar_texto_desc">Clear text</string>
@@ -153,7 +153,7 @@
     <string name="mensaje_sin_clases_semana">Add your subjects or import a photo of your school schedule.</string>
     <string name="mensaje_revisar_periodos">Choose another week or check your academic period dates.</string>
     <string name="agregar_materia_boton">+ Add Subject</string>
-    <string name="ahora_label">NOW</string>
+    <string name="ahora_label">Now</string>
     <string name="tu_dia_libre">Your day is free</string>
     <string name="agregar_clase_boton">+ Add Class</string>
     <string name="no_hay_materias_registradas">No subjects registered</string>

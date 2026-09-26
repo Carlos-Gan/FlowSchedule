@@ -5,7 +5,7 @@
     <string name="daily_widget_description">Clases de hoy y pendientes de cada materia</string>
     <string name="app_name" translatable="false">FlowSchedule</string>
     <string name="editar_perfil">Editar Perfil</string>
-    <string name="promedio_actual">PROMEDIO ACTUAL</string>
+    <string name="promedio_actual">Promedio Actual</string>
     <string name="excelente">Excelente</string>
     <string name="en_progreso">En progreso</string>
     <string name="actividades_completadas">Actividades completadas</string>
@@ -43,7 +43,7 @@
     <string name="eliminar_todo">Eliminar todo</string>
     <string name="exportar">Exportar</string>
     <string name="importar">Importar</string>
-    <string name="copias_automaticas">CÓPIAS AUTOMÁTICAS</string>
+    <string name="copias_automaticas">Cópias Automáticas</string>
     <string name="no_hay_respaldos_automaticos">No hay respaldos automáticos.</string>
     <string name="confirmar_restaurar_respaldo">¿Restaurar respaldo?</string>
     <string name="reemplazar_informacion_respaldo">Se reemplazará toda la información actual con la del respaldo.</string>
@@ -72,8 +72,8 @@
     <string name="editar_actividad_titulo">Editar Actividad</string>
     <string name="organiza_semestre_subtitulo">Organiza tu semestre de forma inteligente.</string>
     <string name="que_tienes_que_hacer_placeholder">¿Qué tienes que hacer?</string>
-    <string name="categoria_label">CATEGORÍA</string>
-    <string name="asignatura_label">ASIGNATURA</string>
+    <string name="categoria_label">Categoría</string>
+    <string name="asignatura_label">Asignatura</string>
     <string name="seleccionar_materia_placeholder">Seleccionar materia…</string>
     <string name="ninguna_materia">Ninguna (General / Escolar)</string>
     <string name="todo_el_dia">Todo el día</string>
@@ -82,7 +82,7 @@
     <string name="hora_label">Hora</string>
     <string name="ubicacion_placeholder">Ubicación o salón (Opcional)</string>
     <string name="notas_placeholder">Notas adicionales…</string>
-    <string name="guardar_actividad_boton">GUARDAR ACTIVIDAD</string>
+    <string name="guardar_actividad_boton">Guardar Actividad</string>
     <string name="buscar_placeholder">Buscar materias o actividades…</string>
     <string name="cerrar_busqueda_desc">Cerrar búsqueda</string>
     <string name="limpiar_texto_desc">Limpiar texto</string>
@@ -152,7 +152,7 @@
     <string name="mensaje_sin_clases_semana">Agrega tus materias o importa una foto de tu horario escolar.</string>
     <string name="mensaje_revisar_periodos">Elige otra semana o revisa las fechas de tus periodos académicos.</string>
     <string name="agregar_materia_boton">+ Agregar Materia</string>
-    <string name="ahora_label">AHORA</string>
+    <string name="ahora_label">Ahora</string>
     <string name="tu_dia_libre">Tu día está libre</string>
     <string name="agregar_clase_boton">+ Agregar Clase</string>
     <string name="no_hay_materias_registradas">No hay materias registradas</string>
