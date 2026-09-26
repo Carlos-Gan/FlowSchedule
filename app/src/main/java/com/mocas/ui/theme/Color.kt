@@ -83,12 +83,12 @@ val OnTertiaryDark = Color(0xFF4C2100)
 val TertiaryContainerDark = Color(0xFF6E3200)
 val OnTertiaryContainerDark = Color(0xFFFFDBC9)
 
-val BackgroundDark = Color(0xFF000000)
-val OnBackgroundDark = Color(0xFFE1E3E4)
-val SurfaceDark = Color(0xFF000000)
-val OnSurfaceDark = Color(0xFFE1E3E4)
-val SurfaceVariantDark = Color(0xFF121415)
-val OnSurfaceVariantDark = Color(0xFFC5C5D4)
+val BackgroundDark = Color(0xFF14161D)
+val OnBackgroundDark = Color(0xFFE2E4EB)
+val SurfaceDark = Color(0xFF1B1D26)
+val OnSurfaceDark = Color(0xFFE2E4EB)
+val SurfaceVariantDark = Color(0xFF262835)
+val OnSurfaceVariantDark = Color(0xFFC7C9D6)
 
 // Subject Palette for Timetable & Categorization (Maintained from previous style)
 val SubjectColors = listOf(
@@ -563,10 +563,10 @@ val CoffeeBackgroundDark = Color(0xFF231B1B)
 val MidnightPrimary = Color(0xFF1A237E)
 val MidnightPrimaryDark = Color(0xFFC5CAE9)
 val MidnightBackground = Color(0xFFF0F2F5) // Soft Blue Gray
-val MidnightBackgroundDark = Color(0xFF0D1117)
+val MidnightBackgroundDark = Color(0xFF121624)
 
 // Forest Theme (Deep Nature)
 val ForestPrimary = Color(0xFF1B5E20)
 val ForestPrimaryDark = Color(0xFFC8E6C9)
 val ForestBackground = Color(0xFFF1F8E9) // Very Light Green
-val ForestBackgroundDark = Color(0xFF0A1A0A)
+val ForestBackgroundDark = Color(0xFF121F12)
