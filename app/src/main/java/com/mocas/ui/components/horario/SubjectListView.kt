@@ -87,7 +87,7 @@ fun SubjectListView(
                     .testTag("subject_list_card_${sub.id}"),
                 shape = RoundedCornerShape(20.dp),
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceDim),
                 elevation = CardDefaults.cardElevation(1.dp)
             ) {
                 Row(

@@ -50,9 +50,8 @@ fun EmptyStateCard(
             .padding(vertical = 8.dp)
             .testTag("empty_state_card"),
         shape = RoundedCornerShape(22.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest
+            containerColor = MaterialTheme.colorScheme.surfaceDim
         )
     ) {
         Column(

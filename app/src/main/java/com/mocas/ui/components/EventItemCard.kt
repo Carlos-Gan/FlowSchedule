@@ -122,17 +122,18 @@ fun EventItemCard(
         isEventUrgent(event)
     }
 
-    // Lógica de color para la línea izquierda (se pone roja al acercarse el vencimiento)
+    val subjectColor = remember(subject?.colorHex) {
+        parseColorFromHex(subject?.colorHex ?: "#3B82F6")
+    }
+
+    // Lógica de color para la línea izquierda
     val sideStripColor = when {
         event.isCompleted -> Color.Transparent
+        subject != null -> subjectColor
         isOverdue || daysLeft <= 0L -> MaterialTheme.colorScheme.error
         daysLeft <= 1L -> Color(0xFFF59E0B) // Ámbar/Naranja
         daysLeft <= 3L -> MaterialTheme.colorScheme.tertiary
         else -> MaterialTheme.colorScheme.primary
-    }
-
-    val subjectColor = remember(subject?.colorHex) {
-        parseColorFromHex(subject?.colorHex ?: "#3B82F6")
     }
 
     Card(
@@ -149,20 +150,13 @@ fun EventItemCard(
             )
             .testTag("event_card_${event.id}"),
         shape = RoundedCornerShape(18.dp),
-        border = BorderStroke(
-            width = 1.dp,
-            color = if (isOverdue || daysLeft <= 1L) {
-                sideStripColor.copy(alpha = 0.55f)
-            } else {
-                MaterialTheme.colorScheme.outlineVariant
-            }
-        ),
         colors = CardDefaults.cardColors(
             containerColor = when {
-                event.isCompleted -> MaterialTheme.colorScheme.surface
-                isOverdue || daysLeft <= 0L -> MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.15f).compositeOver(MaterialTheme.colorScheme.surface)
-                daysLeft <= 1L -> MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.15f).compositeOver(MaterialTheme.colorScheme.surface)
-                else -> MaterialTheme.colorScheme.surface
+                event.isCompleted -> MaterialTheme.colorScheme.surfaceContainerLowest.copy(alpha = 0.6f)
+                subject != null -> subjectColor.copy(alpha = 0.12f).compositeOver(MaterialTheme.colorScheme.surfaceContainerLowest)
+                isOverdue || daysLeft <= 0L -> MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.15f).compositeOver(MaterialTheme.colorScheme.surfaceContainerLowest)
+                daysLeft <= 1L -> MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.15f).compositeOver(MaterialTheme.colorScheme.surfaceContainerLowest)
+                else -> MaterialTheme.colorScheme.surfaceContainerLowest
             }
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = if (isUrgent) 3.dp else 1.dp)

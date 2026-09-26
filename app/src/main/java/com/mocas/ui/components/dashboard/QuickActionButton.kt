@@ -36,7 +36,7 @@ fun QuickActionButton(
         onClick = onClick,
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerLowest,
+        color = containerColor,
         shadowElevation = 0.dp
     ) {
         Row(
@@ -48,8 +48,7 @@ fun QuickActionButton(
         ) {
             Box(
                 modifier = Modifier
-                    .size(35.dp)
-                    .background(containerColor, CircleShape),
+                    .size(35.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(

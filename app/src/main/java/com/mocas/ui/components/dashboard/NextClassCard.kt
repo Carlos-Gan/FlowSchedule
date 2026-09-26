@@ -24,11 +24,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.mocas.R
+import com.mocas.ui.components.parseColorFromHex
 import com.mocas.ui.model.NextClassInfo
 
 @Composable
@@ -36,13 +38,20 @@ fun NextClassCard(
     nextClass: NextClassInfo?,
     onClick: () -> Unit
 ) {
+    val subjectColor = remember(nextClass?.subject?.colorHex) {
+        nextClass?.subject?.colorHex?.let { parseColorFromHex(it) }
+    }
+
+    val cardColor = subjectColor?.copy(alpha = 0.15f)?.compositeOver(MaterialTheme.colorScheme.surfaceContainerLowest)
+        ?: MaterialTheme.colorScheme.surfaceContainerLowest
+
     Surface(
         onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
             .height(140.dp),
         shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerLowest,
+        color = cardColor,
         shadowElevation = 0.dp
     ) {
         Column(
@@ -60,14 +69,14 @@ fun NextClassCard(
                 ) {
                     Surface(
                         shape = CircleShape,
-                        color = MaterialTheme.colorScheme.primaryContainer,
+                        color = if (subjectColor != null) subjectColor.copy(alpha = 0.25f) else MaterialTheme.colorScheme.primaryContainer,
                         modifier = Modifier.size(40.dp)
                     ) {
                         Box(contentAlignment = Alignment.Center) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.MenuBook,
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                tint = subjectColor ?: MaterialTheme.colorScheme.onPrimaryContainer,
                                 modifier = Modifier.size(20.dp)
                             )
                         }
@@ -77,13 +86,14 @@ fun NextClassCard(
                         Text(
                             text = nextClass?.subject?.name ?: stringResource(R.string.sin_clases),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            color = subjectColor ?: MaterialTheme.colorScheme.onSurface,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis
                         )
                         Text(
                             text = stringResource(R.string.siguiente_clase),
                             style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.primary
+                            color = subjectColor ?: MaterialTheme.colorScheme.primary
                         )
                     }
                 }
@@ -92,7 +102,8 @@ fun NextClassCard(
                     Column(horizontalAlignment = Alignment.End) {
                         Text(
                             text = nextClass.slot.startTime,
-                            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold)
+                            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
                             text = stringResource(R.string.aula_formato, nextClass.room.ifBlank { "--" }),
@@ -106,7 +117,6 @@ fun NextClassCard(
             if (nextClass != null) {
                 Column {
                     val progressValue = remember(nextClass.minutesUntil) {
-                        // Very rough approximation for progress indicator
                         if (nextClass.minutesUntil <= 0) 1f else (60f - nextClass.minutesUntil.coerceIn(
                             0,
                             60
@@ -119,7 +129,7 @@ fun NextClassCard(
                             .fillMaxWidth()
                             .height(8.dp)
                             .clip(CircleShape),
-                        color = MaterialTheme.colorScheme.primary,
+                        color = subjectColor ?: MaterialTheme.colorScheme.primary,
                         trackColor = MaterialTheme.colorScheme.surfaceVariant
                     )
                     Spacer(modifier = Modifier.height(4.dp))

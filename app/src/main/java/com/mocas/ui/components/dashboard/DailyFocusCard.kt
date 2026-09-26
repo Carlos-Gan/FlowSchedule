@@ -50,13 +50,13 @@ fun DailyFocusCard(
     }
 
     val backgroundColor =
-        if (isFinishedOrFree) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.surfaceContainerLowest
+        if (isFinishedOrFree) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceDim
     val contentColor =
-        if (isFinishedOrFree) MaterialTheme.colorScheme.onTertiaryContainer else MaterialTheme.colorScheme.onSurface
+        if (isFinishedOrFree) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
     val labelColor =
-        if (isFinishedOrFree) MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.8f) else MaterialTheme.colorScheme.onSurfaceVariant
+        if (isFinishedOrFree) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f) else MaterialTheme.colorScheme.onSurfaceVariant
     val secondaryColor =
-        if (isFinishedOrFree) MaterialTheme.colorScheme.onTertiaryContainer else MaterialTheme.colorScheme.secondary
+        if (isFinishedOrFree) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.secondary
 
     Surface(
         modifier = Modifier

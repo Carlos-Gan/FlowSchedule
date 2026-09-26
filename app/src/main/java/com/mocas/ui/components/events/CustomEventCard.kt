@@ -80,7 +80,7 @@ fun CustomEventCard(
             .fillMaxWidth()
             .clickable { onEditClick() },
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = colors.surfaceContainer),
+        colors = CardDefaults.cardColors(containerColor = colors.surfaceDim),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         // Box en vez de Row+IntrinsicSize.Min: el Box se dimensiona por el contenido

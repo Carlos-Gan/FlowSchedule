@@ -136,7 +136,6 @@ fun WeeklyGridView(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.surface)
                 .padding(start = timeColWidth, bottom = 16.dp)
                 .horizontalScroll(hScrollState)
         ) {
@@ -152,7 +151,7 @@ fun WeeklyGridView(
                 ) {
                     Surface(
                         shape = CircleShape,
-                        color = if (isToday) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
+                        color = if (isToday) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceDim,
                         modifier = Modifier.size(width = 60.dp, height = 40.dp)
                     ) {
                         Box(contentAlignment = Alignment.Center) {

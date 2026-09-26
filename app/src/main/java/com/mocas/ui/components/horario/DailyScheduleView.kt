@@ -1,5 +1,6 @@
 package com.mocas.ui.components.horario
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
@@ -47,6 +48,7 @@ import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale
 
+@SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun DailyScheduleView(
     viewModel: ScheduleViewModel,

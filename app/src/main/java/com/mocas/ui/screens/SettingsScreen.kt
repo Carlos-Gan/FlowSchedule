@@ -107,7 +107,7 @@ fun SettingsScreen(
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(24.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest)
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceDim)
         ) {
             Row(
                 modifier = Modifier
@@ -205,7 +205,7 @@ fun SettingsScreen(
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(24.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest)
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceDim)
         ) {
             Row(
                 modifier = Modifier
@@ -359,7 +359,7 @@ fun SettingsScreen(
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(24.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest)
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceDim)
         ) {
             Column(modifier = Modifier.padding(vertical = 4.dp)) {
                 var showThemeModeDialog by remember { mutableStateOf(false) }
@@ -522,7 +522,7 @@ fun SettingsScreen(
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(24.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest)
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceDim)
         ) {
             Column(modifier = Modifier.padding(vertical = 4.dp)) {
                 SettingRow(

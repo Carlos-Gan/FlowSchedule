@@ -141,8 +141,7 @@ fun TimetableScreen(
         // Bento Segmented Bar: Vista Semanal | Vista Diaria | Lista de Materias
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colorScheme.surface,
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
+            //color = MaterialTheme.colorScheme.surface,
         ) {
             SingleChoiceSegmentedButtonRow(
                 modifier = Modifier
@@ -171,7 +170,7 @@ fun TimetableScreen(
                         colors = SegmentedButtonDefaults.colors(
                             activeContainerColor = MaterialTheme.colorScheme.primary,
                             activeContentColor = MaterialTheme.colorScheme.onPrimary,
-                            inactiveContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                            inactiveContainerColor = MaterialTheme.colorScheme.surfaceDim,
                             inactiveContentColor = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     )

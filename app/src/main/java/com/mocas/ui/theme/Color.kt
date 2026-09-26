@@ -7,7 +7,6 @@ val Primary = Color(0xFF24389C)
 val OnPrimary = Color(0xFFFFFFFF)
 val PrimaryContainer = Color(0xFF3F51B5)
 val OnPrimaryContainer = Color(0xFFCACFFF)
-val InversePrimary = Color(0xFFBAC3FF)
 
 // EduFlow Design System - Secondary Palette (Success Mint)
 val Secondary = Color(0xFF2C6956)
@@ -18,8 +17,6 @@ val OnSecondaryContainer = Color(0xFF316D5B)
 // EduFlow Design System - Tertiary Palette (Urgent Sunset)
 val Tertiary = Color(0xFF6F3000)
 val OnTertiary = Color(0xFFFFFFFF)
-val TertiaryContainer = Color(0xFF944200)
-val OnTertiaryContainer = Color(0xFFFFC5A6)
 
 // EduFlow Design System - Neutral Canvas & Surfaces
 val Background = Color(0xFFF8F9FA)
@@ -30,20 +27,10 @@ val OnSurface = Color(0xFF191C1D)
 val SurfaceVariant = Color(0xFFE1E3E4)
 val OnSurfaceVariant = Color(0xFF454652)
 
-val SurfaceDim = Color(0xFFD9DADB)
-val SurfaceBright = Color(0xFFF8F9FA)
-val SurfaceContainerLowest = Color(0xFFFFFFFF)
-val SurfaceContainerLow = Color(0xFFF3F4F5)
-val SurfaceContainer = Color(0xFFEDEEEF)
-val SurfaceContainerHigh = Color(0xFFE7E8E9)
-val SurfaceContainerHighest = Color(0xFFE1E3E4)
-
-val InverseSurface = Color(0xFF2E3132)
-val InverseOnSurface = Color(0xFFF0F1F2)
+val surfaceDim = Color(0xFFD9DADB)
 
 val Outline = Color(0xFF757684)
 val OutlineVariant = Color(0xFFC5C5D4)
-val SurfaceTint = Color(0xFF4355B9)
 
 // EduFlow Design System - Error
 val Error = Color(0xFFBA1A1A)
@@ -52,20 +39,7 @@ val ErrorContainer = Color(0xFFFFDAD6)
 val OnErrorContainer = Color(0xFF93000A)
 
 // Fixed Variants
-val PrimaryFixed = Color(0xFFDEE0FF)
 val PrimaryFixedDim = Color(0xFFBAC3FF)
-val OnPrimaryFixed = Color(0xFF00105C)
-val OnPrimaryFixedVariant = Color(0xFF293CA0)
-
-val SecondaryFixed = Color(0xFFB1EFD8)
-val SecondaryFixedDim = Color(0xFF96D3BD)
-val OnSecondaryFixed = Color(0xFF002118)
-val OnSecondaryFixedVariant = Color(0xFF0D503F)
-
-val TertiaryFixed = Color(0xFFFFDBC9)
-val TertiaryFixedDim = Color(0xFFFFB68D)
-val OnTertiaryFixed = Color(0xFF331200)
-val OnTertiaryFixedVariant = Color(0xFF763300)
 
 // Dark Theme Derived Palette (EduFlow focus)
 val PrimaryDark = Color(0xFFBAC3FF)
@@ -80,8 +54,7 @@ val OnSecondaryContainerDark = Color(0xFFB1EFD8)
 
 val TertiaryDark = Color(0xFFFCB88E)
 val OnTertiaryDark = Color(0xFF4C2100)
-val TertiaryContainerDark = Color(0xFF6E3200)
-val OnTertiaryContainerDark = Color(0xFFFFDBC9)
+
 
 val BackgroundDark = Color(0xFF14161D)
 val OnBackgroundDark = Color(0xFFE2E4EB)
@@ -90,67 +63,35 @@ val OnSurfaceDark = Color(0xFFE2E4EB)
 val SurfaceVariantDark = Color(0xFF262835)
 val OnSurfaceVariantDark = Color(0xFFC7C9D6)
 
-// Subject Palette for Timetable & Categorization (Maintained from previous style)
-val SubjectColors = listOf(
-    Color(0xFF3B82F6), // Blue
-    Color(0xFF10B981), // Emerald
-    Color(0xFF8B5CF6), // Violet
-    Color(0xFFF59E0B), // Amber
-    Color(0xFFEF4444), // Red
-    Color(0xFF06B6D4), // Cyan
-    Color(0xFFEC4899), // Pink
-    Color(0xFF14B8A6), // Teal
-    Color(0xFF6366F1), // Indigo
-    Color(0xFF84CC16)  // Lime
-)
 
 val SubjectColorHexes = listOf(
-    "#3B82F6",
-    "#10B981",
-    "#8B5CF6",
-    "#F59E0B",
-    "#EF4444",
-    "#06B6D4",
-    "#EC4899",
-    "#14B8A6",
-    "#6366F1",
-    "#84CC16"
-)
+    // Originales
+    "#3B82F6", // Blue
+    "#10B981", // Emerald
+    "#8B5CF6", // Violet
+    "#F59E0B", // Amber
+    "#EF4444", // Red
+    "#06B6D4", // Cyan
+    "#EC4899", // Pink
+    "#14B8A6", // Teal
+    "#6366F1", // Indigo
+    "#84CC16", // Lime
 
-// Legacy Aliases for existing components (Bento style names)
-val IndigoPrimary = Primary
-val IndigoPrimaryVariant = PrimaryContainer
+    // Nuevos recomendados
+    "#FF6B6B", // Coral
+    "#FF8E53", // Peach
+    "#EAB308", // Gold
+    "#2DD4BF", // Mint
+    "#38BDF8", // Sky Blue
+    "#C084FC", // Lavender
+    "#E879F9", // Fuchsia
+    "#FB7185", // Rose
+    "#059669", // Forest Green
+    "#4F46E5"  // Royal Indigo
+)
 val IndigoLight = PrimaryFixedDim
-val IndigoDark = OnPrimaryFixed
-val IndigoContainerLight = PrimaryFixed
-val IndigoContainerDark = PrimaryContainerDark
 
 val TurquoiseSecondary = Secondary
-val TurquoiseLight = SecondaryFixedDim
-val TurquoiseDark = OnSecondaryFixed
-val TurquoiseContainerLight = SecondaryFixed
-
-val AccentAmber = Tertiary
-val AccentAmberContainer = TertiaryFixed
-val AccentRose = Error
-val AccentRoseContainer = ErrorContainer
-val AccentEmerald = Secondary
-val AccentEmeraldContainer = SecondaryFixed
-val AccentViolet = PrimaryFixed
-val AccentVioletContainer = PrimaryFixedDim
-
-val BackgroundLight = Background
-val SurfaceLight = SurfaceContainerLowest
-val SurfaceVariantLight = SurfaceVariant
-val BentoTileLight = SurfaceContainerLowest
-val BentoBorderLight = OutlineVariant
-val TextPrimaryLight = OnSurface
-val TextSecondaryLight = OnSurfaceVariant
-
-val BentoTileDark = SurfaceDark
-val BentoBorderDark = Outline
-val TextPrimaryDark = OnSurfaceDark
-val TextSecondaryDark = OnSurfaceVariantDark
 
 // Totoro Theme Colors (Light)
 val TotoroPrimary = Color(0xFF3C6090)
@@ -173,7 +114,6 @@ val TotoroSurfaceVariant = Color(0xFFE0E2EC)
 val TotoroOnSurfaceVariant = Color(0xFF43474E)
 val TotoroOutline = Color(0xFF74777F)
 val TotoroOutlineVariant = Color(0xFFC3C6CF)
-val TotoroSurfaceContainer = Color(0xFFEDEDF4)
 
 // Totoro Dark (Estimated based on M3 logic)
 val TotoroPrimaryDark = Color(0xFFA6C8FF)
@@ -224,7 +164,6 @@ val AsukaSurfaceVariant = Color(0xFFF5DDDA)
 val AsukaOnSurfaceVariant = Color(0xFF534341)
 val AsukaOutline = Color(0xFF857370)
 val AsukaOutlineVariant = Color(0xFFD8C2BE)
-val AsukaSurfaceContainer = Color(0xFFFCEAE7)
 
 // Asuka Dark
 val AsukaPrimaryDark = Color(0xFFFFB4A8)
@@ -267,7 +206,6 @@ val ItsukaSurfaceVariant = Color(0xFFF9DDCE)
 val ItsukaOnSurfaceVariant = Color(0xFF554338)
 val ItsukaOutline = Color(0xFF897366)
 val ItsukaOutlineVariant = Color(0xFFDCC1B3)
-val ItsukaSurfaceContainer = Color(0xFFFDEAE1)
 
 // Itsuka Dark
 val ItsukaPrimaryDark = Color(0xFFFFB689)
@@ -310,7 +248,6 @@ val KanadeSurfaceVariant = Color(0xFFE4E1E8)
 val KanadeOnSurfaceVariant = Color(0xFF36363B)
 val KanadeOutline = Color(0xFF535258)
 val KanadeOutlineVariant = Color(0xFF6D6C72)
-val KanadeSurfaceContainer = Color(0xFFEBE7E8)
 
 // Kanade Dark
 val KanadePrimaryDark = Color(0xFFC6C5D6)
@@ -353,7 +290,6 @@ val MamimiSurfaceVariant = Color(0xFFE1E2EC)
 val MamimiOnSurfaceVariant = Color(0xFF44464F)
 val MamimiOutline = Color(0xFF757780)
 val MamimiOutlineVariant = Color(0xFFC5C6D0)
-val MamimiSurfaceContainer = Color(0xFFEEEDF4)
 
 // Mamimi Dark
 val MamimiPrimaryDark = Color(0xFFAFC6FF)
@@ -396,7 +332,6 @@ val MikuSurfaceVariant = Color(0xFFD8E5E5)
 val MikuOnSurfaceVariant = Color(0xFF3D4949)
 val MikuOutline = Color(0xFF6D797A)
 val MikuOutlineVariant = Color(0xFFBCC9C9)
-val MikuSurfaceContainer = Color(0xFFEAEFEE)
 
 // Miku Dark
 val MikuPrimaryDark = Color(0xFF69D7DC)
@@ -439,7 +374,6 @@ val MionSurfaceVariant = Color(0xFFDEE5D8)
 val MionOnSurfaceVariant = Color(0xFF424940)
 val MionOutline = Color(0xFF72796F)
 val MionOutlineVariant = Color(0xFFC2C9BD)
-val MionSurfaceContainer = Color(0xFFECEFE6)
 
 // Mion Dark
 val MionPrimaryDark = Color(0xFFA1D39A)
@@ -455,7 +389,6 @@ val MionOnTertiaryDark = Color(0xFF003738)
 val MionTertiaryContainerDark = Color(0xFF1E4D4E)
 val MionOnTertiaryContainerDark = Color(0xFFBCEBEB)
 val MionBackgroundDark = Color(0xFF191D17)
-val MionOnBackgroundDark = Color(0xFFE0E4DB)
 val MionSurfaceDark = Color(0xFF191D17)
 val MionOnSurfaceDark = Color(0xFFE0E4DB)
 val MionSurfaceVariantDark = Color(0xFF424940)
@@ -482,7 +415,6 @@ val RikkaSurfaceVariant = Color(0xFFE7E0EB)
 val RikkaOnSurfaceVariant = Color(0xFF49454E)
 val RikkaOutline = Color(0xFF7A757F)
 val RikkaOutlineVariant = Color(0xFFCBC4CF)
-val RikkaSurfaceContainer = Color(0xFFF2ECF4)
 
 // Rikka Dark
 val RikkaPrimaryDark = Color(0xFFD3BBFD)
@@ -525,7 +457,6 @@ val SakuraSurfaceVariant = Color(0xFFF2DDE1)
 val SakuraOnSurfaceVariant = Color(0xFF514347)
 val SakuraOutline = Color(0xFF837377)
 val SakuraOutlineVariant = Color(0xFFD5C2C6)
-val SakuraSurfaceContainer = Color(0xFFFAEAED)
 
 // Sakura Dark
 val SakuraPrimaryDark = Color(0xFFFFB1C8)

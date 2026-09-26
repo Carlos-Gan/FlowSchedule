@@ -167,7 +167,7 @@ fun DashboardContent(
                     QuickActionButton(
                         icon = Icons.Default.AddTask,
                         label = stringResource(R.string.añadir_tarea),
-                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.1f),
+                        containerColor = MaterialTheme.colorScheme.surfaceDim,
                         contentColor = MaterialTheme.colorScheme.primary,
                         onClick = onAddTaskClick,
                         modifier = Modifier.weight(1f)
@@ -175,7 +175,7 @@ fun DashboardContent(
                     QuickActionButton(
                         icon = Icons.Default.LibraryAdd,
                         label = stringResource(R.string.añadir_materia),
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.2f),
+                        containerColor = MaterialTheme.colorScheme.surfaceDim,
                         contentColor = MaterialTheme.colorScheme.secondary,
                         onClick = onAddSubjectClick,
                         modifier = Modifier.weight(1f)
@@ -262,7 +262,7 @@ fun DashboardContent(
                         Surface(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(12.dp),
-                            color = MaterialTheme.colorScheme.surfaceContainerLowest,
+                            color = MaterialTheme.colorScheme.surfaceDim,
                             shadowElevation = 2.dp
                         ) {
                             Text(

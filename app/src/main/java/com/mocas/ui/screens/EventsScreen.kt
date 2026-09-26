@@ -121,8 +121,7 @@ fun EventsScreen(
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceDim),
                     elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
@@ -260,7 +259,7 @@ fun EventsScreen(
                             colors = SegmentedButtonDefaults.colors(
                                 activeContainerColor = MaterialTheme.colorScheme.primary,
                                 activeContentColor = MaterialTheme.colorScheme.onPrimary,
-                                inactiveContainerColor = MaterialTheme.colorScheme.surface,
+                                inactiveContainerColor = MaterialTheme.colorScheme.surfaceDim,
                                 inactiveContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                                 activeBorderColor = MaterialTheme.colorScheme.primary,
                                 inactiveBorderColor = MaterialTheme.colorScheme.outlineVariant
