@@ -1,4 +1,4 @@
-package com.mocas.ui.dialogs
+package com.mocas.ui.add.event
 
 import android.content.Context
 import androidx.compose.foundation.layout.Arrangement

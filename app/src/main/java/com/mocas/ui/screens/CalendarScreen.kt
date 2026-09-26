@@ -1,6 +1,5 @@
 package com.mocas.ui.screens
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -60,7 +59,7 @@ import com.mocas.R
 import com.mocas.data.repository.CalendarSyncHelper
 import com.mocas.ui.components.ClassScheduleCard
 import com.mocas.ui.components.EmptyStateCard
-import com.mocas.ui.components.EventItemCard
+import com.mocas.ui.components.events.EventItemCard
 import com.mocas.ui.components.calendar.LegendItem
 import com.mocas.ui.components.calendar.generateMonthDays
 import com.mocas.ui.model.DayClassItem

@@ -1,6 +1,5 @@
-package com.mocas.ui.components
+package com.mocas.ui.components.events
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -63,6 +62,7 @@ import com.mocas.data.local.SchoolEventType
 import com.mocas.data.local.SchoolEventWithSubject
 import com.mocas.data.local.EventPriority
 import com.mocas.data.local.RecurrenceType
+import com.mocas.ui.components.parseColorFromHex
 import com.mocas.util.DateTimeUtils
 import java.time.LocalDate
 

@@ -4,6 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mocas.ui.add.event.AddEditSubjectScreen
+import com.mocas.ui.add.event.AddEventDialog
+import com.mocas.ui.add.subject.SubjectDetailDialog
 import com.mocas.ui.viewmodel.ScheduleViewModel
 import com.mocas.ui.screens.AppearanceScreen
 

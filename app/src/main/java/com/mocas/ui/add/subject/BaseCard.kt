@@ -23,7 +23,7 @@ fun BaseCard(title: String, content: @Composable ColumnScope.() -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .shadow(elevation = 12.dp, shape = RoundedCornerShape(16.dp), spotColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.05f)),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceDim),
         shape = RoundedCornerShape(16.dp)
     ) {
         Column(

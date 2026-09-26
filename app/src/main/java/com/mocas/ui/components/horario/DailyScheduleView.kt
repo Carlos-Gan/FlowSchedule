@@ -169,7 +169,8 @@ fun DailyScheduleView(
                 message = emptyMessage,
                 icon = Icons.Default.School,
                 actionButtonText = stringResource(R.string.agregar_clase_boton),
-                onActionClick = onAddSubjectClick
+                onActionClick = onAddSubjectClick,
+                modifier = Modifier.padding(15.dp)
             )
         } else {
             LazyColumn(

@@ -4,8 +4,8 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import com.mocas.data.local.ScheduleSlotEntity
 import com.mocas.data.local.SubjectEntity
 import com.mocas.data.local.SubjectWithSlots
-import com.mocas.ui.dialogs.SlotDraft
-import com.mocas.ui.dialogs.detectScheduleConflicts
+import com.mocas.ui.add.event.SlotDraft
+import com.mocas.ui.add.event.detectScheduleConflicts
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule

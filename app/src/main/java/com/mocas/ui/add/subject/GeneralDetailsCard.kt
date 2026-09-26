@@ -31,7 +31,7 @@ import com.mocas.R
 import com.mocas.data.local.AcademicPeriodEntity
 import com.mocas.ui.add.CustomInputField
 import com.mocas.ui.components.CalendarDateField
-import com.mocas.ui.dialogs.buildPeriodName
+import com.mocas.ui.add.event.buildPeriodName
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.platform.LocalContext
 import com.mocas.ui.util.capitalizeFirstLetter

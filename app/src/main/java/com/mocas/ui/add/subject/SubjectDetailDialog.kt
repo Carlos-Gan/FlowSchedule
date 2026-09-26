@@ -1,6 +1,5 @@
-package com.mocas.ui.dialogs
+package com.mocas.ui.add.subject
 
-import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,9 +18,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccessTime
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -47,7 +43,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -64,7 +59,7 @@ import com.mocas.data.local.GradeItemEntity
 import com.mocas.data.local.GradeUnitCategoryWeightEntity
 import com.mocas.data.local.GradeUnitEntity
 import com.mocas.data.repository.CalendarSyncHelper
-import com.mocas.ui.components.EventItemCard
+import com.mocas.ui.components.events.EventItemCard
 import com.mocas.ui.components.GradesSection
 import com.mocas.ui.components.parseColorFromHex
 import com.mocas.ui.util.showCalendarResult

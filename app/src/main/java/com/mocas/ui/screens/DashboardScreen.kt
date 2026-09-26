@@ -115,13 +115,8 @@ fun DashboardContent(
 ) {
     val widthClass = windowSizeClass.widthSizeClass
     val isCompact = widthClass == WindowWidthSizeClass.Compact
-    // El padding horizontal crece un poco en pantallas medianas/grandes,
-    // acompañando el respiro extra que da el ancho máximo del contenido.
-    val horizontalPadding = when (widthClass) {
-        WindowWidthSizeClass.Compact -> 20.dp
-        WindowWidthSizeClass.Medium -> 32.dp
-        else -> 40.dp
-    }
+
+    val horizontalPadding =  20.dp
 
     Box(
         modifier = modifier
@@ -222,8 +217,8 @@ fun DashboardContent(
                         }
                     }
                 } else {
-                    // Sin clase siguiente: DailyFocusCard ocupa todo el ancho
-                    // en vez de dejar medio espacio vacío al lado.
+                    // Sin clase siguiente: DailyFocusCard ocupa
+                    // el ancho en vez de dejar medio espacio vacío al lado.
                     item {
                         DailyFocusCard(
                             stats = classStats,

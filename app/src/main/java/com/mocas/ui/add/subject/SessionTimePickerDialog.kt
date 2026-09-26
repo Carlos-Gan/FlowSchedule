@@ -14,8 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.res.stringResource
 import com.mocas.R
-import com.mocas.ui.dialogs.formatTime
-import com.mocas.ui.dialogs.parseTime
+import com.mocas.ui.add.event.formatTime
+import com.mocas.ui.add.event.parseTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
