@@ -33,6 +33,7 @@ fun MainDialogHost(
     val gradeItems by viewModel.gradeItems.collectAsStateWithLifecycle()
     val gradeUnits by viewModel.gradeUnits.collectAsStateWithLifecycle()
     val gradeUnitCategoryWeights by viewModel.gradeUnitCategoryWeights.collectAsStateWithLifecycle()
+    val showWhatsNew by viewModel.showWhatsNew.collectAsStateWithLifecycle()
 
     val selectedSubject = remember(
         selectedDetailId,
@@ -54,6 +55,12 @@ fun MainDialogHost(
                 it.event.subjectId == selectedDetailId
             }
         }
+    }
+
+    if (showWhatsNew) {
+        WhatsNewDialog(
+            onDismiss = viewModel::dismissWhatsNew
+        )
     }
 
     if (isAddSubjectOpen) {

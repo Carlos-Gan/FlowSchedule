@@ -49,6 +49,9 @@
     <string name="reemplazar_informacion_respaldo">Se reemplazará toda la información actual con la del respaldo.</string>
     <string name="restaurar_ahora">Restaurar ahora</string>
     <string name="filtro_todos">Todos</string>
+    <string name="filtro_todas">Todas</string>
+    <string name="filtro_incompletas">Incompletas</string>
+    <string name="filtro_completadas">Completadas</string>
     <string name="filtro_tareas">Tareas</string>
     <string name="filtro_examenes">Exámenes</string>
     <string name="filtro_expos">Expos</string>
@@ -569,4 +572,17 @@
     <string name="widget_school_days_total_simple">Total: %1$d días lectivos</string>
     <string name="widget_school_days_total_progress">%1$d días lectivos · %2$d%% completado</string>
     <string name="widget_period_ended">Período finalizado</string>
+
+    <!-- What's New Dialog -->
+    <string name="whats_new_title">¡Novedades en esta versión!</string>
+    <string name="whats_new_subtitle">Esto es lo nuevo que hemos preparado para mejorar tu experiencia:</string>
+    <string name="whats_new_item_1_title">🔍 Menú FAB de filtros avanzados</string>
+    <string name="whats_new_item_1_desc">Filtra rápidamente tus eventos y actividades por estado (Incompletas, Completadas) con un solo toque.</string>
+    <string name="whats_new_item_2_title">🎨 Tonos oscuros mejorados</string>
+    <string name="whats_new_item_2_desc">Transición a grises carbón elegantes, eliminando el negro OLED puro.</string>
+    <string name="whats_new_item_3_title">📐 Widgets adaptativos</string>
+    <string name="whats_new_item_3_desc">Soporte para tamaños desde 1x2 hasta 2x4 con barra de progreso visual.</string>
+    <string name="whats_new_item_4_title">⚡ Interfaz unificada de actividades</string>
+    <string name="whats_new_item_4_desc">Nueva pantalla de creación y edición de actividades idéntica al diseño de materias.</string>
+    <string name="whats_new_button">¡Entendido!</string>
 </resources>

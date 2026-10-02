@@ -149,17 +149,17 @@ fun EventItemCard(
                 onLongClickLabel = stringResource(R.string.editar_actividad_desc)
             )
             .testTag("event_card_${event.id}"),
-        shape = RoundedCornerShape(18.dp),
+        shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = when {
-                event.isCompleted -> MaterialTheme.colorScheme.surfaceContainerLowest.copy(alpha = 0.6f)
-                subject != null -> subjectColor.copy(alpha = 0.12f).compositeOver(MaterialTheme.colorScheme.surfaceContainerLowest)
-                isOverdue || daysLeft <= 0L -> MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.15f).compositeOver(MaterialTheme.colorScheme.surfaceContainerLowest)
-                daysLeft <= 1L -> MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.15f).compositeOver(MaterialTheme.colorScheme.surfaceContainerLowest)
-                else -> MaterialTheme.colorScheme.surfaceContainerLowest
+                event.isCompleted -> MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.5f)
+                subject != null -> subjectColor.copy(alpha = 0.08f).compositeOver(MaterialTheme.colorScheme.surfaceContainer)
+                isOverdue || daysLeft <= 0L -> MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.12f).compositeOver(MaterialTheme.colorScheme.surfaceContainer)
+                daysLeft <= 1L -> MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.12f).compositeOver(MaterialTheme.colorScheme.surfaceContainer)
+                else -> MaterialTheme.colorScheme.surfaceContainer
             }
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = if (isUrgent) 3.dp else 1.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Row(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
             // Línea de color lateral (Indicador de urgencia/estado)
@@ -194,12 +194,13 @@ fun EventItemCard(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        EventTypeChip(type = eventType, color = typeColor)
+                        EventTypeChip(type = eventType, color = typeColor, isCompleted = event.isCompleted)
 
                         if (subject != null) {
                             SubjectChip(
                                 name = subject.name,
                                 color = subjectColor,
+                                isCompleted = event.isCompleted,
                                 modifier = Modifier.weight(1f, fill = false)
                             )
                         }
@@ -214,7 +215,7 @@ fun EventItemCard(
                                 Text(
                                     text = stringResource(R.string.prioridad_formato, priorityLabel),
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = priorityColor,
+                                    color = if (event.isCompleted) priorityColor.copy(alpha = 0.5f) else priorityColor,
                                     fontWeight = FontWeight.Bold
                                 )
                             }
@@ -222,13 +223,13 @@ fun EventItemCard(
                                 Icon(
                                     Icons.Default.Repeat,
                                     contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = if (event.isCompleted) 0.5f else 1f),
                                     modifier = Modifier.size(13.dp)
                                 )
                                 Text(
                                     text = stringResource(event.recurrenceType.titleRes),
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = if (event.isCompleted) 0.5f else 1f)
                                 )
                             }
                         }
@@ -241,7 +242,7 @@ fun EventItemCard(
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         textDecoration = if (event.isCompleted) TextDecoration.LineThrough else TextDecoration.None,
-                        color = if (event.isCompleted) MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.85f) else MaterialTheme.colorScheme.onSurface,
+                        color = if (event.isCompleted) MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f) else MaterialTheme.colorScheme.onSurface,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -262,12 +263,13 @@ fun EventItemCard(
                     EventScheduleRow(
                         dateText = scheduleParts.first,
                         timeText = scheduleParts.second,
-                        color = if (isUrgent) typeColor else MaterialTheme.colorScheme.onSurfaceVariant
+                        color = if (isUrgent) typeColor else MaterialTheme.colorScheme.onSurfaceVariant,
+                        isCompleted = event.isCompleted
                     )
 
                     if (event.location.isNotBlank()) {
                         Spacer(modifier = Modifier.height(4.dp))
-                        EventLocationRow(location = event.location)
+                        EventLocationRow(location = event.location, isCompleted = event.isCompleted)
                     }
 
                     if (eventWithSubject.subtasks.isNotEmpty()) {
@@ -275,20 +277,20 @@ fun EventItemCard(
                         val total = eventWithSubject.subtasks.size
                         Spacer(modifier = Modifier.height(8.dp))
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text(stringResource(R.string.progreso), style = MaterialTheme.typography.labelSmall)
-                            Text("$completed/$total", style = MaterialTheme.typography.labelSmall)
+                            Text(stringResource(R.string.progreso), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = if (event.isCompleted) 0.5f else 0.8f))
+                            Text("$completed/$total", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = if (event.isCompleted) 0.5f else 0.8f))
                         }
                         Spacer(modifier = Modifier.height(3.dp))
                         LinearProgressIndicator(
                             progress = { completed.toFloat() / total },
                             modifier = Modifier.fillMaxWidth(),
-                            color = typeColor,
+                            color = typeColor.copy(alpha = if (event.isCompleted) 0.4f else 1f),
                             trackColor = MaterialTheme.colorScheme.surfaceVariant
                         )
                         Text(
                             text = if (subtasksExpanded) stringResource(R.string.toca_ocultar) else stringResource(R.string.toca_ver_pasos),
                             style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.primary,
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = if (event.isCompleted) 0.5f else 1f),
                             modifier = Modifier.padding(top = 5.dp)
                         )
                         if (subtasksExpanded) {
@@ -306,7 +308,7 @@ fun EventItemCard(
                                         text = subtask.title,
                                         style = MaterialTheme.typography.bodySmall,
                                         textDecoration = if (subtask.isCompleted) TextDecoration.LineThrough else TextDecoration.None,
-                                        color = if (subtask.isCompleted) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
+                                        color = if (subtask.isCompleted) MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f) else MaterialTheme.colorScheme.onSurface,
                                         modifier = Modifier.weight(1f)
                                     )
                                 }
@@ -319,11 +321,11 @@ fun EventItemCard(
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
                     IconButton(onClick = onCalendarSyncClick, modifier = Modifier.size(40.dp).testTag("sync_event_btn_${event.id}")) {
-                        Icon(Icons.Default.CalendarMonth, contentDescription = stringResource(R.string.sincronizar_calendario_desc), tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(19.dp))
+                        Icon(Icons.Default.CalendarMonth, contentDescription = stringResource(R.string.sincronizar_calendario_desc), tint = MaterialTheme.colorScheme.primary.copy(alpha = if (event.isCompleted) 0.5f else 1f), modifier = Modifier.size(19.dp))
                     }
                     if (onDeleteClick != null) {
                         IconButton(onClick = { showDeleteConfirmation = true }, modifier = Modifier.size(48.dp).testTag("delete_event_btn_${event.id}")) {
-                            Icon(Icons.Default.Delete, contentDescription = "Eliminar evento", tint = MaterialTheme.colorScheme.error.copy(alpha = 0.8f), modifier = Modifier.size(19.dp))
+                            Icon(Icons.Default.Delete, contentDescription = "Eliminar evento", tint = MaterialTheme.colorScheme.error.copy(alpha = if (event.isCompleted) 0.4f else 0.8f), modifier = Modifier.size(19.dp))
                         }
                     }
                 }
@@ -351,10 +353,11 @@ fun EventItemCard(
 }
 
 @Composable
-private fun EventTypeChip(type: SchoolEventType, color: Color) {
-    Surface(shape = RoundedCornerShape(8.dp), color = color.copy(alpha = 0.14f)) {
+private fun EventTypeChip(type: SchoolEventType, color: Color, isCompleted: Boolean = false) {
+    val alpha = if (isCompleted) 0.45f else 1f
+    Surface(shape = RoundedCornerShape(8.dp), color = color.copy(alpha = 0.14f * alpha)) {
         Row(modifier = Modifier.padding(horizontal = 7.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-            Icon(imageVector = getEventTypeIcon(type), contentDescription = null, tint = color, modifier = Modifier.size(12.dp))
+            Icon(imageVector = getEventTypeIcon(type), contentDescription = null, tint = color.copy(alpha = alpha), modifier = Modifier.size(12.dp))
             Spacer(modifier = Modifier.width(4.dp))
             val typeRes = when(type) {
                 SchoolEventType.TAREA -> R.string.tipo_tarea
@@ -365,41 +368,44 @@ private fun EventTypeChip(type: SchoolEventType, color: Color) {
                 SchoolEventType.VACACIONES -> R.string.legend_vacaciones
                 else -> R.string.tipo_otro
             }
-            Text(text = stringResource(typeRes).uppercase(), color = color, fontSize = 10.sp, fontWeight = FontWeight.ExtraBold)
+            Text(text = stringResource(typeRes).uppercase(), color = color.copy(alpha = alpha), fontSize = 10.sp, fontWeight = FontWeight.ExtraBold)
         }
     }
 }
 
 @Composable
-private fun SubjectChip(name: String, color: Color, modifier: Modifier = Modifier) {
-    Surface(modifier = modifier, shape = RoundedCornerShape(8.dp), color = color.copy(alpha = 0.12f)) {
-        Text(text = name, color = color, fontSize = 10.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.padding(horizontal = 7.dp, vertical = 4.dp))
+private fun SubjectChip(name: String, color: Color, isCompleted: Boolean = false, modifier: Modifier = Modifier) {
+    val alpha = if (isCompleted) 0.45f else 1f
+    Surface(modifier = modifier, shape = RoundedCornerShape(8.dp), color = color.copy(alpha = 0.12f * alpha)) {
+        Text(text = name, color = color.copy(alpha = alpha), fontSize = 10.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.padding(horizontal = 7.dp, vertical = 4.dp))
     }
 }
 
 @Composable
-private fun EventScheduleRow(dateText: String, timeText: String, color: Color) {
+private fun EventScheduleRow(dateText: String, timeText: String, color: Color, isCompleted: Boolean = false) {
+    val rowColor = if (isCompleted) MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f) else color
     Column {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.Default.Event, contentDescription = null, tint = color, modifier = Modifier.size(14.dp))
+            Icon(Icons.Default.Event, contentDescription = null, tint = rowColor, modifier = Modifier.size(14.dp))
             Spacer(modifier = Modifier.width(5.dp))
-            Text(text = dateText, style = MaterialTheme.typography.labelMedium, color = color, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Text(text = dateText, style = MaterialTheme.typography.labelMedium, color = rowColor, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
         Spacer(modifier = Modifier.height(2.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.Default.Schedule, contentDescription = null, tint = color, modifier = Modifier.size(14.dp))
+            Icon(Icons.Default.Schedule, contentDescription = null, tint = rowColor, modifier = Modifier.size(14.dp))
             Spacer(modifier = Modifier.width(5.dp))
-            Text(text = timeText, style = MaterialTheme.typography.labelMedium, color = color, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Clip)
+            Text(text = timeText, style = MaterialTheme.typography.labelMedium, color = rowColor, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Clip)
         }
     }
 }
 
 @Composable
-private fun EventLocationRow(location: String) {
+private fun EventLocationRow(location: String, isCompleted: Boolean = false) {
+    val locColor = if (isCompleted) MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f) else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f)
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Icon(Icons.Default.LocationOn, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f), modifier = Modifier.size(14.dp))
+        Icon(Icons.Default.LocationOn, contentDescription = null, tint = locColor, modifier = Modifier.size(14.dp))
         Spacer(modifier = Modifier.width(5.dp))
-        Text(text = location, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        Text(text = location, style = MaterialTheme.typography.labelMedium, color = locColor, maxLines = 1, overflow = TextOverflow.Ellipsis)
     }
 }
 

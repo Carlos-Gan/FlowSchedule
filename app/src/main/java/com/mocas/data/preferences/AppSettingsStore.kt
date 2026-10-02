@@ -87,8 +87,14 @@ class AppSettingsStore(context: Context) {
         }
     }
 
+    fun getLastSeenVersionCode(): Int = preferences.getInt(KEY_LAST_SEEN_VERSION, 0)
+    fun setLastSeenVersionCode(versionCode: Int) {
+        preferences.edit { putInt(KEY_LAST_SEEN_VERSION, versionCode) }
+    }
+
     private companion object {
         const val PREFERENCES_NAME = "flow_schedule_settings"
+        const val KEY_LAST_SEEN_VERSION = "last_seen_version_code"
         const val KEY_USER_NAME = "user_name"
         const val KEY_EDUCATION_LEVEL = "education_level"
         const val KEY_EDUCATION_INSTITUTION = "education_institution"

@@ -47,6 +47,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -278,11 +279,14 @@ fun SubjectDetailDialog(
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                                    .padding(horizontal = 12.dp, vertical = 10.dp),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.weight(1f)
+                                ) {
                                     Box(
                                         modifier = Modifier
                                             .size(8.dp)
@@ -290,11 +294,13 @@ fun SubjectDetailDialog(
                                             .background(subjectColor)
                                     )
                                     Spacer(modifier = Modifier.width(8.dp))
-                                    Column {
+                                    Column(modifier = Modifier.weight(1f)) {
                                         Text(
                                             text = dayNames,
                                             fontWeight = FontWeight.SemiBold,
-                                            fontSize = 13.sp
+                                            fontSize = 13.sp,
+                                            maxLines = 2,
+                                            overflow = TextOverflow.Ellipsis
                                         )
                                         Text(
                                             text = "$startTime - $endTime",
@@ -304,7 +310,11 @@ fun SubjectDetailDialog(
                                     }
                                 }
 
-                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                Spacer(modifier = Modifier.width(12.dp))
+
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
                                     Icon(
                                         imageVector = Icons.Default.LocationOn,
                                         contentDescription = null,
@@ -315,7 +325,9 @@ fun SubjectDetailDialog(
                                     Text(
                                         text = room.ifBlank { stringResource(R.string.sin_salon) },
                                         fontSize = 12.sp,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
                                     )
                                 }
                             }

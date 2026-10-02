@@ -72,6 +72,15 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     private val _appSettings = MutableStateFlow(settingsStore.load())
     val appSettings = _appSettings.asStateFlow()
 
+    private val CURRENT_VERSION_CODE = 4
+    private val _showWhatsNew = MutableStateFlow(settingsStore.getLastSeenVersionCode() < CURRENT_VERSION_CODE)
+    val showWhatsNew = _showWhatsNew.asStateFlow()
+
+    fun dismissWhatsNew() {
+        settingsStore.setLastSeenVersionCode(CURRENT_VERSION_CODE)
+        _showWhatsNew.value = false
+    }
+
     private val _isAddSubjectOpen = MutableStateFlow(false)
     val isAddSubjectOpen = _isAddSubjectOpen.asStateFlow()
     private val _isAddEventOpen = MutableStateFlow(false)

@@ -441,7 +441,6 @@ fun CalendarScreen(
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 15.sp
                 ),
-                color = MaterialTheme.colorScheme.surfaceDim
             )
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 classesForSelectedDay.forEach { classItem ->
