@@ -38,6 +38,7 @@
     <string name="la_papelera_esta_vacia">The bin is empty.</string>
     <string name="materia">Subject</string>
     <string name="actividad">Activity</string>
+    <string name="clase_cancelada">Canceled class</string>
     <string name="cerrar">Close</string>
     <string name="confirmar_vaciar_papelera">Empty recycle bin?</string>
     <string name="accion_eliminar_permanente">This action will permanently delete all items.</string>

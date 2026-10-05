@@ -345,6 +345,7 @@ class ScheduleRepository(private val context: Context, private val database: App
     suspend fun emptyTrash() = database.withTransaction {
         eventDao.getDeletedEventsSnapshot().forEach { eventDao.deleteEventById(it.id) }
         subjectDao.getDeletedSubjectsSnapshot().forEach { subjectDao.deleteSubjectById(it.id) }
+        exceptionDao.getAllOnce().filter { it.type == ClassExceptionType.CANCELED }.forEach { exceptionDao.delete(it.id) }
     }
 
     suspend fun purgeExpiredTrash(retentionDays: Long = 30) {

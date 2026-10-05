@@ -73,7 +73,7 @@ fun EventsScreen(
 
     var isRefreshing by remember { mutableStateOf(false) }
     var fabMenuExpanded by rememberSaveable { mutableStateOf(false) }
-    var statusFilter by rememberSaveable { mutableStateOf("TODOS") } // "TODOS", "PENDIENTES", "COMPLETADAS"
+    val statusFilter by viewModel.eventStatusFilter.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     val refreshState = rememberPullToRefreshState()
 
@@ -375,7 +375,7 @@ fun EventsScreen(
             statusItems.forEach { (key, label, icon) ->
                 FloatingActionButtonMenuItem(
                     onClick = {
-                        statusFilter = key
+                        viewModel.setEventStatusFilter(key)
                         fabMenuExpanded = false
                     },
                     icon = { Icon(icon, contentDescription = null) },

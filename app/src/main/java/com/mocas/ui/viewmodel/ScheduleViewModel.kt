@@ -67,8 +67,10 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     val selectedWeekStart = _selectedWeekStart.asStateFlow()
     private val _selectedCalendarDate = MutableStateFlow(getTodayDateString())
     val selectedCalendarDate = _selectedCalendarDate.asStateFlow()
-    private val _eventFilter = MutableStateFlow("TODOS")
+    private val _eventFilter = MutableStateFlow(settingsStore.getEventFilter())
     val eventFilter = _eventFilter.asStateFlow()
+    private val _eventStatusFilter = MutableStateFlow(settingsStore.getEventStatusFilter())
+    val eventStatusFilter = _eventStatusFilter.asStateFlow()
     private val _appSettings = MutableStateFlow(settingsStore.load())
     val appSettings = _appSettings.asStateFlow()
 
@@ -121,6 +123,17 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
     val deletedEvents: StateFlow<List<SchoolEventEntity>> = repository.deletedEvents
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+    val canceledClassExceptions: StateFlow<List<Pair<ClassExceptionEntity, String>>> = combine(
+        repository.allClassExceptions,
+        repository.allSubjectsWithSlots
+    ) { exceptions, subjects ->
+        exceptions.filter { it.type == ClassExceptionType.CANCELED }
+            .map { exc ->
+                val subName = subjects.find { it.subject.id == exc.subjectId }?.subject?.name
+                    ?: getApplication<Application>().getString(R.string.materia)
+                exc to subName
+            }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
     val gradeCategories: StateFlow<List<GradeCategoryEntity>> = repository.gradeCategories
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
     val gradeItems: StateFlow<List<GradeItemEntity>> = repository.gradeItems
@@ -209,7 +222,14 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     fun setSelectedCalendarDate(date: String) {
         if (DateTimeUtils.isValidDate(date)) _selectedCalendarDate.value = date
     }
-    fun setEventFilter(filter: String) { _eventFilter.value = filter }
+    fun setEventFilter(filter: String) {
+        _eventFilter.value = filter
+        settingsStore.setEventFilter(filter)
+    }
+    fun setEventStatusFilter(filter: String) {
+        _eventStatusFilter.value = filter
+        settingsStore.setEventStatusFilter(filter)
+    }
     fun updateSettings(newSettings: AppSettings) {
         _appSettings.value = newSettings
         settingsStore.save(newSettings)

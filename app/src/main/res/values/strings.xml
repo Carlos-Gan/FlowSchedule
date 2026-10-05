@@ -37,6 +37,7 @@
     <string name="la_papelera_esta_vacia">La papelera está vacía.</string>
     <string name="materia">Materia</string>
     <string name="actividad">Actividad</string>
+    <string name="clase_cancelada">Clase cancelada</string>
     <string name="cerrar">Cerrar</string>
     <string name="confirmar_vaciar_papelera">¿Vaciar papelera?</string>
     <string name="accion_eliminar_permanente">Esta acción eliminará todos los elementos permanentemente.</string>

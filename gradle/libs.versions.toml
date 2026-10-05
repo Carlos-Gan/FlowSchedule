@@ -21,7 +21,7 @@ runner = "1.7.0"
 kotlinxCoroutinesAndroid = "1.11.0"
 okhttp = "5.5.0"
 robolectric = "4.17"
-roborazzi = "1.74.0"
+roborazzi = "1.76.0"
 secretsGradlePlugin = "2.0.1"
 appcompat = "1.8.0"
 

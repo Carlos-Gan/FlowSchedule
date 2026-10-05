@@ -16,9 +16,15 @@ object DateTimeUtils {
     private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
     
     private val currentLocale: Locale get() = Locale.getDefault()
-    
-    private val readableDateFormatter: DateTimeFormatter get() =
-        DateTimeFormatter.ofPattern("EEEE, d 'de' MMMM 'de' yyyy", currentLocale)
+
+    private val readableDateFormatter: DateTimeFormatter get() {
+        val pattern = if (currentLocale.language.equals("es", ignoreCase = true)) {
+            "EEEE, d 'de' MMMM 'de' yyyy"
+        } else {
+            "EEEE, MMMM d, yyyy"
+        }
+        return DateTimeFormatter.ofPattern(pattern, currentLocale)
+    }
     
     private val shortDateFormatter: DateTimeFormatter get() =
         DateTimeFormatter.ofPattern("d MMM yyyy", currentLocale)
@@ -97,12 +103,13 @@ object DateTimeUtils {
     fun formatRelativeDate(dateString: String): String {
         val date = parseDate(dateString) ?: return dateString
         val today = LocalDate.now()
+        val isSpanish = currentLocale.language.equals("es", ignoreCase = true)
         return when (val daysBetween = ChronoUnit.DAYS.between(today, date)) {
-            0L -> "Hoy"
-            1L -> "Mañana"
-            -1L -> "Ayer"
-            in 2L..7L -> "En $daysBetween días"
-            in -7L..-2L -> "Hace ${-daysBetween} días"
+            0L -> if (isSpanish) "Hoy" else "Today"
+            1L -> if (isSpanish) "Mañana" else "Tomorrow"
+            -1L -> if (isSpanish) "Ayer" else "Yesterday"
+            in 2L..7L -> if (isSpanish) "En $daysBetween días" else "In $daysBetween days"
+            in -7L..-2L -> if (isSpanish) "Hace ${-daysBetween} días" else "${-daysBetween} days ago"
             else -> formatDate(dateString)
         }
     }

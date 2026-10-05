@@ -92,9 +92,21 @@ class AppSettingsStore(context: Context) {
         preferences.edit { putInt(KEY_LAST_SEEN_VERSION, versionCode) }
     }
 
+    fun getEventFilter(): String = preferences.getString(KEY_EVENT_FILTER_CATEGORY, "TODOS") ?: "TODOS"
+    fun setEventFilter(filter: String) {
+        preferences.edit { putString(KEY_EVENT_FILTER_CATEGORY, filter) }
+    }
+
+    fun getEventStatusFilter(): String = preferences.getString(KEY_EVENT_FILTER_STATUS, "TODOS") ?: "TODOS"
+    fun setEventStatusFilter(filter: String) {
+        preferences.edit { putString(KEY_EVENT_FILTER_STATUS, filter) }
+    }
+
     private companion object {
         const val PREFERENCES_NAME = "flow_schedule_settings"
         const val KEY_LAST_SEEN_VERSION = "last_seen_version_code"
+        const val KEY_EVENT_FILTER_CATEGORY = "event_filter_category"
+        const val KEY_EVENT_FILTER_STATUS = "event_filter_status"
         const val KEY_USER_NAME = "user_name"
         const val KEY_EDUCATION_LEVEL = "education_level"
         const val KEY_EDUCATION_INSTITUTION = "education_institution"

@@ -24,9 +24,15 @@ internal fun weekRangeLabel(weekStart: LocalDate): String {
 internal fun compactDayDate(date: LocalDate): String =
     date.format(DateTimeFormatter.ofPattern("d MMM", weekLocale)).uppercase(weekLocale)
 
-internal fun fullDayDate(date: LocalDate): String =
-    date.format(DateTimeFormatter.ofPattern("EEEE d 'de' MMMM", weekLocale))
+internal fun fullDayDate(date: LocalDate): String {
+    val pattern = if (weekLocale.language.equals("es", ignoreCase = true)) {
+        "EEEE d 'de' MMMM"
+    } else {
+        "EEEE, MMMM d"
+    }
+    return date.format(DateTimeFormatter.ofPattern(pattern, weekLocale))
         .replaceFirstChar { it.titlecase(weekLocale) }
+}
 
 internal fun SubjectWithSlots.isActiveOn(date: LocalDate): Boolean {
     val start = DateTimeUtils.parseDate(subject.semesterStart)

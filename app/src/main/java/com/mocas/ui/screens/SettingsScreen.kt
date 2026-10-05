@@ -44,6 +44,7 @@ import com.mocas.ui.components.settings.StatCard
 import com.mocas.ui.components.settings.TrashRow
 import com.mocas.ui.model.AppSettings
 import com.mocas.ui.viewmodel.ScheduleViewModel
+import com.mocas.util.DateTimeUtils
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -672,6 +673,7 @@ fun SettingsScreen(
     if (showTrashDialog) {
         val deletedSubjects by viewModel.deletedSubjects.collectAsStateWithLifecycle()
         val deletedEvents by viewModel.deletedEvents.collectAsStateWithLifecycle()
+        val canceledClasses by viewModel.canceledClassExceptions.collectAsStateWithLifecycle()
         var showEmptyConfirm by remember { mutableStateOf(false) }
 
         AlertDialog(
@@ -683,7 +685,7 @@ fun SettingsScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(stringResource(R.string.papelera), fontWeight = FontWeight.Bold)
-                    if (deletedSubjects.isNotEmpty() || deletedEvents.isNotEmpty()) {
+                    if (deletedSubjects.isNotEmpty() || deletedEvents.isNotEmpty() || canceledClasses.isNotEmpty()) {
                         IconButton(onClick = { showEmptyConfirm = true }) {
                             Icon(
                                 Icons.Default.DeleteSweep,
@@ -699,13 +701,22 @@ fun SettingsScreen(
                     modifier = Modifier.heightIn(max = 400.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    if (deletedSubjects.isEmpty() && deletedEvents.isEmpty()) {
+                    if (deletedSubjects.isEmpty() && deletedEvents.isEmpty() && canceledClasses.isEmpty()) {
                         item {
                             Text(
                                 stringResource(R.string.la_papelera_esta_vacia),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
+                    }
+                    items(canceledClasses, key = { "exc_${it.first.id}" }) { (exc, subName) ->
+                        val formattedDate = DateTimeUtils.formatDate(exc.date, true)
+                        TrashRow(
+                            title = subName,
+                            subtitle = "${stringResource(R.string.clase_cancelada)} · $formattedDate",
+                            onRestore = { viewModel.deleteClassException(exc.id) },
+                            onDelete = { viewModel.deleteClassException(exc.id) }
+                        )
                     }
                     items(deletedSubjects) { sub ->
                         TrashRow(
