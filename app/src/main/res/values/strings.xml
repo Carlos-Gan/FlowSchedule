@@ -577,13 +577,13 @@
     <!-- What's New Dialog -->
     <string name="whats_new_title">¡Novedades en esta versión!</string>
     <string name="whats_new_subtitle">Esto es lo nuevo que hemos preparado para mejorar tu experiencia:</string>
-    <string name="whats_new_item_1_title">🔍 Menú FAB de filtros avanzados</string>
-    <string name="whats_new_item_1_desc">Filtra rápidamente tus eventos y actividades por estado (Incompletas, Completadas) con un solo toque.</string>
-    <string name="whats_new_item_2_title">🎨 Tonos oscuros mejorados</string>
-    <string name="whats_new_item_2_desc">Transición a grises carbón elegantes, eliminando el negro OLED puro.</string>
-    <string name="whats_new_item_3_title">📐 Widgets adaptativos</string>
-    <string name="whats_new_item_3_desc">Soporte para tamaños desde 1x2 hasta 2x4 con barra de progreso visual.</string>
-    <string name="whats_new_item_4_title">⚡ Interfaz unificada de actividades</string>
-    <string name="whats_new_item_4_desc">Nueva pantalla de creación y edición de actividades idéntica al diseño de materias.</string>
+    <string name="whats_new_item_1_title">🗑️ Papelera para clases canceladas</string>
+    <string name="whats_new_item_1_desc">Las clases canceladas ahora se envían a la Papelera de Reciclaje, permitiéndote ver la fecha exacta y restaurarlas en cualquier momento.</string>
+    <string name="whats_new_item_2_title">💾 Persistencia de filtros</string>
+    <string name="whats_new_item_2_desc">Tus preferencias de filtro por categoría y estado (Pendientes/Completadas) ahora se guardan automáticamente al cerrar la aplicación.</string>
+    <string name="whats_new_item_3_title">🌐 Formato de fechas e idioma</string>
+    <string name="whats_new_item_3_desc">Formato de fechas adaptativo según el idioma activo y correcciones de traducción en diálogos y exportaciones.</string>
+    <string name="whats_new_item_4_title">🎨 Mejoras en la Papelera</string>
+    <string name="whats_new_item_4_desc">Diseño optimizado de elementos eliminados con nombres de materias y fechas visibles sin truncar.</string>
     <string name="whats_new_button">¡Entendido!</string>
 </resources>

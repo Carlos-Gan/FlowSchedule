@@ -579,13 +579,13 @@
     <!-- What's New Dialog -->
     <string name="whats_new_title">What\'s new in this version!</string>
     <string name="whats_new_subtitle">Here is what we\'ve prepared to improve your experience:</string>
-    <string name="whats_new_item_1_title">🔍 Advanced filter FAB menu</string>
-    <string name="whats_new_item_1_desc">Quickly filter your events and activities by status (Incomplete, Completed) with a single tap.</string>
-    <string name="whats_new_item_2_title">🎨 Enhanced dark tones</string>
-    <string name="whats_new_item_2_desc">Transitioned to elegant charcoal grays, removing pure OLED black.</string>
-    <string name="whats_new_item_3_title">📐 Adaptive widgets</string>
-    <string name="whats_new_item_3_desc">Support for sizes from 1x2 up to 2x4 with a visual progress bar.</string>
-    <string name="whats_new_item_4_title">⚡ Unified activity interface</string>
-    <string name="whats_new_item_4_desc">New activity creation and editing screen identical to the subject design.</string>
+    <string name="whats_new_item_1_title">🗑️ Recycle Bin for canceled classes</string>
+    <string name="whats_new_item_1_desc">Canceled classes are now sent to the Recycle Bin, allowing you to view the exact date and restore them at any time.</string>
+    <string name="whats_new_item_2_title">💾 Persistent filters</string>
+    <string name="whats_new_item_2_desc">Your filter preferences by category and status (Pending/Completed) are now saved automatically when closing the app.</string>
+    <string name="whats_new_item_3_title">🌐 Adaptive date formatting</string>
+    <string name="whats_new_item_3_desc">Adaptive date formatting based on active language and translation fixes across dialogs and exports.</string>
+    <string name="whats_new_item_4_title">🎨 Recycle Bin improvements</string>
+    <string name="whats_new_item_4_desc">Optimized layout for deleted items with subject names and full dates visible without truncation.</string>
     <string name="whats_new_button">Got it!</string>
 </resources>

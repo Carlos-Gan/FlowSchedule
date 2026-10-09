@@ -216,19 +216,9 @@ fun CustomEventCard(
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = colors.onSurface,
-                        textDecoration = if (isCompleted) TextDecoration.LineThrough else TextDecoration.None
+                        textDecoration = if (isCompleted) TextDecoration.LineThrough else TextDecoration.None,
+                        modifier = Modifier.padding(bottom = 8.dp)
                     )
-
-                    // Subtítulo (Nombre de la materia)
-                    if (eventWithSubject.subject != null) {
-                        Text(
-                            text = eventWithSubject.subject.name,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = colors.onSurfaceVariant,
-                            modifier = Modifier.padding(top = 2.dp, bottom = 8.dp)
-                        )
-                    }
 
                     // ── Fila inferior: Fecha, Hora y — junto al reloj — cuánto falta.
                     // FlowRow por si en pantallas angostas no cabe todo en una línea. ──

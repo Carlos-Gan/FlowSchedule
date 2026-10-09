@@ -11,7 +11,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Assignment
+import androidx.compose.material.icons.automirrored.filled.Assignment
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
@@ -189,7 +189,7 @@ fun EventsScreen(
                 item {
                     val filterOptions = listOf(
                         "TODOS" to (null to stringResource(R.string.filtro_todos)),
-                        SchoolEventType.TAREA.name to (Icons.Default.Assignment to stringResource(R.string.filtro_tareas)),
+                        SchoolEventType.TAREA.name to (Icons.AutoMirrored.Filled.Assignment to stringResource(R.string.filtro_tareas)),
                         SchoolEventType.EXAMEN.name to (Icons.Default.Quiz to stringResource(R.string.filtro_examenes)),
                         SchoolEventType.EXPOSICION.name to (Icons.Default.CoPresent to stringResource(R.string.filtro_expos)),
                         SchoolEventType.EVENTO_ESCOLAR.name to (Icons.Default.School to stringResource(R.string.filtro_eventos))
@@ -248,7 +248,7 @@ fun EventsScreen(
                             state = rememberCarouselState { urgentExams.size },
                             preferredItemWidth = 140.dp,
                             itemSpacing = 8.dp,
-                            modifier = Modifier.fillMaxWidth().height(95.dp)
+                            modifier = Modifier.fillMaxWidth().height(105.dp)
                         ) { index ->
                             val exam = urgentExams[index]
                             Card(
@@ -273,8 +273,9 @@ fun EventsScreen(
                                         Text(
                                             text = exam.subject.name,
                                             style = MaterialTheme.typography.labelSmall,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                            maxLines = 2,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.9f),
+                                            maxLines = 1,
                                             overflow = TextOverflow.Ellipsis
                                         )
                                     }
@@ -295,7 +296,7 @@ fun EventsScreen(
                         EmptyStateCard(
                             title = stringResource(R.string.no_hay_actividades),
                             message = stringResource(R.string.mensaje_sin_actividades),
-                            icon = Icons.Default.Assignment,
+                            icon = Icons.AutoMirrored.Filled.Assignment,
                             actionButtonText = stringResource(R.string.nueva_actividad_boton),
                             onActionClick = { viewModel.openAddEvent() }
                         )
@@ -367,7 +368,9 @@ fun EventsScreen(
             }
         ) {
             val statusItems = listOf(
-                Triple("TODOS", stringResource(R.string.filtro_todas), Icons.Default.Assignment),
+                Triple("TODOS", stringResource(R.string.filtro_todas),
+                    Icons.AutoMirrored.Filled.Assignment
+                ),
                 Triple("PENDIENTES", stringResource(R.string.filtro_incompletas), Icons.Default.Schedule),
                 Triple("COMPLETADAS", stringResource(R.string.filtro_completadas), Icons.Default.Check)
             )
