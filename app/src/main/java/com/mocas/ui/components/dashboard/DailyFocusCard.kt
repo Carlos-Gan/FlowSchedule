@@ -1,7 +1,11 @@
 package com.mocas.ui.components.dashboard
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -17,8 +21,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.mocas.R
 import com.mocas.ui.model.DailyClassStats
 import java.util.Locale
@@ -53,63 +57,70 @@ fun DailyFocusCard(
         if (isFinishedOrFree) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
     val labelColor =
         if (isFinishedOrFree) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f) else MaterialTheme.colorScheme.onSurfaceVariant
-    val secondaryColor =
-        if (isFinishedOrFree) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.secondary
 
     Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(140.dp),
-        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
         color = backgroundColor,
         shadowElevation = 0.dp
     ) {
-        Column(
-            modifier = Modifier.padding(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+        Row(
+            modifier = Modifier
+                .padding(18.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                text = stringResource(R.string.progreso_del_dia),
-                style = MaterialTheme.typography.labelMedium,
-                color = labelColor,
-                modifier = Modifier.align(Alignment.Start)
-            )
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 12.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.progreso_del_dia),
+                    style = MaterialTheme.typography.labelMedium.copy(
+                        fontWeight = FontWeight.Bold
+                    ),
+                    color = labelColor
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = remainingLabel,
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.ExtraBold
+                    ),
+                    color = contentColor,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                Spacer(modifier = Modifier.height(2.dp))
+
+                Text(
+                    text = footerText,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = labelColor
+                )
+            }
 
             Box(
-                modifier = Modifier.weight(1f),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.size(72.dp)
             ) {
                 CircularWavyProgressIndicator(
                     progress = { stats.progress },
-                    modifier = Modifier.size(80.dp)
+                    modifier = Modifier.fillMaxSize()
                 )
-
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = "${(stats.progress * 100).toInt()}%",
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.Bold
-                        ),
-                        color = contentColor
-                    )
-
-                    Text(
-                        text = remainingLabel,
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            fontSize = 9.sp
-                        ),
-                        color = secondaryColor
-                    )
-                }
+                Text(
+                    text = "${(stats.progress * 100).toInt()}%",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Black
+                    ),
+                    color = contentColor
+                )
             }
-
-            Text(
-                text = footerText,
-                style = MaterialTheme.typography.labelSmall,
-                color = labelColor
-            )
         }
     }
 }

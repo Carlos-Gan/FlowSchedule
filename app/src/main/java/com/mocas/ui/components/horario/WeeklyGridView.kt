@@ -145,7 +145,6 @@ fun WeeklyGridView(
                 ) {
                     Surface(
                         shape = CircleShape,
-                        color = if (isToday) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceDim,
                         modifier = Modifier.size(width = 60.dp, height = 40.dp)
                     ) {
                         Box(contentAlignment = Alignment.Center) {
@@ -171,7 +170,6 @@ fun WeeklyGridView(
             Column(
                 modifier = Modifier
                     .width(timeColWidth)
-                    .background(MaterialTheme.colorScheme.surface)
             ) {
                 hours.forEach { hour ->
                     Box(

@@ -180,12 +180,12 @@ private fun PickerField(
     val accent = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
     Surface(
         modifier = modifier.clickable(onClick = onClick),
-        shape = RoundedCornerShape(12.dp),
-        color = MaterialTheme.colorScheme.surface,
+        shape = RoundedCornerShape(8.dp),
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
         border = BorderStroke(
             1.dp,
             if (isError) MaterialTheme.colorScheme.error
-            else MaterialTheme.colorScheme.outline
+            else MaterialTheme.colorScheme.outlineVariant
         )
     ) {
         Row(

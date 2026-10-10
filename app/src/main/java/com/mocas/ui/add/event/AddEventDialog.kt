@@ -2,6 +2,7 @@ package com.mocas.ui.add.event
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -19,7 +21,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.LocationOn
@@ -246,31 +247,44 @@ fun AddEventDialog(
                             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
                             color = MaterialTheme.colorScheme.onSurface
                         )
-                        SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-                            val types = listOf(
-                                SchoolEventType.TAREA to stringResource(R.string.filtro_tareas),
-                                SchoolEventType.EXAMEN to stringResource(R.string.filtro_examenes),
-                                SchoolEventType.EXPOSICION to stringResource(R.string.filtro_expos),
-                                SchoolEventType.EVENTO_ESCOLAR to stringResource(R.string.filtro_eventos)
-                            )
-                            types.forEachIndexed { index, (type, label) ->
-                                SegmentedButton(
-                                    shape = SegmentedButtonDefaults.itemShape(index = index, count = types.size),
-                                    onClick = { selectedType = type },
-                                    selected = selectedType == type,
-                                    icon = {
-                                        if (selectedType == type) {
-                                            Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(14.dp))
-                                        }
-                                    },
-                                    label = { Text(label, fontSize = 12.sp, fontWeight = FontWeight.Bold) },
-                                    colors = SegmentedButtonDefaults.colors(
-                                        activeContainerColor = MaterialTheme.colorScheme.primary,
-                                        activeContentColor = MaterialTheme.colorScheme.onPrimary,
-                                        inactiveContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        inactiveContainerColor = MaterialTheme.colorScheme.surface
-                                    )
-                                )
+                        val types = listOf(
+                            SchoolEventType.TAREA to stringResource(R.string.filtro_tareas),
+                            SchoolEventType.EXAMEN to stringResource(R.string.filtro_examenes),
+                            SchoolEventType.EXPOSICION to stringResource(R.string.filtro_expos),
+                            SchoolEventType.EVENTO_ESCOLAR to stringResource(R.string.filtro_eventos)
+                        )
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(16.dp),
+                            color = MaterialTheme.colorScheme.surfaceContainerLow
+                        ) {
+                            Row(modifier = Modifier.padding(4.dp)) {
+                                types.forEach { (type, label) ->
+                                    val isSelected = selectedType == type
+                                    Box(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .heightIn(min = 48.dp)
+                                            .clip(RoundedCornerShape(12.dp))
+                                            .background(
+                                                if (isSelected) MaterialTheme.colorScheme.primary
+                                                else MaterialTheme.colorScheme.surfaceContainerLow
+                                            )
+                                            .clickable { selectedType = type },
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = label,
+                                            fontSize = if (isSelected) 14.sp else 12.sp,
+                                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                            color = if (isSelected) MaterialTheme.colorScheme.onPrimary
+                                            else MaterialTheme.colorScheme.onSurfaceVariant,
+                                            maxLines = 2,
+                                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                                            modifier = Modifier.padding(horizontal = 4.dp)
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
@@ -408,34 +422,20 @@ fun AddEventDialog(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        Surface(
-                            modifier = Modifier.weight(1.5f),
-                            shape = RoundedCornerShape(14.dp),
-                            color = MaterialTheme.colorScheme.surface,
-                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
-                        ) {
-                            CalendarDateField(
-                                value = eventDate,
-                                onDateSelected = { eventDate = it },
-                                label = stringResource(R.string.fecha_label),
-                                modifier = Modifier.padding(4.dp)
-                            )
-                        }
+                        CalendarDateField(
+                            value = eventDate,
+                            onDateSelected = { eventDate = it },
+                            label = stringResource(R.string.fecha_label),
+                            modifier = Modifier.weight(1.5f)
+                        )
 
                         if (!isAllDay) {
-                            Surface(
-                                modifier = Modifier.weight(1f),
-                                shape = RoundedCornerShape(14.dp),
-                                color = MaterialTheme.colorScheme.surface,
-                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
-                            ) {
-                                ClockTimeField(
-                                    value = eventTime,
-                                    onTimeSelected = { eventTime = it },
-                                    label = stringResource(R.string.hora_label),
-                                    modifier = Modifier.padding(4.dp)
-                                )
-                            }
+                            ClockTimeField(
+                                value = eventTime,
+                                onTimeSelected = { eventTime = it },
+                                label = stringResource(R.string.hora_label),
+                                modifier = Modifier.weight(1f)
+                            )
                         }
                     }
                 }

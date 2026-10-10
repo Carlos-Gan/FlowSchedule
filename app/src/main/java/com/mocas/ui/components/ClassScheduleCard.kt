@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
@@ -72,17 +73,19 @@ fun ClassScheduleCard(
             Surface(
                 shape = RoundedCornerShape(12.dp),
                 color = MaterialTheme.colorScheme.surfaceVariant,
-                modifier = Modifier.width(62.dp)
+                modifier = Modifier.widthIn(min = 68.dp)
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
-                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 4.dp)
+                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 6.dp)
                 ) {
                     Text(
                         text = slot.startTime,
                         fontWeight = FontWeight.ExtraBold,
                         fontSize = 13.sp,
+                        maxLines = 1,
+                        softWrap = false,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Box(
@@ -96,6 +99,8 @@ fun ClassScheduleCard(
                     Text(
                         text = slot.endTime,
                         fontSize = 11.sp,
+                        maxLines = 1,
+                        softWrap = false,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

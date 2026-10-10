@@ -1,14 +1,16 @@
 package com.mocas.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,9 +19,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -60,42 +66,46 @@ fun TimetableScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        // Bento Segmented Bar: Vista Semanal | Vista Diaria | Lista de Materias
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            //color = MaterialTheme.colorScheme.surface,
-        ) {
-            SingleChoiceSegmentedButtonRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
-            ) {
-                val modes = listOf(
-                    TimetableDisplayMode.SEMANAL to stringResource(R.string.vista_semanal),
-                    TimetableDisplayMode.DIARIA to stringResource(R.string.vista_diaria),
-                    TimetableDisplayMode.MATERIAS to stringResource(R.string.lista_materias)
-                )
+        val modes = listOf(
+            TimetableDisplayMode.SEMANAL to stringResource(R.string.vista_semanal),
+            TimetableDisplayMode.DIARIA to stringResource(R.string.vista_diaria),
+            TimetableDisplayMode.MATERIAS to stringResource(R.string.lista_materias)
+        )
+        val selectedModeIndex = modes.indexOfFirst { it.first == currentMode }.coerceAtLeast(0)
 
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            shape = RoundedCornerShape(16.dp),
+            color = MaterialTheme.colorScheme.surfaceContainerLow
+        ) {
+            Row(modifier = Modifier.padding(4.dp)) {
                 modes.forEachIndexed { index, (mode, label) ->
-                    val isSelected = currentMode == mode
-                    SegmentedButton(
-                        shape = SegmentedButtonDefaults.itemShape(index = index, count = modes.size),
-                        onClick = { viewModel.setTimetableMode(mode) },
-                        selected = isSelected,
-                        label = {
-                            Text(
-                                text = label,
-                                fontSize = 12.sp,
-                                fontWeight = if (isSelected) FontWeight.ExtraBold else FontWeight.Medium
+                    val isSelected = index == selectedModeIndex
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .heightIn(min = 48.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(
+                                if (isSelected) MaterialTheme.colorScheme.primary
+                                else Color.Transparent
                             )
-                        },
-                        colors = SegmentedButtonDefaults.colors(
-                            activeContainerColor = MaterialTheme.colorScheme.primary,
-                            activeContentColor = MaterialTheme.colorScheme.onPrimary,
-                            inactiveContainerColor = MaterialTheme.colorScheme.surfaceDim,
-                            inactiveContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                            .clickable { viewModel.setTimetableMode(mode) },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = label,
+                            fontSize =  12.sp,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                            color = if (isSelected) MaterialTheme.colorScheme.onPrimary
+                            else MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.padding(horizontal = 4.dp)
                         )
-                    )
+                    }
                 }
             }
         }

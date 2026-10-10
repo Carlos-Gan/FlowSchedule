@@ -37,7 +37,7 @@ fun DailyClassRow(
         // Time Column
         Column(
             modifier = Modifier
-                .width(52.dp)
+                .widthIn(min = 60.dp)
                 .padding(top = 10.dp),
             horizontalAlignment = Alignment.End
         ) {
@@ -47,11 +47,15 @@ fun DailyClassRow(
                     fontWeight = FontWeight.Black,
                     fontSize = 13.sp
                 ),
+                maxLines = 1,
+                softWrap = false,
                 color = if (isNow) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
             )
             Text(
                 text = classItem.slot.endTime,
                 style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp),
+                maxLines = 1,
+                softWrap = false,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
             )
         }

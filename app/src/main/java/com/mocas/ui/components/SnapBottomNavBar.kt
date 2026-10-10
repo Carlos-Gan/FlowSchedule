@@ -4,7 +4,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Badge
@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mocas.ui.model.BadgeStyle
@@ -45,7 +46,7 @@ fun SnapBottomNavBar(
                 .fillMaxWidth()
         ) {
             NavigationBar(
-                modifier = Modifier.height(85.dp),
+                modifier = Modifier.heightIn(min = 80.dp),
                 containerColor = MaterialTheme.colorScheme.surfaceContainer,
                 tonalElevation = 0.dp
             ) {
@@ -62,7 +63,7 @@ fun SnapBottomNavBar(
                         onClick = { onTabSelected(tab) },
                         modifier = Modifier
                             .testTag("nav_tab_${tab.name.lowercase()}")
-                            .padding(vertical = 3.dp),
+                            .padding(vertical = 2.dp),
                         icon = {
                             BadgedBox(
                                 badge = {
@@ -103,6 +104,9 @@ fun SnapBottomNavBar(
                             Text(
                                 text = stringResource(tab.titleRes),
                                 fontSize = 10.sp,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                softWrap = false,
                                 fontWeight = if (isSelected) FontWeight.ExtraBold else FontWeight.Medium
                             )
                         },

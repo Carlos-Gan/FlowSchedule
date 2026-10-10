@@ -14,9 +14,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Assignment
@@ -29,8 +29,6 @@ import androidx.compose.material.icons.filled.Quiz
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,9 +39,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleFloatingActionButton
@@ -63,8 +58,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -79,12 +76,47 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
+@Composable
+private fun ProgressBadge(modifier: Modifier, progressFraction: Float) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(8.dp),
+        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+    ) {
+        Text(
+            text = "${(progressFraction * 100).toInt()}%",
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+        )
+    }
+}
+
+@Composable
+private fun ProgressSummary(modifier: Modifier, completedCount: Int, totalCount: Int) {
+    Column(modifier = modifier) {
+        Text(
+            text = stringResource(R.string.progreso_del_semestre),
+            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+            color = MaterialTheme.colorScheme.onSurface
+        )
+        Text(
+            text = stringResource(R.string.actividades_completadas_formato, completedCount, totalCount),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EventsScreen(
     viewModel: ScheduleViewModel,
     modifier: Modifier = Modifier
 ) {
+    val fontScale = LocalDensity.current.fontScale
+    val largeFontScale = fontScale >= 1.3f
     val allEvents by viewModel.allEventsWithSubject.collectAsStateWithLifecycle()
     val activeFilter by viewModel.eventFilter.collectAsStateWithLifecycle()
 
@@ -158,37 +190,14 @@ fun EventsScreen(
                         Column(modifier = Modifier.padding(20.dp)) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Column {
-                                    Text(
-                                        text = stringResource(R.string.progreso_del_semestre),
-                                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                                        color = MaterialTheme.colorScheme.onSurface
-                                    )
-                                    Text(
-                                        text = stringResource(R.string.actividades_completadas_formato, completedCount, totalCount),
-                                        style = MaterialTheme.typography.labelMedium,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                }
-
-                                Surface(
-                                    shape = RoundedCornerShape(8.dp),
-                                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                                ) {
-                                    Text(
-                                        text = "${(progressFraction * 100).toInt()}%",
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = MaterialTheme.colorScheme.primary,
-                                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
-                                    )
-                                }
+                                ProgressSummary(Modifier.weight(1f), completedCount, totalCount)
+                                ProgressBadge(Modifier, progressFraction)
                             }
 
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(12.dp))
 
                             LinearWavyProgressIndicator(
                                 progress = { progressFraction },
@@ -201,19 +210,23 @@ fun EventsScreen(
 
                             Spacer(modifier = Modifier.height(8.dp))
 
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
+                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                                 Text(
                                     text = stringResource(R.string.inicio_ciclo_escolar),
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                                    modifier = Modifier.weight(1f),
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                                 Text(
                                     text = stringResource(R.string.meta_100),
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                                    modifier = Modifier.weight(1f),
+                                    textAlign = TextAlign.End,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                             }
                         }
@@ -223,48 +236,43 @@ fun EventsScreen(
                 // Button Groups for Event Types (below Semester Progress)
                 item {
                     val filterOptions = listOf(
-                        "TODOS" to (null to stringResource(R.string.filtro_todos)),
+                        "TODOS" to (Icons.Default.FilterList to stringResource(R.string.filtro_todos)),
                         SchoolEventType.TAREA.name to (Icons.AutoMirrored.Filled.Assignment to stringResource(R.string.filtro_tareas)),
                         SchoolEventType.EXAMEN.name to (Icons.Default.Quiz to stringResource(R.string.filtro_examenes)),
                         SchoolEventType.EXPOSICION.name to (Icons.Default.CoPresent to stringResource(R.string.filtro_expos)),
                         SchoolEventType.EVENTO_ESCOLAR.name to (Icons.Default.School to stringResource(R.string.filtro_eventos))
                     )
 
-                    SingleChoiceSegmentedButtonRow(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                    Surface(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        color = MaterialTheme.colorScheme.surfaceContainerLow
                     ) {
-                        filterOptions.forEachIndexed { index, (key, option) ->
-                            val (icon, label) = option
-                            val isSelected = activeFilter == key
-
-                            SegmentedButton(
-                                shape = SegmentedButtonDefaults.itemShape(index = index, count = filterOptions.size),
-                                onClick = { viewModel.setEventFilter(key) },
-                                selected = isSelected,
-                                label = {
-                                    if (icon == null) {
-                                        Text(
-                                            text = label,
-                                            fontSize = 12.sp,
-                                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                        Row(modifier = Modifier.padding(4.dp)) {
+                            filterOptions.forEach { (key, option) ->
+                                val (icon, label) = option
+                                val isSelected = activeFilter == key
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .height(52.dp)
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .background(
+                                            if (isSelected) MaterialTheme.colorScheme.primary
+                                            else androidx.compose.ui.graphics.Color.Transparent
                                         )
-                                    } else {
-                                        Icon(
-                                            imageVector = icon,
-                                            contentDescription = label,
-                                            modifier = Modifier.size(18.dp)
-                                        )
-                                    }
-                                },
-                                colors = SegmentedButtonDefaults.colors(
-                                    activeContainerColor = MaterialTheme.colorScheme.primary,
-                                    activeContentColor = MaterialTheme.colorScheme.onPrimary,
-                                    inactiveContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                                    inactiveContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    activeBorderColor = MaterialTheme.colorScheme.primary,
-                                    inactiveBorderColor = MaterialTheme.colorScheme.outlineVariant
-                                )
-                            )
+                                        .clickable { viewModel.setEventFilter(key) },
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = icon,
+                                        contentDescription = label,
+                                        tint = if (isSelected) MaterialTheme.colorScheme.onPrimary
+                                        else MaterialTheme.colorScheme.onSurfaceVariant,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -274,14 +282,17 @@ fun EventsScreen(
                     item {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
                                 text = stringResource(R.string.examenes_proximos).uppercase(),
                                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Black, letterSpacing = 1.2.sp),
-                                color = MaterialTheme.colorScheme.error
+                                color = MaterialTheme.colorScheme.error,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.weight(1f)
                             )
+                            Spacer(modifier = Modifier.width(8.dp))
                             Surface(
                                 shape = RoundedCornerShape(8.dp),
                                 color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.5f)
@@ -290,7 +301,8 @@ fun EventsScreen(
                                     text = stringResource(R.string.agendado_badge_formato, urgentExams.size),
                                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                                     style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                                    color = MaterialTheme.colorScheme.error
+                                    color = MaterialTheme.colorScheme.error,
+                                    maxLines = 1
                                 )
                             }
                         }
@@ -299,9 +311,9 @@ fun EventsScreen(
 
                         HorizontalMultiBrowseCarousel(
                             state = rememberCarouselState { urgentExams.size },
-                            preferredItemWidth = 140.dp,
+                            preferredItemWidth = 140.dp * fontScale.coerceAtLeast(1f),
                             itemSpacing = 8.dp,
-                            modifier = Modifier.fillMaxWidth().height(105.dp)
+                            modifier = Modifier.fillMaxWidth().height(105.dp * fontScale.coerceAtLeast(1f))
                         ) { index ->
                             val exam = urgentExams[index]
                             Card(
@@ -357,7 +369,13 @@ fun EventsScreen(
                 } else {
                     if (pendingEvents.isNotEmpty()) {
                         item {
-                            Row(
+                            if (largeFontScale) Column(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalArrangement = Arrangement.spacedBy(2.dp)
+                            ) {
+                                Text(stringResource(R.string.pendientes), style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.ExtraBold), color = MaterialTheme.colorScheme.onSurface)
+                                Text(stringResource(R.string.ordenado_por_fecha), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f))
+                            } else Row(
                                 modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 4.dp),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically

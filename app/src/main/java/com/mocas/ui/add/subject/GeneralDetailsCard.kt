@@ -132,30 +132,20 @@ fun GeneralDetailsCard(
 
             // Fechas de inicio y fin
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                Surface(
-                    modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(12.dp),
-                    color = MaterialTheme.colorScheme.surface,
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
-                ) {
-                    CalendarDateField(
-                        value = semesterStart, onDateSelected = onStartChange,
-                        label = stringResource(R.string.inicio_periodo_label), isError = !DateTimeUtils.isValidDate(semesterStart),
-                        modifier = Modifier.padding(4.dp)
-                    )
-                }
-                Surface(
-                    modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(12.dp),
-                    color = MaterialTheme.colorScheme.surface,
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
-                ) {
-                    CalendarDateField(
-                        value = semesterEnd, onDateSelected = onEndChange,
-                        label = stringResource(R.string.fin_periodo_label), isError = !DateTimeUtils.isValidDate(semesterEnd),
-                        modifier = Modifier.padding(4.dp)
-                    )
-                }
+                CalendarDateField(
+                    value = semesterStart,
+                    onDateSelected = onStartChange,
+                    label = stringResource(R.string.inicio_periodo_label),
+                    isError = !DateTimeUtils.isValidDate(semesterStart),
+                    modifier = Modifier.weight(1f)
+                )
+                CalendarDateField(
+                    value = semesterEnd,
+                    onDateSelected = onEndChange,
+                    label = stringResource(R.string.fin_periodo_label),
+                    isError = !DateTimeUtils.isValidDate(semesterEnd),
+                    modifier = Modifier.weight(1f)
+                )
             }
         }
 
