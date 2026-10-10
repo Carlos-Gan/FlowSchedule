@@ -16,10 +16,10 @@ object DateTimeUtils {
     private val currentLocale: Locale get() = Locale.getDefault()
 
     private val readableDateFormatter: DateTimeFormatter get() {
-        val pattern = if (currentLocale.language.equals("es", ignoreCase = true)) {
-            "EEEE, d 'de' MMMM 'de' yyyy"
-        } else {
-            "EEEE, MMMM d, yyyy"
+        val pattern = when (currentLocale.language.lowercase(Locale.ROOT)) {
+            "es", "pt" -> "EEEE, d 'de' MMMM 'de' yyyy"
+            "it" -> "EEEE d MMMM yyyy"
+            else -> "EEEE, MMMM d, yyyy"
         }
         return DateTimeFormatter.ofPattern(pattern, currentLocale)
     }
@@ -92,13 +92,38 @@ object DateTimeUtils {
     fun formatRelativeDate(dateString: String): String {
         val date = parseDate(dateString) ?: return dateString
         val today = LocalDate.now()
-        val isSpanish = currentLocale.language.equals("es", ignoreCase = true)
+        val lang = currentLocale.language.lowercase(Locale.ROOT)
         return when (val daysBetween = ChronoUnit.DAYS.between(today, date)) {
-            0L -> if (isSpanish) "Hoy" else "Today"
-            1L -> if (isSpanish) "Mañana" else "Tomorrow"
-            -1L -> if (isSpanish) "Ayer" else "Yesterday"
-            in 2L..7L -> if (isSpanish) "En $daysBetween días" else "In $daysBetween days"
-            in -7L..-2L -> if (isSpanish) "Hace ${-daysBetween} días" else "${-daysBetween} days ago"
+            0L -> when (lang) {
+                "es" -> "Hoy"
+                "pt" -> "Hoje"
+                "it" -> "Oggi"
+                else -> "Today"
+            }
+            1L -> when (lang) {
+                "es" -> "Mañana"
+                "pt" -> "Amanhã"
+                "it" -> "Domani"
+                else -> "Tomorrow"
+            }
+            -1L -> when (lang) {
+                "es" -> "Ayer"
+                "pt" -> "Ontem"
+                "it" -> "Ieri"
+                else -> "Yesterday"
+            }
+            in 2L..7L -> when (lang) {
+                "es" -> "En $daysBetween días"
+                "pt" -> "Em $daysBetween dias"
+                "it" -> "Tra $daysBetween giorni"
+                else -> "In $daysBetween days"
+            }
+            in -7L..-2L -> when (lang) {
+                "es" -> "Hace ${-daysBetween} días"
+                "pt" -> "Há ${-daysBetween} dias"
+                "it" -> "${-daysBetween} giorni fa"
+                else -> "${-daysBetween} days ago"
+            }
             else -> formatDate(dateString)
         }
     }

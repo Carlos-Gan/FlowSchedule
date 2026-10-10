@@ -42,7 +42,12 @@ class MainActivity : ComponentActivity() {
 
             // Aplicar Idioma
             LaunchedEffect(settings.language) {
-                val localeTag = if (settings.language == "English") "en" else "es-MX"
+                val localeTag = when (settings.language) {
+                    "English" -> "en"
+                    "Português" -> "pt"
+                    "Italiano" -> "it"
+                    else -> "es-MX"
+                }
                 AppCompatDelegate.setApplicationLocales(
                     LocaleListCompat.forLanguageTags(localeTag)
                 )
