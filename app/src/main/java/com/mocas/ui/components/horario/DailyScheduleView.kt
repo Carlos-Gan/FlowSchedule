@@ -54,11 +54,7 @@ fun DailyScheduleView(
     viewModel: ScheduleViewModel,
     selectedDay: Int,
     selectedDate: LocalDate,
-    isVacationDay: Boolean,
-    onPreviousDay: () -> Unit,
-    onNextDay: () -> Unit,
     onClassClick: (SubjectEntity, ScheduleSlotEntity) -> Unit,
-    onSyncClass: (SubjectEntity, ScheduleSlotEntity) -> Unit,
     onAddSubjectClick: () -> Unit
 ) {
     val todayClasses by viewModel.todayClasses.collectAsStateWithLifecycle()
@@ -75,7 +71,7 @@ fun DailyScheduleView(
     )
 
     val monthName = remember(selectedDate) {
-        selectedDate.month.getDisplayName(java.time.format.TextStyle.FULL, java.util.Locale.getDefault())
+        selectedDate.month.getDisplayName(TextStyle.FULL, Locale.getDefault())
             .replaceFirstChar { it.uppercase() }
     }
 

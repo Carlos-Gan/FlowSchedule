@@ -13,9 +13,8 @@ import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.mocas.R
-import com.mocas.data.local.ScheduleSlotEntity
 import com.mocas.data.local.ClassExceptionEntity
-import com.mocas.data.local.SchoolEventEntity
+import com.mocas.data.local.ScheduleSlotEntity
 import com.mocas.data.local.SubjectEntity
 
 enum class BottomNavTab(

@@ -1,7 +1,9 @@
 package com.mocas.ui.screens
 
+import android.app.Application
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -11,38 +13,29 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddTask
+import androidx.compose.material.icons.filled.LibraryAdd
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddTask
-import androidx.compose.material.icons.filled.LibraryAdd
-import androidx.compose.material3.Icon
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.material3.windowsizeclass.WindowSizeClass
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mocas.R
-import android.app.Application
-import androidx.compose.ui.platform.LocalContext
 import com.mocas.data.local.SchoolEventWithSubject
 import com.mocas.ui.components.dashboard.DailyFocusCard
 import com.mocas.ui.components.dashboard.NextClassCard
@@ -63,7 +56,6 @@ fun DashboardScreen(
     windowSizeClass: WindowSizeClass,
     modifier: Modifier = Modifier
 ) {
-    val isCompact = windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact
     val settings by viewModel.appSettings.collectAsStateWithLifecycle()
     val nextClass by viewModel.nextClassInfo.collectAsStateWithLifecycle()
     val allEvents by viewModel.allEventsWithSubject.collectAsStateWithLifecycle()
@@ -191,8 +183,7 @@ fun DashboardContent(
 
                 item {
                     DailyFocusCard(
-                        stats = classStats,
-                        modifier = Modifier.fillMaxWidth()
+                        stats = classStats
                     )
                 }
             } else {
@@ -210,8 +201,7 @@ fun DashboardContent(
                             }
                             Box(modifier = Modifier.weight(1f)) {
                                 DailyFocusCard(
-                                    stats = classStats,
-                                    modifier = Modifier.fillMaxWidth()
+                                    stats = classStats
                                 )
                             }
                         }
@@ -221,8 +211,7 @@ fun DashboardContent(
                     // el ancho en vez de dejar medio espacio vacío al lado.
                     item {
                         DailyFocusCard(
-                            stats = classStats,
-                            modifier = Modifier.fillMaxWidth()
+                            stats = classStats
                         )
                     }
                 }

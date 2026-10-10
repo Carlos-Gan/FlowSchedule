@@ -224,7 +224,6 @@ private fun ReminderCategoryCard(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ReminderOptionChips(
     currentMinutes: Int,

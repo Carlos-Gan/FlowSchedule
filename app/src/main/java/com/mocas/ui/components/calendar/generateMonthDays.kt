@@ -19,8 +19,6 @@ fun generateMonthDays(
     classExceptions: List<ClassExceptionEntity>
 ): List<com.mocas.ui.model.CalendarDayItem> {
     val list = mutableListOf<com.mocas.ui.model.CalendarDayItem>()
-    val year = calendarMonth.year
-    val month = calendarMonth.monthValue
     val maxDays = calendarMonth.lengthOfMonth()
     val leadingOffset = calendarMonth.atDay(1).dayOfWeek.value - 1
 

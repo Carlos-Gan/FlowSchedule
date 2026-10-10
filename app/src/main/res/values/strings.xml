@@ -417,6 +417,10 @@
     <!-- UI Buttons -->
     <string name="aceptar_boton">Aceptar</string>
     <string name="cancelar_boton">Cancelar</string>
+    <string name="selecciona_una_fecha">Selecciona una fecha</string>
+    <string name="selecciona_hora">Selecciona la hora</string>
+    <string name="selecciona_formato">Selecciona %1$s</string>
+    <string name="elegir_formato">Elegir %1$s</string>
 
     <!-- Academic Period Dialog -->
     <string name="nuevo_periodo_titulo">Nuevo periodo</string>

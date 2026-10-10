@@ -49,7 +49,7 @@ class AppSettingsStore(context: Context) {
         colorTheme = preferences.getString(KEY_COLOR_THEME, "DEFAULT") ?: "DEFAULT",
         badgeStyle = try {
             BadgeStyle.valueOf(preferences.getString(KEY_BADGE_STYLE, BadgeStyle.NUMBER.name) ?: BadgeStyle.NUMBER.name)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             BadgeStyle.NUMBER
         },
         onboardingCompleted = preferences.getBoolean(KEY_ONBOARDING_COMPLETED, false)

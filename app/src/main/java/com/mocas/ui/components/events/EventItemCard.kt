@@ -1,6 +1,5 @@
 package com.mocas.ui.components.events
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,7 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Assignment
+import androidx.compose.material.icons.automirrored.filled.Assignment
 import androidx.compose.material.icons.filled.BeachAccess
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.CoPresent
@@ -70,7 +69,7 @@ fun getEventTypeIcon(
     type: SchoolEventType
 ): ImageVector {
     return when (type) {
-        SchoolEventType.TAREA -> Icons.Default.Assignment
+        SchoolEventType.TAREA -> Icons.AutoMirrored.Filled.Assignment
         SchoolEventType.EXAMEN -> Icons.Default.Quiz
         SchoolEventType.EXPOSICION -> Icons.Default.CoPresent
         SchoolEventType.EVENTO_ESCOLAR -> Icons.Default.School
@@ -94,7 +93,6 @@ fun getEventTypeColor(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun EventItemCard(
     eventWithSubject: SchoolEventWithSubject,
@@ -374,7 +372,7 @@ private fun EventTypeChip(type: SchoolEventType, color: Color, isCompleted: Bool
 }
 
 @Composable
-private fun SubjectChip(name: String, color: Color, isCompleted: Boolean = false, modifier: Modifier = Modifier) {
+private fun SubjectChip(modifier: Modifier = Modifier, name: String, color: Color, isCompleted: Boolean = false) {
     val alpha = if (isCompleted) 0.45f else 1f
     Surface(modifier = modifier, shape = RoundedCornerShape(8.dp), color = color.copy(alpha = 0.12f * alpha)) {
         Text(text = name, color = color.copy(alpha = alpha), fontSize = 10.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.padding(horizontal = 7.dp, vertical = 4.dp))
@@ -433,6 +431,5 @@ private fun isEventUrgent(event: SchoolEventEntity): Boolean {
     val urgentTypes = setOf(SchoolEventType.TAREA, SchoolEventType.EXAMEN, SchoolEventType.EXPOSICION)
     if (event.type !in urgentTypes) return false
     val today = DateTimeUtils.todayString()
-    if (event.startDate <= today && event.endDate >= today) return true
-    return DateTimeUtils.daysRemaining(event.startDate)?.let { it in 0..2 } ?: false
+    return event.startDate <= today && event.endDate >= today || DateTimeUtils.daysRemaining(event.startDate)?.let { it in 0..2 } ?: false
 }

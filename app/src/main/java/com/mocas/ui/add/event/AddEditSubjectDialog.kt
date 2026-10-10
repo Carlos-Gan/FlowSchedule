@@ -352,15 +352,10 @@ private fun timeRangesOverlap(
     secondStart: String,
     secondEnd: String
 ): Boolean {
-    if (
-        !DateTimeUtils.isValidTime(firstStart) ||
-        !DateTimeUtils.isValidTime(firstEnd) ||
-        !DateTimeUtils.isValidTime(secondStart) ||
-        !DateTimeUtils.isValidTime(secondEnd)
-    ) {
-        return false
-    }
-    return firstStart < secondEnd && firstEnd > secondStart
+    return !(!DateTimeUtils.isValidTime(firstStart) ||
+            !DateTimeUtils.isValidTime(firstEnd) ||
+            !DateTimeUtils.isValidTime(secondStart) ||
+            !DateTimeUtils.isValidTime(secondEnd)) && firstStart < secondEnd && firstEnd > secondStart
 }
 
 @Composable

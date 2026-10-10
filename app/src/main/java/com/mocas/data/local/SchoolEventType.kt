@@ -1,50 +1,34 @@
 package com.mocas.data.local
 
 enum class SchoolEventType(
-    val displayName: String,
-    val iconName: String,
-    val defaultColorHex: String
+    val displayName: String
 ) {
     TAREA(
-        displayName = "Tarea",
-        iconName = "Assignment",
-        defaultColorHex = "#8B5CF6"
+        displayName = "Tarea"
     ),
 
     EXAMEN(
-        displayName = "Examen",
-        iconName = "Quiz",
-        defaultColorHex = "#EF4444"
+        displayName = "Examen"
     ),
 
     EXPOSICION(
-        displayName = "Exposición",
-        iconName = "CoPresent",
-        defaultColorHex = "#06B6D4"
+        displayName = "Exposición"
     ),
 
     EVENTO_ESCOLAR(
-        displayName = "Evento escolar",
-        iconName = "School",
-        defaultColorHex = "#F59E0B"
+        displayName = "Evento escolar"
     ),
 
     REUNION(
-        displayName = "Reunión",
-        iconName = "Groups",
-        defaultColorHex = "#3B82F6"
+        displayName = "Reunión"
     ),
 
     VACACIONES(
-        displayName = "Vacaciones",
-        iconName = "BeachAccess",
-        defaultColorHex = "#10B981"
+        displayName = "Vacaciones"
     ),
 
     OTRO(
-        displayName = "Otro",
-        iconName = "Event",
-        defaultColorHex = "#64748B"
+        displayName = "Otro"
     );
 
     companion object {

@@ -173,7 +173,7 @@ object CalendarSyncHelper {
 
             context.startActivity(intent)
             CalendarActionResult.Launched
-        } catch (error: ActivityNotFoundException) {
+        } catch (_: ActivityNotFoundException) {
             CalendarActionResult.NoCompatibleApp
         } catch (error: IllegalArgumentException) {
             CalendarActionResult.InvalidData(error.message ?: context.getString(R.string.error_fecha_hora_invalida))
@@ -322,7 +322,7 @@ object CalendarSyncHelper {
 
             context.startActivity(intent)
             CalendarActionResult.Launched
-        } catch (error: ActivityNotFoundException) {
+        } catch (_: ActivityNotFoundException) {
             CalendarActionResult.NoCompatibleApp
         } catch (error: IllegalArgumentException) {
             CalendarActionResult.InvalidData(error.message ?: context.getString(R.string.error_fecha_hora_invalida))

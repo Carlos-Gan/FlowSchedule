@@ -17,7 +17,6 @@ import com.mocas.R
 import com.mocas.ui.add.event.formatTime
 import com.mocas.ui.add.event.parseTime
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SessionTimePickerDialog(
     title: String,

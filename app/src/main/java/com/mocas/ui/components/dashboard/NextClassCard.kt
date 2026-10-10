@@ -69,7 +69,7 @@ fun NextClassCard(
                 ) {
                     Surface(
                         shape = CircleShape,
-                        color = if (subjectColor != null) subjectColor.copy(alpha = 0.25f) else MaterialTheme.colorScheme.primaryContainer,
+                        color = subjectColor?.copy(alpha = 0.25f) ?: MaterialTheme.colorScheme.primaryContainer,
                         modifier = Modifier.size(40.dp)
                     ) {
                         Box(contentAlignment = Alignment.Center) {

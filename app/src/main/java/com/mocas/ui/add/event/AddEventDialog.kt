@@ -48,7 +48,6 @@ import com.mocas.ui.components.parseColorFromHex
 import com.mocas.ui.util.capitalizeFirstLetter
 import com.mocas.util.DateTimeUtils
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEventDialog(
     editingEvent: SchoolEventWithSubject?,

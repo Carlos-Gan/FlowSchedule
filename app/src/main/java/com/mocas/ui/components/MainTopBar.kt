@@ -34,8 +34,8 @@ data class TopBarConfig(
         result = 31 * result + (subtitleRes ?: 0)
         result = 31 * result + showScanAction.hashCode()
         result = 31 * result + showAddAction.hashCode()
-        result = 31 * result + (title?.hashCode() ?: 0)
-        result = 31 * result + (subtitle?.hashCode() ?: 0)
+        result = 31 * result + title.hashCode()
+        result = 31 * result + subtitle.hashCode()
         result = 31 * result + (subtitleArgs?.contentHashCode() ?: 0)
         return result
     }

@@ -23,7 +23,6 @@ import com.mocas.ui.screens.MainAppScreen
 import com.mocas.ui.screens.OnboardingScreen
 import com.mocas.ui.theme.FlowScheduleTheme
 import com.mocas.ui.viewmodel.ScheduleViewModel
-import java.util.Locale
 
 class MainActivity : ComponentActivity() {
 

@@ -17,7 +17,6 @@ import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -34,15 +33,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.mocas.R
 import com.mocas.util.DateTimeUtils
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.util.Locale
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalendarDateField(
     value: String,
@@ -78,18 +78,18 @@ fun CalendarDateField(
                         showPicker = false
                     }
                 ) {
-                    Text("Aceptar", fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.aceptar_boton), fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showPicker = false }) {
-                    Text("Cancelar")
+                    Text(stringResource(R.string.cancelar_boton))
                 }
             }
         ) {
             DatePicker(
                 state = state,
-                title = { Text("Selecciona una fecha", modifier = Modifier.padding(16.dp)) },
+                title = { Text(stringResource(R.string.selecciona_una_fecha), modifier = Modifier.padding(16.dp)) },
                 showModeToggle = false
             )
         }
@@ -109,7 +109,6 @@ internal fun pickerMillisToDate(millis: Long): String =
         .toLocalDate()
         .toString()
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClockTimeField(
     value: String,
@@ -142,7 +141,7 @@ fun ClockTimeField(
         )
         AlertDialog(
             onDismissRequest = { showPicker = false },
-            title = { Text("Selecciona $label", fontWeight = FontWeight.Bold) },
+            title = { Text(stringResource(R.string.selecciona_formato, label), fontWeight = FontWeight.Bold) },
             text = {
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     TimePicker(state = state)
@@ -157,12 +156,12 @@ fun ClockTimeField(
                         showPicker = false
                     }
                 ) {
-                    Text("Aceptar", fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.aceptar_boton), fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showPicker = false }) {
-                    Text("Cancelar")
+                    Text(stringResource(R.string.cancelar_boton))
                 }
             }
         )
@@ -211,7 +210,7 @@ private fun PickerField(
             Spacer(modifier = Modifier.width(6.dp))
             Icon(
                 imageVector = icon,
-                contentDescription = "Elegir $label",
+                contentDescription = stringResource(R.string.elegir_formato, label),
                 tint = accent,
                 modifier = Modifier.size(20.dp)
             )

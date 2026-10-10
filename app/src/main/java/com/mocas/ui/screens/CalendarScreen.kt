@@ -22,10 +22,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.EventNote
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.EventNote
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -113,16 +113,16 @@ fun CalendarScreen(
         classExceptions
     ) {
         val list = mutableListOf<DayClassItem>()
-        for (subWithSlots in subjectsWithSlots) {
-            for (slot in subWithSlots.slots) {
+        for ((subject, slots) in subjectsWithSlots) {
+            for (slot in slots) {
                 val selectedDate = DateTimeUtils.parseDate(selectedDateStr)
-                val semesterStart = DateTimeUtils.parseDate(subWithSlots.subject.semesterStart)
-                val semesterEnd = DateTimeUtils.parseDate(subWithSlots.subject.semesterEnd)
+                val semesterStart = DateTimeUtils.parseDate(subject.semesterStart)
+                val semesterEnd = DateTimeUtils.parseDate(subject.semesterEnd)
                 if (slot.dayOfWeek == selectedDayOfWeekNum && selectedDate != null &&
                     semesterStart != null && semesterEnd != null && selectedDate in semesterStart..semesterEnd
                 ) {
                     slot.forDate(selectedDate, classExceptions)?.let { effective ->
-                        list.add(DayClassItem(subject = subWithSlots.subject, slot = effective))
+                        list.add(DayClassItem(subject = subject, slot = effective))
                     }
                 }
             }
@@ -486,7 +486,7 @@ fun CalendarScreen(
             } else {
                 stringResource(R.string.mensaje_programar_actividad)
             },
-            icon = Icons.Default.EventNote,
+            icon = Icons.AutoMirrored.Filled.EventNote,
             actionButtonText = stringResource(R.string.nueva_actividad_boton),
             onActionClick = { viewModel.openAddEvent(defaultDate = selectedDateStr) }
         )

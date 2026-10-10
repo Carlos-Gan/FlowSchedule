@@ -23,6 +23,7 @@ import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import androidx.core.graphics.toColorInt
 
 data class DailyWidgetClassItem(
     val id: Long,
@@ -35,6 +36,7 @@ data class DailyWidgetClassItem(
 )
 
 class DailyScheduleWidgetProvider : AppWidgetProvider() {
+    @Suppress("DEPRECATION")
     override fun onUpdate(context: Context, manager: AppWidgetManager, appWidgetIds: IntArray) {
         appWidgetIds.forEach { appWidgetId ->
             val serviceIntent = Intent(context, DailyScheduleWidgetService::class.java).apply {
@@ -59,14 +61,14 @@ class DailyScheduleWidgetProvider : AppWidgetProvider() {
                 .replaceFirstChar { it.uppercase() }
             val views = RemoteViews(context.packageName, R.layout.widget_daily_schedule).apply {
                 setTextViewText(R.id.daily_widget_date, dateLabel)
-                setRemoteAdapter(R.id.daily_widget_list, serviceIntent)
+                setRemoteAdapter(appWidgetId, R.id.daily_widget_list, serviceIntent)
                 setEmptyView(R.id.daily_widget_list, R.id.daily_widget_empty)
                 setOnClickPendingIntent(R.id.daily_widget_root, openApp)
                 setPendingIntentTemplate(R.id.daily_widget_list, openFromClass)
             }
             manager.updateAppWidget(appWidgetId, views)
-            manager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.daily_widget_list)
         }
+        manager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.daily_widget_list)
     }
 
     companion object {
@@ -115,7 +117,8 @@ private class DailyScheduleWidgetFactory(
     override fun getViewAt(position: Int): RemoteViews? {
         val item = items.getOrNull(position) ?: return null
         return RemoteViews(context.packageName, R.layout.widget_daily_schedule_item).apply {
-            val baseColor = try { Color.parseColor(item.colorHex) } catch (_: Exception) { Color.WHITE }
+            val baseColor = try {
+                item.colorHex.toColorInt() } catch (_: Exception) { Color.WHITE }
             
             // Aplicar color de fondo estilo pill (transparencia)
             val pillColor = Color.argb(

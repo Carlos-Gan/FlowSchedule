@@ -50,7 +50,6 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.DayOfWeek
 import java.time.temporal.TemporalAdjusters
-import java.util.Locale
 
 class ScheduleViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = ScheduleRepository(application, AppDatabase.getDatabase(application))
@@ -74,12 +73,12 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     private val _appSettings = MutableStateFlow(settingsStore.load())
     val appSettings = _appSettings.asStateFlow()
 
-    private val CURRENT_VERSION_CODE = 6
-    private val _showWhatsNew = MutableStateFlow(settingsStore.getLastSeenVersionCode() < CURRENT_VERSION_CODE)
+    private val currentVERSIONCODE = 6
+    private val _showWhatsNew = MutableStateFlow(settingsStore.getLastSeenVersionCode() < currentVERSIONCODE)
     val showWhatsNew = _showWhatsNew.asStateFlow()
 
     fun dismissWhatsNew() {
-        settingsStore.setLastSeenVersionCode(CURRENT_VERSION_CODE)
+        settingsStore.setLastSeenVersionCode(currentVERSIONCODE)
         _showWhatsNew.value = false
     }
 
@@ -184,7 +183,7 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
                 repository.allClassExceptions,
                 repository.allAcademicPeriods,
                 _appSettings
-            ) { _, _, _, _, _ -> Unit }
+            ) { _, _, _, _, _ -> }
                 .collectLatest {
                     ReminderRescheduler.reschedule(application)
                     ScheduleWidgetProvider.requestUpdate(application)
@@ -199,22 +198,6 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     fun setSelectedDayOfWeek(day: Int) { if (day in 1..7) _selectedDayOfWeek.value = day }
     fun showPreviousWeek() { _selectedWeekStart.value = _selectedWeekStart.value.minusWeeks(1) }
     fun showNextWeek() { _selectedWeekStart.value = _selectedWeekStart.value.plusWeeks(1) }
-    fun showPreviousDay() {
-        if (_selectedDayOfWeek.value == 1) {
-            _selectedWeekStart.value = _selectedWeekStart.value.minusWeeks(1)
-            _selectedDayOfWeek.value = 7
-        } else {
-            _selectedDayOfWeek.value -= 1
-        }
-    }
-    fun showNextDay() {
-        if (_selectedDayOfWeek.value == 7) {
-            _selectedWeekStart.value = _selectedWeekStart.value.plusWeeks(1)
-            _selectedDayOfWeek.value = 1
-        } else {
-            _selectedDayOfWeek.value += 1
-        }
-    }
     fun showCurrentWeek() {
         _selectedWeekStart.value = startOfWeek(LocalDate.now())
         _selectedDayOfWeek.value = getCurrentDayOfWeekNumber()
@@ -352,15 +335,6 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun deleteEvent(eventId: Long) {
-        viewModelScope.launch {
-            runOperation {
-                check(repository.deleteEvent(eventId)) { getApplication<Application>().getString(R.string.error_evento_no_existe) }
-                _userMessage.value = getApplication<Application>().getString(R.string.msg_actividad_papelera)
-            }
-        }
-    }
-
     fun restoreDeletedSubject(subjectId: Long) {
         viewModelScope.launch {
             runOperation {
@@ -409,42 +383,10 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun deleteAcademicPeriod(periodId: Long) {
-        viewModelScope.launch {
-            runOperation {
-                check(repository.deleteAcademicPeriod(periodId)) {
-                    getApplication<Application>().getString(R.string.error_periodo_no_existe)
-                }
-            }
-        }
-    }
-
-    fun copySubjectsBetweenPeriods(sourcePeriodId: Long, targetPeriodId: Long) {
-        viewModelScope.launch {
-            runOperation {
-                val copied = repository.copySubjectsBetweenPeriods(sourcePeriodId, targetPeriodId)
-                _userMessage.value = when (copied) {
-                    0 -> getApplication<Application>().getString(R.string.msg_no_materias_nuevas_copiar)
-                    1 -> getApplication<Application>().getString(R.string.msg_copio_1_materia)
-                    else -> getApplication<Application>().getString(R.string.msg_copiaron_n_materias, copied)
-                }
-            }
-        }
-    }
-
     fun toggleEventCompleted(eventId: Long, completed: Boolean) {
         viewModelScope.launch {
             runOperation {
                 check(repository.setEventCompleted(eventId, completed)) { getApplication<Application>().getString(R.string.error_evento_no_existe) }
-            }
-        }
-    }
-
-    fun postponeEventOneDay(eventId: Long) {
-        viewModelScope.launch {
-            runOperation {
-                check(repository.postponeEventByDays(eventId, 1)) { getApplication<Application>().getString(R.string.error_evento_no_existe) }
-                _userMessage.value = getApplication<Application>().getString(R.string.msg_actividad_pospuesta_mañana)
             }
         }
     }
@@ -489,16 +431,6 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
 
     fun deleteGradeItem(item: GradeItemEntity) {
         viewModelScope.launch { runOperation { repository.deleteGradeItem(item) } }
-    }
-
-    fun clearAllData() {
-        viewModelScope.launch {
-            runOperation {
-                createAutomaticBackup("clear")
-                repository.clearAll()
-                _userMessage.value = getApplication<Application>().getString(R.string.msg_datos_borrados_respaldo)
-            }
-        }
     }
 
     fun exportScheduleBackup(uri: Uri) {
@@ -588,8 +520,7 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     companion object {
         fun getCurrentDayOfWeekNumber(): Int = DateTimeUtils.currentDayOfWeek()
         fun getTodayDateString(): String = DateTimeUtils.todayString()
-        
-        fun getFormattedTodayHeading(): String = DateTimeUtils.formatDate(getTodayDateString(), true)
+
         fun getGreetingText(application: Application, name: String): String {
             val greetingRes = when (LocalTime.now().hour) {
                 in 6..11 -> R.string.greeting_morning

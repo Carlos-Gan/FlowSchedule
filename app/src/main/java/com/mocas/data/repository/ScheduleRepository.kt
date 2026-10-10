@@ -22,7 +22,6 @@ import com.mocas.data.local.GradeUnitEntity
 import com.mocas.data.local.GradeUnitCategoryWeightEntity
 import com.mocas.util.DateTimeUtils
 import kotlinx.coroutines.flow.Flow
-import java.time.temporal.ChronoUnit
 import java.util.Locale
 
 class ScheduleRepository(private val context: Context, private val database: AppDatabase) {
@@ -132,9 +131,6 @@ class ScheduleRepository(private val context: Context, private val database: App
         }
     }
 
-    suspend fun deleteAcademicPeriod(periodId: Long): Boolean =
-        periodDao.deletePeriod(periodId) > 0
-
     suspend fun copySubjectsBetweenPeriods(sourcePeriodId: Long, targetPeriodId: Long): Int =
         database.withTransaction {
             require(sourcePeriodId != targetPeriodId) { context.getString(R.string.error_unidades_diferentes) }
@@ -188,12 +184,6 @@ class ScheduleRepository(private val context: Context, private val database: App
             }
             copied
         }
-
-    suspend fun getSubjectWithSlots(subjectId: Long): SubjectWithSlots? =
-        subjectDao.getSubjectWithSlotsById(subjectId)
-
-    fun observeSubjectWithSlots(subjectId: Long): Flow<SubjectWithSlots?> =
-        subjectDao.observeSubjectWithSlotsById(subjectId)
 
     suspend fun insertSubjectWithSlots(
         subject: SubjectEntity,
@@ -333,9 +323,6 @@ class ScheduleRepository(private val context: Context, private val database: App
     }
 
 
-    suspend fun deleteEvent(eventId: Long): Boolean =
-        eventDao.setEventDeleted(eventId, true, System.currentTimeMillis()) > 0
-
     suspend fun restoreEvent(eventId: Long): Boolean =
         eventDao.setEventDeleted(eventId, false, null) > 0
 
@@ -393,22 +380,6 @@ class ScheduleRepository(private val context: Context, private val database: App
         val changed = eventDao.setEventCompleted(eventId, completed, now, completedAt) > 0
         if (changed) subtaskDao.setAllCompletedForEvent(eventId, completed, now)
         changed
-    }
-
-    suspend fun postponeEventByDays(eventId: Long, days: Long = 1): Boolean = database.withTransaction {
-        require(days > 0) { context.getString(R.string.error_posponer_futuro) }
-        val event = requireNotNull(eventDao.getEventById(eventId)) { context.getString(R.string.error_evento_no_existe) }
-        val start = requireDate(event.startDate, context.getString(R.string.fecha_inicio_label))
-        val end = requireDate(event.endDate, context.getString(R.string.fecha_fin_label))
-        val durationDays = ChronoUnit.DAYS.between(start, end)
-        val newStart = start.plusDays(days)
-        val newEnd = newStart.plusDays(durationDays)
-        eventDao.updateEventDates(
-            eventId = eventId,
-            startDate = newStart.toString(),
-            endDate = newEnd.toString(),
-            updatedAtMillis = System.currentTimeMillis()
-        ) > 0
     }
 
     suspend fun setSubtaskCompleted(eventId: Long, subtaskId: Long, completed: Boolean): Boolean =
@@ -783,13 +754,6 @@ class ScheduleRepository(private val context: Context, private val database: App
 
     private fun buildSubjectKey(name: String, professor: String): String =
         "${normalize(name)}|${normalize(professor)}"
-
-    private fun buildPeriodSubjectKey(
-        name: String,
-        professor: String,
-        semesterStart: String,
-        semesterEnd: String
-    ): String = "${buildSubjectKey(name, professor)}|$semesterStart|$semesterEnd"
 
     private fun normalize(value: String): String = value
         .trim()

@@ -2,9 +2,7 @@ package com.mocas.util
 
 import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.LocalTime
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import java.time.temporal.ChronoUnit
@@ -72,15 +70,6 @@ object DateTimeUtils {
         return parseDate(semesterStart)?.with(
             TemporalAdjusters.nextOrSame(DayOfWeek.of(dayOfWeek))
         )
-    }
-
-    fun toMillis(date: String, time: String, zoneId: ZoneId = ZoneId.systemDefault()): Long? {
-        val parsedDate = parseDate(date) ?: return null
-        val parsedTime = parseTime(time) ?: return null
-        return LocalDateTime.of(parsedDate, parsedTime)
-            .atZone(zoneId)
-            .toInstant()
-            .toEpochMilli()
     }
 
     fun daysRemaining(date: String): Long? =

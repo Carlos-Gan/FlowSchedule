@@ -22,7 +22,7 @@ object StreakCalculator {
             try {
                 val endDate = LocalDate.parse(event.endDate)
                 endDate.isBefore(today)
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 false
             }
         }
