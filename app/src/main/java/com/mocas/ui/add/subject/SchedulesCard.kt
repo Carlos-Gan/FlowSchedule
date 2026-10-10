@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.mocas.R
 import com.mocas.ui.add.event.SlotDraft
 import com.mocas.util.DateTimeUtils
@@ -48,18 +49,17 @@ fun SchedulesCard(
     onRemoveSlot: (Int) -> Unit,
     onUpdateSlot: (Int, SlotDraft) -> Unit
 ) {
-    BaseCard(stringResource(R.string.horarios_clase_titulo)) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
-        ) {
+    BaseCard(
+        title = stringResource(R.string.horarios_clase_titulo),
+        subtitle = stringResource(R.string.sub_horario_clases),
+        action = {
             TextButton(onClick = onAddSlot) {
-                Icon(Icons.Default.Add, contentDescription = null)
+                Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
                 Spacer(modifier = Modifier.width(4.dp))
-                Text(stringResource(R.string.añadir_sesion_boton))
+                Text(stringResource(R.string.agregar_sesion_btn), fontWeight = FontWeight.Bold)
             }
         }
-
+    ) {
         slotsList.forEachIndexed { index, slotDraft ->
             val conflicts = slotConflicts[index].orEmpty()
             val hasConflict = conflicts.isNotEmpty()
@@ -68,9 +68,9 @@ fun SchedulesCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 4.dp),
-                shape = RoundedCornerShape(8.dp),
+                shape = RoundedCornerShape(16.dp),
                 border = BorderStroke(1.dp, if (hasConflict) MaterialTheme.colorScheme.error.copy(alpha = 0.5f) else MaterialTheme.colorScheme.outlineVariant),
-                colors = CardDefaults.cardColors(containerColor = if (hasConflict) MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.3f) else MaterialTheme.colorScheme.surfaceContainerLow)
+                colors = CardDefaults.cardColors(containerColor = if (hasConflict) MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.3f) else MaterialTheme.colorScheme.surface)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Row(
@@ -78,7 +78,11 @@ fun SchedulesCard(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(stringResource(R.string.sesion_n_formato, index + 1), fontWeight = FontWeight.Medium, style = MaterialTheme.typography.labelLarge)
+                        Text(
+                            text = stringResource(R.string.sesion_n_formato, index + 1).uppercase(),
+                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Black, letterSpacing = 1.sp),
+                            color = MaterialTheme.colorScheme.primary
+                        )
                         IconButton(onClick = { onRemoveSlot(index) }, modifier = Modifier.size(24.dp)) {
                             Icon(Icons.Default.Close, contentDescription = stringResource(R.string.eliminar), tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f))
                         }
@@ -89,7 +93,7 @@ fun SchedulesCard(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 8.dp)
-                                .background(MaterialTheme.colorScheme.errorContainer, RoundedCornerShape(6.dp))
+                                .background(MaterialTheme.colorScheme.errorContainer, RoundedCornerShape(8.dp))
                                 .padding(8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -122,7 +126,7 @@ fun SchedulesCard(
                             val isSelected = dayNum in slotDraft.selectedDays
                             Box(
                                 modifier = Modifier
-                                    .size(30.dp)
+                                    .size(32.dp)
                                     .background(
                                         color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
                                         shape = RoundedCornerShape(20.dp)
@@ -139,8 +143,8 @@ fun SchedulesCard(
                             ) {
                                 Text(
                                     text = initial,
-                                    color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                    color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
                                 )
                             }
                         }
@@ -150,14 +154,13 @@ fun SchedulesCard(
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         SessionTimeField(
                             label = stringResource(R.string.inicio_label), time = slotDraft.startTime,
                             onClick = { onTimeClick(index, true) }, modifier = Modifier.weight(1f)
                         )
-                        Text("-", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f))
                         SessionTimeField(
                             label = stringResource(R.string.fin_label), time = slotDraft.endTime,
                             onClick = { onTimeClick(index, false) }, modifier = Modifier.weight(1f),
@@ -170,12 +173,11 @@ fun SchedulesCard(
                     OutlinedTextField(
                         value = slotDraft.room,
                         onValueChange = { onUpdateSlot(index, slotDraft.copy(room = it)) },
-                        label = { Text(stringResource(R.string.salon)) },
-                        placeholder = { Text(defaultRoom.ifBlank { stringResource(R.string.sin_salon) }) },
+                        placeholder = { Text(defaultRoom.ifBlank { stringResource(R.string.sin_salon) }, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)) },
                         singleLine = true,
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier.fillMaxWidth(),
-                        leadingIcon = { Icon(Icons.Default.LocationOn, contentDescription = null, modifier = Modifier.size(18.dp)) }
+                        leadingIcon = { Icon(Icons.Default.LocationOn, contentDescription = null, tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f), modifier = Modifier.size(18.dp)) }
                     )
                 }
             }

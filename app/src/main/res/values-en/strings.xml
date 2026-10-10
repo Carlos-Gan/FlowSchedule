@@ -583,13 +583,54 @@
     <!-- What's New Dialog -->
     <string name="whats_new_title">What\'s new in this version!</string>
     <string name="whats_new_subtitle">Here is what we\'ve prepared to improve your experience:</string>
-    <string name="whats_new_item_1_title">🗑️ Recycle Bin for canceled classes</string>
-    <string name="whats_new_item_1_desc">Canceled classes are now sent to the Recycle Bin, allowing you to view the exact date and restore them at any time.</string>
+    <string name="whats_new_item_1_title">🌐 Portuguese &amp; Italian support</string>
+    <string name="whats_new_item_1_desc">Full translations added for Portuguese and Italian across the entire app.</string>
     <string name="whats_new_item_2_title">💾 Persistent filters</string>
     <string name="whats_new_item_2_desc">Your filter preferences by category and status (Pending/Completed) are now saved automatically when closing the app.</string>
-    <string name="whats_new_item_3_title">🌐 Adaptive date formatting</string>
-    <string name="whats_new_item_3_desc">Adaptive date formatting based on active language and translation fixes across dialogs and exports.</string>
-    <string name="whats_new_item_4_title">🎨 Recycle Bin improvements</string>
-    <string name="whats_new_item_4_desc">Optimized layout for deleted items with subject names and full dates visible without truncation.</string>
+    <string name="whats_new_item_3_title">⚡ R8 Optimization &amp; Performance</string>
+    <string name="whats_new_item_3_desc">Advanced DEX code optimization and size reduction (~5.5 MB) to meet Google Play standards.</string>
+    <string name="whats_new_item_4_title">🌐 Adaptive date formatting</string>
+    <string name="whats_new_item_4_desc">Adaptive date formatting based on active language and visual contrast fixes in dark mode.</string>
     <string name="whats_new_button">Got it!</string>
+
+    <!-- Add Event Dialog UI Strings -->
+    <string name="detalles_principales">MAIN DETAILS</string>
+    <string name="requerido">Required</string>
+    <string name="que_hacer_asterisco">What do you need to do? *</string>
+    <string name="ej_proyecto_final">Ex. Final Project Submission</string>
+    <string name="fecha_y_horario">DATE &amp; TIME</string>
+    <string name="contexto_y_notas">CONTEXT &amp; NOTES</string>
+    <string name="opcional">Optional</string>
+    <string name="lugar_o_aula">Location or classroom</string>
+    <string name="ej_edificio_b">Ex. Building B - Lab 3</string>
+    <string name="notas_adicionales">Additional notes</string>
+    <string name="escribe_instrucciones_placeholder">Write instructions, submission criteria or reminders…</string>
+    <string name="organizacion_y_prioridad">ORGANIZATION &amp; PRIORITY</string>
+    <string name="gemelo_de_materia">Subject Twin</string>
+    <string name="espacio_o_etiqueta">Space or tag</string>
+    <string name="prioridad_alta_titulo">High Priority</string>
+    <string name="destacar_lista_dia">Highlight in daily list</string>
+
+    <!-- Add Subject UI Strings -->
+    <string name="sub_detalles_generales">Course base information and academic period</string>
+    <string name="periodo_academico_mayus">ACADEMIC PERIOD</string>
+    <string name="selecciona_periodo_o_fechas">Select a saved one or define dates</string>
+    <string name="sub_personalizacion">Labels, color code and priority</string>
+    <string name="color_de_materia">Subject color</string>
+    <string name="organizacion_label_mayus">Organization</string>
+    <string name="sub_horario_clases">Days, time ranges and classrooms</string>
+    <string name="agregar_sesion_btn">+ Add session</string>
+
+    <!-- Events Screen UI Strings -->
+    <string name="inicio_ciclo_escolar">School cycle start</string>
+    <string name="meta_100">Goal: 100%</string>
+    <string name="ordenado_por_fecha">Sorted by date</string>
+    <string name="agendado_badge_formato">%1$d scheduled</string>
+    <string name="ver_calendario">View calendar</string>
+    <string name="ordenar_por_fecha">Sort by date</string>
+    <string name="periodo_academico_actual">Academic Period 2026-II</string>
+    <string name="vence_en_dias_formato">Due in %1$d days!</string>
+    <string name="hoy_exclamacion">Today!</string>
+
+    <string name="widget_mark_done">Mark as done</string>
 </resources>

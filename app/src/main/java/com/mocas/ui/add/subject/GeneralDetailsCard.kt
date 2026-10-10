@@ -17,12 +17,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -30,10 +32,8 @@ import androidx.compose.ui.unit.sp
 import com.mocas.R
 import com.mocas.data.local.AcademicPeriodEntity
 import com.mocas.ui.add.CustomInputField
-import com.mocas.ui.components.CalendarDateField
 import com.mocas.ui.add.event.buildPeriodName
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.ui.platform.LocalContext
+import com.mocas.ui.components.CalendarDateField
 import com.mocas.ui.util.capitalizeFirstLetter
 import com.mocas.util.DateTimeUtils
 import java.util.Locale
@@ -50,10 +50,12 @@ fun GeneralDetailsCard(
     onSavePeriod: (AcademicPeriodEntity) -> Unit
 ) {
     val context = LocalContext.current
-    BaseCard(stringResource(R.string.detalles_generales_titulo)) {
-
-        // --- RESTAURADO: Sección de Periodos Guardados ---
-        Column(modifier = Modifier.fillMaxWidth()) {
+    BaseCard(
+        title = stringResource(R.string.detalles_generales_titulo),
+        subtitle = stringResource(R.string.sub_detalles_generales)
+    ) {
+        // --- Sección de Periodo Académico ---
+        Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -61,14 +63,13 @@ fun GeneralDetailsCard(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = stringResource(R.string.periodo_academico_default),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant // on-surface-variant
+                        text = stringResource(R.string.periodo_academico_mayus),
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Black, letterSpacing = 1.sp),
+                        color = MaterialTheme.colorScheme.primary
                     )
                     Text(
-                        text = stringResource(R.string.selecciona_periodo_instruccion),
-                        fontSize = 11.sp,
+                        text = stringResource(R.string.selecciona_periodo_o_fechas),
+                        style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                     )
                 }
@@ -95,12 +96,11 @@ fun GeneralDetailsCard(
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
                     modifier = Modifier.height(32.dp)
                 ) {
-                    Text(stringResource(R.string.guardar_periodo_boton), fontSize = 11.sp)
+                    Text(stringResource(R.string.guardar_periodo_boton), fontSize = 11.sp, fontWeight = FontWeight.Medium)
                 }
             }
 
             if (academicPeriods.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(12.dp))
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(academicPeriods, key = { it.id }) { period ->
                         val selected = period.startDate == semesterStart && period.endDate == semesterEnd
@@ -110,7 +110,7 @@ fun GeneralDetailsCard(
                                 onEndChange(period.endDate)
                             },
                             shape = RoundedCornerShape(8.dp),
-                            color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerLow,
+                            color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
                             border = BorderStroke(
                                 1.dp,
                                 if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant
@@ -128,28 +128,42 @@ fun GeneralDetailsCard(
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
             // Fechas de inicio y fin
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                CalendarDateField(
-                    value = semesterStart, onDateSelected = onStartChange,
-                    label = stringResource(R.string.inicio_periodo_label), isError = !DateTimeUtils.isValidDate(semesterStart),
-                    modifier = Modifier.weight(1f)
-                )
-                CalendarDateField(
-                    value = semesterEnd, onDateSelected = onEndChange,
-                    label = stringResource(R.string.fin_periodo_label), isError = !DateTimeUtils.isValidDate(semesterEnd),
-                    modifier = Modifier.weight(1f)
-                )
+                Surface(
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(12.dp),
+                    color = MaterialTheme.colorScheme.surface,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                ) {
+                    CalendarDateField(
+                        value = semesterStart, onDateSelected = onStartChange,
+                        label = stringResource(R.string.inicio_periodo_label), isError = !DateTimeUtils.isValidDate(semesterStart),
+                        modifier = Modifier.padding(4.dp)
+                    )
+                }
+                Surface(
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(12.dp),
+                    color = MaterialTheme.colorScheme.surface,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                ) {
+                    CalendarDateField(
+                        value = semesterEnd, onDateSelected = onEndChange,
+                        label = stringResource(R.string.fin_periodo_label), isError = !DateTimeUtils.isValidDate(semesterEnd),
+                        modifier = Modifier.padding(4.dp)
+                    )
+                }
             }
         }
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        // --- CAMPOS DE TEXTO CON DISEÑO CORREGIDO (Etiqueta arriba, fondo gris) ---
+        // --- CAMPOS DE TEXTO ---
         CustomInputField(
-            label = stringResource(R.string.nombre_materia_label),
+            label = stringResource(R.string.nombre_materia_label) + " *",
             placeholder = stringResource(R.string.nombre_materia_placeholder),
             value = name,
             onValueChange = { onNameChange(capitalizeFirstLetter(it)) }

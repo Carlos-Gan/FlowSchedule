@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:maxLines="1"
             android:textColor="#FFFFFF"
-            android:textSize="11sp"
+            android:textSize="12sp"
             android:textStyle="bold" />
 
         <LinearLayout
@@ -54,7 +54,7 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:textColor="#DAD5FF"
-                android:textSize="10sp" />
+                android:textSize="11sp" />
         </LinearLayout>
 
         <TextView
@@ -63,7 +63,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:maxLines="1"
-            android:textSize="10sp"
+            android:textSize="11sp"
             android:textStyle="bold" />
 
         <TextView
@@ -76,7 +76,7 @@
             android:paddingVertical="2dp"
             android:text="@string/ahora"
             android:textColor="#FFFFFF"
-            android:textSize="8sp"
+            android:textSize="11sp"
             android:textStyle="bold" />
     </LinearLayout>
 </FrameLayout>

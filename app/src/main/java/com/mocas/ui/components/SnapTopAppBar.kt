@@ -398,7 +398,7 @@ fun SnapTopAppBar(
                             modifier = Modifier
                                 .size(44.dp)
                                 .testTag("top_bar_add_button"),
-                            shape = RoundedCornerShape(14.dp),
+                            shape = RoundedCornerShape(24.dp),
                             colors = IconButtonDefaults.filledIconButtonColors(
                                 containerColor = MaterialTheme.colorScheme.primary,
                                 contentColor = MaterialTheme.colorScheme.onPrimary

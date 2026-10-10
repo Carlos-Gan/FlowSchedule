@@ -581,13 +581,53 @@
     <!-- What's New Dialog -->
     <string name="whats_new_title">¡Novedades en esta versión!</string>
     <string name="whats_new_subtitle">Esto es lo nuevo que hemos preparado para mejorar tu experiencia:</string>
-    <string name="whats_new_item_1_title">🗑️ Papelera para clases canceladas</string>
-    <string name="whats_new_item_1_desc">Las clases canceladas ahora se envían a la Papelera de Reciclaje, permitiéndote ver la fecha exacta y restaurarlas en cualquier momento.</string>
+    <string name="whats_new_item_1_title">🌐 Soporte para Portugués e Italiano</string>
+    <string name="whats_new_item_1_desc">Traducciones completas añadidas para Portugués e Italiano en toda la aplicación.</string>
     <string name="whats_new_item_2_title">💾 Persistencia de filtros</string>
-    <string name="whats_new_item_2_desc">Tus preferencias de filtro por categoría y estado (Pendientes/Completadas) ahora se guardan automáticamente al cerrar la aplicación.</string>
-    <string name="whats_new_item_3_title">🌐 Formato de fechas e idioma</string>
-    <string name="whats_new_item_3_desc">Formato de fechas adaptativo según el idioma activo y correcciones de traducción en diálogos y exportaciones.</string>
-    <string name="whats_new_item_4_title">🎨 Mejoras en la Papelera</string>
-    <string name="whats_new_item_4_desc">Diseño optimizado de elementos eliminados con nombres de materias y fechas visibles sin truncar.</string>
+    <string name="whats_new_item_2_desc">Tus preferencias de filtro por categoría y estado (Pendientes/Completadas) ahora se guardan automáticamente al cerrar la app.</string>
+    <string name="whats_new_item_3_title">⚡ Optimización y Rendimiento R8</string>
+    <string name="whats_new_item_3_desc">Optimización avanzada de código DEX y reducción de tamaño (~5.5 MB) para cumplir con los estándares de Google Play.</string>
+    <string name="whats_new_item_4_title">🌐 Formato de fechas adaptativo</string>
+    <string name="whats_new_item_4_desc">Formato de fechas adaptativo según el idioma activo y correcciones de contraste visual en modo oscuro.</string>
     <string name="whats_new_button">¡Entendido!</string>
+
+    <!-- Add Event Dialog UI Strings -->
+    <string name="detalles_principales">DETALLES PRINCIPALES</string>
+    <string name="requerido">Requerido</string>
+    <string name="que_hacer_asterisco">¿Qué tienes que hacer? *</string>
+    <string name="ej_proyecto_final">Ej. Entrega de Proyecto Final</string>
+    <string name="fecha_y_horario">FECHA Y HORARIO</string>
+    <string name="contexto_y_notas">CONTEXTO Y NOTAS</string>
+    <string name="opcional">Opcional</string>
+    <string name="lugar_o_aula">Lugar o aula</string>
+    <string name="ej_edificio_b">Ej. Edificio B - Laboratorio 3</string>
+    <string name="notas_adicionales">Notas adicionales</string>
+    <string name="escribe_instrucciones_placeholder">Escribe instrucciones, criterios de entrega o recordatorios...</string>
+    <string name="organizacion_y_prioridad">ORGANIZACIÓN Y PRIORIDAD</string>
+    <string name="gemelo_de_materia">Gemelo de Materia</string>
+    <string name="espacio_o_etiqueta">Espacio o etiqueta</string>
+    <string name="prioridad_alta_titulo">Prioridad Alta</string>
+    <string name="destacar_lista_dia">Destacar en la lista del día</string>
+
+    <!-- Add Subject UI Strings -->
+    <string name="sub_detalles_generales">Información base del curso y periodo escolar</string>
+    <string name="periodo_academico_mayus">PERIODO ACADÉMICO</string>
+    <string name="selecciona_periodo_o_fechas">Selecciona uno guardado o define las fechas</string>
+    <string name="sub_personalizacion">Etiquetas, código de color y prioridad</string>
+    <string name="color_de_materia">Color de la materia</string>
+    <string name="organizacion_label_mayus">Organización</string>
+    <string name="sub_horario_clases">Días, rangos horarios y aulas</string>
+    <string name="agregar_sesion_btn">+ Agregar sesión</string>
+
+    <!-- Events Screen UI Strings -->
+    <string name="inicio_ciclo_escolar">Inicio ciclo escolar</string>
+    <string name="meta_100">Meta: 100%</string>
+    <string name="ordenado_por_fecha">Ordenado por fecha</string>
+    <string name="agendado_badge_formato">%1$d agendado</string>
+    <string name="ver_calendario">Ver calendario</string>
+    <string name="ordenar_por_fecha">Ordenar por fecha</string>
+    <string name="periodo_academico_actual">Periodo Académico 2026-II</string>
+    <string name="vence_en_dias_formato">¡Vence en %1$d días!</string>
+    <string name="hoy_exclamacion">¡Hoy!</string>
+    <string name="widget_mark_done">Marcar como completado</string>
 </resources>

@@ -22,7 +22,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mocas.ui.screens.MainAppScreen
 import com.mocas.ui.screens.OnboardingScreen
 import com.mocas.ui.theme.FlowScheduleTheme
+import com.mocas.ui.model.BottomNavTab
 import com.mocas.ui.viewmodel.ScheduleViewModel
+import android.content.Intent
 
 class MainActivity : ComponentActivity() {
 
@@ -35,6 +37,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
+        handleIntent(intent)
 
         setContent {
             val settings by
@@ -97,6 +100,19 @@ class MainActivity : ComponentActivity() {
                     )
                 }
             }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleIntent(intent)
+    }
+
+    private fun handleIntent(intent: Intent?) {
+        when (intent?.action) {
+            "ACTION_OPEN_EVENTS" -> viewModel.setTab(BottomNavTab.EVENTOS)
+            "ACTION_OPEN_SCHEDULE" -> viewModel.setTab(BottomNavTab.HORARIO)
         }
     }
 }

@@ -70,6 +70,14 @@ class ScheduleWidgetProvider : AppWidgetProvider() {
                 Intent(context, MainActivity::class.java),
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
+            val openEvents = PendingIntent.getActivity(
+                context,
+                1,
+                Intent(context, MainActivity::class.java).apply {
+                    action = "ACTION_OPEN_EVENTS"
+                },
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
             return RemoteViews(context.packageName, R.layout.widget_schedule).apply {
                 setTextViewText(R.id.widget_class_name, snapshot.className)
                 setTextViewText(R.id.widget_class_details, snapshot.classDetails)
@@ -80,6 +88,7 @@ class ScheduleWidgetProvider : AppWidgetProvider() {
                     else context.getString(R.string.widget_pending_plural, snapshot.pendingCount)
                 )
                 setOnClickPendingIntent(R.id.widget_root, openApp)
+                setOnClickPendingIntent(R.id.widget_pending, openEvents)
             }
         }
     }

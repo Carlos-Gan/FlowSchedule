@@ -43,16 +43,20 @@ class DailyScheduleWidgetProvider : AppWidgetProvider() {
                 putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
                 data = Uri.parse(toUri(Intent.URI_INTENT_SCHEME))
             }
-            val openApp = PendingIntent.getActivity(
+            val openSchedule = PendingIntent.getActivity(
                 context,
                 appWidgetId,
-                Intent(context, MainActivity::class.java),
+                Intent(context, MainActivity::class.java).apply {
+                    action = "ACTION_OPEN_SCHEDULE"
+                },
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
             val openFromClass = PendingIntent.getActivity(
                 context,
                 appWidgetId + 100_000,
-                Intent(context, MainActivity::class.java),
+                Intent(context, MainActivity::class.java).apply {
+                    action = "ACTION_OPEN_SCHEDULE"
+                },
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
             )
             val locale = context.resources.configuration.locales[0]
@@ -63,7 +67,7 @@ class DailyScheduleWidgetProvider : AppWidgetProvider() {
                 setTextViewText(R.id.daily_widget_date, dateLabel)
                 setRemoteAdapter(appWidgetId, R.id.daily_widget_list, serviceIntent)
                 setEmptyView(R.id.daily_widget_list, R.id.daily_widget_empty)
-                setOnClickPendingIntent(R.id.daily_widget_root, openApp)
+                setOnClickPendingIntent(R.id.daily_widget_root, openSchedule)
                 setPendingIntentTemplate(R.id.daily_widget_list, openFromClass)
             }
             manager.updateAppWidget(appWidgetId, views)

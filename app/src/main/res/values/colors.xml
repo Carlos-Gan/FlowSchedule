@@ -5,4 +5,8 @@
     <color name="widget_date">#454652</color>
     <color name="widget_item_bg_tint">#1A000000</color>
     <color name="widget_empty_text">#454652</color>
+    <!-- nuevos -->
+    <color name="widget_check_stroke">#4F46E5</color>
+    <color name="widget_check_done">#00897B</color>
+    <color name="widget_subject_default">#4F46E5</color>
 </resources>
