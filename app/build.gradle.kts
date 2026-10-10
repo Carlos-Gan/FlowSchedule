@@ -14,7 +14,7 @@ android {
     minSdk = 26
     targetSdk = 37
     versionCode = 8
-    versionName = "1.7.4"
+    versionName = "1.8.0"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
@@ -107,4 +107,5 @@ dependencies {
   "ksp"(libs.androidx.room.compiler)
 
   implementation(libs.material3)
+  implementation(libs.work.runtime.ktx)
 }

@@ -21,6 +21,7 @@ import com.mocas.data.local.GradeItemEntity
 import com.mocas.data.local.GradeUnitEntity
 import com.mocas.data.local.GradeUnitCategoryWeightEntity
 import com.mocas.util.DateTimeUtils
+import com.mocas.data.repository.CalendarSyncScheduler
 import kotlinx.coroutines.flow.Flow
 import java.util.Locale
 
@@ -43,6 +44,10 @@ class ScheduleRepository(private val context: Context, private val database: App
     val gradeItems: Flow<List<GradeItemEntity>> = gradeDao.observeItems()
     val gradeUnits: Flow<List<GradeUnitEntity>> = gradeDao.observeUnits()
     val gradeUnitCategoryWeights: Flow<List<GradeUnitCategoryWeightEntity>> = gradeDao.observeUnitCategoryWeights()
+
+    suspend fun getAllSubjectsWithSlotsOnce(): List<SubjectWithSlots> = subjectDao.getAllSubjectsWithSlotsOnce()
+    suspend fun getAllSchoolEventsOnce(): List<SchoolEventEntity> = eventDao.getAllEventsWithSubjectOnce().map { it.event }
+    suspend fun getAllClassExceptionsOnce(): List<ClassExceptionEntity> = exceptionDao.getAllOnce()
 
     suspend fun addGradeUnit(item: GradeUnitEntity): Long {
         require(item.name.isNotBlank()) { context.getString(R.string.error_nombre_unidad_obligatorio) }
@@ -237,14 +242,20 @@ class ScheduleRepository(private val context: Context, private val database: App
         }
     }
 
-    suspend fun deleteSubject(subjectId: Long): Boolean =
-        subjectDao.setSubjectDeleted(subjectId, true, System.currentTimeMillis()) > 0
+    suspend fun deleteSubject(subjectId: Long): Boolean {
+        val deleted = subjectDao.setSubjectDeleted(subjectId, true, System.currentTimeMillis()) > 0
+        if (deleted) CalendarSyncScheduler.triggerImmediateSync(context)
+        return deleted
+    }
 
     suspend fun restoreSubject(subjectId: Long): Boolean =
         subjectDao.setSubjectDeleted(subjectId, false, null) > 0
 
-    suspend fun permanentlyDeleteSubject(subjectId: Long): Boolean =
-        subjectDao.deleteSubjectById(subjectId) > 0
+    suspend fun permanentlyDeleteSubject(subjectId: Long): Boolean {
+        val deleted = subjectDao.deleteSubjectById(subjectId) > 0
+        if (deleted) CalendarSyncScheduler.triggerImmediateSync(context)
+        return deleted
+    }
 
     suspend fun insertEvent(
         event: SchoolEventEntity,
@@ -263,6 +274,7 @@ class ScheduleRepository(private val context: Context, private val database: App
             if (index == 0) firstId = eventId
             insertSubtasksForEvent(eventId, subtasks)
         }
+        CalendarSyncScheduler.triggerImmediateSync(context)
         firstId
     }
 
@@ -288,7 +300,7 @@ class ScheduleRepository(private val context: Context, private val database: App
 
         val turnsIntoSeries = previous.recurrenceType == com.mocas.data.local.RecurrenceType.NONE &&
             event.recurrenceType != com.mocas.data.local.RecurrenceType.NONE
-        if (turnsIntoSeries) {
+        val updated = if (turnsIntoSeries) {
             val occurrences = EventRecurrenceGenerator.generate(eventToSave.copy(id = 0))
             val first = occurrences.first().copy(
                 id = event.id,
@@ -304,13 +316,15 @@ class ScheduleRepository(private val context: Context, private val database: App
             }
             true
         } else {
-            val updated = eventDao.updateEvent(eventToSave) > 0
-            if (updated) {
+            val res = eventDao.updateEvent(eventToSave) > 0
+            if (res) {
                 subtaskDao.deleteForEvent(event.id)
                 insertSubtasksForEvent(event.id, subtasks)
             }
-            updated
+            res
         }
+        if (updated) CalendarSyncScheduler.triggerImmediateSync(context)
+        updated
     }
 
     private suspend fun insertSubtasksForEvent(eventId: Long, items: List<SubtaskEntity>) {
@@ -326,13 +340,17 @@ class ScheduleRepository(private val context: Context, private val database: App
     suspend fun restoreEvent(eventId: Long): Boolean =
         eventDao.setEventDeleted(eventId, false, null) > 0
 
-    suspend fun permanentlyDeleteEvent(eventId: Long): Boolean =
-        eventDao.deleteEventById(eventId) > 0
+    suspend fun permanentlyDeleteEvent(eventId: Long): Boolean {
+        val deleted = eventDao.deleteEventById(eventId) > 0
+        if (deleted) CalendarSyncScheduler.triggerImmediateSync(context)
+        return deleted
+    }
 
     suspend fun emptyTrash() = database.withTransaction {
         eventDao.getDeletedEventsSnapshot().forEach { eventDao.deleteEventById(it.id) }
         subjectDao.getDeletedSubjectsSnapshot().forEach { subjectDao.deleteSubjectById(it.id) }
         exceptionDao.getAllOnce().filter { it.type == ClassExceptionType.CANCELED }.forEach { exceptionDao.delete(it.id) }
+        CalendarSyncScheduler.triggerImmediateSync(context)
     }
 
     suspend fun purgeExpiredTrash(retentionDays: Long = 30) {
@@ -365,20 +383,29 @@ class ScheduleRepository(private val context: Context, private val database: App
             item.copy(date = date.toString(), updatedAtMillis = System.currentTimeMillis())
         }
         val existing = exceptionDao.getForOccurrence(item.slotId, date.toString())
-        if (existing == null) exceptionDao.insert(normalized.copy(id = 0))
+        val id = if (existing == null) exceptionDao.insert(normalized.copy(id = 0))
         else {
             check(exceptionDao.update(normalized.copy(id = existing.id, createdAtMillis = existing.createdAtMillis)) > 0)
             existing.id
         }
+        CalendarSyncScheduler.triggerImmediateSync(context)
+        id
     }
 
-    suspend fun deleteClassException(id: Long): Boolean = exceptionDao.delete(id) > 0
+    suspend fun deleteClassException(id: Long): Boolean {
+        val deleted = exceptionDao.delete(id) > 0
+        if (deleted) CalendarSyncScheduler.triggerImmediateSync(context)
+        return deleted
+    }
 
     suspend fun setEventCompleted(eventId: Long, completed: Boolean): Boolean = database.withTransaction {
         val now = System.currentTimeMillis()
         val completedAt = if (completed) now else null
         val changed = eventDao.setEventCompleted(eventId, completed, now, completedAt) > 0
-        if (changed) subtaskDao.setAllCompletedForEvent(eventId, completed, now)
+        if (changed) {
+            subtaskDao.setAllCompletedForEvent(eventId, completed, now)
+            CalendarSyncScheduler.triggerImmediateSync(context)
+        }
         changed
     }
 

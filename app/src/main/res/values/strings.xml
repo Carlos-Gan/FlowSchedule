@@ -581,14 +581,16 @@
     <!-- What's New Dialog -->
     <string name="whats_new_title">¡Novedades en esta versión!</string>
     <string name="whats_new_subtitle">Esto es lo nuevo que hemos preparado para mejorar tu experiencia:</string>
-    <string name="whats_new_item_1_title">🌐 Soporte para Portugués e Italiano</string>
-    <string name="whats_new_item_1_desc">Traducciones completas añadidas para Portugués e Italiano en toda la aplicación.</string>
-    <string name="whats_new_item_2_title">💾 Persistencia de filtros</string>
-    <string name="whats_new_item_2_desc">Tus preferencias de filtro por categoría y estado (Pendientes/Completadas) ahora se guardan automáticamente al cerrar la app.</string>
+    <string name="whats_new_item_1_title">🗓️ Sincronización Automática con Calendario</string>
+    <string name="whats_new_item_1_desc">Sincroniza tus clases, tareas y exámenes en segundo plano con Google Calendar / Outlook de forma automática.</string>
+    <string name="whats_new_item_2_title">⚡ Actualizaciones Instantáneas</string>
+    <string name="whats_new_item_2_desc">Al agregar, editar o eliminar tareas o clases, tu calendario externo se actualiza de inmediato.</string>
     <string name="whats_new_item_3_title">⚡ Optimización y Rendimiento R8</string>
     <string name="whats_new_item_3_desc">Optimización avanzada de código DEX y reducción de tamaño (~5.5 MB) para cumplir con los estándares de Google Play.</string>
     <string name="whats_new_item_4_title">🌐 Formato de fechas adaptativo</string>
     <string name="whats_new_item_4_desc">Formato de fechas adaptativo según el idioma activo y correcciones de contraste visual en modo oscuro.</string>
+    <string name="whats_new_item_5_title">📌 Widget de tareas pendientes</string>
+    <string name="whats_new_item_5_desc">Completa tus tareas directamente desde el widget en la pantalla de inicio sin necesidad de abrir la aplicación.</string>
     <string name="whats_new_button">¡Entendido!</string>
 
     <!-- Add Event Dialog UI Strings -->
@@ -630,4 +632,13 @@
     <string name="vence_en_dias_formato">¡Vence en %1$d días!</string>
     <string name="hoy_exclamacion">¡Hoy!</string>
     <string name="widget_mark_done">Marcar como completado</string>
+    <string name="calendar_sync_success_count">Sincronización exitosa: %1$d eventos actualizados en el calendario.</string>
+    <string name="calendar_sync_error">Error en sincronización de calendario: %1$s</string>
+    <string name="calendar_sync_title">Sincronización con Calendario</string>
+    <string name="calendar_sync_subtitle">Sincroniza tus clases y eventos con Google Calendar / Outlook</string>
+    <string name="sync_now_btn">Sincronizar ahora</string>
+    <string name="calendar_permissions_required">Se requieren permisos de calendario para la sincronización.</string>
+    <string name="calendar_sync_auto_title">Sincronización automática</string>
+    <string name="calendar_sync_auto_desc">Mantener tu calendario externo actualizado automáticamente al cambiar tu horario o tareas</string>
+    <string name="calendar_sync_now_desc">Forzar la actualización de todas tus materias y tareas en el calendario del dispositivo</string>
 </resources>

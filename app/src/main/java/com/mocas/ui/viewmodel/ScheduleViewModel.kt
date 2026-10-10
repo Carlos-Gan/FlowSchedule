@@ -27,6 +27,8 @@ import com.mocas.data.widget.ScheduleWidgetProvider
 import com.mocas.data.widget.DailyScheduleWidgetProvider
 import com.mocas.data.widget.AcademicPeriodWidgetProvider
 import com.mocas.data.repository.ScheduleRepository
+import com.mocas.data.repository.CalendarSyncManager
+import com.mocas.data.repository.ExternalCalendarEvent
 import com.mocas.ui.model.AppSettings
 import com.mocas.ui.model.ClassOccurrenceInfo
 import com.mocas.ui.model.BottomNavTab
@@ -73,7 +75,7 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     private val _appSettings = MutableStateFlow(settingsStore.load())
     val appSettings = _appSettings.asStateFlow()
 
-    private val currentVERSIONCODE = 6
+    private val currentVERSIONCODE = 8
     private val _showWhatsNew = MutableStateFlow(settingsStore.getLastSeenVersionCode() < currentVERSIONCODE)
     val showWhatsNew = _showWhatsNew.asStateFlow()
 
@@ -109,6 +111,42 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
 
     private val _userMessage = MutableStateFlow<String?>(null)
     val userMessage = _userMessage.asStateFlow()
+
+    private val _syncMessage = MutableStateFlow<String?>(null)
+    val syncMessage = _syncMessage.asStateFlow()
+
+    private val _externalCalendarEvents = MutableStateFlow<List<ExternalCalendarEvent>>(emptyList())
+    val externalCalendarEvents = _externalCalendarEvents.asStateFlow()
+
+    fun syncWithDeviceCalendar() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val context = getApplication<Application>()
+            val subjects = repository.getAllSubjectsWithSlotsOnce()
+            val events = repository.getAllSchoolEventsOnce()
+            val exceptions = repository.getAllClassExceptionsOnce()
+            val result = CalendarSyncManager.syncLocalScheduleToCalendar(context, subjects, events, exceptions)
+            result.fold(
+                onSuccess = { count ->
+                    _syncMessage.value = context.getString(R.string.calendar_sync_success_count, count)
+                },
+                onFailure = { err ->
+                    _syncMessage.value = context.getString(R.string.calendar_sync_error, err.localizedMessage ?: "")
+                }
+            )
+        }
+    }
+
+    fun loadExternalCalendarEvents(startMillis: Long, endMillis: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val context = getApplication<Application>()
+            val events = CalendarSyncManager.fetchExternalCalendarEvents(context, startMillis, endMillis)
+            _externalCalendarEvents.value = events
+        }
+    }
+
+    fun clearSyncMessage() {
+        _syncMessage.value = null
+    }
 
     val subjectsWithSlots: StateFlow<List<SubjectWithSlots>> = repository.allSubjectsWithSlots
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())

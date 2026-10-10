@@ -68,6 +68,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.material.icons.outlined.CalendarMonth
+import com.mocas.data.repository.CalendarSyncManager
+import com.mocas.data.repository.CalendarSyncScheduler
+import androidx.work.WorkManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -387,6 +392,101 @@ fun SettingsScreen(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,
                         maxLines = 2
+                    )
+                }
+            }
+        }
+
+        // --- CALENDAR SYNC SECTION ---
+        SettingsSectionHeader(
+            title = stringResource(R.string.calendar_sync_title),
+        )
+
+        val syncMessage by viewModel.syncMessage.collectAsStateWithLifecycle()
+        val context = LocalContext.current
+        val calendarPermissionLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissions ->
+            val allGranted = permissions.values.all { it }
+            if (allGranted) {
+                viewModel.updateSettings(settings.copy(calendarSyncEnabled = true))
+                CalendarSyncScheduler.schedulePeriodicSync(context)
+                viewModel.syncWithDeviceCalendar()
+            }
+        }
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceDim)
+        ) {
+            Column(modifier = Modifier.padding(vertical = 4.dp)) {
+                // Interruptor de Sincronización Automática
+                SettingRow(
+                    icon = Icons.Outlined.CalendarMonth,
+                    title = stringResource(R.string.calendar_sync_auto_title),
+                    subtitle = stringResource(R.string.calendar_sync_auto_desc),
+                    action = {
+                        Switch(
+                            checked = settings.calendarSyncEnabled,
+                            onCheckedChange = { enabled ->
+                                if (enabled) {
+                                    if (CalendarSyncManager.hasCalendarPermissions(context)) {
+                                        viewModel.updateSettings(settings.copy(calendarSyncEnabled = true))
+                                        CalendarSyncScheduler.schedulePeriodicSync(context)
+                                        viewModel.syncWithDeviceCalendar()
+                                    } else {
+                                        calendarPermissionLauncher.launch(
+                                            arrayOf(
+                                                android.Manifest.permission.READ_CALENDAR,
+                                                android.Manifest.permission.WRITE_CALENDAR
+                                            )
+                                        )
+                                    }
+                                } else {
+                                    viewModel.updateSettings(settings.copy(calendarSyncEnabled = false))
+                                    WorkManager.getInstance(context).cancelUniqueWork("FlowSchedulePeriodicCalendarSync")
+                                }
+                            },
+                            colors = SwitchDefaults.colors(checkedTrackColor = MaterialTheme.colorScheme.primary)
+                        )
+                    }
+                )
+
+                HorizontalDivider(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f)
+                )
+
+                // Botón Sincronizar Ahora en la parte inferior
+                SettingRow(
+                    icon = Icons.Outlined.CalendarMonth,
+                    title = stringResource(R.string.sync_now_btn),
+                    subtitle = stringResource(R.string.calendar_sync_now_desc),
+                    onClick = {
+                        if (CalendarSyncManager.hasCalendarPermissions(context)) {
+                            viewModel.syncWithDeviceCalendar()
+                        } else {
+                            calendarPermissionLauncher.launch(
+                                arrayOf(
+                                    android.Manifest.permission.READ_CALENDAR,
+                                    android.Manifest.permission.WRITE_CALENDAR
+                                )
+                            )
+                        }
+                    }
+                )
+
+                if (syncMessage != null) {
+                    HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f)
+                    )
+                    Text(
+                        text = syncMessage!!,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(16.dp)
                     )
                 }
             }

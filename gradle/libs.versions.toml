@@ -8,10 +8,10 @@ lifecycleRuntimeKtx = "2.11.0"
 lifecycleViewmodelCompose = "2.11.0"
 lifecycleRuntimeCompose = "2.11.0"
 activityCompose = "1.13.0"
-kotlin = "2.4.20"
+kotlin = "2.4.21"
 composeBom = "2026.09.00"
 googleDevtoolsKsp = "2.3.11"
-material3 = "1.5.0-alpha29"
+material3 = "1.5.0-beta01"
 roomRuntime = "2.8.5"
 roomKtx = "2.8.5"
 roomCompiler = "2.8.5"
@@ -24,6 +24,7 @@ robolectric = "4.17"
 roborazzi = "1.76.0"
 secretsGradlePlugin = "2.0.1"
 appcompat = "1.8.0"
+workRuntimeKtxVersion = "2.12.0"
 
 [libraries]
 androidx-compose-material3-window-size-class1 = { module = "androidx.compose.material3:material3-window-size-class" }
@@ -60,6 +61,7 @@ roborazzi = { group = "io.github.takahirom.roborazzi", name = "roborazzi", versi
 roborazzi-compose = { group = "io.github.takahirom.roborazzi", name = "roborazzi-compose", version.ref = "roborazzi" }
 roborazzi-junit-rule = { group = "io.github.takahirom.roborazzi", name = "roborazzi-junit-rule", version.ref = "roborazzi" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtxVersion" }
 
 
 [plugins]

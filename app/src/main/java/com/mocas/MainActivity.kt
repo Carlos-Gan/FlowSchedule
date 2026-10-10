@@ -24,6 +24,7 @@ import com.mocas.ui.screens.OnboardingScreen
 import com.mocas.ui.theme.FlowScheduleTheme
 import com.mocas.ui.model.BottomNavTab
 import com.mocas.ui.viewmodel.ScheduleViewModel
+import com.mocas.data.repository.CalendarSyncScheduler
 import android.content.Intent
 
 class MainActivity : ComponentActivity() {
@@ -42,6 +43,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             val settings by
             viewModel.appSettings.collectAsStateWithLifecycle()
+
+            LaunchedEffect(settings.calendarSyncEnabled) {
+                if (settings.calendarSyncEnabled) {
+                    CalendarSyncScheduler.schedulePeriodicSync(applicationContext)
+                    CalendarSyncScheduler.triggerImmediateSync(applicationContext)
+                }
+            }
 
             // Aplicar Idioma
             LaunchedEffect(settings.language) {
@@ -107,6 +115,13 @@ class MainActivity : ComponentActivity() {
         super.onNewIntent(intent)
         setIntent(intent)
         handleIntent(intent)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (viewModel.appSettings.value.calendarSyncEnabled) {
+            CalendarSyncScheduler.triggerImmediateSync(applicationContext)
+        }
     }
 
     private fun handleIntent(intent: Intent?) {

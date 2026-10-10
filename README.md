@@ -50,7 +50,7 @@ The project was built as a real-world personal application and is continuously d
 
 ### 📱 Widgets & Backups
 
-- Home screen widgets for daily schedules, full schedules, and academic period tracking.
+- Home screen widgets for daily schedules, full schedules, academic period tracking, and interactive pending tasks widget to complete tasks directly from the home screen without opening the app.
 - Automatic and manual backup management with robust backup/restore encoding.
 
 ### 📤 Schedule Sharing
