@@ -31,13 +31,15 @@ The project was built as a real-world personal application and is continuously d
 ### 📝 Activities & Calendar
 
 - Assignments, exams, presentations, meetings, school events, vacations, and custom events.
+- **Two-Way Automatic Calendar Synchronization**: Background sync with Google Calendar and Outlook via Jetpack WorkManager.
+- **Instant Updates**: Immediate calendar updates upon adding, editing, or deleting subjects, classes, or tasks.
 - Visual urgency indicators based on how close an activity is to its due date.
 - Upcoming exam carousel with relative dates such as Today and Tomorrow.
 - Smart event creation with suggested times based on the user's schedule.
 - Category filters with Material 3 icons.
 - Recurring weekly or monthly activities with configurable end dates.
 - Priority labels and persistent subtasks with progress tracking.
-- Integration with the device calendar through Android `CalendarContract`.
+- Direct integration with device calendars via `CalendarContract`.
 
 ### 🎓 Academic Profile & Grades
 
@@ -63,7 +65,7 @@ FlowSchedule can export and share schedules in multiple formats:
 
 ### 🎨 User Experience
 
-- Spanish and English localization.
+- Spanish, English, Italian, and Portuguese localization.
 - OLED-friendly True Black dark theme.
 - Interactive onboarding experience.
 - Material 3 UI components and motion.
@@ -122,6 +124,7 @@ The application uses reactive state with `StateFlow` and separates UI state from
 
 ### System Integration
 
+- **Jetpack WorkManager** (`CalendarSyncWorker` & `CalendarSyncScheduler`)
 - AlarmManager & Notification Scheduler
 - Home screen app widgets (AppWidgetProvider)
 - `CalendarContract` integration
@@ -174,7 +177,7 @@ Open the project in Android Studio, allow Gradle to synchronize, and run the app
 
 ## 📌 Project Status
 
-**Current version:** `1.7.0`
+**Current version:** `1.8.0`
 
 **Application ID:** `dev.charlesmoran.flowschedule`
 
@@ -197,7 +200,7 @@ Some of the main engineering challenges addressed by the project include:
 - Persisting reactive application state using Room and `StateFlow`.
 - Generating shareable schedules in different formats.
 - Designing a schedule interface that remains readable with many classes and events.
-- Supporting both Spanish and English interfaces.
+- Supporting Spanish, English, Italian, and Portuguese interfaces.
 - Building reactive home screen widgets and robust local backup codecs.
 
 ---
@@ -218,6 +221,8 @@ Potential future improvements include:
 
 ## 📄 License
 
-This project is licensed under the **MIT License**.
+This project is protected under a **Custom Personal License**.
 
-See the [LICENSE](https://github.com/Carlos-Gan/FlowSchedule/blob/v2/LICENSE) file for more information.
+Copyright © 2026 Charles Moran. All rights reserved.
+
+Redistribution, modification, or commercial use of this software, in whole or in part, without explicit written permission from the author is strictly prohibited.
