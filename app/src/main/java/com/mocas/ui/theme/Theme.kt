@@ -13,6 +13,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -634,8 +635,10 @@ fun FlowScheduleTheme(
     dynamicColor: Boolean = false, // Use our handcrafted student theme for cohesive aesthetic
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        (colorTheme == "DYNAMIC" || dynamicColor) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+    val usesDynamicPalette = (colorTheme == "DYNAMIC" || dynamicColor) &&
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+    val selectedColorScheme = when {
+        usesDynamicPalette -> {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
@@ -654,6 +657,24 @@ fun FlowScheduleTheme(
         colorTheme == "FOREST" -> if (darkTheme) ForestDarkColorScheme else ForestLightColorScheme
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
+    }
+    // Give every handcrafted palette the same tonal surface ladder, tinted by its
+    // own primary hue. This keeps cards and elevated surfaces in harmony with the
+    // selected theme instead of falling back to Material's default purple tones.
+    val colorScheme = if (usesDynamicPalette) {
+        selectedColorScheme
+    } else {
+        val surface = selectedColorScheme.surface
+        val accent = selectedColorScheme.primary
+        val tint = if (darkTheme) listOf(0.025f, 0.05f, 0.08f, 0.11f, 0.14f)
+        else listOf(0.012f, 0.025f, 0.04f, 0.06f, 0.08f)
+        selectedColorScheme.copy(
+            surfaceContainerLowest = lerp(surface, accent, tint[0]),
+            surfaceContainerLow = lerp(surface, accent, tint[1]),
+            surfaceContainer = lerp(surface, accent, tint[2]),
+            surfaceContainerHigh = lerp(surface, accent, tint[3]),
+            surfaceContainerHighest = lerp(surface, accent, tint[4])
+        )
     }
 
     val view = LocalView.current
