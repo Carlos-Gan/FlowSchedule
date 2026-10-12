@@ -58,6 +58,17 @@ object DateTimeUtils {
             .replaceFirstChar { it.titlecase(currentLocale) }
     }
 
+    fun formatCalendarHeadingDate(value: String): String {
+        val date = parseDate(value) ?: return value
+        val includeYear = date.year != LocalDate.now().year
+        val pattern = when (currentLocale.language.lowercase(Locale.ROOT)) {
+            "es", "pt" -> if (includeYear) "d 'de' MMMM 'de' yyyy" else "d 'de' MMMM"
+            "it" -> if (includeYear) "d MMMM yyyy" else "d MMMM"
+            else -> if (includeYear) "MMMM d, yyyy" else "MMMM d"
+        }
+        return date.format(DateTimeFormatter.ofPattern(pattern, currentLocale))
+    }
+
     fun formatTime(value: String?, use24Hour: Boolean = true): String? {
         if (value.isNullOrBlank()) return null
         val time = parseTime(value) ?: return value

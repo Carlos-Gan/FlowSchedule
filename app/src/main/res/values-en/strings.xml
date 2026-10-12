@@ -583,12 +583,12 @@
     <!-- What's New Dialog -->
     <string name="whats_new_title">What\'s new in this version!</string>
     <string name="whats_new_subtitle">Here is what we\'ve prepared to improve your experience:</string>
-    <string name="whats_new_item_1_title">🗓️ Automatic Calendar Sync</string>
-    <string name="whats_new_item_1_desc">Automatically sync your classes, assignments, and exams in the background with Google Calendar / Outlook.</string>
-    <string name="whats_new_item_2_title">⚡ Instant Updates</string>
-    <string name="whats_new_item_2_desc">Adding, editing, or deleting tasks and classes immediately updates your external calendar.</string>
-    <string name="whats_new_item_3_title">⚡ R8 Optimization &amp; Performance</string>
-    <string name="whats_new_item_3_desc">Advanced DEX code optimization and size reduction (~5.5 MB) to meet Google Play standards.</string>
+    <string name="whats_new_item_1_title">⚡ Critical Sync Bug Fix</string>
+    <string name="whats_new_item_1_desc">Fixed an issue causing duplicate events when syncing with the device calendar.</string>
+    <string name="whats_new_item_2_title">🎨 Visual &amp; Layout Fixes</string>
+    <string name="whats_new_item_2_desc">Resolved layout issues when increasing system text size across navigation bar, class cards, and widgets.</string>
+    <string name="whats_new_item_3_title">🗓️ Automatic Calendar Sync</string>
+    <string name="whats_new_item_3_desc">Automatically sync your classes, assignments, and exams in the background with Google Calendar / Outlook.</string>
     <string name="whats_new_item_4_title">🌐 Adaptive date formatting</string>
     <string name="whats_new_item_4_desc">Adaptive date formatting based on active language and visual contrast fixes in dark mode.</string>
     <string name="whats_new_item_5_title">📌 Pending tasks widget</string>
@@ -644,4 +644,6 @@
     <string name="calendar_sync_auto_title">Automatic synchronization</string>
     <string name="calendar_sync_auto_desc">Keep your external calendar automatically updated when schedule or tasks change</string>
     <string name="calendar_sync_now_desc">Force immediate update of all your subjects and tasks in the device calendar</string>
+    <string name="whats_new_item_6_title">🎨 A clearer, more adaptable interface</string>
+    <string name="whats_new_item_6_desc">Updates to filters, forms, and cards keep content organized, while surface colors now coordinate with your selected theme.</string>
 </resources>

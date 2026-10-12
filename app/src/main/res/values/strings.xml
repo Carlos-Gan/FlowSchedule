@@ -146,7 +146,7 @@
     <string name="listo">Listo</string>
     <string name="vista_semanal">Vista Semanal</string>
     <string name="vista_diaria">Vista Diaria</string>
-    <string name="lista_materias">Lista de Materias</string>
+    <string name="lista_materias">Materias</string>
     <string name="hoy_boton">Hoy</string>
     <string name="semana_label">Semana</string>
     <string name="compartir_horario_desc">Compartir horario</string>
@@ -581,12 +581,12 @@
     <!-- What's New Dialog -->
     <string name="whats_new_title">¡Novedades en esta versión!</string>
     <string name="whats_new_subtitle">Esto es lo nuevo que hemos preparado para mejorar tu experiencia:</string>
-    <string name="whats_new_item_1_title">🗓️ Sincronización Automática con Calendario</string>
-    <string name="whats_new_item_1_desc">Sincroniza tus clases, tareas y exámenes en segundo plano con Google Calendar / Outlook de forma automática.</string>
-    <string name="whats_new_item_2_title">⚡ Actualizaciones Instantáneas</string>
-    <string name="whats_new_item_2_desc">Al agregar, editar o eliminar tareas o clases, tu calendario externo se actualiza de inmediato.</string>
-    <string name="whats_new_item_3_title">⚡ Optimización y Rendimiento R8</string>
-    <string name="whats_new_item_3_desc">Optimización avanzada de código DEX y reducción de tamaño (~5.5 MB) para cumplir con los estándares de Google Play.</string>
+    <string name="whats_new_item_1_title">⚡ Corrección Crítica en Sincronización</string>
+    <string name="whats_new_item_1_desc">Solucionado un error de eventos duplicados al sincronizar con el calendario del dispositivo.</string>
+    <string name="whats_new_item_2_title">🎨 Corrección de Problemas Visuales</string>
+    <string name="whats_new_item_2_desc">Resueltos los problemas de diseño al aumentar el tamaño de texto del teléfono en la barra de navegación, tarjetas de clases y widgets.</string>
+    <string name="whats_new_item_3_title">🗓️ Sincronización Automática con Calendario</string>
+    <string name="whats_new_item_3_desc">Sincroniza tus clases, tareas y exámenes en segundo plano con Google Calendar / Outlook automáticamente.</string>
     <string name="whats_new_item_4_title">🌐 Formato de fechas adaptativo</string>
     <string name="whats_new_item_4_desc">Formato de fechas adaptativo según el idioma activo y correcciones de contraste visual en modo oscuro.</string>
     <string name="whats_new_item_5_title">📌 Widget de tareas pendientes</string>
@@ -641,4 +641,6 @@
     <string name="calendar_sync_auto_title">Sincronización automática</string>
     <string name="calendar_sync_auto_desc">Mantener tu calendario externo actualizado automáticamente al cambiar tu horario o tareas</string>
     <string name="calendar_sync_now_desc">Forzar la actualización de todas tus materias y tareas en el calendario del dispositivo</string>
+    <string name="whats_new_item_6_title">🎨 Interfaz más clara y adaptable</string>
+    <string name="whats_new_item_6_desc">Mejoras en filtros, formularios y tarjetas para mantener el contenido ordenado, junto con superficies cuyos tonos combinan con el tema elegido.</string>
 </resources>

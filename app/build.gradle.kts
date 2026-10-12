@@ -13,8 +13,8 @@ android {
     applicationId = "dev.charlesmoran.flowschedule"
     minSdk = 26
     targetSdk = 37
-    versionCode = 8
-    versionName = "1.8.0"
+    versionCode = 10
+    versionName = "1.8.3"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }

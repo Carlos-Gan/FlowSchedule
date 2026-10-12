@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -277,33 +276,42 @@ fun CalendarScreen(
                     color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    FlowRow(
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 8.dp, horizontal = 12.dp),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        LegendItem(
-                            color = Color(0xFF3B82F6),
-                            label = stringResource(R.string.legend_clases)
-                        )
-                        LegendItem(
-                            color = Color(0xFF8B5CF6),
-                            label = stringResource(R.string.legend_tareas)
-                        )
-                        LegendItem(
-                            color = Color(0xFFEF4444),
-                            label = stringResource(R.string.legend_examenes)
-                        )
-                        LegendItem(
-                            color = Color(0xFFF59E0B),
-                            label = stringResource(R.string.legend_eventos)
-                        )
-                        LegendItem(
-                            color = Color(0xFF10B981),
-                            label = stringResource(R.string.legend_vacaciones)
-                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally)
+                        ) {
+                            LegendItem(
+                                color = Color(0xFF3B82F6),
+                                label = stringResource(R.string.legend_clases)
+                            )
+                            LegendItem(
+                                color = Color(0xFF8B5CF6),
+                                label = stringResource(R.string.legend_tareas)
+                            )
+                            LegendItem(
+                                color = Color(0xFFEF4444),
+                                label = stringResource(R.string.legend_examenes)
+                            )
+                        }
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally)
+                        ) {
+                            LegendItem(
+                                color = Color(0xFFF59E0B),
+                                label = stringResource(R.string.legend_eventos)
+                            )
+                            LegendItem(
+                                color = Color(0xFF10B981),
+                                label = stringResource(R.string.legend_vacaciones)
+                            )
+                        }
                     }
                 }
             }
@@ -326,7 +334,10 @@ fun CalendarScreen(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = stringResource(R.string.actividades_para_formato, selectedDateStr),
+                        text = stringResource(
+                            R.string.actividades_para_formato,
+                            DateTimeUtils.formatCalendarHeadingDate(selectedDateStr)
+                        ),
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.ExtraBold,
                             fontSize = 15.sp
