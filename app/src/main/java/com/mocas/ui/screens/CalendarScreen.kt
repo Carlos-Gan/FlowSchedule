@@ -491,16 +491,18 @@ fun CalendarScreen(
     fun CombinedEmptyState() {
         EmptyStateCard(
             title = if (selectedDateIsVacation) stringResource(R.string.dia_vacaciones) else stringResource(
-                R.string.sin_actividades_dia
+                R.string.sin_programacion_dia
             ),
             message = if (selectedDateIsVacation) {
                 stringResource(R.string.mensaje_fuera_periodos)
             } else {
-                stringResource(R.string.mensaje_programar_actividad)
+                stringResource(R.string.mensaje_sin_programacion_dia)
             },
             icon = Icons.AutoMirrored.Filled.EventNote,
             actionButtonText = stringResource(R.string.nueva_actividad_boton),
-            onActionClick = { viewModel.openAddEvent(defaultDate = selectedDateStr) }
+            onActionClick = { viewModel.openAddEvent(defaultDate = selectedDateStr) },
+            secondaryActionButtonText = if (selectedDateIsVacation) null else stringResource(R.string.agregar_clase_boton),
+            onSecondaryActionClick = if (selectedDateIsVacation) null else ({ viewModel.openAddSubject() })
         )
     }
 

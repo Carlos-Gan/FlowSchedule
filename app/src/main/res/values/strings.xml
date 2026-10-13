@@ -62,6 +62,9 @@
     <string name="examenes_proximos">Exámenes próximos</string>
     <string name="no_hay_actividades">No hay actividades</string>
     <string name="mensaje_sin_actividades">Puedes registrar tareas, exposiciones o exámenes.</string>
+    <string name="sin_resultados_filtros">No hay resultados con estos filtros</string>
+    <string name="mensaje_sin_resultados_filtros">Prueba otro tipo o estado, o quita los filtros para ver todas tus actividades.</string>
+    <string name="limpiar_filtros_boton">Quitar filtros</string>
     <string name="nueva_actividad_boton">+ Nueva Actividad</string>
     <string name="pendientes">Pendientes</string>
     <string name="completadas">Completadas</string>
@@ -105,6 +108,8 @@
     <string name="clases_dia">Clases del día</string>
     <string name="dia_vacaciones">Día de vacaciones</string>
     <string name="sin_actividades_dia">Sin actividades para este día</string>
+    <string name="sin_programacion_dia">Nada programado para este día</string>
+    <string name="mensaje_sin_programacion_dia">Puedes agregar una clase o programar una actividad para esta fecha.</string>
     <string name="mensaje_fuera_periodos">Este día está fuera de tus periodos académicos.</string>
     <string name="mensaje_programar_actividad">¿Quieres programar una tarea o examen?</string>
     <string name="legend_clases">Clases</string>

@@ -19,6 +19,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -38,7 +39,10 @@ fun EmptyStateCard(
     modifier: Modifier = Modifier,
     icon: ImageVector = Icons.Default.School,
     actionButtonText: String? = null,
-    onActionClick: (() -> Unit)? = null
+    onActionClick: (() -> Unit)? = null,
+    secondaryActionButtonText: String? = null,
+    onSecondaryActionClick: (() -> Unit)? = null,
+    actionIcon: ImageVector = Icons.Default.Add
 ) {
     Card(
         modifier = modifier
@@ -104,13 +108,28 @@ fun EmptyStateCard(
                     modifier = Modifier.testTag("empty_state_action_btn")
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Add,
+                        imageVector = actionIcon,
                         contentDescription = null,
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.size(6.dp))
                     Text(
                         text = actionButtonText,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+
+            if (secondaryActionButtonText != null && onSecondaryActionClick != null) {
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedButton(
+                    onClick = onSecondaryActionClick,
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.testTag("empty_state_secondary_action_btn")
+                ) {
+                    Text(
+                        text = secondaryActionButtonText,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold
                     )

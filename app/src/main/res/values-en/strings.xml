@@ -63,6 +63,9 @@
     <string name="examenes_proximos">Upcoming Exams</string>
     <string name="no_hay_actividades">No activities found</string>
     <string name="mensaje_sin_actividades">You can register tasks, expos, or exams.</string>
+    <string name="sin_resultados_filtros">No results for these filters</string>
+    <string name="mensaje_sin_resultados_filtros">Try another type or status, or clear the filters to see all your activities.</string>
+    <string name="limpiar_filtros_boton">Clear filters</string>
     <string name="nueva_actividad_boton">+ New Activity</string>
     <string name="pendientes">Pending</string>
     <string name="completadas">Completed</string>
@@ -106,6 +109,8 @@
     <string name="clases_dia">Today\'s classes</string>
     <string name="dia_vacaciones">Vacation day</string>
     <string name="sin_actividades_dia">No activities for this day</string>
+    <string name="sin_programacion_dia">Nothing scheduled for this day</string>
+    <string name="mensaje_sin_programacion_dia">Add a class or schedule an activity for this date.</string>
     <string name="mensaje_fuera_periodos">This day is outside your academic periods.</string>
     <string name="mensaje_programar_actividad">Do you want to schedule a task or exam?</string>
     <string name="legend_clases">Classes</string>

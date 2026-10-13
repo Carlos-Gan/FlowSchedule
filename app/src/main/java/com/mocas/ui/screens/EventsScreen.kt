@@ -359,11 +359,28 @@ fun EventsScreen(
                 if (filteredList.isEmpty()) {
                     item {
                         EmptyStateCard(
-                            title = stringResource(R.string.no_hay_actividades),
-                            message = stringResource(R.string.mensaje_sin_actividades),
+                            title = stringResource(
+                                if (allEvents.isEmpty()) R.string.no_hay_actividades
+                                else R.string.sin_resultados_filtros
+                            ),
+                            message = stringResource(
+                                if (allEvents.isEmpty()) R.string.mensaje_sin_actividades
+                                else R.string.mensaje_sin_resultados_filtros
+                            ),
                             icon = Icons.AutoMirrored.Filled.Assignment,
-                            actionButtonText = stringResource(R.string.nueva_actividad_boton),
-                            onActionClick = { viewModel.openAddEvent() }
+                            actionButtonText = stringResource(
+                                if (allEvents.isEmpty()) R.string.nueva_actividad_boton
+                                else R.string.limpiar_filtros_boton
+                            ),
+                            actionIcon = if (allEvents.isEmpty()) Icons.Default.Add else Icons.Default.FilterList,
+                            onActionClick = {
+                                if (allEvents.isEmpty()) {
+                                    viewModel.openAddEvent()
+                                } else {
+                                    viewModel.setEventFilter("TODOS")
+                                    viewModel.setEventStatusFilter("TODOS")
+                                }
+                            }
                         )
                     }
                 } else {
