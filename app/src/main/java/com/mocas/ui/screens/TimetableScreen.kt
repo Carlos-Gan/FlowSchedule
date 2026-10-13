@@ -110,7 +110,7 @@ fun TimetableScreen(
             }
         }
 
-        if (currentMode != TimetableDisplayMode.MATERIAS) {
+        if (currentMode == TimetableDisplayMode.SEMANAL) {
             WeekNavigationBar(
                 weekStart = selectedWeekStart,
                 onPreviousWeek = viewModel::showPreviousWeek,
@@ -140,7 +140,6 @@ fun TimetableScreen(
             TimetableDisplayMode.DIARIA -> {
                 DailyScheduleView(
                     viewModel = viewModel,
-                    selectedDay = selectedDay,
                     selectedDate = selectedDate,
                     onClassClick = { subject, slot ->
                         viewModel.openClassOccurrence(

@@ -265,6 +265,10 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     fun setTab(tab: BottomNavTab) { _currentTab.value = tab }
     fun setTimetableMode(mode: TimetableDisplayMode) { _timetableMode.value = mode }
     fun setSelectedDayOfWeek(day: Int) { if (day in 1..7) _selectedDayOfWeek.value = day }
+    fun selectTimetableDate(date: LocalDate) {
+        _selectedWeekStart.value = startOfWeek(date)
+        _selectedDayOfWeek.value = date.dayOfWeek.value
+    }
     fun showPreviousWeek() { _selectedWeekStart.value = _selectedWeekStart.value.minusWeeks(1) }
     fun showNextWeek() { _selectedWeekStart.value = _selectedWeekStart.value.plusWeeks(1) }
     fun showCurrentWeek() {

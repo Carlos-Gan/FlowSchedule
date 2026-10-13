@@ -1,23 +1,19 @@
 package com.mocas.ui.components.horario
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.res.stringResource
-import com.mocas.R
 import com.mocas.ui.components.parseColorFromHex
 
 @Composable
@@ -62,21 +58,27 @@ fun DailyClassRow(
 
         Spacer(modifier = Modifier.width(16.dp))
 
-        // Card Block (Pill Style)
-        Card(
+        // A slim subject-color marker keeps the schedule row clear without
+        // turning the whole class into a pill-shaped card.
+        Row(
             modifier = Modifier
                 .weight(1f)
+                .height(IntrinsicSize.Min)
                 .clickable { onClick() },
-            shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = subjectColor.copy(alpha = 0.15f)
-            ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(modifier = Modifier.fillMaxWidth()) {
+            Box(
+                modifier = Modifier
+                    .width(5.dp)
+                    .fillMaxHeight()
+                    .clip(RoundedCornerShape(3.dp))
+                    .background(subjectColor)
+            )
+
+            Box(modifier = Modifier.weight(1f)) {
                 Column(
                     modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 14.dp)
+                        .padding(start = 12.dp, end = 8.dp, top = 8.dp, bottom = 8.dp)
                         .fillMaxWidth()
                 ) {
                     Text(
@@ -87,7 +89,7 @@ fun DailyClassRow(
                             letterSpacing = (-0.3).sp,
                             lineHeight = 20.sp
                         ),
-                        color = subjectColor,
+                        color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.padding(end = 12.dp),
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis
@@ -108,31 +110,13 @@ fun DailyClassRow(
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold
                             ),
-                            color = subjectColor.copy(alpha = 0.8f),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
                     }
                 }
 
-                // Status Indicator
-                if (isNow) {
-                    Surface(
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .padding(12.dp),
-                        shape = RoundedCornerShape(4.dp),
-                        color = Color.Red
-                    ) {
-                        Text(
-                            text = stringResource(R.string.ahora_label),
-                            color = Color.White,
-                            fontSize = 8.sp,
-                            fontWeight = FontWeight.Black,
-                            modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp)
-                        )
-                    }
-                }
             }
         }
     }

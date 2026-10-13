@@ -3,7 +3,6 @@ package com.mocas.ui.components.horario
 import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,23 +12,21 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.School
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,6 +42,7 @@ import com.mocas.data.local.SubjectEntity
 import com.mocas.ui.components.EmptyStateCard
 import com.mocas.ui.viewmodel.ScheduleViewModel
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 import java.time.format.TextStyle
 import java.util.Locale
 
@@ -52,14 +50,11 @@ import java.util.Locale
 @Composable
 fun DailyScheduleView(
     viewModel: ScheduleViewModel,
-    selectedDay: Int,
     selectedDate: LocalDate,
     onClassClick: (SubjectEntity, ScheduleSlotEntity) -> Unit,
     onAddSubjectClick: () -> Unit
 ) {
     val todayClasses by viewModel.todayClasses.collectAsStateWithLifecycle()
-    val weekStart by viewModel.selectedWeekStart.collectAsStateWithLifecycle()
-
     val daysList = listOf(
         1 to stringResource(R.string.dia_l),
         2 to stringResource(R.string.dia_m),
@@ -70,9 +65,24 @@ fun DailyScheduleView(
         7 to stringResource(R.string.dia_d)
     )
 
-    val monthName = remember(selectedDate) {
-        selectedDate.month.getDisplayName(TextStyle.FULL, Locale.getDefault())
-            .replaceFirstChar { it.uppercase() }
+    val locale = Locale.getDefault()
+    val monthName = remember(selectedDate, locale) {
+        val format = if (selectedDate.year != LocalDate.now().year) "MMMM yyyy" else "MMMM"
+        selectedDate.format(java.time.format.DateTimeFormatter.ofPattern(format, locale))
+            .replaceFirstChar { it.titlecase(locale) }
+    }
+    val firstDate = remember { LocalDate.now().minusYears(5) }
+    val dateCount = remember(firstDate) {
+        ChronoUnit.DAYS.between(firstDate, LocalDate.now().plusYears(5)).toInt() + 1
+    }
+    val selectedIndex = ChronoUnit.DAYS.between(firstDate, selectedDate)
+        .toInt()
+        .coerceIn(0, dateCount - 1)
+    val firstVisibleIndex = (selectedIndex - 2).coerceAtLeast(0)
+    val dateListState = rememberLazyListState(initialFirstVisibleItemIndex = firstVisibleIndex)
+
+    LaunchedEffect(selectedDate) {
+        dateListState.animateScrollToItem((selectedIndex - 2).coerceAtLeast(0))
     }
 
     Column(
@@ -94,15 +104,17 @@ fun DailyScheduleView(
                 color = MaterialTheme.colorScheme.onSurface
             )
 
-            IconButton(
-                onClick = { viewModel.showCurrentWeek() },
-                modifier = Modifier.size(32.dp)
+            Surface(
+                onClick = { viewModel.selectTimetableDate(LocalDate.now()) },
+                shape = RoundedCornerShape(12.dp),
+                color = MaterialTheme.colorScheme.primaryContainer
             ) {
-                Icon(
-                    Icons.Default.CalendarMonth,
-                    contentDescription = stringResource(R.string.hoy_boton),
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(24.dp)
+                Text(
+                    text = stringResource(R.string.hoy_boton),
+                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 9.dp),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
         }
@@ -110,23 +122,28 @@ fun DailyScheduleView(
         Spacer(modifier = Modifier.height(8.dp))
 
         // --- Compact Horizontal Date Strip ---
-        Row(
+        LazyRow(
+            state = dateListState,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .horizontalScroll(rememberScrollState()),
+                .padding(horizontal = 16.dp),
+            contentPadding = PaddingValues(horizontal = 2.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            daysList.forEach { (dayNum, label) ->
-                val date = weekStart.plusDays((dayNum - 1).toLong())
-                val isSelected = dayNum == selectedDay
+            items(
+                count = dateCount,
+                key = { index -> firstDate.plusDays(index.toLong()).toString() }
+            ) { index ->
+                val date = firstDate.plusDays(index.toLong())
+                val label = daysList[date.dayOfWeek.value - 1].second
+                val isSelected = date == selectedDate
 
                 Surface(
-                    onClick = { viewModel.setSelectedDayOfWeek(dayNum) },
+                    onClick = { viewModel.selectTimetableDate(date) },
                     shape = RoundedCornerShape(12.dp),
                     color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
                     border = BorderStroke(1.dp, if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent),
-                    modifier = Modifier.width(54.dp).height(68.dp)
+                    modifier = Modifier.width(58.dp).height(72.dp)
                 ) {
                     Column(
                         modifier = Modifier.fillMaxSize(),
@@ -135,14 +152,14 @@ fun DailyScheduleView(
                     ) {
                         Text(
                             text = label,
-                            fontSize = 10.sp,
+                            fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = date.dayOfMonth.toString(),
-                            fontSize = 16.sp,
+                            fontSize = 17.sp,
                             fontWeight = FontWeight.Black,
                             color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
                         )
