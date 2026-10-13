@@ -16,13 +16,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -40,8 +38,7 @@ import com.mocas.ui.model.DayClassItem
 fun ClassScheduleCard(
     dayClassItem: DayClassItem,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    onSyncCalendarClick: (() -> Unit)? = null
+    modifier: Modifier = Modifier
 ) {
     val subject = dayClassItem.subject
     val slot = dayClassItem.slot
@@ -206,22 +203,6 @@ fun ClassScheduleCard(
                             }
                         }
                     }
-                }
-            }
-
-            if (onSyncCalendarClick != null) {
-                IconButton(
-                    onClick = onSyncCalendarClick,
-                    modifier = Modifier
-                        .size(36.dp)
-                        .testTag("sync_class_btn_${slot.id}")
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.CalendarMonth,
-                        contentDescription = "Sincronizar clase con calendario del teléfono",
-                        tint = subjectColor,
-                        modifier = Modifier.size(20.dp)
-                    )
                 }
             }
         }

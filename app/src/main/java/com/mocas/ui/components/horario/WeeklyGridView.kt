@@ -113,7 +113,7 @@ fun WeeklyGridView(
     val hours = (finalStartHour until finalEndHour).toList()
     val hourHeight = 90.dp
     val timeColWidth = 48.dp
-    val dayColWidth = 130.dp
+    val dayColWidth = 140.dp
 
     val hScrollState = rememberScrollState()
     val vScrollState = rememberScrollState()
@@ -284,7 +284,7 @@ fun WeeklyGridView(
                                                             Text(
                                                                 text = " • $room",
                                                                 color = subColor.copy(alpha = 0.7f),
-                                                                fontSize = 10.sp,
+                                                                fontSize = 9.sp,
                                                                 fontWeight = FontWeight.Bold,
                                                                 maxLines = 1,
                                                                 overflow = TextOverflow.Ellipsis

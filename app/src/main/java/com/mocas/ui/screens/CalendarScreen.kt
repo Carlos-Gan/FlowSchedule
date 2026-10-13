@@ -469,16 +469,6 @@ fun CalendarScreen(
                                     }
                                 )
                             }
-                        },
-                        onSyncCalendarClick = {
-                            showCalendarResult(
-                                context,
-                                CalendarSyncHelper.addClassToPhoneCalendar(
-                                    context,
-                                    classItem.subject,
-                                    classItem.slot
-                                )
-                            )
                         }
                     )
                 }
