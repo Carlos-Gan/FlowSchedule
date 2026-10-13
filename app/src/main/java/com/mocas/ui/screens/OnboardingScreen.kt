@@ -4,6 +4,13 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.EaseInOutCubic
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -68,6 +75,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -153,11 +161,21 @@ fun OnboardingScreen(
                 targetState = currentStep,
                 transitionSpec = {
                     if (targetState > initialState) {
-                        (slideInHorizontally(animationSpec = tween(500, easing = EaseInOutCubic)) { it } + fadeIn(tween(500)))
-                            .togetherWith(slideOutHorizontally(animationSpec = tween(500, easing = EaseInOutCubic)) { -it } + fadeOut(tween(500)))
+                        (slideInHorizontally(
+                            animationSpec = spring(
+                                dampingRatio = Spring.DampingRatioNoBouncy,
+                                stiffness = Spring.StiffnessMediumLow
+                            )
+                        ) { it / 3 } + fadeIn(tween(240)))
+                            .togetherWith(slideOutHorizontally(animationSpec = tween(180)) { -it / 4 } + fadeOut(tween(150)))
                     } else {
-                        (slideInHorizontally(animationSpec = tween(500, easing = EaseInOutCubic)) { -it } + fadeIn(tween(500)))
-                            .togetherWith(slideOutHorizontally(animationSpec = tween(500, easing = EaseInOutCubic)) { it } + fadeOut(tween(500)))
+                        (slideInHorizontally(
+                            animationSpec = spring(
+                                dampingRatio = Spring.DampingRatioNoBouncy,
+                                stiffness = Spring.StiffnessMediumLow
+                            )
+                        ) { -it / 3 } + fadeIn(tween(240)))
+                            .togetherWith(slideOutHorizontally(animationSpec = tween(180)) { it / 4 } + fadeOut(tween(150)))
                     }
                 },
                 label = "onboarding_step_transition",
@@ -183,30 +201,92 @@ fun OnboardingScreen(
 }
 
 @Composable
-private fun WelcomeStep(onStart: () -> Unit) {
-    Column(
-        modifier = Modifier.fillMaxSize().padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+private fun OnboardingHeroIcon(
+    icon: ImageVector,
+    large: Boolean = false
+) {
+    val motion = rememberInfiniteTransition(label = "onboarding_hero_motion")
+    val pulse by motion.animateFloat(
+        initialValue = 0.96f,
+        targetValue = 1.04f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1700, easing = EaseInOutCubic),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "onboarding_hero_pulse"
+    )
+    val floatOffset by motion.animateFloat(
+        initialValue = -3f,
+        targetValue = 3f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2200, easing = EaseInOutCubic),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "onboarding_hero_float"
+    )
+    val containerSize = if (large) 148.dp else 82.dp
+    val haloSize = if (large) 136.dp else 74.dp
+    val iconContainerSize = if (large) 108.dp else 58.dp
+
+    Box(
+        modifier = Modifier.size(containerSize),
+        contentAlignment = Alignment.Center
     ) {
         Box(
             modifier = Modifier
-                .size(110.dp)
-                .clip(RoundedCornerShape(32.dp))
+                .size(haloSize)
+                .graphicsLayer {
+                    scaleX = pulse
+                    scaleY = pulse
+                }
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.38f))
+        )
+        Box(
+            modifier = Modifier
+                .size(iconContainerSize)
+                .graphicsLayer { translationY = floatOffset }
+                .clip(RoundedCornerShape(if (large) 32.dp else 20.dp))
                 .background(
-                    Brush.linearGradient(
-                        colors = listOf(IndigoLight, MaterialTheme.colorScheme.primary, TurquoiseSecondary)
-                    )
+                    if (large) {
+                        Brush.linearGradient(
+                            colors = listOf(IndigoLight, MaterialTheme.colorScheme.primary, TurquoiseSecondary)
+                        )
+                    } else {
+                        Brush.linearGradient(
+                            colors = listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.secondary)
+                        )
+                    }
                 ),
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = Icons.Default.School,
+                imageVector = icon,
                 contentDescription = null,
-                tint = Color.White,
-                modifier = Modifier.size(58.dp)
+                tint = if (large) Color.White else MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.size(if (large) 56.dp else 30.dp)
             )
         }
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = if (large) 16.dp else 8.dp, end = if (large) 14.dp else 8.dp)
+                .size(if (large) 14.dp else 10.dp)
+                .graphicsLayer { translationY = -floatOffset }
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.tertiary)
+        )
+    }
+}
+
+@Composable
+private fun WelcomeStep(onStart: () -> Unit) {
+    Column(
+        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        OnboardingHeroIcon(icon = Icons.Default.School, large = true)
 
         Spacer(modifier = Modifier.height(32.dp))
         
@@ -379,17 +459,7 @@ private fun StepLayout(
     content: @Composable () -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize().padding(24.dp).verticalScroll(rememberScrollState())) {
-        Surface(
-            shape = RoundedCornerShape(16.dp),
-            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(12.dp).size(28.dp)
-            )
-        }
+        OnboardingHeroIcon(icon = icon)
         
         Spacer(modifier = Modifier.height(20.dp))
         
@@ -444,11 +514,18 @@ private fun OnboardingBottomBar(
                     val isCurrent = (i + 1) == currentStep
                     val color by animateColorAsState(
                         if (isCurrent) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
-                        label = "dot_color"
+                        animationSpec = tween(260),
+                        label = "step_color"
+                    )
+                    val width by animateDpAsState(
+                        targetValue = if (isCurrent) 24.dp else 8.dp,
+                        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMedium),
+                        label = "step_width"
                     )
                     Box(
                         modifier = Modifier
-                            .size(if (isCurrent) 10.dp else 7.dp)
+                            .width(width)
+                            .height(8.dp)
                             .clip(CircleShape)
                             .background(color)
                     )

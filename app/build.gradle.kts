@@ -13,8 +13,8 @@ android {
     applicationId = "dev.charlesmoran.flowschedule"
     minSdk = 26
     targetSdk = 37
-    versionCode = 10
-    versionName = "1.8.3"
+    versionCode = 11
+    versionName = "1.8.5"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
@@ -46,10 +46,10 @@ android {
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
       val keystorePath = System.getenv("KEYSTORE_PATH") ?: "${rootDir}/my-upload-key.jks"
       val keystoreFile = file(keystorePath)
-      if (keystoreFile.exists()) {
-        signingConfig = signingConfigs.getByName("release")
+      signingConfig = if (keystoreFile.exists()) {
+        signingConfigs.getByName("release")
       } else {
-        signingConfig = signingConfigs.getByName("debug")
+        signingConfigs.getByName("debug")
       }
       ndk.debugSymbolLevel = "FULL"
     }
