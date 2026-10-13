@@ -71,7 +71,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.material.icons.outlined.CalendarMonth
 import com.mocas.data.repository.CalendarSyncManager
 import com.mocas.data.repository.CalendarSyncScheduler
-import androidx.work.WorkManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -413,8 +412,6 @@ fun SettingsScreen(
             val allGranted = permissions.values.all { it }
             if (allGranted) {
                 viewModel.updateSettings(settings.copy(calendarSyncEnabled = true))
-                CalendarSyncScheduler.schedulePeriodicSync(context)
-                viewModel.syncWithDeviceCalendar()
             }
         }
 
@@ -436,8 +433,6 @@ fun SettingsScreen(
                                 if (enabled) {
                                     if (CalendarSyncManager.hasCalendarPermissions(context)) {
                                         viewModel.updateSettings(settings.copy(calendarSyncEnabled = true))
-                                        CalendarSyncScheduler.schedulePeriodicSync(context)
-                                        viewModel.syncWithDeviceCalendar()
                                     } else {
                                         calendarPermissionLauncher.launch(
                                             arrayOf(
@@ -448,7 +443,7 @@ fun SettingsScreen(
                                     }
                                 } else {
                                     viewModel.updateSettings(settings.copy(calendarSyncEnabled = false))
-                                    WorkManager.getInstance(context).cancelUniqueWork("FlowSchedulePeriodicCalendarSync")
+                                    CalendarSyncScheduler.cancelPeriodicSync(context)
                                 }
                             },
                             colors = SwitchDefaults.colors(checkedTrackColor = MaterialTheme.colorScheme.primary)

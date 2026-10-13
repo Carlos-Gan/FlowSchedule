@@ -117,13 +117,6 @@ class MainActivity : ComponentActivity() {
         handleIntent(intent)
     }
 
-    override fun onResume() {
-        super.onResume()
-        if (viewModel.appSettings.value.calendarSyncEnabled) {
-            CalendarSyncScheduler.triggerImmediateSync(applicationContext)
-        }
-    }
-
     private fun handleIntent(intent: Intent?) {
         when (intent?.action) {
             "ACTION_OPEN_EVENTS" -> viewModel.setTab(BottomNavTab.EVENTOS)

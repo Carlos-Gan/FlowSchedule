@@ -3,7 +3,10 @@ package com.mocas.ui.viewmodel
 import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import com.mocas.R
 import com.mocas.data.backup.AutomaticBackupInfo
 import com.mocas.data.backup.AutomaticBackupManager
@@ -28,6 +31,8 @@ import com.mocas.data.widget.DailyScheduleWidgetProvider
 import com.mocas.data.widget.AcademicPeriodWidgetProvider
 import com.mocas.data.repository.ScheduleRepository
 import com.mocas.data.repository.CalendarSyncManager
+import com.mocas.data.repository.CalendarSyncScheduler
+import com.mocas.data.repository.CalendarSyncWorker
 import com.mocas.data.repository.ExternalCalendarEvent
 import com.mocas.ui.model.AppSettings
 import com.mocas.ui.model.ClassOccurrenceInfo
@@ -114,26 +119,46 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
 
     private val _syncMessage = MutableStateFlow<String?>(null)
     val syncMessage = _syncMessage.asStateFlow()
+    private val syncWorkInfoLiveData = WorkManager.getInstance(application)
+        .getWorkInfosForUniqueWorkLiveData(CalendarSyncScheduler.ONE_TIME_WORK_NAME)
+    private val syncWorkObserver = Observer<List<WorkInfo>> { workInfos ->
+        val workInfo = workInfos.lastOrNull { it.state == WorkInfo.State.RUNNING }
+            ?: workInfos.lastOrNull {
+                it.state == WorkInfo.State.ENQUEUED || it.state == WorkInfo.State.BLOCKED
+            }
+            ?: workInfos.lastOrNull()
+        _syncMessage.value = when (workInfo?.state) {
+            WorkInfo.State.RUNNING -> application.getString(R.string.calendar_sync_running)
+            WorkInfo.State.ENQUEUED, WorkInfo.State.BLOCKED -> {
+                if (workInfo.runAttemptCount > 0) {
+                    application.getString(R.string.calendar_sync_retrying)
+                } else {
+                    application.getString(R.string.calendar_sync_queued)
+                }
+            }
+            WorkInfo.State.SUCCEEDED -> {
+                val count = workInfo.outputData.getInt(CalendarSyncWorker.OUTPUT_EVENT_COUNT, 0)
+                application.getString(R.string.calendar_sync_success_count, count)
+            }
+            WorkInfo.State.FAILED -> application.getString(
+                R.string.calendar_sync_error,
+                workInfo.outputData.getString(CalendarSyncWorker.OUTPUT_ERROR)
+                    ?: application.getString(R.string.calendar_sync_unknown_error)
+            )
+            else -> null
+        }
+    }
 
     private val _externalCalendarEvents = MutableStateFlow<List<ExternalCalendarEvent>>(emptyList())
     val externalCalendarEvents = _externalCalendarEvents.asStateFlow()
 
     fun syncWithDeviceCalendar() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val context = getApplication<Application>()
-            val subjects = repository.getAllSubjectsWithSlotsOnce()
-            val events = repository.getAllSchoolEventsOnce()
-            val exceptions = repository.getAllClassExceptionsOnce()
-            val result = CalendarSyncManager.syncLocalScheduleToCalendar(context, subjects, events, exceptions)
-            result.fold(
-                onSuccess = { count ->
-                    _syncMessage.value = context.getString(R.string.calendar_sync_success_count, count)
-                },
-                onFailure = { err ->
-                    _syncMessage.value = context.getString(R.string.calendar_sync_error, err.localizedMessage ?: "")
-                }
-            )
+        val context = getApplication<Application>()
+        if (!CalendarSyncManager.hasCalendarPermissions(context)) {
+            _syncMessage.value = context.getString(R.string.calendar_sync_permission_error)
+            return
         }
+        CalendarSyncScheduler.triggerImmediateSync(context)
     }
 
     fun loadExternalCalendarEvents(startMillis: Long, endMillis: Long) {
@@ -210,6 +235,7 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
     init {
+        syncWorkInfoLiveData.observeForever(syncWorkObserver)
         viewModelScope.launch {
             repository.purgeExpiredTrash()
             refreshAutomaticBackups()
@@ -229,6 +255,11 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
                     AcademicPeriodWidgetProvider.requestUpdate(application)
                 }
         }
+    }
+
+    override fun onCleared() {
+        syncWorkInfoLiveData.removeObserver(syncWorkObserver)
+        super.onCleared()
     }
 
     fun setTab(tab: BottomNavTab) { _currentTab.value = tab }

@@ -646,4 +646,9 @@
     <string name="calendar_sync_now_desc">Force immediate update of all your subjects and tasks in the device calendar</string>
     <string name="whats_new_item_6_title">🎨 A clearer, more adaptable interface</string>
     <string name="whats_new_item_6_desc">Updates to filters, forms, and cards keep content organized, while surface colors now coordinate with your selected theme.</string>
+    <string name="calendar_sync_queued">Calendar sync queued…</string>
+    <string name="calendar_sync_running">Syncing with your calendar…</string>
+    <string name="calendar_sync_retrying">Retrying calendar sync…</string>
+    <string name="calendar_sync_permission_error">Allow calendar access and try again.</string>
+    <string name="calendar_sync_unknown_error">Calendar sync could not be completed.</string>
 </resources>

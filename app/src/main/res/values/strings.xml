@@ -643,4 +643,9 @@
     <string name="calendar_sync_now_desc">Forzar la actualización de todas tus materias y tareas en el calendario del dispositivo</string>
     <string name="whats_new_item_6_title">🎨 Interfaz más clara y adaptable</string>
     <string name="whats_new_item_6_desc">Mejoras en filtros, formularios y tarjetas para mantener el contenido ordenado, junto con superficies cuyos tonos combinan con el tema elegido.</string>
+    <string name="calendar_sync_queued">Sincronización en espera…</string>
+    <string name="calendar_sync_running">Sincronizando con el calendario…</string>
+    <string name="calendar_sync_retrying">Reintentando la sincronización…</string>
+    <string name="calendar_sync_permission_error">Concede permiso para acceder al calendario e inténtalo de nuevo.</string>
+    <string name="calendar_sync_unknown_error">No se pudo completar la sincronización.</string>
 </resources>
