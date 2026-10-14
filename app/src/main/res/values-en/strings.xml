@@ -596,8 +596,6 @@
     <string name="whats_new_item_3_desc">A color marker identifies each subject, while the time highlights the upcoming or current class without an extra badge.</string>
     <string name="whats_new_item_4_title">✨ More helpful empty states</string>
     <string name="whats_new_item_4_desc">Add a class or activity from an empty day, or clear filters when they return no results.</string>
-    <string name="whats_new_item_5_title">📌 Pending tasks widget</string>
-    <string name="whats_new_item_5_desc">Complete your tasks directly from the widget on your home screen without having to open the app.</string>
     <string name="whats_new_button">Got it!</string>
 
     <!-- Add Event Dialog UI Strings -->
