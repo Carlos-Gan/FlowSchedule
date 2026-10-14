@@ -26,8 +26,7 @@ fun DailyClassRow(
 
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp),
+            .fillMaxWidth(),
         verticalAlignment = Alignment.Top
     ) {
         // Time Column
