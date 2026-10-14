@@ -11,6 +11,8 @@ The project was built as a real-world personal application and is continuously d
 ### 📅 Schedules & Subjects
 
 - Weekly and daily schedule views.
+- Horizontal day browsing in Daily View, with a month heading that includes the year when viewing a different year.
+- Compact class rows with a subject-color marker; the start time highlights the upcoming or active class without an extra status badge.
 - Navigation between weeks with quick access to the current week.
 - Dynamic time range that adapts to scheduled classes.
 - Real-time timeline indicating the current time and active class.
@@ -37,6 +39,7 @@ The project was built as a real-world personal application and is continuously d
 - Upcoming exam carousel with relative dates such as Today and Tomorrow.
 - Smart event creation with suggested times based on the user's schedule.
 - Category filters with Material 3 icons.
+- Helpful empty states that explain when a day has no scheduled classes or activities, with shortcuts to add a class or activity and clear filters when a filter returns no results.
 - Recurring weekly or monthly activities with configurable end dates.
 - Priority labels and persistent subtasks with progress tracking.
 - Direct integration with device calendars via `CalendarContract`.
