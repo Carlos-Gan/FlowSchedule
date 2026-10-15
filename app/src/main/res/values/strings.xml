@@ -24,7 +24,7 @@
     <string name="cambiar_a_ingles">Cambiar a Inglés para ver diseño</string>
     <string name="debug_reiniciar_bienvenida">Reiniciar Bienvenida</string>
     <string name="debug_reiniciar_bienvenida_desc">Volver a ver la pantalla de configuración inicial</string>
-    <string name="gpa_actual">GPA ACTUAL</string>
+    <string name="gpa_actual">GPA Actual</string>
     <string name="tu_nombre">Tu nombre</string>
     <string name="carrera_grado">Carrera / Grado</string>
     <string name="ej_semestre">Ej. 4to Semestre</string>
@@ -584,14 +584,14 @@
     <string name="widget_period_ended">Período finalizado</string>
 
     <!-- What's New Dialog -->
-    <string name="whats_new_title">¡Novedades en esta versión!</string>
+    <string name="whats_new_title">¡Novedades en la versión 2.0.0!</string>
     <string name="whats_new_subtitle">Esto es lo nuevo que hemos preparado para mejorar tu experiencia:</string>
-    <string name="whats_new_item_1_title">⚡ Sincronización de calendario más confiable</string>
-    <string name="whats_new_item_1_desc">Mejoras para reducir duplicados y manejar correctamente las actualizaciones del calendario del dispositivo.</string>
-    <string name="whats_new_item_2_title">🗓️ Navegación diaria más clara</string>
-    <string name="whats_new_item_2_desc">Desplázate horizontalmente entre días y consulta el mes y el año del día seleccionado.</string>
-    <string name="whats_new_item_3_title">🎨 Clases con un diseño más limpio</string>
-    <string name="whats_new_item_3_desc">Una franja muestra el color de cada materia; la hora destaca la próxima clase o la que está en curso, sin una etiqueta adicional.</string>
+    <string name="whats_new_item_1_title">🔍 Búsqueda inteligente y animada</string>
+    <string name="whats_new_item_1_desc">Encuentra materias y actividades rápidamente con la nueva barra de búsqueda expandible y animaciones fluídas.</string>
+    <string name="whats_new_item_2_title">📝 Editor de notas y formularios mejorado</string>
+    <string name="whats_new_item_2_desc">Escribe notas largas y detalles con total comodidad gracias al ajuste automático al desplegar el teclado.</string>
+    <string name="whats_new_item_3_title">🎨 Interfaz refinada y adaptable v2.0.0</string>
+    <string name="whats_new_item_3_desc">Visualización perfecta incluso con fuentes grandes en el sistema, mejor diseño de clases y superficies con temas modernos.</string>
     <string name="whats_new_item_4_title">✨ Estados vacíos con acciones útiles</string>
     <string name="whats_new_item_4_desc">Agrega una clase o actividad desde un día vacío, o quita los filtros cuando no encuentres resultados.</string>
     <string name="whats_new_button">¡Entendido!</string>

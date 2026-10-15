@@ -1,10 +1,22 @@
-package com.mocas.ui.components
+package com.mocas.ui.components.bar
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -153,7 +165,47 @@ fun SnapTopAppBar(
     ) {
         AnimatedContent(
             targetState = isSearchActive,
-            transitionSpec = { fadeIn() togetherWith fadeOut() },
+            transitionSpec = {
+                if (targetState) {
+                    (fadeIn(animationSpec = tween(280, easing = LinearOutSlowInEasing)) +
+                     expandHorizontally(
+                         expandFrom = Alignment.End,
+                         animationSpec = spring(
+                             dampingRatio = Spring.DampingRatioLowBouncy,
+                             stiffness = Spring.StiffnessLow
+                         )
+                     ) +
+                     scaleIn(
+                         initialScale = 0.92f,
+                         transformOrigin = TransformOrigin(0.9f, 0.5f),
+                         animationSpec = tween(280)
+                     )) togetherWith (
+                     fadeOut(animationSpec = tween(180)) +
+                     shrinkHorizontally(
+                         shrinkTowards = Alignment.Start,
+                         animationSpec = tween(200)
+                     ))
+                } else {
+                    (fadeIn(animationSpec = tween(280, easing = LinearOutSlowInEasing)) +
+                     expandHorizontally(
+                         expandFrom = Alignment.Start,
+                         animationSpec = spring(
+                             dampingRatio = Spring.DampingRatioNoBouncy,
+                             stiffness = Spring.StiffnessMediumLow
+                         )
+                     )) togetherWith (
+                     fadeOut(animationSpec = tween(180)) +
+                     shrinkHorizontally(
+                         shrinkTowards = Alignment.End,
+                         animationSpec = tween(200)
+                     ) +
+                     scaleOut(
+                         targetScale = 0.92f,
+                         transformOrigin = TransformOrigin(0.9f, 0.5f),
+                         animationSpec = tween(180)
+                     ))
+                }
+            },
             label = "TopAppBarSearchAnimation",
             modifier = Modifier
                 .fillMaxWidth()
@@ -177,10 +229,11 @@ fun SnapTopAppBar(
                             },
                             placeholder = {
                                 Text(
-                                    stringResource(R.string.buscar_placeholder),
-                                    fontSize = 14.sp
+                                    text = stringResource(R.string.buscar_placeholder),
+                                    style = MaterialTheme.typography.bodyMedium
                                 )
                             },
+                            textStyle = MaterialTheme.typography.bodyMedium,
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                             keyboardActions = KeyboardActions(onSearch = { focusManager.clearFocus() }),
@@ -216,7 +269,7 @@ fun SnapTopAppBar(
                             ),
                             modifier = Modifier
                                 .weight(1f)
-                                .height(52.dp)
+                                .heightIn(min = 52.dp)
                                 .focusRequester(focusRequester)
                         )
                     }
@@ -228,7 +281,18 @@ fun SnapTopAppBar(
                             offset = IntOffset(0, barHeightPx),
                             properties = PopupProperties(focusable = false)
                         ) {
-                            Card(
+                            AnimatedVisibility(
+                                visible = showDropdown,
+                                enter = fadeIn(animationSpec = tween(200)) + expandVertically(
+                                    expandFrom = Alignment.Top,
+                                    animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
+                                ),
+                                exit = fadeOut(animationSpec = tween(150)) + shrinkVertically(
+                                    shrinkTowards = Alignment.Top,
+                                    animationSpec = tween(150)
+                                )
+                            ) {
+                                Card(
                                 modifier = Modifier
                                     .width(with(density) { barWidthPx.toDp() })
                                     .padding(horizontal = 20.dp, vertical = 5.dp)
@@ -350,6 +414,7 @@ fun SnapTopAppBar(
                         }
                     }
                 }
+                }
 
             } else {
                 Row(
@@ -412,66 +477,6 @@ fun SnapTopAppBar(
                         }
                     }
                 }
-            }
-        }
-    }
-}
-
-@Composable
-private fun SearchResultRow(
-    title: String,
-    subtitle: String,
-    isImportant: Boolean,
-    isSubject: Boolean,
-    onClick: () -> Unit
-) {
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .clickable(onClick = onClick),
-        shape = RoundedCornerShape(12.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerHigh
-    ) {
-        Row(
-            modifier = Modifier.padding(10.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = if (isSubject) Icons.Default.School else Icons.Default.Event,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(20.dp)
-            )
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 10.dp)
-            ) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                if (subtitle.isNotEmpty()) {
-                    Text(
-                        text = subtitle,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-            }
-            if (isImportant) {
-                Icon(
-                    imageVector = Icons.Default.Star,
-                    contentDescription = stringResource(R.string.importante_desc),
-                    tint = MaterialTheme.colorScheme.tertiary,
-                    modifier = Modifier.size(18.dp)
-                )
             }
         }
     }

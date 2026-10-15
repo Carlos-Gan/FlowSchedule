@@ -1,4 +1,4 @@
-package com.mocas.ui.components
+package com.mocas.ui.components.bar
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring

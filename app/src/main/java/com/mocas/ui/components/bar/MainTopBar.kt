@@ -1,4 +1,4 @@
-package com.mocas.ui.components
+package com.mocas.ui.components.bar
 
 import com.mocas.R
 import com.mocas.ui.model.BottomNavTab

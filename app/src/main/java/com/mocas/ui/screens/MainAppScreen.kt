@@ -19,11 +19,11 @@ import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mocas.ui.components.AppTabContent
-import com.mocas.ui.components.SnapBottomNavBar
-import com.mocas.ui.components.SnapNavigationRail
-import com.mocas.ui.components.SnapTopAppBar
+import com.mocas.ui.components.bar.SnapBottomNavBar
+import com.mocas.ui.components.bar.SnapNavigationRail
+import com.mocas.ui.components.bar.SnapTopAppBar
 import com.mocas.ui.components.UserMessageEffect
-import com.mocas.ui.components.getTopBarConfig
+import com.mocas.ui.components.bar.getTopBarConfig
 import com.mocas.ui.dialogs.MainDialogHost
 import com.mocas.ui.model.BottomNavTab
 import com.mocas.ui.viewmodel.ScheduleViewModel

@@ -83,6 +83,7 @@ import com.mocas.R
 import com.mocas.data.repository.GradeCalculator
 import com.mocas.ui.components.settings.RemindersConfigDialog
 import com.mocas.ui.components.settings.SettingRow
+import com.mocas.ui.components.settings.SettingsSectionHeader
 import com.mocas.ui.components.settings.TrashRow
 import com.mocas.ui.model.BadgeStyle
 import com.mocas.ui.theme.ThemeConfig
@@ -283,7 +284,7 @@ fun SettingsScreen(
                             text = displayAverage,
                             style = MaterialTheme.typography.titleLarge.copy(
                                 fontWeight = FontWeight.Black,
-                                fontSize = 18.sp
+                                fontSize = 19.sp
                             ),
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -333,7 +334,7 @@ fun SettingsScreen(
                             text = completedTasksCount.toString(),
                             style = MaterialTheme.typography.titleLarge.copy(
                                 fontWeight = FontWeight.Black,
-                                fontSize = 18.sp
+                                fontSize = 19.sp
                             ),
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -381,7 +382,7 @@ fun SettingsScreen(
                             text = currentStreak.toString(),
                             style = MaterialTheme.typography.titleLarge.copy(
                                 fontWeight = FontWeight.Black,
-                                fontSize = 18.sp
+                                fontSize = 19.sp
                             ),
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -750,7 +751,16 @@ fun SettingsScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(100.dp))
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text(
+            text = "FlowSchedule v2.0.0",
+            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium),
+            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
+
+        Spacer(modifier = Modifier.height(80.dp))
     }
 
     // --- DIALOGS ---
@@ -1039,33 +1049,6 @@ fun SettingsScreen(
                         )
                     }
                 }
-            )
-        }
-    }
-}
-
-@Composable
-private fun SettingsSectionHeader(title: String, subtitle: String? = null) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 4.dp, end = 4.dp, top = 24.dp, bottom = 10.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Black),
-            color = MaterialTheme.colorScheme.onSurface
-        )
-        if (subtitle != null) {
-            Text(
-                text = subtitle,
-                style = MaterialTheme.typography.labelSmall.copy(
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 1.sp
-                ),
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
             )
         }
     }

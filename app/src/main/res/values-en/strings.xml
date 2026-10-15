@@ -25,7 +25,7 @@
     <string name="cambiar_a_ingles">Switch to English to check layout</string>
     <string name="debug_reiniciar_bienvenida">Reset Onboarding</string>
     <string name="debug_reiniciar_bienvenida_desc">See the initial setup screen again</string>
-    <string name="gpa_actual">CURRENT GPA</string>
+    <string name="gpa_actual">Current GPA</string>
     <string name="tu_nombre">Your name</string>
     <string name="carrera_grado">Degree / Grade</string>
     <string name="ej_semestre">e.g. 4th Semester</string>
@@ -586,14 +586,14 @@
     <string name="widget_period_ended">Period ended</string>
 
     <!-- What's New Dialog -->
-    <string name="whats_new_title">What\'s new in this version!</string>
-    <string name="whats_new_subtitle">Here is what we\'ve prepared to improve your experience:</string>
-    <string name="whats_new_item_1_title">⚡ More reliable calendar sync</string>
-    <string name="whats_new_item_1_desc">Improvements help prevent duplicates and correctly handle updates to your device calendar.</string>
-    <string name="whats_new_item_2_title">🗓️ Clearer daily navigation</string>
-    <string name="whats_new_item_2_desc">Scroll horizontally between days and see the month and year for the selected date.</string>
-    <string name="whats_new_item_3_title">🎨 Cleaner class rows</string>
-    <string name="whats_new_item_3_desc">A color marker identifies each subject, while the time highlights the upcoming or current class without an extra badge.</string>
+    <string name="whats_new_title">What\'s new in version 2.0.0!</string>
+    <string name="whats_new_subtitle">Here is what we\'ve prepared for FlowSchedule 2.0.0:</string>
+    <string name="whats_new_item_1_title">🔍 Smart animated search</string>
+    <string name="whats_new_item_1_desc">Quickly find subjects and activities with the new expandable animated search bar.</string>
+    <string name="whats_new_item_2_title">📝 Improved forms and notes</string>
+    <string name="whats_new_item_2_desc">Write long notes and instructions easily with automatic layout adjustment when the keyboard opens.</string>
+    <string name="whats_new_item_3_title">🎨 Refined &amp; adaptable UI v2.0.0</string>
+    <string name="whats_new_item_3_desc">Perfect layout scaling even with large system fonts, cleaner class cards, and modern surfaces.</string>
     <string name="whats_new_item_4_title">✨ More helpful empty states</string>
     <string name="whats_new_item_4_desc">Add a class or activity from an empty day, or clear filters when they return no results.</string>
     <string name="whats_new_button">Got it!</string>

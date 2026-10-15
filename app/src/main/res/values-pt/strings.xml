@@ -25,7 +25,8 @@
     <string name="cambiar_a_ingles">Mudar para inglês para verificar layout</string>
     <string name="debug_reiniciar_bienvenida">Redefinir Onboarding</string>
     <string name="debug_reiniciar_bienvenida_desc">Ver a tela de configuração inicial novamente</string>
-    <string name="gpa_actual">GPA ATUAL</string>
+
+    <string name="gpa_actual">GPA Atual</string>
     <string name="tu_nombre">Seu nome</string>
     <string name="carrera_grado">Curso / Série</string>
     <string name="ej_semestre">ex. 4º Semestre</string>
@@ -554,14 +555,14 @@
     <string name="widget_school_days_total_simple">Total: %1$d dias letivos</string>
     <string name="widget_school_days_total_progress">%1$d dias letivos · %2$d%% concluídos</string>
     <string name="widget_period_ended">Período finalizado</string>
-    <string name="whats_new_title">Novidades nesta versão!</string>
-    <string name="whats_new_subtitle">Confira o que preparamos para melhorar a sua experiência:</string>
-    <string name="whats_new_item_1_title">⚡ Sincronização de calendário mais confiável</string>
-    <string name="whats_new_item_1_desc">Melhorias ajudam a evitar duplicatas e a processar corretamente as atualizações do calendário do dispositivo.</string>
-    <string name="whats_new_item_2_title">🗓️ Navegação diária mais clara</string>
-    <string name="whats_new_item_2_desc">Deslize horizontalmente entre os dias e veja o mês e o ano da data selecionada.</string>
-    <string name="whats_new_item_3_title">🎨 Aulas com visual mais limpo</string>
-    <string name="whats_new_item_3_desc">Uma faixa colorida identifica cada matéria, e o horário destaca a próxima aula ou a atual sem um selo extra.</string>
+    <string name="whats_new_title">Novidades na versão 2.0.0!</string>
+    <string name="whats_new_subtitle">Confira o que preparamos no FlowSchedule 2.0.0:</string>
+    <string name="whats_new_item_1_title">🔍 Busca inteligente e animada</string>
+    <string name="whats_new_item_1_desc">Encontre matérias e atividades rapidamente com a nova barra de busca expansível e animações fluidas.</string>
+    <string name="whats_new_item_2_title">📝 Formulários e notas melhorados</string>
+    <string name="whats_new_item_2_desc">Escreva notas longas com facilidade graças ao ajuste automático ao abrir o teclado.</string>
+    <string name="whats_new_item_3_title">🎨 Interface refinada e adaptável v2.0.0</string>
+    <string name="whats_new_item_3_desc">Adaptação perfeita mesmo com fontes grandes do sistema e cartões de aulas mais limpos.</string>
     <string name="whats_new_item_4_title">✨ Estados vazios mais úteis</string>
     <string name="whats_new_item_4_desc">Adicione uma aula ou atividade em um dia vazio, ou limpe os filtros quando não houver resultados.</string>
     <string name="whats_new_button">Entendi!</string>

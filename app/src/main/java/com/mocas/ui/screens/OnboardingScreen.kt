@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -458,7 +459,7 @@ private fun StepLayout(
     icon: ImageVector,
     content: @Composable () -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxSize().padding(24.dp).verticalScroll(rememberScrollState())) {
+    Column(modifier = Modifier.fillMaxSize().padding(24.dp).imePadding().verticalScroll(rememberScrollState())) {
         OnboardingHeroIcon(icon = icon)
         
         Spacer(modifier = Modifier.height(20.dp))
