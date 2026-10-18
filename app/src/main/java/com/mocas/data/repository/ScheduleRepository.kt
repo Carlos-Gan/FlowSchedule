@@ -20,6 +20,7 @@ import com.mocas.data.local.GradeCategoryEntity
 import com.mocas.data.local.GradeItemEntity
 import com.mocas.data.local.GradeUnitEntity
 import com.mocas.data.local.GradeUnitCategoryWeightEntity
+import com.mocas.data.local.ActivityGradeEntity
 import com.mocas.util.DateTimeUtils
 import com.mocas.data.repository.CalendarSyncScheduler
 import kotlinx.coroutines.flow.Flow
@@ -33,6 +34,7 @@ class ScheduleRepository(private val context: Context, private val database: App
     private val exceptionDao = database.classExceptionDao()
     private val subtaskDao = database.subtaskDao()
     private val gradeDao = database.gradeDao()
+    private val activityGradeDao = database.activityGradeDao()
 
     val allSubjectsWithSlots: Flow<List<SubjectWithSlots>> = subjectDao.getAllSubjectsWithSlots()
     val allEventsWithSubject: Flow<List<SchoolEventWithSubject>> = eventDao.getAllEventsWithSubject()
@@ -90,6 +92,32 @@ class ScheduleRepository(private val context: Context, private val database: App
 
     suspend fun deleteGradeCategory(item: GradeCategoryEntity): Boolean = gradeDao.deleteCategory(item) > 0
     suspend fun deleteGradeItem(item: GradeItemEntity): Boolean = gradeDao.deleteItem(item) > 0
+
+    suspend fun completeEventWithGrade(eventId: Long, categoryId: Long, score: Double): Boolean = database.withTransaction {
+        require(score in 0.0..100.0) { context.getString(R.string.error_calificacion_rango) }
+        val event = requireNotNull(eventDao.getEventById(eventId)) { context.getString(R.string.error_evento_no_existe) }
+        require(event.countsTowardGrade && event.subjectId != null && event.gradeUnitId != null) {
+            "La actividad no está configurada para calificación."
+        }
+        val category = gradeDao.getCategoriesForSubjectOnce(event.subjectId).firstOrNull { it.id == categoryId }
+            ?: throw IllegalArgumentException("Selecciona una categoría válida para esta materia.")
+        val unit = gradeDao.getUnitsOnce().firstOrNull { it.id == event.gradeUnitId && it.subjectId == event.subjectId }
+            ?: throw IllegalArgumentException("Selecciona una unidad válida para esta materia.")
+        val link = activityGradeDao.getByEventId(eventId)
+        val gradeItemId = if (link == null) {
+            gradeDao.insertItem(GradeItemEntity(categoryId = category.id, unitId = unit.id, unitName = unit.name, name = event.title, score = score))
+        } else {
+            val oldItem = gradeDao.getItemsOnce().firstOrNull { it.id == link.gradeItemId }
+            if (oldItem == null) {
+                gradeDao.insertItem(GradeItemEntity(categoryId = category.id, unitId = unit.id, unitName = unit.name, name = event.title, score = score))
+            } else {
+                gradeDao.updateItem(oldItem.copy(categoryId = category.id, unitId = unit.id, unitName = unit.name, name = event.title, score = score))
+                oldItem.id
+            }
+        }
+        activityGradeDao.upsert(ActivityGradeEntity(eventId, category.id, gradeItemId))
+        setEventCompleted(eventId, true)
+    }
 
     suspend fun insertAcademicPeriod(period: AcademicPeriodEntity): Long =
         saveAcademicPeriod(period.copy(id = 0))
@@ -432,7 +460,8 @@ class ScheduleRepository(private val context: Context, private val database: App
             gradeCategories = gradeDao.getCategoriesOnce(),
             gradeItems = gradeDao.getItemsOnce(),
             gradeUnits = gradeDao.getUnitsOnce(),
-            gradeUnitCategoryWeights = gradeDao.getUnitCategoryWeightsOnce()
+            gradeUnitCategoryWeights = gradeDao.getUnitCategoryWeightsOnce(),
+            activityGrades = activityGradeDao.getAllOnce()
         )
     )
 
@@ -519,12 +548,13 @@ class ScheduleRepository(private val context: Context, private val database: App
         if (restoredWeights.isNotEmpty()) {
             gradeDao.insertUnitCategoryWeights(restoredWeights)
         }
+        val gradeItemIds = mutableMapOf<Long, Long>()
         backup.gradeItems.forEach { item ->
             val oldUnitId = item.unitId.takeIf { it > 0 } ?: unitsToRestore.first {
                 it.subjectId == backup.gradeCategories.first { category -> category.id == item.categoryId }.subjectId &&
                     it.name == item.unitName
             }.id
-            gradeDao.insertItem(
+            val newItemId = gradeDao.insertItem(
                 item.copy(
                     id = 0,
                     categoryId = requireNotNull(categoryIds[item.categoryId]) {
@@ -533,6 +563,7 @@ class ScheduleRepository(private val context: Context, private val database: App
                     unitId = requireNotNull(unitIds[oldUnitId]) { "Una calificación apunta a una unidad inexistente." }
                 )
             )
+            gradeItemIds[item.id] = newItemId
         }
 
         val eventIds = mutableMapOf<Long, Long>()
@@ -544,6 +575,9 @@ class ScheduleRepository(private val context: Context, private val database: App
                 event.copy(
                     id = 0,
                     subjectId = mappedSubjectId,
+                    gradeUnitId = event.gradeUnitId?.let { oldUnitId ->
+                        requireNotNull(unitIds[oldUnitId]) { "Una actividad apunta a una unidad inexistente." }
+                    },
                     syncCalendar = false,
                     calendarEventId = null,
                     calendarId = null,
@@ -562,6 +596,16 @@ class ScheduleRepository(private val context: Context, private val database: App
             )
         }
         if (restoredSubtasks.isNotEmpty()) subtaskDao.insertSubtasks(restoredSubtasks)
+
+        backup.activityGrades.forEach { link ->
+            activityGradeDao.upsert(
+                link.copy(
+                    eventId = requireNotNull(eventIds[link.eventId]) { "Una calificación de actividad apunta a una actividad inexistente." },
+                    categoryId = requireNotNull(categoryIds[link.categoryId]) { "Una calificación de actividad apunta a una categoría inexistente." },
+                    gradeItemId = requireNotNull(gradeItemIds[link.gradeItemId]) { "Una calificación de actividad apunta a una calificación inexistente." }
+                )
+            )
+        }
 
         backup.exceptions.forEach { exception ->
             exceptionDao.insert(
@@ -587,6 +631,7 @@ class ScheduleRepository(private val context: Context, private val database: App
 
     suspend fun clearAll() = database.withTransaction {
         exceptionDao.clearAll()
+        activityGradeDao.clearAll()
         gradeDao.clearUnitCategoryWeights()
         gradeDao.clearItems()
         gradeDao.clearCategories()
@@ -639,6 +684,11 @@ class ScheduleRepository(private val context: Context, private val database: App
         }
         val categoryIds = backup.gradeCategories.mapTo(mutableSetOf()) { it.id }
         val unitIds = backup.gradeUnits.mapTo(mutableSetOf()) { it.id }
+        backup.events.filter { it.countsTowardGrade }.forEach { event ->
+            require(event.subjectId != null && event.gradeUnitId != null && event.gradeUnitId in unitIds) {
+                "Una actividad calificable debe tener materia y unidad válidas."
+            }
+        }
         backup.gradeUnits.forEach { unit ->
             require(unit.subjectId in subjectIds && unit.name.isNotBlank()) { context.getString(R.string.error_unidad_respaldo_invalida) }
         }
@@ -660,6 +710,11 @@ class ScheduleRepository(private val context: Context, private val database: App
             require(item.categoryId in categoryIds && (item.unitId == 0L || item.unitId in unitIds) &&
                 item.name.isNotBlank() && item.unitName.isNotBlank() && item.score in 0.0..100.0) {
                 context.getString(R.string.error_calificacion_respaldo_invalida)
+            }
+        }
+        backup.activityGrades.forEach { link ->
+            require(link.eventId in eventIds && link.categoryId in categoryIds && link.gradeItemId in backup.gradeItems.map { it.id }) {
+                "El respaldo contiene un vínculo de calificación de actividad inválido."
             }
         }
         backup.exceptions.forEach { exception ->

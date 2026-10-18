@@ -19,6 +19,7 @@ fun AppTabContent(
     currentTab: BottomNavTab,
     viewModel: ScheduleViewModel,
     windowSizeClass: WindowSizeClass,
+    onOpenAcademicProgress: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val stateHolder = rememberSaveableStateHolder()
@@ -48,7 +49,7 @@ fun AppTabContent(
                 }
 
                 BottomNavTab.EVENTOS -> {
-                    EventsScreen(viewModel = viewModel)
+                    EventsScreen(viewModel = viewModel, onOpenAcademicProgress = onOpenAcademicProgress)
                 }
 
                 BottomNavTab.CONFIGURACION -> {

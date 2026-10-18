@@ -654,4 +654,9 @@
     <string name="calendar_sync_retrying">Retrying calendar sync…</string>
     <string name="calendar_sync_permission_error">Allow calendar access and try again.</string>
     <string name="calendar_sync_unknown_error">Calendar sync could not be completed.</string>
+    <string name="cuenta_para_calificacion">Counts toward grade</string>
+    <string name="cuenta_para_calificacion_desc">Links this activity to the subject average.</string>
+    <string name="calificacion_requiere_materia">Select a subject to include this activity in the grade.</string>
+    <string name="calificacion_sin_unidades">Create a unit in Grades to link this activity.</string>
+    <string name="seleccionar_unidad">Select unit</string>
 </resources>

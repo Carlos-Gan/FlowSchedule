@@ -651,4 +651,9 @@
     <string name="calendar_sync_retrying">Reintentando la sincronización…</string>
     <string name="calendar_sync_permission_error">Concede permiso para acceder al calendario e inténtalo de nuevo.</string>
     <string name="calendar_sync_unknown_error">No se pudo completar la sincronización.</string>
+    <string name="cuenta_para_calificacion">Cuenta para calificación</string>
+    <string name="cuenta_para_calificacion_desc">Vincula esta actividad con el promedio de la materia.</string>
+    <string name="calificacion_requiere_materia">Selecciona una materia para incluir esta actividad en la calificación.</string>
+    <string name="calificacion_sin_unidades">Crea una unidad en Calificaciones para poder vincular esta actividad.</string>
+    <string name="seleccionar_unidad">Seleccionar unidad</string>
 </resources>

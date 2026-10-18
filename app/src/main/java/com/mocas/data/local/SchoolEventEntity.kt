@@ -19,6 +19,7 @@ import androidx.room.PrimaryKey
         Index("subjectId"),
         Index(value = ["startDate", "startTime"]),
         Index("isCompleted"),
+        Index("gradeUnitId"),
         Index("calendarEventId")
     ]
 )
@@ -31,6 +32,10 @@ data class SchoolEventEntity(
     val type: SchoolEventType = SchoolEventType.TAREA,
 
     val subjectId: Long? = null,
+
+    /** Indicates that this activity will later contribute a grade to its subject. */
+    val countsTowardGrade: Boolean = false,
+    val gradeUnitId: Long? = null,
 
     // Formato yyyy-MM-dd
     val startDate: String,

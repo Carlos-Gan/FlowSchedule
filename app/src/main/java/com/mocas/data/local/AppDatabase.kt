@@ -19,9 +19,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         GradeCategoryEntity::class,
         GradeUnitEntity::class,
         GradeUnitCategoryWeightEntity::class,
-        GradeItemEntity::class
+        GradeItemEntity::class,
+        ActivityGradeEntity::class
     ],
-    version = 12,
+    version = 14,
     exportSchema = false
 )
 @TypeConverters(DatabaseConverters::class)
@@ -37,6 +38,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun classExceptionDao(): ClassExceptionDao
     abstract fun subtaskDao(): SubtaskDao
     abstract fun gradeDao(): GradeDao
+    abstract fun activityGradeDao(): ActivityGradeDao
 
     companion object {
 
@@ -50,7 +52,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "flow_schedule_db"
                 )
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11, MIGRATION_11_12)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11, MIGRATION_11_12, MIGRATION_12_13, MIGRATION_13_14)
                     .build()
                     .also { database ->
                         INSTANCE = database
@@ -243,6 +245,33 @@ abstract class AppDatabase : RoomDatabase() {
         private val MIGRATION_11_12 = object : Migration(11, 12) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE `school_events` ADD COLUMN `completedAtMillis` INTEGER")
+            }
+        }
+
+        private val MIGRATION_12_13 = object : Migration(12, 13) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `school_events` ADD COLUMN `countsTowardGrade` INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("ALTER TABLE `school_events` ADD COLUMN `gradeUnitId` INTEGER")
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_school_events_gradeUnitId` ON `school_events` (`gradeUnitId`)")
+            }
+        }
+
+        private val MIGRATION_13_14 = object : Migration(13, 14) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("""
+                    CREATE TABLE IF NOT EXISTS `activity_grades` (
+                        `eventId` INTEGER NOT NULL,
+                        `categoryId` INTEGER NOT NULL,
+                        `gradeItemId` INTEGER NOT NULL,
+                        `recordedAtMillis` INTEGER NOT NULL,
+                        PRIMARY KEY(`eventId`),
+                        FOREIGN KEY(`eventId`) REFERENCES `school_events`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE,
+                        FOREIGN KEY(`categoryId`) REFERENCES `grade_categories`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE,
+                        FOREIGN KEY(`gradeItemId`) REFERENCES `grade_items`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE
+                    )
+                """.trimIndent())
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_activity_grades_categoryId` ON `activity_grades` (`categoryId`)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_activity_grades_gradeItemId` ON `activity_grades` (`gradeItemId`)")
             }
         }
     }

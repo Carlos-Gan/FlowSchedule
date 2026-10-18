@@ -113,6 +113,7 @@ private fun ProgressSummary(modifier: Modifier, completedCount: Int, totalCount:
 @Composable
 fun EventsScreen(
     viewModel: ScheduleViewModel,
+    onOpenAcademicProgress: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val fontScale = LocalDensity.current.fontScale
@@ -182,7 +183,7 @@ fun EventsScreen(
                 // Tarjeta de Progreso
                 item {
                     Card(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth().clickable(onClick = onOpenAcademicProgress),
                         shape = RoundedCornerShape(20.dp),
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
                         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)

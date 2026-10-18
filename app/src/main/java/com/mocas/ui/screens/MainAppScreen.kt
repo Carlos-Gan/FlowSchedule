@@ -1,5 +1,6 @@
 package com.mocas.ui.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -34,6 +35,8 @@ fun MainAppScreen(
     windowSizeClass: WindowSizeClass
 ) {
     val isCompact = windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact
+    var showAcademicProgress by remember { mutableStateOf(false) }
+    BackHandler(showAcademicProgress) { showAcademicProgress = false }
     val focusManager = LocalFocusManager.current
     val currentTab by
     viewModel.currentTab.collectAsStateWithLifecycle()
@@ -114,6 +117,7 @@ fun MainAppScreen(
                 SnackbarHost(hostState = snackbarHostState)
             },
             topBar = {
+                if (!showAcademicProgress) {
                 SnapTopAppBar(
                     title = resolvedTitle,
                     subtitle = resolvedSubtitle,
@@ -152,9 +156,10 @@ fun MainAppScreen(
                         }
                     } else null
                 )
+                }
             },
             bottomBar = {
-                if (isCompact) {
+                if (isCompact && !showAcademicProgress) {
                     SnapBottomNavBar(
                         selectedTab = currentTab,
                         pendingEventCount = pendingEventCount,
@@ -169,13 +174,20 @@ fun MainAppScreen(
                 }
             }
         ) { innerPadding ->
-            AppTabContent(
+            if (showAcademicProgress) {
+                AcademicProgressScreen(
+                    viewModel = viewModel,
+                    onBack = { showAcademicProgress = false },
+                    modifier = Modifier.fillMaxSize().padding(innerPadding)
+                )
+            } else AppTabContent(
                 currentTab = currentTab,
                 viewModel = viewModel,
                 windowSizeClass = windowSizeClass,
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding)
+                    .padding(innerPadding),
+                onOpenAcademicProgress = { showAcademicProgress = true }
             )
         }
     }

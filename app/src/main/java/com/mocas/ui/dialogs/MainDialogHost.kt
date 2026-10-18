@@ -9,6 +9,7 @@ import com.mocas.ui.add.event.AddEventDialog
 import com.mocas.ui.add.subject.SubjectDetailDialog
 import com.mocas.ui.viewmodel.ScheduleViewModel
 import com.mocas.ui.screens.AppearanceScreen
+import com.mocas.ui.components.grade.RecordActivityGradeDialog
 
 @Composable
 fun MainDialogHost(
@@ -34,6 +35,7 @@ fun MainDialogHost(
     val gradeUnits by viewModel.gradeUnits.collectAsStateWithLifecycle()
     val gradeUnitCategoryWeights by viewModel.gradeUnitCategoryWeights.collectAsStateWithLifecycle()
     val showWhatsNew by viewModel.showWhatsNew.collectAsStateWithLifecycle()
+    val eventAwaitingGrade by viewModel.eventAwaitingGrade.collectAsStateWithLifecycle()
 
     val selectedSubject = remember(
         selectedDetailId,
@@ -82,6 +84,7 @@ fun MainDialogHost(
             defaultType = newEventType,
             defaultTitle = newEventTitle,
             subjects = subjectsWithSlots,
+            gradeUnits = gradeUnits,
             onDismiss = viewModel::closeAddEvent,
             onSave = viewModel::saveEvent
         )
@@ -91,6 +94,19 @@ fun MainDialogHost(
         AppearanceScreen(
             viewModel = viewModel,
             onBack = viewModel::closeAppearance
+        )
+    }
+
+    eventAwaitingGrade?.let { event ->
+        val unit = gradeUnits.firstOrNull { it.id == event.event.gradeUnitId }
+        RecordActivityGradeDialog(
+            event = event,
+            unit = unit,
+            categories = gradeCategories.filter { it.subjectId == event.event.subjectId },
+            onDismiss = viewModel::dismissGradeEntry,
+            onSave = { categoryId, score ->
+                viewModel.completeEventWithGrade(event.event.id, categoryId, score)
+            }
         )
     }
 

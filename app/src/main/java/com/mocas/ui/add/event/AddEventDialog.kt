@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mocas.R
 import com.mocas.data.local.EventPriority
+import com.mocas.data.local.GradeUnitEntity
 import com.mocas.data.local.OrganizationTag
 import com.mocas.data.local.RecurrenceType
 import com.mocas.data.local.SchoolEventEntity
@@ -60,6 +61,7 @@ fun AddEventDialog(
     defaultType: SchoolEventType? = null,
     defaultTitle: String? = null,
     subjects: List<SubjectWithSlots>,
+    gradeUnits: List<GradeUnitEntity>,
     onDismiss: () -> Unit,
     onSave: (SchoolEventEntity, List<SubtaskEntity>) -> Unit
 ) {
@@ -69,6 +71,8 @@ fun AddEventDialog(
         mutableStateOf(initialEvent?.type ?: defaultType ?: SchoolEventType.TAREA)
     }
     var selectedSubjectId by remember { mutableStateOf(initialEvent?.subjectId ?: defaultSubjectId) }
+    var countsTowardGrade by remember { mutableStateOf(initialEvent?.countsTowardGrade ?: (initialEvent == null && (defaultType ?: SchoolEventType.TAREA) == SchoolEventType.TAREA)) }
+    var selectedGradeUnitId by remember { mutableStateOf(initialEvent?.gradeUnitId) }
     var eventDate by remember {
         mutableStateOf(initialEvent?.startDate ?: defaultDate ?: DateTimeUtils.todayString())
     }
@@ -103,8 +107,25 @@ fun AddEventDialog(
     var isImportant by remember { mutableStateOf(initialEvent?.isImportant ?: false) }
 
     var isSubjectDropdownExpanded by remember { mutableStateOf(false) }
+    var isUnitDropdownExpanded by remember { mutableStateOf(false) }
 
-    val isValid = title.isNotBlank()
+    val unitsForSelectedSubject = remember(selectedSubjectId, gradeUnits) {
+        gradeUnits.filter { it.subjectId == selectedSubjectId }
+    }
+
+    LaunchedEffect(selectedType) {
+        if (initialEvent == null && selectedType == SchoolEventType.TAREA) {
+            countsTowardGrade = true
+        }
+    }
+
+    LaunchedEffect(selectedSubjectId) {
+        if (unitsForSelectedSubject.none { it.id == selectedGradeUnitId }) {
+            selectedGradeUnitId = null
+        }
+    }
+
+    val isValid = title.isNotBlank() && (!countsTowardGrade || (selectedSubjectId != null && selectedGradeUnitId != null))
 
     Scaffold(
         topBar = {
@@ -134,6 +155,8 @@ fun AddEventDialog(
                                         title = title.trim(),
                                         type = selectedType,
                                         subjectId = selectedSubjectId,
+                                        countsTowardGrade = countsTowardGrade,
+                                        gradeUnitId = selectedGradeUnitId,
                                         startDate = eventDate,
                                         endDate = eventDate,
                                         startTime = finalStartTime,
@@ -352,6 +375,74 @@ fun AddEventDialog(
                                             isSubjectDropdownExpanded = false
                                         }
                                     )
+                                }
+                            }
+                        }
+                    }
+
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(stringResource(R.string.cuenta_para_calificacion), fontWeight = FontWeight.Bold)
+                            Text(
+                                stringResource(R.string.cuenta_para_calificacion_desc),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        Switch(
+                            checked = countsTowardGrade,
+                            onCheckedChange = { countsTowardGrade = it }
+                        )
+                    }
+
+                    if (countsTowardGrade) {
+                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Text(stringResource(R.string.unidades), fontWeight = FontWeight.SemiBold)
+                            if (selectedSubjectId == null) {
+                                Text(
+                                    stringResource(R.string.calificacion_requiere_materia),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            } else if (unitsForSelectedSubject.isEmpty()) {
+                                Text(
+                                    stringResource(R.string.calificacion_sin_unidades),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            } else {
+                                ExposedDropdownMenuBox(
+                                    expanded = isUnitDropdownExpanded,
+                                    onExpandedChange = { isUnitDropdownExpanded = !isUnitDropdownExpanded }
+                                ) {
+                                    val selectedUnitName = unitsForSelectedSubject.firstOrNull { it.id == selectedGradeUnitId }?.name
+                                        ?: stringResource(R.string.seleccionar_unidad)
+                                    Surface(
+                                        onClick = { isUnitDropdownExpanded = true },
+                                        modifier = Modifier.fillMaxWidth().menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
+                                        shape = RoundedCornerShape(14.dp),
+                                        color = MaterialTheme.colorScheme.surface,
+                                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                                    ) {
+                                        Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+                                            Text(selectedUnitName, Modifier.weight(1f), color = if (selectedGradeUnitId == null) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface)
+                                            ExposedDropdownMenuDefaults.TrailingIcon(isUnitDropdownExpanded)
+                                        }
+                                    }
+                                    ExposedDropdownMenu(isUnitDropdownExpanded, onDismissRequest = { isUnitDropdownExpanded = false }) {
+                                        unitsForSelectedSubject.forEach { unit ->
+                                            DropdownMenuItem(text = { Text(unit.name) }, onClick = {
+                                                selectedGradeUnitId = unit.id
+                                                isUnitDropdownExpanded = false
+                                            })
+                                        }
+                                    }
                                 }
                             }
                         }

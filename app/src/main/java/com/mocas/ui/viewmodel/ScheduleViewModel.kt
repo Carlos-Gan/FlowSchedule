@@ -113,6 +113,8 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     val newEventTitle = _newEventTitle.asStateFlow()
     private val _selectedClassOccurrence = MutableStateFlow<ClassOccurrenceInfo?>(null)
     val selectedClassOccurrence = _selectedClassOccurrence.asStateFlow()
+    private val _eventAwaitingGrade = MutableStateFlow<SchoolEventWithSubject?>(null)
+    val eventAwaitingGrade = _eventAwaitingGrade.asStateFlow()
 
     private val _userMessage = MutableStateFlow<String?>(null)
     val userMessage = _userMessage.asStateFlow()
@@ -459,7 +461,25 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     fun toggleEventCompleted(eventId: Long, completed: Boolean) {
         viewModelScope.launch {
             runOperation {
+                val event = allEventsWithSubject.value.firstOrNull { it.event.id == eventId }
+                if (completed && event?.event?.countsTowardGrade == true) {
+                    _eventAwaitingGrade.value = event
+                    return@runOperation
+                }
                 check(repository.setEventCompleted(eventId, completed)) { getApplication<Application>().getString(R.string.error_evento_no_existe) }
+            }
+        }
+    }
+
+    fun dismissGradeEntry() {
+        _eventAwaitingGrade.value = null
+    }
+
+    fun completeEventWithGrade(eventId: Long, categoryId: Long, score: Double) {
+        viewModelScope.launch {
+            runOperation {
+                check(repository.completeEventWithGrade(eventId, categoryId, score)) { getApplication<Application>().getString(R.string.error_evento_no_existe) }
+                _eventAwaitingGrade.value = null
             }
         }
     }
