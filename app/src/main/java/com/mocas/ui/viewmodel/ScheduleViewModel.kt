@@ -154,7 +154,6 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     }
 
     private val _externalCalendarEvents = MutableStateFlow<List<ExternalCalendarEvent>>(emptyList())
-    val externalCalendarEvents = _externalCalendarEvents.asStateFlow()
 
     fun syncWithDeviceCalendar() {
         val context = getApplication<Application>()
@@ -165,17 +164,6 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         CalendarSyncScheduler.triggerImmediateSync(context)
     }
 
-    fun loadExternalCalendarEvents(startMillis: Long, endMillis: Long) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val context = getApplication<Application>()
-            val events = CalendarSyncManager.fetchExternalCalendarEvents(context, startMillis, endMillis)
-            _externalCalendarEvents.value = events
-        }
-    }
-
-    fun clearSyncMessage() {
-        _syncMessage.value = null
-    }
 
     val subjectsWithSlots: StateFlow<List<SubjectWithSlots>> = repository.allSubjectsWithSlots
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
@@ -263,12 +251,10 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
 
     override fun onCleared() {
         syncWorkInfoLiveData.removeObserver(syncWorkObserver)
-        super.onCleared()
     }
 
     fun setTab(tab: BottomNavTab) { _currentTab.value = tab }
     fun setTimetableMode(mode: TimetableDisplayMode) { _timetableMode.value = mode }
-    fun setSelectedDayOfWeek(day: Int) { if (day in 1..7) _selectedDayOfWeek.value = day }
     fun selectTimetableDate(date: LocalDate) {
         _selectedWeekStart.value = startOfWeek(date)
         _selectedDayOfWeek.value = date.dayOfWeek.value

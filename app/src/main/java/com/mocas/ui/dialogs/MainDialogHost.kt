@@ -150,8 +150,12 @@ fun MainDialogHost(
             },
             onToggleSubtask = viewModel::toggleSubtaskCompleted,
             onEditEvent = { event ->
-                viewModel.closeSubjectDetail()
-                viewModel.openAddEvent(event)
+                if (event.event.countsTowardGrade) {
+                    viewModel.openGradeEntry(event.event.id)
+                } else {
+                    viewModel.closeSubjectDetail()
+                    viewModel.openAddEvent(event)
+                }
             },
             gradeCategories = gradeCategories.filter { it.subjectId == selectedSubject.subject.id },
             gradeItems = gradeItems,

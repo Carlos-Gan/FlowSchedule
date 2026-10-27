@@ -1,6 +1,5 @@
 package com.mocas.ui.components.horario
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -85,7 +84,6 @@ fun SubjectListView(
                     .clickable { onSubjectClick(sub.id) }
                     .testTag("subject_list_card_${sub.id}"),
                 shape = RoundedCornerShape(20.dp),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceDim),
                 elevation = CardDefaults.cardElevation(1.dp)
             ) {

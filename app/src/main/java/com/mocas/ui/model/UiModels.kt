@@ -91,7 +91,7 @@ data class AppSettings(
     val useGpaScale: Boolean = false,
     val themeMode: String = "LIGHT", // LIGHT por defecto; AUTO y DARK siguen disponibles
     val defaultReminderMinutes: Int = 15,
-    val firstDayOfWeek: Int = 1, // 1 = Lunes, 7 = Domingo
+    val firstDayOfWeek: Int = 1, // 1 = lunes, 7 = domingo
     val notificationsEnabled: Boolean = true,
     val classNotificationsEnabled: Boolean = true,
     val taskNotificationsEnabled: Boolean = true,

@@ -629,4 +629,9 @@
     <string name="opcion_flow_titulo">Arquivo Flow (.flow)</string>
     <string name="opcion_flow_detalle">Horário completo com matérias e tarefas, pronto para partilhar com outra pessoa.</string>
     <string name="compartir_flow_desc">Partilhar arquivo Flow do horário</string>
+    <string name="cuenta_para_calificacion">Conta para a nota</string>
+    <string name="cuenta_para_calificacion_desc">Vincula esta atividade à média da matéria.</string>
+    <string name="calificacion_requiere_materia">Selecione uma matéria para incluir esta atividade na nota.</string>
+    <string name="calificacion_sin_unidades">Crie uma unidade em Notas para vincular esta atividade.</string>
+    <string name="seleccionar_unidad">Selecionar unidade</string>
 </resources>

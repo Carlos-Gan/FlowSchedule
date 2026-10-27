@@ -628,4 +628,9 @@
     <string name="opcion_flow_titulo">File Flow (.flow)</string>
     <string name="opcion_flow_detalle">Orario completo con materie e attività, pronto da condividere con qualcuno.</string>
     <string name="compartir_flow_desc">Condividi file Flow dell\'orario</string>
+    <string name="cuenta_para_calificacion">Concorre al voto</string>
+    <string name="cuenta_para_calificacion_desc">Collega questa attività alla media della materia.</string>
+    <string name="calificacion_requiere_materia">Seleziona una materia per includere questa attività nel voto.</string>
+    <string name="calificacion_sin_unidades">Crea un\'unità in Voti per collegare questa attività.</string>
+    <string name="seleccionar_unidad">Seleziona unità</string>
 </resources>

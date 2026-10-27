@@ -16,11 +16,11 @@ import com.mocas.ui.viewmodel.ScheduleViewModel
 
 @Composable
 fun AppTabContent(
+    modifier: Modifier = Modifier,
     currentTab: BottomNavTab,
     viewModel: ScheduleViewModel,
     windowSizeClass: WindowSizeClass,
     onOpenAcademicProgress: () -> Unit = {},
-    modifier: Modifier = Modifier
 ) {
     val stateHolder = rememberSaveableStateHolder()
 

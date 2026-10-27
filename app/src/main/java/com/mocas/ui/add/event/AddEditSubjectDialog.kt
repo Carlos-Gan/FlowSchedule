@@ -57,7 +57,6 @@ private data class TimePickerTarget(
     val isStartTime: Boolean
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditSubjectScreen(
     editingSubject: SubjectWithSlots?,

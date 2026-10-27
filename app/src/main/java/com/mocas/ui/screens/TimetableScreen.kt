@@ -55,12 +55,6 @@ fun TimetableScreen(
     val settings by viewModel.appSettings.collectAsStateWithLifecycle()
     var showShareDialog by remember { mutableStateOf(false) }
     val selectedDate = selectedWeekStart.plusDays((selectedDay - 1).toLong())
-    val selectedDateIsVacation = settings.showVacationsInTimetable && isVacationDate(
-        date = selectedDate,
-        academicPeriods = academicPeriods,
-        events = allEvents,
-        outsidePeriodsAreVacations = settings.outsidePeriodsAreVacations
-    )
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -165,6 +159,7 @@ fun TimetableScreen(
         }
     }
     if (showShareDialog) {
+        val compartirFlowDesc = stringResource(R.string.compartir_flow_desc)
         ShareScheduleDialog(
             context = context,
             subjects = subjectsWithSlots,
@@ -172,7 +167,7 @@ fun TimetableScreen(
             weekStart = selectedWeekStart,
             onShareFlow = {
                 viewModel.createFlowShareIntent(context) { intent ->
-                    context.startActivity(android.content.Intent.createChooser(intent, context.getString(R.string.compartir_flow_desc)))
+                    context.startActivity(android.content.Intent.createChooser(intent, compartirFlowDesc))
                 }
             },
             onDismiss = { showShareDialog = false }

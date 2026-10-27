@@ -22,7 +22,6 @@ import com.mocas.data.local.GradeUnitEntity
 import com.mocas.data.local.GradeUnitCategoryWeightEntity
 import com.mocas.data.local.ActivityGradeEntity
 import com.mocas.util.DateTimeUtils
-import com.mocas.data.repository.CalendarSyncScheduler
 import com.mocas.data.notifications.ReminderRescheduler
 import kotlinx.coroutines.flow.Flow
 import java.util.Locale
@@ -48,10 +47,7 @@ class ScheduleRepository(private val context: Context, private val database: App
     val gradeUnits: Flow<List<GradeUnitEntity>> = gradeDao.observeUnits()
     val gradeUnitCategoryWeights: Flow<List<GradeUnitCategoryWeightEntity>> = gradeDao.observeUnitCategoryWeights()
 
-    suspend fun getAllSubjectsWithSlotsOnce(): List<SubjectWithSlots> = subjectDao.getAllSubjectsWithSlotsOnce()
-    suspend fun getAllSchoolEventsOnce(): List<SchoolEventEntity> = eventDao.getAllEventsWithSubjectOnce().map { it.event }
     suspend fun getAllEventsWithSubjectOnce(): List<SchoolEventWithSubject> = eventDao.getAllEventsWithSubjectOnce()
-    suspend fun getAllClassExceptionsOnce(): List<ClassExceptionEntity> = exceptionDao.getAllOnce()
 
     suspend fun addGradeUnit(item: GradeUnitEntity): Long {
         require(item.name.isNotBlank()) { context.getString(R.string.error_nombre_unidad_obligatorio) }

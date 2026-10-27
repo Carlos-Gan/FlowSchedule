@@ -45,6 +45,7 @@ import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import java.time.format.TextStyle
 import java.util.Locale
+import androidx.compose.ui.platform.LocalLocale
 
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
@@ -65,7 +66,7 @@ fun DailyScheduleView(
         7 to stringResource(R.string.dia_d)
     )
 
-    val locale = Locale.getDefault()
+    val locale = LocalLocale.current.platformLocale
     val monthName = remember(selectedDate, locale) {
         val format = if (selectedDate.year != LocalDate.now().year) "MMMM yyyy" else "MMMM"
         selectedDate.format(java.time.format.DateTimeFormatter.ofPattern(format, locale))

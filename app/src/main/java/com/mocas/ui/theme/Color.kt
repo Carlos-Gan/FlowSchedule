@@ -27,8 +27,6 @@ val OnSurface = Color(0xFF191C1D)
 val SurfaceVariant = Color(0xFFE1E3E4)
 val OnSurfaceVariant = Color(0xFF454652)
 
-val surfaceDim = Color(0xFFD9DADB)
-
 val Outline = Color(0xFF757684)
 val OutlineVariant = Color(0xFFC5C5D4)
 
