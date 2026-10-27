@@ -23,6 +23,7 @@ import com.mocas.data.local.GradeUnitCategoryWeightEntity
 import com.mocas.data.local.ActivityGradeEntity
 import com.mocas.util.DateTimeUtils
 import com.mocas.data.repository.CalendarSyncScheduler
+import com.mocas.data.notifications.ReminderRescheduler
 import kotlinx.coroutines.flow.Flow
 import java.util.Locale
 
@@ -49,6 +50,7 @@ class ScheduleRepository(private val context: Context, private val database: App
 
     suspend fun getAllSubjectsWithSlotsOnce(): List<SubjectWithSlots> = subjectDao.getAllSubjectsWithSlotsOnce()
     suspend fun getAllSchoolEventsOnce(): List<SchoolEventEntity> = eventDao.getAllEventsWithSubjectOnce().map { it.event }
+    suspend fun getAllEventsWithSubjectOnce(): List<SchoolEventWithSubject> = eventDao.getAllEventsWithSubjectOnce()
     suspend fun getAllClassExceptionsOnce(): List<ClassExceptionEntity> = exceptionDao.getAllOnce()
 
     suspend fun addGradeUnit(item: GradeUnitEntity): Long {
@@ -93,7 +95,8 @@ class ScheduleRepository(private val context: Context, private val database: App
     suspend fun deleteGradeCategory(item: GradeCategoryEntity): Boolean = gradeDao.deleteCategory(item) > 0
     suspend fun deleteGradeItem(item: GradeItemEntity): Boolean = gradeDao.deleteItem(item) > 0
 
-    suspend fun completeEventWithGrade(eventId: Long, categoryId: Long, score: Double): Boolean = database.withTransaction {
+    suspend fun completeEventWithGrade(eventId: Long, categoryId: Long, score: Double): Boolean {
+        val completed = database.withTransaction {
         require(score in 0.0..100.0) { context.getString(R.string.error_calificacion_rango) }
         val event = requireNotNull(eventDao.getEventById(eventId)) { context.getString(R.string.error_evento_no_existe) }
         require(event.countsTowardGrade && event.subjectId != null && event.gradeUnitId != null) {
@@ -116,7 +119,15 @@ class ScheduleRepository(private val context: Context, private val database: App
             }
         }
         activityGradeDao.upsert(ActivityGradeEntity(eventId, category.id, gradeItemId))
-        setEventCompleted(eventId, true)
+        val now = System.currentTimeMillis()
+        if (eventDao.setEventCompleted(eventId, true, now, now) > 0) {
+            subtaskDao.setAllCompletedForEvent(eventId, true, now)
+            CalendarSyncScheduler.triggerImmediateSync(context)
+        }
+        true
+        }
+        ReminderRescheduler.reschedule(context)
+        return completed
     }
 
     suspend fun insertAcademicPeriod(period: AcademicPeriodEntity): Long =
@@ -309,7 +320,8 @@ class ScheduleRepository(private val context: Context, private val database: App
     suspend fun updateEvent(
         event: SchoolEventEntity,
         subtasks: List<SubtaskEntity> = emptyList()
-    ): Boolean = database.withTransaction {
+    ): Boolean {
+        val updated = database.withTransaction {
         require(event.id > 0) { context.getString(R.string.error_evento_sin_id) }
         validateEvent(event)
         val previous = requireNotNull(eventDao.getEventById(event.id)) { context.getString(R.string.error_evento_no_existe) }
@@ -351,8 +363,18 @@ class ScheduleRepository(private val context: Context, private val database: App
             }
             res
         }
-        if (updated) CalendarSyncScheduler.triggerImmediateSync(context)
+        if (updated) {
+            if (previous.countsTowardGrade && !eventToSave.countsTowardGrade) {
+                activityGradeDao.getByEventId(event.id)?.let { link ->
+                    gradeDao.getItemsOnce().firstOrNull { it.id == link.gradeItemId }?.let { gradeDao.deleteItem(it) }
+                }
+            }
+            CalendarSyncScheduler.triggerImmediateSync(context)
+        }
         updated
+        }
+        if (updated) ReminderRescheduler.reschedule(context)
+        return updated
     }
 
     private suspend fun insertSubtasksForEvent(eventId: Long, items: List<SubtaskEntity>) {
@@ -426,19 +448,39 @@ class ScheduleRepository(private val context: Context, private val database: App
         return deleted
     }
 
-    suspend fun setEventCompleted(eventId: Long, completed: Boolean): Boolean = database.withTransaction {
-        val now = System.currentTimeMillis()
-        val completedAt = if (completed) now else null
-        val changed = eventDao.setEventCompleted(eventId, completed, now, completedAt) > 0
-        if (changed) {
-            subtaskDao.setAllCompletedForEvent(eventId, completed, now)
-            CalendarSyncScheduler.triggerImmediateSync(context)
+    suspend fun setEventCompleted(eventId: Long, completed: Boolean): Boolean {
+        val changed = database.withTransaction {
+            val now = System.currentTimeMillis()
+            val completedAt = if (completed) now else null
+            val changed = eventDao.setEventCompleted(eventId, completed, now, completedAt) > 0
+            if (changed) {
+                subtaskDao.setAllCompletedForEvent(eventId, completed, now)
+                CalendarSyncScheduler.triggerImmediateSync(context)
+            }
+            changed
         }
-        changed
+        if (changed) ReminderRescheduler.reschedule(context)
+        return changed
     }
 
-    suspend fun setSubtaskCompleted(eventId: Long, subtaskId: Long, completed: Boolean): Boolean =
-        database.withTransaction {
+    suspend fun markEventGradePending(eventId: Long): Boolean {
+        val exists = database.withTransaction {
+            val event = eventDao.getEventById(eventId) ?: return@withTransaction false
+            if (!event.countsTowardGrade) return@withTransaction false
+            if (!event.isCompleted) {
+                val now = System.currentTimeMillis()
+                eventDao.setEventCompleted(eventId, true, now, now)
+                subtaskDao.setAllCompletedForEvent(eventId, true, now)
+                CalendarSyncScheduler.triggerImmediateSync(context)
+            }
+            true
+        }
+        if (exists) ReminderRescheduler.reschedule(context)
+        return exists
+    }
+
+    suspend fun setSubtaskCompleted(eventId: Long, subtaskId: Long, completed: Boolean): Boolean {
+        val changed = database.withTransaction {
             val now = System.currentTimeMillis()
             val changed = subtaskDao.setCompleted(subtaskId, completed, now) > 0
             if (!changed) return@withTransaction false
@@ -449,6 +491,9 @@ class ScheduleRepository(private val context: Context, private val database: App
             }
             true
         }
+        if (changed) ReminderRescheduler.reschedule(context)
+        return changed
+    }
 
     suspend fun exportScheduleBackup(): String = ScheduleBackupCodec.encode(
         ScheduleBackupData(

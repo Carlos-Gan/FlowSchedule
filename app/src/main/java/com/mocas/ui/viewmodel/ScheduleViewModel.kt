@@ -1,6 +1,8 @@
 package com.mocas.ui.viewmodel
 
 import android.app.Application
+import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.Observer
@@ -475,10 +477,27 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         _eventAwaitingGrade.value = null
     }
 
+    fun openGradeEntry(eventId: Long) {
+        viewModelScope.launch {
+            repository.getAllEventsWithSubjectOnce().firstOrNull { it.event.id == eventId }?.let {
+                _eventAwaitingGrade.value = it
+            }
+        }
+    }
+
     fun completeEventWithGrade(eventId: Long, categoryId: Long, score: Double) {
         viewModelScope.launch {
             runOperation {
                 check(repository.completeEventWithGrade(eventId, categoryId, score)) { getApplication<Application>().getString(R.string.error_evento_no_existe) }
+                _eventAwaitingGrade.value = null
+            }
+        }
+    }
+
+    fun completeEventWithoutGrade(eventId: Long) {
+        viewModelScope.launch {
+            runOperation {
+                check(repository.markEventGradePending(eventId)) { getApplication<Application>().getString(R.string.error_evento_no_existe) }
                 _eventAwaitingGrade.value = null
             }
         }
@@ -539,6 +558,20 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
                     }.bufferedWriter().use { writer -> writer.write(json) }
                 }
                 _userMessage.value = getApplication<Application>().getString(R.string.msg_respaldo_exportado)
+            }
+        }
+    }
+
+    fun createFlowShareIntent(context: Context, onIntentReady: (Intent) -> Unit) {
+        viewModelScope.launch {
+            runOperation {
+                val json = withContext(Dispatchers.IO) {
+                    repository.exportScheduleBackup()
+                }
+                val intent = withContext(Dispatchers.IO) {
+                    com.mocas.data.repository.ScheduleShareExporter.shareFlow(context, json)
+                }
+                onIntentReady(intent)
             }
         }
     }

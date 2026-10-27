@@ -12,12 +12,19 @@ import kotlinx.coroutines.launch
 object ReminderRescheduler {
     suspend fun reschedule(context: Context) {
         val database = AppDatabase.getDatabase(context)
+        val events = database.schoolEventDao().getAllEventsWithSubjectOnce()
+        val linkedEventIds = database.activityGradeDao().getAllOnce().mapTo(mutableSetOf()) { it.eventId }
         val reminders = planReminders(
             context = context,
             subjects = database.subjectDao().getAllSubjectsWithSlotsOnce(),
-            events = database.schoolEventDao().getAllEventsWithSubjectOnce(),
+            events = events,
             exceptions = database.classExceptionDao().getAllOnce(),
-            settings = AppSettingsStore(context).load()
+            settings = AppSettingsStore(context).load(),
+            pendingGradeEventIds = events
+                .filter { it.event.isCompleted && it.event.countsTowardGrade }
+                .map { it.event.id }
+                .filterNot { it in linkedEventIds }
+                .toSet()
         )
         NotificationScheduler.replaceAll(context, reminders)
     }

@@ -170,6 +170,11 @@ fun TimetableScreen(
             subjects = subjectsWithSlots,
             events = allEvents,
             weekStart = selectedWeekStart,
+            onShareFlow = {
+                viewModel.createFlowShareIntent(context) { intent ->
+                    context.startActivity(android.content.Intent.createChooser(intent, context.getString(R.string.compartir_flow_desc)))
+                }
+            },
             onDismiss = { showShareDialog = false }
         )
     }

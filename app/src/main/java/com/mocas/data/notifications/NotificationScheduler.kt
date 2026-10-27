@@ -118,20 +118,38 @@ class ReminderReceiver : BroadcastReceiver() {
             .apply {
                 val eventId = intent.getLongExtra("eventId", -1L)
                 if (eventId > 0) {
-                    addAction(
-                        R.drawable.ic_notification,
-                        context.getString(R.string.notif_action_complete),
-                        notificationAction(context, NotificationScheduler.ACTION_COMPLETE, id, eventId, intent)
-                    )
-                    addAction(
-                        R.drawable.ic_notification,
-                        context.getString(R.string.notif_action_snooze),
-                        notificationAction(context, NotificationScheduler.ACTION_SNOOZE, id, eventId, intent)
-                    )
+                    if (id.startsWith("grade_pending_")) {
+                        addAction(
+                            R.drawable.ic_notification,
+                            context.getString(R.string.notif_action_grade),
+                            gradeEntryIntent(context, id, eventId)
+                        )
+                    } else {
+                        addAction(
+                            R.drawable.ic_notification,
+                            context.getString(R.string.notif_action_complete),
+                            notificationAction(context, NotificationScheduler.ACTION_COMPLETE, id, eventId, intent)
+                        )
+                        addAction(
+                            R.drawable.ic_notification,
+                            context.getString(R.string.notif_action_snooze),
+                            notificationAction(context, NotificationScheduler.ACTION_SNOOZE, id, eventId, intent)
+                        )
+                    }
                 }
             }
             .build()
         NotificationManagerCompat.from(context).notify(id.hashCode(), notification)
+        if (id.startsWith("grade_pending_")) {
+            val pendingResult = goAsync()
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    ReminderRescheduler.reschedule(context.applicationContext)
+                } finally {
+                    pendingResult.finish()
+                }
+            }
+        }
     }
 
     private fun notificationAction(
@@ -159,6 +177,20 @@ class ReminderReceiver : BroadcastReceiver() {
 
 }
 
+private fun gradeEntryIntent(context: Context, notificationId: String, eventId: Long): PendingIntent {
+    val intent = Intent(context, MainActivity::class.java).apply {
+        action = "ACTION_OPEN_GRADE"
+        putExtra("eventId", eventId)
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+    }
+    return PendingIntent.getActivity(
+        context,
+        notificationId.hashCode(),
+        intent,
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    )
+}
+
 class NotificationActionReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val eventId = intent.getLongExtra("eventId", -1L)
@@ -170,14 +202,8 @@ class NotificationActionReceiver : BroadcastReceiver() {
             try {
                 when (intent.action) {
                     NotificationScheduler.ACTION_COMPLETE -> {
-                        val now = System.currentTimeMillis()
-                        AppDatabase.getDatabase(context).schoolEventDao().setEventCompleted(
-                            eventId,
-                            true,
-                            now,
-                            now
-                        )
-                        ReminderRescheduler.reschedule(context)
+                        val database = AppDatabase.getDatabase(context)
+                        com.mocas.data.repository.ScheduleRepository(context, database).setEventCompleted(eventId, true)
                         ScheduleWidgetProvider.requestUpdate(context)
                         DailyScheduleWidgetProvider.requestUpdate(context)
                     }

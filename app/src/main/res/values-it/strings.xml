@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="grade_pending_action">Non ho ancora ricevuto il voto</string>
+    <string name="grade_pending_title">Hai già ricevuto il voto?</string>
+    <string name="grade_pending_message">Inserisci il voto di %1$s quando lo ricevi.</string>
     <string name="app_name">FlowSchedule</string>
     <string name="widget_description">Prossima lezione e attività in sospeso</string>
     <string name="next_class_widget_name">Prossima Lezione</string>
@@ -431,6 +434,7 @@
     <string name="channel_summary_name">Riepilogo Giornaliero</string>
     <string name="notif_action_complete">Completa</string>
     <string name="notif_action_snooze">Posticipa 1h</string>
+    <string name="notif_action_grade">Inserisci voto</string>
     <string name="notif_pending_activity">Attività in sospeso</string>
     <string name="no_clases_dia_formato">Nessuna lezione assegnata per %1$s.</string>
     <string name="error_nombre_unidad_obligatorio">Il nome dell\'unità è obbligatorio.</string>
@@ -621,4 +625,7 @@
     <string name="calendar_sync_retrying">Nuovo tentativo di sincronizzazione…</string>
     <string name="calendar_sync_permission_error">Consenti l’accesso al calendario e riprova.</string>
     <string name="calendar_sync_unknown_error">Impossibile completare la sincronizzazione.</string>
+    <string name="opcion_flow_titulo">File Flow (.flow)</string>
+    <string name="opcion_flow_detalle">Orario completo con materie e attività, pronto da condividere con qualcuno.</string>
+    <string name="compartir_flow_desc">Condividi file Flow dell\'orario</string>
 </resources>

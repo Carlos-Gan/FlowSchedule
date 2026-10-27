@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="grade_pending_action">Ainda não recebi a nota</string>
+    <string name="grade_pending_title">Você já recebeu sua nota?</string>
+    <string name="grade_pending_message">Registre a nota de %1$s quando recebê-la.</string>
     <string name="app_name">FlowSchedule</string>
     <string name="widget_description">Próxima aula e atividades pendentes</string>
     <string name="next_class_widget_name">Próxima Aula</string>
@@ -432,6 +435,7 @@
     <string name="channel_summary_name">Resumo Diário</string>
     <string name="notif_action_complete">Concluir</string>
     <string name="notif_action_snooze">Adiar 1h</string>
+    <string name="notif_action_grade">Registrar nota</string>
     <string name="notif_pending_activity">Atividade pendente</string>
     <string name="no_clases_dia_formato">Nenhuma aula atribuída para %1$s.</string>
     <string name="error_nombre_unidad_obligatorio">O nome da unidade é obrigatório.</string>
@@ -622,4 +626,7 @@
     <string name="calendar_sync_retrying">Tentando sincronizar novamente…</string>
     <string name="calendar_sync_permission_error">Permita o acesso ao calendário e tente novamente.</string>
     <string name="calendar_sync_unknown_error">Não foi possível concluir a sincronização.</string>
+    <string name="opcion_flow_titulo">Arquivo Flow (.flow)</string>
+    <string name="opcion_flow_detalle">Horário completo com matérias e tarefas, pronto para partilhar com outra pessoa.</string>
+    <string name="compartir_flow_desc">Partilhar arquivo Flow do horário</string>
 </resources>

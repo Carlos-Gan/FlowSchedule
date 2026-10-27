@@ -951,7 +951,7 @@ fun SettingsScreen(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Button(
-                            onClick = { exportLauncher.launch("SnapBackup_${System.currentTimeMillis()}.json") },
+                            onClick = { exportLauncher.launch("FlowSchedule_${System.currentTimeMillis()}.flow") },
                             modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(12.dp)
                         ) {
@@ -967,7 +967,8 @@ fun SettingsScreen(
                             importLauncher.launch(
                                 arrayOf(
                                     "application/json",
-                                    "application/octet-stream"
+                                    "application/octet-stream",
+                                    "*/*"
                                 )
                             )
                         }, modifier = Modifier.weight(1f), shape = RoundedCornerShape(12.dp)) {

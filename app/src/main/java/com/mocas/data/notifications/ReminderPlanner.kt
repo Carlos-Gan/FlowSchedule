@@ -36,6 +36,7 @@ internal fun planReminders(
     events: List<SchoolEventWithSubject>,
     exceptions: List<ClassExceptionEntity>,
     settings: AppSettings,
+    pendingGradeEventIds: Set<Long> = emptySet(),
     now: LocalDateTime = LocalDateTime.now(),
     zoneId: ZoneId = ZoneId.systemDefault()
 ): List<PlannedReminder> {
@@ -191,5 +192,18 @@ internal fun planReminders(
             )
         }
     }
+
+    events.filter { it.event.isCompleted && it.event.countsTowardGrade && it.event.id in pendingGradeEventIds }
+        .forEach { item ->
+            val nextReminder = LocalDateTime.of(now.toLocalDate().plusDays(1), LocalTime.of(10, 0))
+            reminders += PlannedReminder(
+                id = "grade_pending_${item.event.id}",
+                triggerAtMillis = nextReminder.atZone(zoneId).toInstant().toEpochMilli(),
+                title = context.getString(R.string.grade_pending_title),
+                message = context.getString(R.string.grade_pending_message, item.event.title),
+                channel = NotificationScheduler.CHANNEL_ACTIVITIES,
+                eventId = item.event.id
+            )
+        }
     return reminders.distinctBy { it.id }
 }

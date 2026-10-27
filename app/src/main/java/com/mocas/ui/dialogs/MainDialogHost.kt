@@ -104,6 +104,7 @@ fun MainDialogHost(
             unit = unit,
             categories = gradeCategories.filter { it.subjectId == event.event.subjectId },
             onDismiss = viewModel::dismissGradeEntry,
+            onMarkGradePending = { viewModel.completeEventWithoutGrade(event.event.id) },
             onSave = { categoryId, score ->
                 viewModel.completeEventWithGrade(event.event.id, categoryId, score)
             }

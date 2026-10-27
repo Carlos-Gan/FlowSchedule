@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="grade_pending_action">I haven’t received the grade yet</string>
+    <string name="grade_pending_title">Do you have your grade yet?</string>
+    <string name="grade_pending_message">Enter the grade for %1$s when you receive it.</string>
     <string name="app_name">FlowSchedule</string>
     <string name="widget_description">Next class and pending activities</string>
     <string name="next_class_widget_name">Next Class</string>
@@ -449,6 +452,7 @@
     <string name="channel_summary_name">Daily Summary</string>
     <string name="notif_action_complete">Complete</string>
     <string name="notif_action_snooze">Snooze 1h</string>
+    <string name="notif_action_grade">Enter grade</string>
     <string name="notif_pending_activity">Pending activity</string>
 
     <!-- Error Messages & UI Feedback -->
@@ -659,4 +663,7 @@
     <string name="calificacion_requiere_materia">Select a subject to include this activity in the grade.</string>
     <string name="calificacion_sin_unidades">Create a unit in Grades to link this activity.</string>
     <string name="seleccionar_unidad">Select unit</string>
+    <string name="opcion_flow_titulo">Flow file (.flow)</string>
+    <string name="opcion_flow_detalle">Complete schedule with subjects and tasks, ready to share with someone.</string>
+    <string name="compartir_flow_desc">Share schedule Flow file</string>
 </resources>

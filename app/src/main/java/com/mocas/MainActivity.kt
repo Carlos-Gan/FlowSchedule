@@ -120,7 +120,20 @@ class MainActivity : ComponentActivity() {
     private fun handleIntent(intent: Intent?) {
         when (intent?.action) {
             "ACTION_OPEN_EVENTS" -> viewModel.setTab(BottomNavTab.EVENTOS)
+            "ACTION_OPEN_GRADE" -> {
+                viewModel.setTab(BottomNavTab.EVENTOS)
+                intent.getLongExtra("eventId", -1L).takeIf { it > 0 }?.let(viewModel::openGradeEntry)
+            }
             "ACTION_OPEN_SCHEDULE" -> viewModel.setTab(BottomNavTab.HORARIO)
+            Intent.ACTION_VIEW, Intent.ACTION_SEND -> {
+                val uri = intent.data ?: if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    intent.getParcelableExtra(Intent.EXTRA_STREAM, android.net.Uri::class.java)
+                } else {
+                    @Suppress("DEPRECATION")
+                    intent.getParcelableExtra(Intent.EXTRA_STREAM)
+                }
+                uri?.let { viewModel.importScheduleBackup(it) }
+            }
         }
     }
 }

@@ -414,6 +414,9 @@
     <!-- Actividad vencida -->
     <string name="notif_overdue_title">Actividad vencida</string>
     <string name="notif_overdue_message">%1$s sigue pendiente.</string>
+    <string name="grade_pending_action">Aún no me dan la calificación</string>
+    <string name="grade_pending_title">¿Ya tienes tu calificación?</string>
+    <string name="grade_pending_message">Completa la calificación de %1$s cuando te la entreguen.</string>
     <string name="ahora">Ahora</string>
     <string name="no_tienes_clases_hoy_n_tu_horario_est_libre">No tienes clases hoy ¡Tu horario está libre!</string>
     <string name="sin_pr_ximas_clases">Sin próximas clases</string>
@@ -447,6 +450,7 @@
     <string name="channel_summary_name">Resumen diario</string>
     <string name="notif_action_complete">Completar</string>
     <string name="notif_action_snooze">Posponer 1 h</string>
+    <string name="notif_action_grade">Registrar calificación</string>
     <string name="notif_pending_activity">Actividad pendiente</string>
 
     <!-- Error Messages & UI Feedback -->
@@ -656,4 +660,7 @@
     <string name="calificacion_requiere_materia">Selecciona una materia para incluir esta actividad en la calificación.</string>
     <string name="calificacion_sin_unidades">Crea una unidad en Calificaciones para poder vincular esta actividad.</string>
     <string name="seleccionar_unidad">Seleccionar unidad</string>
+    <string name="opcion_flow_titulo">Archivo Flow (.flow)</string>
+    <string name="opcion_flow_detalle">Horario completo con materias y tareas, listo para pasar a otra persona.</string>
+    <string name="compartir_flow_desc">Compartir archivo Flow del horario</string>
 </resources>
