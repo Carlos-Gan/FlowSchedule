@@ -62,6 +62,7 @@ fun AddEventDialog(
     defaultTitle: String? = null,
     subjects: List<SubjectWithSlots>,
     gradeUnits: List<GradeUnitEntity>,
+    onManageGradeUnits: (Long) -> Unit,
     onDismiss: () -> Unit,
     onSave: (SchoolEventEntity, List<SubtaskEntity>) -> Unit
 ) {
@@ -411,11 +412,16 @@ fun AddEventDialog(
                                     color = MaterialTheme.colorScheme.error
                                 )
                             } else if (unitsForSelectedSubject.isEmpty()) {
-                                Text(
-                                    stringResource(R.string.calificacion_sin_unidades),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
+                                Column {
+                                    Text(
+                                        stringResource(R.string.calificacion_sin_unidades),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                    TextButton(onClick = { selectedSubjectId?.let(onManageGradeUnits) }) {
+                                        Text(stringResource(R.string.abrir_calificaciones_desc))
+                                    }
+                                }
                             } else {
                                 ExposedDropdownMenuBox(
                                     expanded = isUnitDropdownExpanded,

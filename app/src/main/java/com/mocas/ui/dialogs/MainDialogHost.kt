@@ -2,6 +2,8 @@ package com.mocas.ui.dialogs
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mocas.ui.add.event.AddEditSubjectScreen
@@ -10,11 +12,13 @@ import com.mocas.ui.add.subject.SubjectDetailDialog
 import com.mocas.ui.viewmodel.ScheduleViewModel
 import com.mocas.ui.screens.AppearanceScreen
 import com.mocas.ui.components.grade.RecordActivityGradeDialog
+import com.mocas.ui.components.grade.GradesWorkspaceDialog
 
 @Composable
 fun MainDialogHost(
     viewModel: ScheduleViewModel
 ) {
+    var gradeWorkspaceSubjectId by remember { mutableStateOf<Long?>(null) }
     val isAddSubjectOpen by viewModel.isAddSubjectOpen.collectAsStateWithLifecycle()
     val isAddEventOpen by viewModel.isAddEventOpen.collectAsStateWithLifecycle()
     val isAppearanceOpen by viewModel.isAppearanceOpen.collectAsStateWithLifecycle()
@@ -85,6 +89,7 @@ fun MainDialogHost(
             defaultTitle = newEventTitle,
             subjects = subjectsWithSlots,
             gradeUnits = gradeUnits,
+            onManageGradeUnits = { gradeWorkspaceSubjectId = it },
             onDismiss = viewModel::closeAddEvent,
             onSave = viewModel::saveEvent
         )
@@ -167,6 +172,25 @@ fun MainDialogHost(
             onDeleteItem = viewModel::deleteGradeItem,
             onAddGradeUnit = viewModel::addGradeUnit,
             onDeleteGradeUnit = viewModel::deleteGradeUnit,
+            onSaveUnitCategoryWeights = viewModel::saveUnitCategoryWeights,
+            onResetUnitCategoryWeights = viewModel::resetUnitCategoryWeights
+        )
+    }
+
+    gradeWorkspaceSubjectId?.let { subjectId ->
+        GradesWorkspaceDialog(
+            subjectId = subjectId,
+            categories = gradeCategories.filter { it.subjectId == subjectId },
+            gradeItems = gradeItems,
+            units = gradeUnits.filter { it.subjectId == subjectId },
+            unitCategoryWeights = gradeUnitCategoryWeights,
+            onDismiss = { gradeWorkspaceSubjectId = null },
+            onAddCategory = viewModel::addGradeCategory,
+            onAddItem = viewModel::addGradeItem,
+            onDeleteCategory = viewModel::deleteGradeCategory,
+            onDeleteItem = viewModel::deleteGradeItem,
+            onAddUnit = viewModel::addGradeUnit,
+            onDeleteUnit = viewModel::deleteGradeUnit,
             onSaveUnitCategoryWeights = viewModel::saveUnitCategoryWeights,
             onResetUnitCategoryWeights = viewModel::resetUnitCategoryWeights
         )

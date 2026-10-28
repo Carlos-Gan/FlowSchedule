@@ -1,5 +1,10 @@
 package com.mocas.ui.components.grade
 
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -48,6 +53,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
@@ -83,8 +89,47 @@ fun GradesWorkspaceDialog(
     onResetUnitCategoryWeights: (Long) -> Unit
 ) {
     var selectedUnitId by remember { mutableStateOf<Long?>(null) }
-    LaunchedEffect(units) {
-        if (units.none { it.id == selectedUnitId }) selectedUnitId = units.firstOrNull()?.id
+    var knownUnitIds by remember { mutableStateOf(units.mapTo(mutableSetOf()) { it.id }) }
+    val workspaceOpenedAtMillis = remember { System.currentTimeMillis() }
+    var showMissingCategoriesNotice by remember { mutableStateOf(false) }
+    var needsCategorySetupAttention by remember { mutableStateOf(false) }
+    var hasCheckedInitialUnit by remember { mutableStateOf(false) }
+    var notifiedUnitIds by remember { mutableStateOf(emptySet<Long>()) }
+    val selectUnit: (GradeUnitEntity) -> Unit = { unit ->
+        selectedUnitId = unit.id
+        if (!GradeCalculator.hasCustomUnitWeights(unit.id, unitCategoryWeights) && unit.id !in notifiedUnitIds) {
+            showMissingCategoriesNotice = true
+            needsCategorySetupAttention = true
+            notifiedUnitIds = notifiedUnitIds + unit.id
+        }
+    }
+    val gearPulseScale = rememberInfiniteTransition(label = "categorySetupAttention")
+        .animateFloat(
+            initialValue = 1f,
+            targetValue = if (needsCategorySetupAttention) 1.2f else 1f,
+            animationSpec = infiniteRepeatable(tween(550), RepeatMode.Reverse),
+            label = "categoryGearPulse"
+        )
+    LaunchedEffect(units, categories, unitCategoryWeights) {
+        val currentIds = units.mapTo(mutableSetOf()) { it.id }
+        if (!hasCheckedInitialUnit && units.isNotEmpty()) {
+            val initialUnit = units.firstOrNull { it.id == selectedUnitId } ?: units.first()
+            hasCheckedInitialUnit = true
+            selectUnit(initialUnit)
+        }
+        val newUnit = units.firstOrNull {
+            it.id !in knownUnitIds && it.createdAtMillis >= workspaceOpenedAtMillis
+        }
+        if (newUnit != null) {
+            selectUnit(newUnit)
+        }
+        if (selectedUnitId != null && units.none { it.id == selectedUnitId }) {
+            units.firstOrNull()?.let(selectUnit)
+        }
+        knownUnitIds = currentIds
+    }
+    LaunchedEffect(categories) {
+        if (categories.isNotEmpty()) needsCategorySetupAttention = false
     }
     val selectedUnit = units.firstOrNull { it.id == selectedUnitId }
     var showAddGrade by remember { mutableStateOf(false) }
@@ -151,10 +196,31 @@ fun GradesWorkspaceDialog(
                         )
                         Text(stringResource(R.string.organizadas_por_unidades), style = MaterialTheme.typography.bodySmall)
                     }
-                    IconButton(onClick = { showCategories = true }) {
+                    IconButton(onClick = {
+                        val configureNewUnit = needsCategorySetupAttention &&
+                            selectedUnit != null && categories.isNotEmpty()
+                        needsCategorySetupAttention = false
+                        if (configureNewUnit) {
+                            showUnitWeightsDialog = true
+                        } else {
+                            showCategories = true
+                        }
+                    }) {
                         Icon(
                             Icons.Default.Settings,
-                            stringResource(R.string.administrar_porcentajes_desc)
+                            stringResource(
+                                if (needsCategorySetupAttention && selectedUnit != null && categories.isNotEmpty()) {
+                                    R.string.cambiar_porcentajes_unidad_desc
+                                } else {
+                                    R.string.administrar_porcentajes_desc
+                                }
+                            ),
+                            modifier = Modifier.graphicsLayer {
+                                scaleX = gearPulseScale.value
+                                scaleY = gearPulseScale.value
+                            },
+                            tint = if (needsCategorySetupAttention) MaterialTheme.colorScheme.error
+                            else MaterialTheme.colorScheme.onSurface
                         )
                     }
                     IconButton(onClick = onDismiss) { Icon(Icons.Default.Close, stringResource(R.string.cerrar)) }
@@ -211,7 +277,7 @@ fun GradesWorkspaceDialog(
                                 average = average,
                                 selected = selectedUnitId == unit.id,
                                 isCustomized = isCustom,
-                                onClick = { selectedUnitId = unit.id },
+                                onClick = { selectUnit(unit) },
                                 onLongClick = {
                                     selectedUnitId = unit.id
                                     showUnitWeightsDialog = true
@@ -238,7 +304,7 @@ fun GradesWorkspaceDialog(
                         SelectableChip(
                             unit.name,
                             selectedUnitId == unit.id
-                        ) { selectedUnitId = unit.id }
+                        ) { selectUnit(unit) }
                     }
                 }
 
@@ -440,6 +506,50 @@ fun GradesWorkspaceDialog(
             onAddCategory,
             onDeleteCategory
         ) { showCategories = false }
+    }
+    if (showMissingCategoriesNotice) {
+        AlertDialog(
+            onDismissRequest = { showMissingCategoriesNotice = false },
+            title = {
+                Text(
+                    stringResource(
+                        if (categories.isEmpty()) R.string.new_unit_missing_categories_title
+                        else R.string.new_unit_default_weights_title
+                    )
+                )
+            },
+            text = {
+                Text(
+                    stringResource(
+                        if (categories.isEmpty()) R.string.new_unit_missing_categories_message
+                        else R.string.new_unit_default_weights_message
+                    )
+                )
+            },
+            confirmButton = {
+                Button(onClick = {
+                    showMissingCategoriesNotice = false
+                    needsCategorySetupAttention = false
+                    if (categories.isNotEmpty() && selectedUnit != null) {
+                        showUnitWeightsDialog = true
+                    } else {
+                        showCategories = true
+                    }
+                }) {
+                    Text(
+                        stringResource(
+                            if (categories.isEmpty()) R.string.manage_grade_categories_action
+                            else R.string.configure_unit_weights_action
+                        )
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showMissingCategoriesNotice = false }) {
+                    Text(stringResource(R.string.grade_setup_later))
+                }
+            }
+        )
     }
     if (showUnitWeightsDialog && selectedUnit != null) {
         UnitCategoryWeightsDialog(

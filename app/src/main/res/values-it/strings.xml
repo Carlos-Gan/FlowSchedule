@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="grade_pending_action">Non ho ancora ricevuto il voto</string>
+    <string name="grade_pending_action">Non ho ancora il voto</string>
     <string name="grade_pending_title">Hai già ricevuto il voto?</string>
     <string name="grade_pending_message">Inserisci il voto di %1$s quando lo ricevi.</string>
+    <string name="new_unit_missing_categories_title">Configura i voti</string>
+    <string name="new_unit_missing_categories_message">Questa materia non ha ancora categorie di voto. Creane una dall’ingranaggio per calcolare la media dell’unità.</string>
+    <string name="manage_grade_categories_action">Configura categorie</string>
+    <string name="grade_setup_later">Non ora</string>
+    <string name="new_unit_default_weights_title">Questa unità usa le percentuali generali</string>
+    <string name="new_unit_default_weights_message">Non ha ancora percentuali proprie. Usa l’ingranaggio per personalizzare la distribuzione dell’unità.</string>
+    <string name="configure_unit_weights_action">Configura percentuali</string>
     <string name="app_name">FlowSchedule</string>
     <string name="widget_description">Prossima lezione e attività in sospeso</string>
     <string name="next_class_widget_name">Prossima Lezione</string>
@@ -558,16 +565,16 @@
     <string name="widget_school_days_total_simple">Totale: %1$d giorni scolastici</string>
     <string name="widget_school_days_total_progress">%1$d giorni scolastici · %2$d%% completati</string>
     <string name="widget_period_ended">Periodo terminato</string>
-    <string name="whats_new_title">Novità nella versione 2.0.0!</string>
-    <string name="whats_new_subtitle">Ecco le novità preparate per FlowSchedule 2.0.0:</string>
-    <string name="whats_new_item_1_title">🔍 Ricerca intelligente e animata</string>
-    <string name="whats_new_item_1_desc">Trova rapidamente materie ed eventi con la nuova barra di ricerca espandibile e animazioni fluide.</string>
-    <string name="whats_new_item_2_title">📝 Moduli e note migliorati</string>
-    <string name="whats_new_item_2_desc">Scrivi note e istruzioni senza ostacoli grazie all\'adattamento automatico della tastiera.</string>
-    <string name="whats_new_item_3_title">🎨 Interfaccia raffinata e adattabile v2.0.0</string>
-    <string name="whats_new_item_3_desc">Adattamento perfetto anche con caratteri di sistema grandi e schede lezioni più pulite.</string>
-    <string name="whats_new_item_4_title">✨ Stati vuoti più utili</string>
-    <string name="whats_new_item_4_desc">Aggiungi una lezione o un’attività da un giorno vuoto oppure rimuovi i filtri se non trovi risultati.</string>
+    <string name="whats_new_title">Novità nella versione 2.3.0!</string>
+    <string name="whats_new_subtitle">Tieni traccia dei voti insieme alle tue attività:</string>
+    <string name="whats_new_item_1_title">📊 Attività che contribuiscono al voto</string>
+    <string name="whats_new_item_1_desc">Indica che un’attività contribuisce al voto della materia e inserisci il risultato quando la completi. Sarà collegata all’unità e alla categoria scelte.</string>
+    <string name="whats_new_item_2_title">🔔 Promemoria per i voti in sospeso</string>
+    <string name="whats_new_item_2_desc">Se non hai ancora ricevuto il voto, avvisa l’app e ti ricorderemo di inserirlo più tardi.</string>
+    <string name="whats_new_item_3_title">⚙️ Configura i voti in pochi passaggi</string>
+    <string name="whats_new_item_3_desc">Apri le impostazioni dell’unità dall’avviso quando mancano categorie o percentuali. Vengono rilevate anche le unità esistenti che usano le percentuali generali.</string>
+    <string name="whats_new_item_4_title">✨ Accesso rapido dall’attività</string>
+    <string name="whats_new_item_4_desc">Apri Voti dal modulo dell’attività per creare unità o configurare categorie e percentuali senza perdere i dati inseriti.</string>
     <string name="whats_new_button">Ho capito!</string>
 
     <!-- Add Event Dialog UI Strings -->
@@ -633,4 +640,10 @@
     <string name="calificacion_requiere_materia">Seleziona una materia per includere questa attività nel voto.</string>
     <string name="calificacion_sin_unidades">Crea un\'unità in Voti per collegare questa attività.</string>
     <string name="seleccionar_unidad">Seleziona unità</string>
+    <string name="unidad_sin_definir">Unità non definita</string>
+    <string name="crear_categoria_calificacion_instruccion">Crea una categoria di valutazione per questa materia prima di registrare il voto.</string>
+    <string name="selecciona_categoria">Seleziona una categoria</string>
+    <string name="calificacion">Voto</string>
+    <string name="ingresa_valor_0_100">Inserisci un valore da 0 a 100</string>
+    <string name="guardar_y_completar">Salva e completa</string>
 </resources>

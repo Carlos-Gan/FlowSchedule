@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="grade_pending_action">I haven’t received the grade yet</string>
+    <string name="grade_pending_action">I don’t have the grade yet</string>
     <string name="grade_pending_title">Do you have your grade yet?</string>
     <string name="grade_pending_message">Enter the grade for %1$s when you receive it.</string>
+    <string name="new_unit_missing_categories_title">Set up grades</string>
+    <string name="new_unit_missing_categories_message">This subject has no grade categories yet. Create one from the gear to calculate this unit’s average.</string>
+    <string name="manage_grade_categories_action">Set up categories</string>
+    <string name="grade_setup_later">Not now</string>
+    <string name="new_unit_default_weights_title">This unit uses general percentages</string>
+    <string name="new_unit_default_weights_message">It doesn’t have its own percentages yet. Use the gear to customize this unit’s distribution.</string>
+    <string name="configure_unit_weights_action">Set percentages</string>
     <string name="app_name">FlowSchedule</string>
     <string name="widget_description">Next class and pending activities</string>
     <string name="next_class_widget_name">Next Class</string>
@@ -590,16 +597,16 @@
     <string name="widget_period_ended">Period ended</string>
 
     <!-- What's New Dialog -->
-    <string name="whats_new_title">What\'s new in version 2.0.0!</string>
-    <string name="whats_new_subtitle">Here is what we\'ve prepared for FlowSchedule 2.0.0:</string>
-    <string name="whats_new_item_1_title">🔍 Smart animated search</string>
-    <string name="whats_new_item_1_desc">Quickly find subjects and activities with the new expandable animated search bar.</string>
-    <string name="whats_new_item_2_title">📝 Improved forms and notes</string>
-    <string name="whats_new_item_2_desc">Write long notes and instructions easily with automatic layout adjustment when the keyboard opens.</string>
-    <string name="whats_new_item_3_title">🎨 Refined &amp; adaptable UI v2.0.0</string>
-    <string name="whats_new_item_3_desc">Perfect layout scaling even with large system fonts, cleaner class cards, and modern surfaces.</string>
-    <string name="whats_new_item_4_title">✨ More helpful empty states</string>
-    <string name="whats_new_item_4_desc">Add a class or activity from an empty day, or clear filters when they return no results.</string>
+    <string name="whats_new_title">What\'s new in version 2.3.0!</string>
+    <string name="whats_new_subtitle">Track your grades right alongside your activities:</string>
+    <string name="whats_new_item_1_title">📊 Activities that count toward your grade</string>
+    <string name="whats_new_item_1_desc">Mark an activity to include it in your subject grade and record its score when you complete it. It links to the selected unit and category.</string>
+    <string name="whats_new_item_2_title">🔔 Reminders for pending grades</string>
+    <string name="whats_new_item_2_desc">If you have not received a score yet, let the app know and we’ll remind you to enter it later.</string>
+    <string name="whats_new_item_3_title">⚙️ Set up grades without extra steps</string>
+    <string name="whats_new_item_3_desc">Open a unit’s settings from the prompt when categories or percentages are missing. Existing units using general percentages are detected too.</string>
+    <string name="whats_new_item_4_title">✨ Quick access from an activity</string>
+    <string name="whats_new_item_4_desc">Open Grades from the activity form to create units or configure categories and percentages without losing what you entered.</string>
     <string name="whats_new_button">Got it!</string>
 
     <!-- Add Event Dialog UI Strings -->
@@ -666,4 +673,10 @@
     <string name="opcion_flow_titulo">Flow file (.flow)</string>
     <string name="opcion_flow_detalle">Complete schedule with subjects and tasks, ready to share with someone.</string>
     <string name="compartir_flow_desc">Share schedule Flow file</string>
+    <string name="unidad_sin_definir">Undefined unit</string>
+    <string name="crear_categoria_calificacion_instruccion">Create a grading category for this subject before recording a grade.</string>
+    <string name="selecciona_categoria">Select a category</string>
+    <string name="calificacion">Grade</string>
+    <string name="ingresa_valor_0_100">Enter a value from 0 to 100</string>
+    <string name="guardar_y_completar">Save and complete</string>
 </resources>

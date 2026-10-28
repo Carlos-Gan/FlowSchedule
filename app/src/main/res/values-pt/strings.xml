@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="grade_pending_action">Ainda não recebi a nota</string>
+    <string name="grade_pending_action">Ainda não tenho a nota</string>
     <string name="grade_pending_title">Você já recebeu sua nota?</string>
     <string name="grade_pending_message">Registre a nota de %1$s quando recebê-la.</string>
+    <string name="new_unit_missing_categories_title">Configure as notas</string>
+    <string name="new_unit_missing_categories_message">Esta matéria ainda não tem categorias de notas. Crie uma pela engrenagem para calcular a média da unidade.</string>
+    <string name="manage_grade_categories_action">Configurar categorias</string>
+    <string name="grade_setup_later">Agora não</string>
+    <string name="new_unit_default_weights_title">Esta unidade usa as porcentagens gerais</string>
+    <string name="new_unit_default_weights_message">Ela ainda não tem porcentagens próprias. Use a engrenagem para personalizar a distribuição desta unidade.</string>
+    <string name="configure_unit_weights_action">Configurar porcentagens</string>
     <string name="app_name">FlowSchedule</string>
     <string name="widget_description">Próxima aula e atividades pendentes</string>
     <string name="next_class_widget_name">Próxima Aula</string>
@@ -559,16 +566,16 @@
     <string name="widget_school_days_total_simple">Total: %1$d dias letivos</string>
     <string name="widget_school_days_total_progress">%1$d dias letivos · %2$d%% concluídos</string>
     <string name="widget_period_ended">Período finalizado</string>
-    <string name="whats_new_title">Novidades na versão 2.0.0!</string>
-    <string name="whats_new_subtitle">Confira o que preparamos no FlowSchedule 2.0.0:</string>
-    <string name="whats_new_item_1_title">🔍 Busca inteligente e animada</string>
-    <string name="whats_new_item_1_desc">Encontre matérias e atividades rapidamente com a nova barra de busca expansível e animações fluidas.</string>
-    <string name="whats_new_item_2_title">📝 Formulários e notas melhorados</string>
-    <string name="whats_new_item_2_desc">Escreva notas longas com facilidade graças ao ajuste automático ao abrir o teclado.</string>
-    <string name="whats_new_item_3_title">🎨 Interface refinada e adaptável v2.0.0</string>
-    <string name="whats_new_item_3_desc">Adaptação perfeita mesmo com fontes grandes do sistema e cartões de aulas mais limpos.</string>
-    <string name="whats_new_item_4_title">✨ Estados vazios mais úteis</string>
-    <string name="whats_new_item_4_desc">Adicione uma aula ou atividade em um dia vazio, ou limpe os filtros quando não houver resultados.</string>
+    <string name="whats_new_title">Novidades na versão 2.3.0!</string>
+    <string name="whats_new_subtitle">Acompanhe suas notas junto com suas atividades:</string>
+    <string name="whats_new_item_1_title">📊 Atividades que contam para sua nota</string>
+    <string name="whats_new_item_1_desc">Marque uma atividade para incluí-la na nota da matéria e registre a pontuação ao concluí-la. Ela fica vinculada à unidade e categoria escolhidas.</string>
+    <string name="whats_new_item_2_title">🔔 Lembretes de notas pendentes</string>
+    <string name="whats_new_item_2_desc">Se ainda não recebeu sua nota, avise o aplicativo e lembraremos você de registrá-la depois.</string>
+    <string name="whats_new_item_3_title">⚙️ Configure as notas sem etapas extras</string>
+    <string name="whats_new_item_3_desc">Abra as configurações da unidade pelo aviso quando faltarem categorias ou porcentagens. Unidades existentes que usam percentuais gerais também são identificadas.</string>
+    <string name="whats_new_item_4_title">✨ Acesso rápido pela atividade</string>
+    <string name="whats_new_item_4_desc">Abra Notas no formulário da atividade para criar unidades ou configurar categorias e porcentagens sem perder os dados preenchidos.</string>
     <string name="whats_new_button">Entendi!</string>
 
     <!-- Add Event Dialog UI Strings -->
@@ -634,4 +641,10 @@
     <string name="calificacion_requiere_materia">Selecione uma matéria para incluir esta atividade na nota.</string>
     <string name="calificacion_sin_unidades">Crie uma unidade em Notas para vincular esta atividade.</string>
     <string name="seleccionar_unidad">Selecionar unidade</string>
+    <string name="unidad_sin_definir">Unidade não definida</string>
+    <string name="crear_categoria_calificacion_instruccion">Crie uma categoria de avaliação para esta matéria antes de registrar a nota.</string>
+    <string name="selecciona_categoria">Selecione uma categoria</string>
+    <string name="calificacion">Nota</string>
+    <string name="ingresa_valor_0_100">Insira um valor de 0 a 100</string>
+    <string name="guardar_y_completar">Salvar e concluir</string>
 </resources>

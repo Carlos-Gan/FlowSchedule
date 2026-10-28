@@ -414,9 +414,16 @@
     <!-- Actividad vencida -->
     <string name="notif_overdue_title">Actividad vencida</string>
     <string name="notif_overdue_message">%1$s sigue pendiente.</string>
-    <string name="grade_pending_action">Aún no me dan la calificación</string>
+    <string name="grade_pending_action">Aún no tengo la nota</string>
     <string name="grade_pending_title">¿Ya tienes tu calificación?</string>
     <string name="grade_pending_message">Completa la calificación de %1$s cuando te la entreguen.</string>
+    <string name="new_unit_missing_categories_title">Configura las calificaciones</string>
+    <string name="new_unit_missing_categories_message">Esta materia aún no tiene categorías de calificación. Crea una desde el engranaje para calcular el promedio de la unidad.</string>
+    <string name="manage_grade_categories_action">Configurar categorías</string>
+    <string name="grade_setup_later">Ahora no</string>
+    <string name="new_unit_default_weights_title">La unidad usa porcentajes generales</string>
+    <string name="new_unit_default_weights_message">Todavía no tiene porcentajes propios. Puedes ajustar la distribución de esta unidad desde el engranaje.</string>
+    <string name="configure_unit_weights_action">Configurar porcentajes</string>
     <string name="ahora">Ahora</string>
     <string name="no_tienes_clases_hoy_n_tu_horario_est_libre">No tienes clases hoy ¡Tu horario está libre!</string>
     <string name="sin_pr_ximas_clases">Sin próximas clases</string>
@@ -588,16 +595,16 @@
     <string name="widget_period_ended">Período finalizado</string>
 
     <!-- What's New Dialog -->
-    <string name="whats_new_title">¡Novedades en la versión 2.0.0!</string>
-    <string name="whats_new_subtitle">Esto es lo nuevo que hemos preparado para mejorar tu experiencia:</string>
-    <string name="whats_new_item_1_title">🔍 Búsqueda inteligente y animada</string>
-    <string name="whats_new_item_1_desc">Encuentra materias y actividades rápidamente con la nueva barra de búsqueda expandible y animaciones fluídas.</string>
-    <string name="whats_new_item_2_title">📝 Editor de notas y formularios mejorado</string>
-    <string name="whats_new_item_2_desc">Escribe notas largas y detalles con total comodidad gracias al ajuste automático al desplegar el teclado.</string>
-    <string name="whats_new_item_3_title">🎨 Interfaz refinada y adaptable v2.0.0</string>
-    <string name="whats_new_item_3_desc">Visualización perfecta incluso con fuentes grandes en el sistema, mejor diseño de clases y superficies con temas modernos.</string>
-    <string name="whats_new_item_4_title">✨ Estados vacíos con acciones útiles</string>
-    <string name="whats_new_item_4_desc">Agrega una clase o actividad desde un día vacío, o quita los filtros cuando no encuentres resultados.</string>
+    <string name="whats_new_title">¡Novedades en la versión 2.3.0!</string>
+    <string name="whats_new_subtitle">Ahora puedes llevar el seguimiento de tus calificaciones junto con tus actividades:</string>
+    <string name="whats_new_item_1_title">📊 Actividades que cuentan para tu promedio</string>
+    <string name="whats_new_item_1_desc">Marca una actividad para incluirla en la calificación de la materia y registra la nota al completarla. Se vincula con la unidad y categoría elegidas.</string>
+    <string name="whats_new_item_2_title">🔔 Recordatorios para notas pendientes</string>
+    <string name="whats_new_item_2_desc">Si todavía no recibiste tu calificación, indícalo y te recordaremos que la registres después.</string>
+    <string name="whats_new_item_3_title">⚙️ Configura las calificaciones sin dar vueltas</string>
+    <string name="whats_new_item_3_desc">Si faltan categorías o porcentajes en una unidad, puedes abrir su configuración desde el aviso. También detectamos unidades existentes que aún usan la configuración general.</string>
+    <string name="whats_new_item_4_title">✨ Acceso directo desde la actividad</string>
+    <string name="whats_new_item_4_desc">Abre Calificaciones desde el formulario de actividad para crear unidades o configurar categorías y porcentajes sin perder lo que ya llenaste.</string>
     <string name="whats_new_button">¡Entendido!</string>
 
     <!-- Add Event Dialog UI Strings -->
@@ -663,4 +670,10 @@
     <string name="opcion_flow_titulo">Archivo Flow (.flow)</string>
     <string name="opcion_flow_detalle">Horario completo con materias y tareas, listo para pasar a otra persona.</string>
     <string name="compartir_flow_desc">Compartir archivo Flow del horario</string>
+    <string name="unidad_sin_definir">Unidad sin definir</string>
+    <string name="crear_categoria_calificacion_instruccion">Crea una categoría de calificación para esta materia antes de registrar la nota.</string>
+    <string name="selecciona_categoria">Selecciona una categoría</string>
+    <string name="calificacion">Calificación</string>
+    <string name="ingresa_valor_0_100">Ingresa un valor de 0 a 100</string>
+    <string name="guardar_y_completar">Guardar y completar</string>
 </resources>
