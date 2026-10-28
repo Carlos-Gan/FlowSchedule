@@ -181,7 +181,7 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         repository.allClassExceptions,
         repository.allSubjectsWithSlots
     ) { exceptions, subjects ->
-        exceptions.filter { it.type == ClassExceptionType.CANCELED }
+        exceptions.filter { it.type == ClassExceptionType.CANCELED && it.isInTrash }
             .map { exc ->
                 val subName = subjects.find { it.subject.id == exc.subjectId }?.subject?.name
                     ?: getApplication<Application>().getString(R.string.materia)
@@ -364,6 +364,16 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
                 check(repository.deleteClassException(id)) { getApplication<Application>().getString(R.string.error_sesion_no_existe) }
                 closeClassOccurrence()
                 _userMessage.value = getApplication<Application>().getString(R.string.msg_clase_horario_habitual)
+            }
+        }
+    }
+
+    fun permanentlyDeleteCanceledExceptionFromTrash(id: Long) {
+        viewModelScope.launch {
+            runOperation {
+                check(repository.removeCanceledExceptionFromTrash(id)) {
+                    getApplication<Application>().getString(R.string.error_sesion_no_existe)
+                }
             }
         }
     }

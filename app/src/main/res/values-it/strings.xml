@@ -1,5 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="academic_back">Indietro</string>
+    <string name="academic_progress_eyebrow">I MIEI RISULTATI</string>
+    <string name="academic_progress_title">Progresso accademico</string>
+    <string name="academic_progress_subtitle">Scopri come cambiano i tuoi voti nel tempo.</string>
+    <string name="academic_tab_current">Riepilogo</string>
+    <string name="academic_tab_monthly">Mese per mese</string>
+    <string name="academic_gpa">GPA</string>
+    <string name="academic_weighted_average">Media ponderata</string>
+    <string name="academic_current_grade">%1$s attuale</string>
+    <string name="academic_no_data_short">—</string>
+    <string name="academic_current_description">Calcolato in base ai voti registrati.</string>
+    <string name="academic_period_history">Storico per periodo</string>
+    <string name="academic_period_empty">Non ci sono ancora voti nei tuoi periodi accademici.</string>
+    <string name="academic_monthly_change_title">Variazione rispetto al mese scorso</string>
+    <string name="academic_change_up">Aumento di %1$s punti</string>
+    <string name="academic_change_down">Diminuzione di %1$s punti</string>
+    <string name="academic_monthly_change_empty">Registra voti in più di un mese per vedere la variazione.</string>
+    <string name="academic_monthly_title">Progresso mensile</string>
+    <string name="academic_monthly_history">Storico mensile</string>
+    <string name="academic_monthly_empty">Non ci sono ancora voti datati da mostrare nell’andamento mensile.</string>
+    <string name="academic_average">Media</string>
+    <string name="academic_change_up_short">+%1$s</string>
+    <string name="academic_change_down_short">−%1$s</string>
+    <string name="academic_chart_title">%1$s per mese</string>
+    <string name="academic_maximum">Max. %1$s</string>
+    <string name="academic_chart_note">Ogni punto mostra la media cumulativa dei voti registrati fino a quel mese.</string>
+    <string name="academic_subject_filter">Materia</string>
+    <string name="academic_all_subjects">Tutte le materie</string>
+    <string name="academic_data_note">Calcolato in base ai voti registrati · scala %1$s</string>
+    <string name="academic_gpa_scale">GPA da 0,00 a 4,00</string>
+    <string name="academic_original_scale">originale</string>
     <string name="grade_pending_action">Non ho ancora il voto</string>
     <string name="grade_pending_title">Hai già ricevuto il voto?</string>
     <string name="grade_pending_message">Inserisci il voto di %1$s quando lo ricevi.</string>
@@ -566,7 +597,7 @@
     <string name="widget_school_days_total_progress">%1$d giorni scolastici · %2$d%% completati</string>
     <string name="widget_period_ended">Periodo terminato</string>
     <string name="whats_new_title">Novità nella versione 2.3.0!</string>
-    <string name="whats_new_subtitle">Tieni traccia dei voti insieme alle tue attività:</string>
+    <string name="whats_new_subtitle">Ecco i miglioramenti recenti a voti e organizzazione:</string>
     <string name="whats_new_item_1_title">📊 Attività che contribuiscono al voto</string>
     <string name="whats_new_item_1_desc">Indica che un’attività contribuisce al voto della materia e inserisci il risultato quando la completi. Sarà collegata all’unità e alla categoria scelte.</string>
     <string name="whats_new_item_2_title">🔔 Promemoria per i voti in sospeso</string>
@@ -575,6 +606,10 @@
     <string name="whats_new_item_3_desc">Apri le impostazioni dell’unità dall’avviso quando mancano categorie o percentuali. Vengono rilevate anche le unità esistenti che usano le percentuali generali.</string>
     <string name="whats_new_item_4_title">✨ Accesso rapido dall’attività</string>
     <string name="whats_new_item_4_desc">Apri Voti dal modulo dell’attività per creare unità o configurare categorie e percentuali senza perdere i dati inseriti.</string>
+    <string name="whats_new_item_5_title">🗑️ Annullamenti più chiari nel cestino</string>
+    <string name="whats_new_item_5_desc">Rimuovendo una lezione annullata dal cestino, l’annullamento resta nel calendario. Solo Ripristina riporta la lezione nell’orario.</string>
+    <string name="whats_new_item_6_title">📚 Medie per materia e unità</string>
+    <string name="whats_new_item_6_desc">La sezione Voti mostra la media della materia e apre uno spazio per consultare ogni unità e modificarne le percentuali per categoria.</string>
     <string name="whats_new_button">Ho capito!</string>
 
     <!-- Add Event Dialog UI Strings -->
@@ -625,8 +660,6 @@
     <string name="calendar_sync_auto_title">Sincronizzazione automatica</string>
     <string name="calendar_sync_auto_desc">Mantiere il tuo calendario esterno aggiornato automaticamente quando cambiano orario o attività</string>
     <string name="calendar_sync_now_desc">Forza l\'aggiornamento immediato di tutte le tue materie e attività nel calendario del dispositivo</string>
-    <string name="whats_new_item_6_title">🎨 Un’interfaccia più chiara e adattabile</string>
-    <string name="whats_new_item_6_desc">Miglioramenti a filtri, moduli e schede mantengono i contenuti ordinati, con superfici coordinate al tema scelto.</string>
     <string name="calendar_sync_queued">Sincronizzazione calendario in coda…</string>
     <string name="calendar_sync_running">Sincronizzazione con il calendario…</string>
     <string name="calendar_sync_retrying">Nuovo tentativo di sincronizzazione…</string>

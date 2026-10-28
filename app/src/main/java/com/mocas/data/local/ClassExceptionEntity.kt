@@ -3,6 +3,7 @@ package com.mocas.data.local
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
+import androidx.room.ColumnInfo
 import androidx.room.PrimaryKey
 
 enum class ClassExceptionType { CANCELED, MODIFIED }
@@ -39,5 +40,7 @@ data class ClassExceptionEntity(
     val newRoom: String? = null,
     val note: String = "",
     val createdAtMillis: Long = System.currentTimeMillis(),
-    val updatedAtMillis: Long = System.currentTimeMillis()
+    val updatedAtMillis: Long = System.currentTimeMillis(),
+    @ColumnInfo(defaultValue = "1")
+    val isInTrash: Boolean = true
 )

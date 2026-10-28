@@ -1,4 +1,35 @@
 <resources>
+    <string name="academic_back">Volver</string>
+    <string name="academic_progress_eyebrow">MI DESEMPEÑO</string>
+    <string name="academic_progress_title">Progreso académico</string>
+    <string name="academic_progress_subtitle">Consulta cómo evolucionan tus calificaciones.</string>
+    <string name="academic_tab_current">Resumen</string>
+    <string name="academic_tab_monthly">Mes a mes</string>
+    <string name="academic_gpa">GPA</string>
+    <string name="academic_weighted_average">Promedio ponderado</string>
+    <string name="academic_current_grade">%1$s actual</string>
+    <string name="academic_no_data_short">—</string>
+    <string name="academic_current_description">El valor se calcula con las calificaciones registradas.</string>
+    <string name="academic_period_history">Historial por período</string>
+    <string name="academic_period_empty">Todavía no hay calificaciones en tus períodos académicos.</string>
+    <string name="academic_monthly_change_title">Cambio desde el mes anterior</string>
+    <string name="academic_change_up">Subió %1$s puntos</string>
+    <string name="academic_change_down">Bajó %1$s puntos</string>
+    <string name="academic_monthly_change_empty">Agrega calificaciones en más de un mes para ver el cambio.</string>
+    <string name="academic_monthly_title">Evolución mensual</string>
+    <string name="academic_monthly_history">Historial mensual</string>
+    <string name="academic_monthly_empty">Aún no hay calificaciones con fecha para mostrar la evolución mensual.</string>
+    <string name="academic_average">Promedio</string>
+    <string name="academic_change_up_short">+%1$s</string>
+    <string name="academic_change_down_short">−%1$s</string>
+    <string name="academic_chart_title">%1$s por mes</string>
+    <string name="academic_maximum">Máx. %1$s</string>
+    <string name="academic_chart_note">Cada punto muestra el promedio acumulado con las calificaciones registradas hasta ese mes.</string>
+    <string name="academic_subject_filter">Materia</string>
+    <string name="academic_all_subjects">Todas las materias</string>
+    <string name="academic_data_note">Cálculo según tus calificaciones · Escala %1$s</string>
+    <string name="academic_gpa_scale">GPA de 0,00 a 4,00</string>
+    <string name="academic_original_scale">original</string>
     <string name="widget_description">Próxima clase y actividades pendientes</string>
     <string name="next_class_widget_name">Próxima clase</string>
     <string name="daily_widget_name">Horario de hoy</string>
@@ -596,7 +627,7 @@
 
     <!-- What's New Dialog -->
     <string name="whats_new_title">¡Novedades en la versión 2.3.0!</string>
-    <string name="whats_new_subtitle">Ahora puedes llevar el seguimiento de tus calificaciones junto con tus actividades:</string>
+    <string name="whats_new_subtitle">Estas son las mejoras recientes en calificaciones y organización:</string>
     <string name="whats_new_item_1_title">📊 Actividades que cuentan para tu promedio</string>
     <string name="whats_new_item_1_desc">Marca una actividad para incluirla en la calificación de la materia y registra la nota al completarla. Se vincula con la unidad y categoría elegidas.</string>
     <string name="whats_new_item_2_title">🔔 Recordatorios para notas pendientes</string>
@@ -605,6 +636,10 @@
     <string name="whats_new_item_3_desc">Si faltan categorías o porcentajes en una unidad, puedes abrir su configuración desde el aviso. También detectamos unidades existentes que aún usan la configuración general.</string>
     <string name="whats_new_item_4_title">✨ Acceso directo desde la actividad</string>
     <string name="whats_new_item_4_desc">Abre Calificaciones desde el formulario de actividad para crear unidades o configurar categorías y porcentajes sin perder lo que ya llenaste.</string>
+    <string name="whats_new_item_5_title">🗑️ Cancelaciones claras en la papelera</string>
+    <string name="whats_new_item_5_desc">Al quitar una clase cancelada de la papelera, la cancelación se conserva en el calendario. Solo Restaurar hace que la clase vuelva a tu horario.</string>
+    <string name="whats_new_item_6_title">📚 Promedio por materia y por unidad</string>
+    <string name="whats_new_item_6_desc">La sección de calificaciones muestra el promedio de la materia y abre un espacio para consultar cada unidad y ajustar sus porcentajes por categoría.</string>
     <string name="whats_new_button">¡Entendido!</string>
 
     <!-- Add Event Dialog UI Strings -->
@@ -655,8 +690,6 @@
     <string name="calendar_sync_auto_title">Sincronización automática</string>
     <string name="calendar_sync_auto_desc">Mantener tu calendario externo actualizado automáticamente al cambiar tu horario o tareas</string>
     <string name="calendar_sync_now_desc">Forzar la actualización de todas tus materias y tareas en el calendario del dispositivo</string>
-    <string name="whats_new_item_6_title">🎨 Interfaz más clara y adaptable</string>
-    <string name="whats_new_item_6_desc">Mejoras en filtros, formularios y tarjetas para mantener el contenido ordenado, junto con superficies cuyos tonos combinan con el tema elegido.</string>
     <string name="calendar_sync_queued">Sincronización en espera…</string>
     <string name="calendar_sync_running">Sincronizando con el calendario…</string>
     <string name="calendar_sync_retrying">Reintentando la sincronización…</string>

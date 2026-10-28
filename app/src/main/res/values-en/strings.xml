@@ -1,5 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="academic_back">Back</string>
+    <string name="academic_progress_eyebrow">MY PERFORMANCE</string>
+    <string name="academic_progress_title">Academic progress</string>
+    <string name="academic_progress_subtitle">See how your grades are changing over time.</string>
+    <string name="academic_tab_current">Overview</string>
+    <string name="academic_tab_monthly">Month by month</string>
+    <string name="academic_gpa">GPA</string>
+    <string name="academic_weighted_average">Weighted average</string>
+    <string name="academic_current_grade">Current %1$s</string>
+    <string name="academic_no_data_short">—</string>
+    <string name="academic_current_description">Calculated from the grades you have recorded.</string>
+    <string name="academic_period_history">History by term</string>
+    <string name="academic_period_empty">There are no grades in your academic terms yet.</string>
+    <string name="academic_monthly_change_title">Change since last month</string>
+    <string name="academic_change_up">Up %1$s points</string>
+    <string name="academic_change_down">Down %1$s points</string>
+    <string name="academic_monthly_change_empty">Add grades across more than one month to see a change.</string>
+    <string name="academic_monthly_title">Monthly progress</string>
+    <string name="academic_monthly_history">Monthly history</string>
+    <string name="academic_monthly_empty">There are no dated grades to show monthly progress yet.</string>
+    <string name="academic_average">Average</string>
+    <string name="academic_change_up_short">+%1$s</string>
+    <string name="academic_change_down_short">−%1$s</string>
+    <string name="academic_chart_title">%1$s by month</string>
+    <string name="academic_maximum">Max. %1$s</string>
+    <string name="academic_chart_note">Each point shows the cumulative average using grades recorded through that month.</string>
+    <string name="academic_subject_filter">Subject</string>
+    <string name="academic_all_subjects">All subjects</string>
+    <string name="academic_data_note">Based on your recorded grades · %1$s scale</string>
+    <string name="academic_gpa_scale">GPA from 0.00 to 4.00</string>
+    <string name="academic_original_scale">original</string>
     <string name="grade_pending_action">I don’t have the grade yet</string>
     <string name="grade_pending_title">Do you have your grade yet?</string>
     <string name="grade_pending_message">Enter the grade for %1$s when you receive it.</string>
@@ -598,7 +629,7 @@
 
     <!-- What's New Dialog -->
     <string name="whats_new_title">What\'s new in version 2.3.0!</string>
-    <string name="whats_new_subtitle">Track your grades right alongside your activities:</string>
+    <string name="whats_new_subtitle">Here are the latest improvements to grades and organization:</string>
     <string name="whats_new_item_1_title">📊 Activities that count toward your grade</string>
     <string name="whats_new_item_1_desc">Mark an activity to include it in your subject grade and record its score when you complete it. It links to the selected unit and category.</string>
     <string name="whats_new_item_2_title">🔔 Reminders for pending grades</string>
@@ -607,6 +638,10 @@
     <string name="whats_new_item_3_desc">Open a unit’s settings from the prompt when categories or percentages are missing. Existing units using general percentages are detected too.</string>
     <string name="whats_new_item_4_title">✨ Quick access from an activity</string>
     <string name="whats_new_item_4_desc">Open Grades from the activity form to create units or configure categories and percentages without losing what you entered.</string>
+    <string name="whats_new_item_5_title">🗑️ Clearer canceled classes in Trash</string>
+    <string name="whats_new_item_5_desc">Removing a canceled class from Trash now keeps it canceled on the calendar. Only Restore brings the class back to your schedule.</string>
+    <string name="whats_new_item_6_title">📚 Averages by subject and unit</string>
+    <string name="whats_new_item_6_desc">The Grades section shows the subject average and opens a workspace to review each unit and adjust its category percentages.</string>
     <string name="whats_new_button">Got it!</string>
 
     <!-- Add Event Dialog UI Strings -->
@@ -658,8 +693,6 @@
     <string name="calendar_sync_auto_title">Automatic synchronization</string>
     <string name="calendar_sync_auto_desc">Keep your external calendar automatically updated when schedule or tasks change</string>
     <string name="calendar_sync_now_desc">Force immediate update of all your subjects and tasks in the device calendar</string>
-    <string name="whats_new_item_6_title">🎨 A clearer, more adaptable interface</string>
-    <string name="whats_new_item_6_desc">Updates to filters, forms, and cards keep content organized, while surface colors now coordinate with your selected theme.</string>
     <string name="calendar_sync_queued">Calendar sync queued…</string>
     <string name="calendar_sync_running">Syncing with your calendar…</string>
     <string name="calendar_sync_retrying">Retrying calendar sync…</string>

@@ -1,5 +1,7 @@
 package com.mocas.ui.screens
 
+import android.app.Application
+import android.health.connect.datatypes.AppInfo
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -140,6 +142,13 @@ fun SettingsScreen(
             if (realAverage > 10) "%.0f".format(realAverage) else "%.1f".format(realAverage)
         }
     }
+
+    val context = LocalContext.current
+
+    val versionName = context.packageManager
+        .getPackageInfo(context.packageName, 0)
+        .versionName.orEmpty()
+
 
     Column(
         modifier = modifier
@@ -753,7 +762,7 @@ fun SettingsScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "FlowSchedule v2.0.0",
+            text = "FlowSchedule $versionName",
             style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium),
             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
             modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -862,7 +871,7 @@ fun SettingsScreen(
                             title = subName,
                             subtitle = "${stringResource(R.string.clase_cancelada)} · $formattedDate",
                             onRestore = { viewModel.deleteClassException(exc.id) },
-                            onDelete = { viewModel.deleteClassException(exc.id) }
+                            onDelete = { viewModel.permanentlyDeleteCanceledExceptionFromTrash(exc.id) }
                         )
                     }
                     items(deletedSubjects) { sub ->

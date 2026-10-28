@@ -1,5 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="academic_back">Voltar</string>
+    <string name="academic_progress_eyebrow">MEU DESEMPENHO</string>
+    <string name="academic_progress_title">Progresso acadêmico</string>
+    <string name="academic_progress_subtitle">Veja como suas notas mudam ao longo do tempo.</string>
+    <string name="academic_tab_current">Resumo</string>
+    <string name="academic_tab_monthly">Mês a mês</string>
+    <string name="academic_gpa">GPA</string>
+    <string name="academic_weighted_average">Média ponderada</string>
+    <string name="academic_current_grade">%1$s atual</string>
+    <string name="academic_no_data_short">—</string>
+    <string name="academic_current_description">Calculado com base nas notas registradas.</string>
+    <string name="academic_period_history">Histórico por período</string>
+    <string name="academic_period_empty">Ainda não há notas nos seus períodos acadêmicos.</string>
+    <string name="academic_monthly_change_title">Variação desde o mês passado</string>
+    <string name="academic_change_up">Subiu %1$s pontos</string>
+    <string name="academic_change_down">Caiu %1$s pontos</string>
+    <string name="academic_monthly_change_empty">Registre notas em mais de um mês para ver a variação.</string>
+    <string name="academic_monthly_title">Progresso mensal</string>
+    <string name="academic_monthly_history">Histórico mensal</string>
+    <string name="academic_monthly_empty">Ainda não há notas com data para mostrar a evolução mensal.</string>
+    <string name="academic_average">Média</string>
+    <string name="academic_change_up_short">+%1$s</string>
+    <string name="academic_change_down_short">−%1$s</string>
+    <string name="academic_chart_title">%1$s por mês</string>
+    <string name="academic_maximum">Máx. %1$s</string>
+    <string name="academic_chart_note">Cada ponto mostra a média acumulada com as notas registradas até aquele mês.</string>
+    <string name="academic_subject_filter">Matéria</string>
+    <string name="academic_all_subjects">Todas as matérias</string>
+    <string name="academic_data_note">Com base nas notas registradas · escala %1$s</string>
+    <string name="academic_gpa_scale">GPA de 0,00 a 4,00</string>
+    <string name="academic_original_scale">original</string>
     <string name="grade_pending_action">Ainda não tenho a nota</string>
     <string name="grade_pending_title">Você já recebeu sua nota?</string>
     <string name="grade_pending_message">Registre a nota de %1$s quando recebê-la.</string>
@@ -567,7 +598,7 @@
     <string name="widget_school_days_total_progress">%1$d dias letivos · %2$d%% concluídos</string>
     <string name="widget_period_ended">Período finalizado</string>
     <string name="whats_new_title">Novidades na versão 2.3.0!</string>
-    <string name="whats_new_subtitle">Acompanhe suas notas junto com suas atividades:</string>
+    <string name="whats_new_subtitle">Confira as melhorias recentes em notas e organização:</string>
     <string name="whats_new_item_1_title">📊 Atividades que contam para sua nota</string>
     <string name="whats_new_item_1_desc">Marque uma atividade para incluí-la na nota da matéria e registre a pontuação ao concluí-la. Ela fica vinculada à unidade e categoria escolhidas.</string>
     <string name="whats_new_item_2_title">🔔 Lembretes de notas pendentes</string>
@@ -576,6 +607,10 @@
     <string name="whats_new_item_3_desc">Abra as configurações da unidade pelo aviso quando faltarem categorias ou porcentagens. Unidades existentes que usam percentuais gerais também são identificadas.</string>
     <string name="whats_new_item_4_title">✨ Acesso rápido pela atividade</string>
     <string name="whats_new_item_4_desc">Abra Notas no formulário da atividade para criar unidades ou configurar categorias e porcentagens sem perder os dados preenchidos.</string>
+    <string name="whats_new_item_5_title">🗑️ Cancelamentos mais claros na lixeira</string>
+    <string name="whats_new_item_5_desc">Ao remover uma aula cancelada da lixeira, o cancelamento continua no calendário. Só Restaurar faz a aula voltar ao seu horário.</string>
+    <string name="whats_new_item_6_title">📚 Médias por matéria e unidade</string>
+    <string name="whats_new_item_6_desc">A seção Notas mostra a média da matéria e abre um espaço para consultar cada unidade e ajustar seus percentuais por categoria.</string>
     <string name="whats_new_button">Entendi!</string>
 
     <!-- Add Event Dialog UI Strings -->
@@ -626,8 +661,6 @@
     <string name="calendar_sync_auto_title">Sincronização automática</string>
     <string name="calendar_sync_auto_desc">Manter seu calendário externo atualizado automaticamente ao alterar horários ou tarefas</string>
     <string name="calendar_sync_now_desc">Forçar a atualização imediata de todas as suas matérias e tarefas no calendário do dispositivo</string>
-    <string name="whats_new_item_6_title">🎨 Uma interface mais clara e adaptável</string>
-    <string name="whats_new_item_6_desc">Melhorias em filtros, formulários e cartões mantêm o conteúdo organizado, com superfícies que combinam com o tema escolhido.</string>
     <string name="calendar_sync_queued">Sincronização do calendário na fila…</string>
     <string name="calendar_sync_running">Sincronizando com o calendário…</string>
     <string name="calendar_sync_retrying">Tentando sincronizar novamente…</string>

@@ -395,7 +395,7 @@ class ScheduleRepository(private val context: Context, private val database: App
     suspend fun emptyTrash() = database.withTransaction {
         eventDao.getDeletedEventsSnapshot().forEach { eventDao.deleteEventById(it.id) }
         subjectDao.getDeletedSubjectsSnapshot().forEach { subjectDao.deleteSubjectById(it.id) }
-        exceptionDao.getAllOnce().filter { it.type == ClassExceptionType.CANCELED }.forEach { exceptionDao.delete(it.id) }
+        exceptionDao.clearCanceledExceptionTrash()
         CalendarSyncScheduler.triggerImmediateSync(context)
     }
 
@@ -417,7 +417,8 @@ class ScheduleRepository(private val context: Context, private val database: App
                 newStartTime = null,
                 newEndTime = null,
                 newRoom = null,
-                updatedAtMillis = System.currentTimeMillis()
+                updatedAtMillis = System.currentTimeMillis(),
+                isInTrash = true
             )
         } else {
             val start = requireNotNull(item.newStartTime) { "Selecciona la nueva hora de inicio." }
@@ -443,6 +444,9 @@ class ScheduleRepository(private val context: Context, private val database: App
         if (deleted) CalendarSyncScheduler.triggerImmediateSync(context)
         return deleted
     }
+
+    suspend fun removeCanceledExceptionFromTrash(id: Long): Boolean =
+        exceptionDao.removeCanceledExceptionFromTrash(id) > 0
 
     suspend fun setEventCompleted(eventId: Long, completed: Boolean): Boolean {
         val changed = database.withTransaction {

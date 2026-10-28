@@ -27,6 +27,12 @@ interface ClassExceptionDao {
     @Query("DELETE FROM class_exceptions WHERE id = :id")
     suspend fun delete(id: Long): Int
 
+    @Query("UPDATE class_exceptions SET isInTrash = 0 WHERE id = :id AND type = 'CANCELED' AND isInTrash = 1")
+    suspend fun removeCanceledExceptionFromTrash(id: Long): Int
+
+    @Query("UPDATE class_exceptions SET isInTrash = 0 WHERE type = 'CANCELED' AND isInTrash = 1")
+    suspend fun clearCanceledExceptionTrash(): Int
+
     @Query("DELETE FROM class_exceptions")
     suspend fun clearAll(): Int
 }
