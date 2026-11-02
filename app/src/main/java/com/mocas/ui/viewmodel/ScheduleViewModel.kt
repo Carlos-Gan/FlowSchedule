@@ -12,6 +12,7 @@ import androidx.work.WorkManager
 import com.mocas.R
 import com.mocas.data.backup.AutomaticBackupInfo
 import com.mocas.data.backup.AutomaticBackupManager
+import com.mocas.data.backup.AutomaticBackupScheduler
 import com.mocas.data.local.AcademicPeriodEntity
 import com.mocas.data.local.AppDatabase
 import com.mocas.data.local.ClassExceptionEntity
@@ -198,6 +199,10 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
     private val _automaticBackups = MutableStateFlow<List<AutomaticBackupInfo>>(emptyList())
     val automaticBackups = _automaticBackups.asStateFlow()
+    private val _automaticBackupEnabled = MutableStateFlow(AutomaticBackupScheduler.isEnabled(application))
+    val automaticBackupEnabled = _automaticBackupEnabled.asStateFlow()
+    private val _automaticBackupInterval = MutableStateFlow(AutomaticBackupScheduler.getInterval(application))
+    val automaticBackupInterval = _automaticBackupInterval.asStateFlow()
     val todayClasses: StateFlow<List<DayClassItem>> = combine(
         subjectsWithSlots,
         _selectedDayOfWeek,
@@ -616,6 +621,28 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
                 refreshAutomaticBackups()
             }
         }
+    }
+
+    fun setAutomaticBackupEnabled(enabled: Boolean) {
+        _automaticBackupEnabled.value = enabled
+        AutomaticBackupScheduler.configure(
+            getApplication(),
+            enabled = enabled,
+            interval = _automaticBackupInterval.value
+        )
+    }
+
+    fun setAutomaticBackupInterval(interval: String) {
+        _automaticBackupInterval.value = interval
+        AutomaticBackupScheduler.configure(
+            getApplication(),
+            enabled = _automaticBackupEnabled.value,
+            interval = interval
+        )
+    }
+
+    fun refreshAutomaticBackupsNow() {
+        viewModelScope.launch { refreshAutomaticBackups() }
     }
 
     private suspend fun createAutomaticBackup(reasonCode: String) {

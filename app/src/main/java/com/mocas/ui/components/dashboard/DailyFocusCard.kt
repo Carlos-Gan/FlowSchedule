@@ -30,7 +30,9 @@ import java.util.Locale
 @ExperimentalMaterial3Api
 @Composable
 fun DailyFocusCard(
-    stats: DailyClassStats
+    stats: DailyClassStats,
+    modifier: Modifier = Modifier,
+    showTitle: Boolean = true
 ) {
     val isFinishedOrFree = stats.totalHours == 0.0 || stats.progress >= 1f
 
@@ -59,7 +61,7 @@ fun DailyFocusCard(
         if (isFinishedOrFree) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f) else MaterialTheme.colorScheme.onSurfaceVariant
 
     Surface(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
         color = backgroundColor,
         shadowElevation = 0.dp
@@ -67,7 +69,8 @@ fun DailyFocusCard(
         Row(
             modifier = Modifier
                 .padding(18.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .then(if (!showTitle) Modifier.height(114.dp) else Modifier),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -76,15 +79,14 @@ fun DailyFocusCard(
                     .weight(1f)
                     .padding(end = 12.dp)
             ) {
-                Text(
-                    text = stringResource(R.string.progreso_del_dia),
-                    style = MaterialTheme.typography.labelMedium.copy(
-                        fontWeight = FontWeight.Bold
-                    ),
-                    color = labelColor
-                )
-
-                Spacer(modifier = Modifier.height(4.dp))
+                if (showTitle) {
+                    Text(
+                        text = stringResource(R.string.progreso_del_dia),
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                        color = labelColor
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                }
 
                 Text(
                     text = remainingLabel,

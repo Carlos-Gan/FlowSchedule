@@ -31,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -50,6 +51,7 @@ fun SubjectListView(
     onSubjectClick: (Long) -> Unit,
     onAddNewSubject: () -> Unit
 ) {
+    val isTablet = LocalConfiguration.current.screenWidthDp >= 840
     if (subjectsWithSlots.isEmpty()) {
         Box(
             modifier = Modifier
@@ -90,13 +92,13 @@ fun SubjectListView(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .padding(if (isTablet) 28.dp else 16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(48.dp)
-                            .clip(RoundedCornerShape(14.dp))
+                            .size(if (isTablet) 72.dp else 48.dp)
+                            .clip(RoundedCornerShape(if (isTablet) 20.dp else 14.dp))
                             .background(color),
                         contentAlignment = Alignment.Center
                     ) {
@@ -104,11 +106,11 @@ fun SubjectListView(
                             text = sub.name.take(2).uppercase(),
                             color = MaterialTheme.colorScheme.onPrimary,
                             fontWeight = FontWeight.ExtraBold,
-                            fontSize = 16.sp
+                            fontSize = if (isTablet) 24.sp else 16.sp
                         )
                     }
 
-                    Spacer(modifier = Modifier.width(14.dp))
+                    Spacer(modifier = Modifier.width(if (isTablet) 24.dp else 14.dp))
 
                     Column(modifier = Modifier.weight(1f)) {
                         Row(
@@ -120,8 +122,8 @@ fun SubjectListView(
                                 text = sub.name,
                                 style = MaterialTheme.typography.titleMedium.copy(
                                     fontWeight = FontWeight.Bold,
-                                    fontSize = 16.sp,
-                                    lineHeight = 19.sp
+                                    fontSize = if (isTablet) 26.sp else 16.sp,
+                                    lineHeight = if (isTablet) 31.sp else 19.sp
                                 ),
                                 color = MaterialTheme.colorScheme.onSurface,
                                 maxLines = 2,
@@ -138,14 +140,14 @@ fun SubjectListView(
                                 ) {
                                     Text(
                                         text = sub.code,
-                                        fontSize = 10.sp,
+                                        fontSize = if (isTablet) 14.sp else 10.sp,
                                         fontWeight = FontWeight.Bold,
                                         textAlign = TextAlign.Center,
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis,
                                         modifier = Modifier.padding(
-                                            horizontal = 4.dp,
-                                            vertical = 4.dp
+                                            horizontal = if (isTablet) 10.dp else 4.dp,
+                                            vertical = if (isTablet) 7.dp else 4.dp
                                         )
                                     )
                                 }
@@ -159,12 +161,12 @@ fun SubjectListView(
                                     imageVector = Icons.Default.Person,
                                     contentDescription = null,
                                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.size(14.dp)
+                                    modifier = Modifier.size(if (isTablet) 20.dp else 14.dp)
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
                                     text = sub.professor,
-                                    fontSize = 12.sp,
+                                    fontSize = if (isTablet) 17.sp else 12.sp,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     maxLines = 2,
                                     overflow = TextOverflow.Ellipsis,
@@ -173,12 +175,12 @@ fun SubjectListView(
                             }
                         }
 
-                        Spacer(modifier = Modifier.height(6.dp))
+                        Spacer(modifier = Modifier.height(if (isTablet) 14.dp else 6.dp))
 
                         // Schedule badges summary
                         FlowRow(
-                            horizontalArrangement = Arrangement.spacedBy(6.dp),
-                            verticalArrangement = Arrangement.spacedBy(6.dp),
+                            horizontalArrangement = Arrangement.spacedBy(if (isTablet) 10.dp else 6.dp),
+                            verticalArrangement = Arrangement.spacedBy(if (isTablet) 10.dp else 6.dp),
                             itemVerticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.fillMaxWidth()
                         ) {
@@ -199,11 +201,11 @@ fun SubjectListView(
                                     Text(
                                         text = "$dayAbbr ${slot.startTime}",
                                         color = color,
-                                        fontSize = 11.sp,
+                                        fontSize = if (isTablet) 15.sp else 11.sp,
                                         fontWeight = FontWeight.SemiBold,
                                         modifier = Modifier.padding(
-                                            horizontal = 6.dp,
-                                            vertical = 2.dp
+                                            horizontal = if (isTablet) 12.dp else 6.dp,
+                                            vertical = if (isTablet) 6.dp else 2.dp
                                         )
                                     )
                                 }

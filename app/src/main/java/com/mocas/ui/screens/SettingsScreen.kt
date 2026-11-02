@@ -10,6 +10,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -52,6 +53,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -63,10 +65,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -83,13 +88,13 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mocas.R
 import com.mocas.data.repository.GradeCalculator
-import com.mocas.ui.components.settings.RemindersConfigDialog
 import com.mocas.ui.components.settings.SettingRow
 import com.mocas.ui.components.settings.SettingsSectionHeader
 import com.mocas.ui.components.settings.TrashRow
 import com.mocas.ui.model.BadgeStyle
 import com.mocas.ui.theme.ThemeConfig
 import com.mocas.ui.viewmodel.ScheduleViewModel
+import com.mocas.ui.screens.settings.RemindersScreen
 import com.mocas.util.DateTimeUtils
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -98,7 +103,8 @@ import java.util.Locale
 @Composable
 fun SettingsScreen(
     viewModel: ScheduleViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onRemindersScreenChanged: (Boolean) -> Unit = {}
 ) {
     val settings by viewModel.appSettings.collectAsStateWithLifecycle()
     val allEvents by viewModel.allEventsWithSubject.collectAsStateWithLifecycle()
@@ -115,6 +121,11 @@ fun SettingsScreen(
 
     var showTrashDialog by remember { mutableStateOf(false) }
     var showBackupsDialog by remember { mutableStateOf(false) }
+    var showRemindersScreen by rememberSaveable { mutableStateOf(false) }
+
+    DisposableEffect(Unit) {
+        onDispose { onRemindersScreenChanged(false) }
+    }
 
     val completedTasksCount = remember(allEvents) {
         allEvents.count { it.event.isCompleted }
@@ -149,6 +160,19 @@ fun SettingsScreen(
         .getPackageInfo(context.packageName, 0)
         .versionName.orEmpty()
 
+
+    if (showRemindersScreen) {
+        RemindersScreen(
+            settings = settings,
+            onUpdate = viewModel::updateSettings,
+            onBack = {
+                showRemindersScreen = false
+                onRemindersScreenChanged(false)
+            },
+            modifier = modifier
+        )
+        return
+    }
 
     Column(
         modifier = modifier
@@ -697,21 +721,15 @@ fun SettingsScreen(
                     color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f)
                 )
 
-                var showRemindersDialog by remember { mutableStateOf(false) }
                 SettingRow(
                     icon = Icons.Outlined.Alarm,
                     title = stringResource(R.string.configurar_recordatorios),
                     subtitle = stringResource(R.string.configurar_recordatorios_desc),
-                    onClick = { showRemindersDialog = true }
+                    onClick = {
+                        showRemindersScreen = true
+                        onRemindersScreenChanged(true)
+                    }
                 )
-
-                if (showRemindersDialog) {
-                    RemindersConfigDialog(
-                        settings = settings,
-                        onUpdate = viewModel::updateSettings,
-                        onDismiss = { showRemindersDialog = false }
-                    )
-                }
 
                 HorizontalDivider(
                     modifier = Modifier.padding(horizontal = 16.dp),
@@ -933,7 +951,10 @@ fun SettingsScreen(
 
     if (showBackupsDialog) {
         val automaticBackups by viewModel.automaticBackups.collectAsStateWithLifecycle()
+        val automaticBackupEnabled by viewModel.automaticBackupEnabled.collectAsStateWithLifecycle()
+        val automaticBackupInterval by viewModel.automaticBackupInterval.collectAsStateWithLifecycle()
         var pendingRestore by remember { mutableStateOf<String?>(null) }
+        LaunchedEffect(Unit) { viewModel.refreshAutomaticBackupsNow() }
 
         val exportLauncher =
             rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
@@ -996,6 +1017,39 @@ fun SettingsScreen(
                         style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black)
                     )
 
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            stringResource(R.string.respaldo_programado_automaticamente),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Switch(
+                            checked = automaticBackupEnabled,
+                            onCheckedChange = viewModel::setAutomaticBackupEnabled
+                        )
+                    }
+                    if (automaticBackupEnabled) {
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            listOf(
+                                "daily" to R.string.respaldo_cada_dia,
+                                "weekly" to R.string.respaldo_cada_semana,
+                                "monthly" to R.string.respaldo_cada_mes
+                            ).forEach { (interval, labelRes) ->
+                                FilterChip(
+                                    selected = automaticBackupInterval == interval,
+                                    onClick = { viewModel.setAutomaticBackupInterval(interval) },
+                                    label = { Text(stringResource(labelRes)) }
+                                )
+                            }
+                        }
+                    }
+
                     val dateFormatter =
                         remember { SimpleDateFormat("dd MMM, HH:mm", Locale.getDefault()) }
 
@@ -1014,7 +1068,9 @@ fun SettingsScreen(
                         }
                         items(automaticBackups) { backup ->
                             TrashRow(
-                                title = backup.reason,
+                                title = if (backup.reason == "Respaldo programado") {
+                                    stringResource(R.string.respaldo_programado)
+                                } else backup.reason,
                                 subtitle = dateFormatter.format(Date(backup.createdAtMillis)),
                                 onRestore = { pendingRestore = backup.fileName },
                                 onDelete = { viewModel.deleteAutomaticBackup(backup.fileName) }

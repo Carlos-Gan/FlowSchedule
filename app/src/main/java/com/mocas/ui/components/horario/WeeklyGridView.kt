@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -111,9 +112,7 @@ fun WeeklyGridView(
     val finalEndHour = (gridEndHour + 1).coerceIn(finalStartHour + 1, 24)
 
     val hours = (finalStartHour until finalEndHour).toList()
-    val hourHeight = 90.dp
     val timeColWidth = 48.dp
-    val dayColWidth = 140.dp
 
     val hScrollState = rememberScrollState()
     val vScrollState = rememberScrollState()
@@ -123,9 +122,13 @@ fun WeeklyGridView(
     val today = LocalDate.now()
     val isTodayInWeek = today >= weekStart && today < weekStart.plusDays(7)
 
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val dayColWidth = ((maxWidth - timeColWidth) / days.size).coerceAtLeast(100.dp)
+        val hourHeight = maxOf(90.dp, (maxHeight - 60.dp) / hours.size)
+
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
         // Sticky Header: Days row (Pill Style)
         Row(
             modifier = Modifier
@@ -145,6 +148,8 @@ fun WeeklyGridView(
                 ) {
                     Surface(
                         shape = CircleShape,
+                        color = if (isToday) MaterialTheme.colorScheme.primaryContainer
+                        else MaterialTheme.colorScheme.surfaceContainerHigh,
                         modifier = Modifier.size(width = 60.dp, height = 40.dp)
                     ) {
                         Box(contentAlignment = Alignment.Center) {
@@ -152,7 +157,8 @@ fun WeeklyGridView(
                                 text = label.take(3), // "Lun", "Mar"...
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = if (isToday) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
+                                color = if (isToday) MaterialTheme.colorScheme.onPrimaryContainer
+                                else MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
@@ -340,6 +346,7 @@ fun WeeklyGridView(
                     }
                 }
             }
+        }
         }
     }
 }

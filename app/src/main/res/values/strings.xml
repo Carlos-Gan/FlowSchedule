@@ -76,6 +76,11 @@
     <string name="exportar">Exportar</string>
     <string name="importar">Importar</string>
     <string name="copias_automaticas">Cópias Automáticas</string>
+    <string name="respaldo_programado_automaticamente">Crear respaldo automático</string>
+    <string name="respaldo_programado">Respaldo programado</string>
+    <string name="respaldo_cada_dia">Cada día</string>
+    <string name="respaldo_cada_semana">Cada semana</string>
+    <string name="respaldo_cada_mes">Cada mes</string>
     <string name="no_hay_respaldos_automaticos">No hay respaldos automáticos.</string>
     <string name="confirmar_restaurar_respaldo">¿Restaurar respaldo?</string>
     <string name="reemplazar_informacion_respaldo">Se reemplazará toda la información actual con la del respaldo.</string>
@@ -419,6 +424,15 @@
     <string name="recordatorio_preparacion">Recordatorio de preparación</string>
     <string name="recordatorio_preparacion_desc">Aviso extra días antes para exámenes</string>
     <string name="aviso_antes_de">Aviso antes de…</string>
+    <string name="recordatorio_aviso_antes_formato">Avisarme %1$s antes</string>
+    <string name="recordatorio_personalizado">Personalizado</string>
+    <string name="recordatorio_minutos_antes">Minutos de anticipación</string>
+    <string name="recordatorio_cantidad">Cantidad</string>
+    <string name="recordatorio_unidad_minutos">Minutos</string>
+    <string name="recordatorio_unidad_horas">Horas</string>
+    <string name="recordatorio_unidad_dias">Días</string>
+    <string name="minutos_abreviado" translatable="false">min</string>
+    <string name="recordatorio_minutos_personalizado">%1$d min</string>
     <string name="dias">Días</string>
     <string name="modo_apariencia">Modo de Apariencia</string>
     <string name="tema_claro">Claro</string>

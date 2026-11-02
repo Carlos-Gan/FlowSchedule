@@ -87,6 +87,11 @@
     <string name="exportar">Esporta</string>
     <string name="importar">Importa</string>
     <string name="copias_automaticas">Backup Automatici</string>
+    <string name="respaldo_programado_automaticamente">Crea backup automatici</string>
+    <string name="respaldo_programado">Backup programmato</string>
+    <string name="respaldo_cada_dia">Ogni giorno</string>
+    <string name="respaldo_cada_semana">Ogni settimana</string>
+    <string name="respaldo_cada_mes">Ogni mese</string>
     <string name="no_hay_respaldos_automaticos">Nessun backup automatico trovato.</string>
     <string name="confirmar_restaurar_respaldo">Ripristinare backup?</string>
     <string name="reemplazar_informacion_respaldo">I dati attuali verranno sostituiti con i dati del backup.</string>
@@ -430,6 +435,15 @@
     <string name="recordatorio_preparacion">Promemoria preparazione</string>
     <string name="recordatorio_preparacion_desc">Giorni extra di anticipo per gli esami</string>
     <string name="aviso_antes_de">Avvisa prima di…</string>
+    <string name="recordatorio_aviso_antes_formato">Avvisami %1$s prima</string>
+    <string name="recordatorio_personalizado">Personalizzato</string>
+    <string name="recordatorio_minutos_antes">Minuti di anticipo</string>
+    <string name="recordatorio_cantidad">Quantità</string>
+    <string name="recordatorio_unidad_minutos">Minuti</string>
+    <string name="recordatorio_unidad_horas">Ore</string>
+    <string name="recordatorio_unidad_dias">Giorni</string>
+    <string name="minutos_abreviado" translatable="false">min</string>
+    <string name="recordatorio_minutos_personalizado">%1$d min</string>
     <string name="dias">Giorni</string>
     <string name="modo_apariencia">Modalità Aspetto</string>
     <string name="tema_claro">Chiaro</string>

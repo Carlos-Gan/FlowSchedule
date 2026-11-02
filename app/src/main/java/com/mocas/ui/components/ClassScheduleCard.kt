@@ -52,11 +52,11 @@ fun ClassScheduleCard(
             .testTag("class_card_${subject.id}_${slot.id}"),
         shape = RoundedCornerShape(20.dp),
         border = BorderStroke(
-            if (dayClassItem.isLiveNow) 1.5.dp else 1.dp,
-            if (dayClassItem.isLiveNow) subjectColor.copy(alpha = 0.7f) else MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
+            if (dayClassItem.isLiveNow) 1.5.dp else 0.dp,
+            if (dayClassItem.isLiveNow) subjectColor.copy(alpha = 0.7f) else MaterialTheme.colorScheme.surfaceDim
         ),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surfaceDim
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = if (dayClassItem.isLiveNow) 2.dp else 1.dp)
     ) {

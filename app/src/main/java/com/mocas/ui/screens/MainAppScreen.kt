@@ -36,6 +36,7 @@ fun MainAppScreen(
 ) {
     val isCompact = windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact
     var showAcademicProgress by remember { mutableStateOf(false) }
+    var showSettingsSubScreen by remember { mutableStateOf(false) }
     BackHandler(showAcademicProgress) { showAcademicProgress = false }
     val focusManager = LocalFocusManager.current
     val currentTab by
@@ -117,7 +118,7 @@ fun MainAppScreen(
                 SnackbarHost(hostState = snackbarHostState)
             },
             topBar = {
-                if (!showAcademicProgress) {
+                if (!showAcademicProgress && !showSettingsSubScreen) {
                 SnapTopAppBar(
                     title = resolvedTitle,
                     subtitle = resolvedSubtitle,
@@ -159,7 +160,7 @@ fun MainAppScreen(
                 }
             },
             bottomBar = {
-                if (isCompact && !showAcademicProgress) {
+                if (isCompact && !showAcademicProgress && !showSettingsSubScreen) {
                     SnapBottomNavBar(
                         selectedTab = currentTab,
                         pendingEventCount = pendingEventCount,
@@ -187,7 +188,8 @@ fun MainAppScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding),
-                onOpenAcademicProgress = { showAcademicProgress = true }
+                onOpenAcademicProgress = { showAcademicProgress = true },
+                onSettingsSubScreenChanged = { showSettingsSubScreen = it }
             )
         }
     }

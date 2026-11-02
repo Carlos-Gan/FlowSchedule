@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -46,6 +47,7 @@ import java.time.temporal.ChronoUnit
 import java.time.format.TextStyle
 import java.util.Locale
 import androidx.compose.ui.platform.LocalLocale
+import androidx.compose.ui.platform.LocalConfiguration
 
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
@@ -56,6 +58,7 @@ fun DailyScheduleView(
     onAddSubjectClick: () -> Unit
 ) {
     val todayClasses by viewModel.todayClasses.collectAsStateWithLifecycle()
+    val isTablet = LocalConfiguration.current.screenWidthDp >= 840
     val daysList = listOf(
         1 to stringResource(R.string.dia_l),
         2 to stringResource(R.string.dia_m),
@@ -123,47 +126,56 @@ fun DailyScheduleView(
         Spacer(modifier = Modifier.height(8.dp))
 
         // --- Compact Horizontal Date Strip ---
-        LazyRow(
-            state = dateListState,
+        BoxWithConstraints(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            contentPadding = PaddingValues(horizontal = 2.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                .padding(horizontal = 16.dp)
         ) {
-            items(
-                count = dateCount,
-                key = { index -> firstDate.plusDays(index.toLong()).toString() }
-            ) { index ->
-                val date = firstDate.plusDays(index.toLong())
-                val label = daysList[date.dayOfWeek.value - 1].second
-                val isSelected = date == selectedDate
+            val dateCardWidth = if (isTablet) {
+                ((maxWidth - 12.dp - 48.dp) / 7).coerceAtLeast(58.dp)
+            } else 58.dp
+            val dateCardHeight = if (isTablet) 84.dp else 60.dp
 
-                Surface(
-                    onClick = { viewModel.selectTimetableDate(date) },
-                    shape = RoundedCornerShape(12.dp),
-                    color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
-                    border = BorderStroke(1.dp, if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent),
-                    modifier = Modifier.width(58.dp).height(72.dp)
-                ) {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
+            LazyRow(
+                state = dateListState,
+                modifier = Modifier.fillMaxWidth(),
+                contentPadding = PaddingValues(horizontal = 2.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(
+                    count = dateCount,
+                    key = { index -> firstDate.plusDays(index.toLong()).toString() }
+                ) { index ->
+                    val date = firstDate.plusDays(index.toLong())
+                    val label = daysList[date.dayOfWeek.value - 1].second
+                    val isSelected = date == selectedDate
+
+                    Surface(
+                        onClick = { viewModel.selectTimetableDate(date) },
+                        shape = RoundedCornerShape(if (isTablet) 18.dp else 12.dp),
+                        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+                        border = BorderStroke(1.dp, if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent),
+                        modifier = Modifier.width(dateCardWidth).height(dateCardHeight)
                     ) {
-                        Text(
-                            text = label,
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = date.dayOfMonth.toString(),
-                            fontSize = 17.sp,
-                            fontWeight = FontWeight.Black,
-                            color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
-                        )
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = label,
+                                fontSize = if (isTablet) 16.sp else 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = date.dayOfMonth.toString(),
+                                fontSize = if (isTablet) 26.sp else 18.sp,
+                                fontWeight = FontWeight.Black,
+                                color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
+                            )
+                        }
                     }
                 }
             }
@@ -189,13 +201,14 @@ fun DailyScheduleView(
         } else {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(top = 16.dp, bottom = 100.dp),
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 100.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(todayClasses, key = { it.slot.id }) { classItem ->
                     DailyClassRow(
                         classItem = classItem,
-                        onClick = { onClassClick(classItem.subject, classItem.slot) }
+                        onClick = { onClassClick(classItem.subject, classItem.slot) },
+                        isTablet = isTablet
                     )
                 }
             }

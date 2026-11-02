@@ -2,6 +2,7 @@ package com.mocas.ui.screens
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,6 +24,7 @@ import androidx.compose.material.icons.automirrored.filled.Assignment
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.CoPresent
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Quiz
@@ -77,7 +79,7 @@ import kotlin.time.Duration.Companion.milliseconds
 private fun ProgressBadge(modifier: Modifier, progressFraction: Float) {
     Surface(
         modifier = modifier,
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(12.dp),
         color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
     ) {
         Text(
@@ -85,7 +87,7 @@ private fun ProgressBadge(modifier: Modifier, progressFraction: Float) {
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)
         )
     }
 }
@@ -179,8 +181,9 @@ fun EventsScreen(
                 // Tarjeta de Progreso
                 item {
                     Card(
-                        modifier = Modifier.fillMaxWidth().clickable(onClick = onOpenAcademicProgress),
-                        shape = RoundedCornerShape(20.dp),
+                        onClick = onOpenAcademicProgress,
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(24.dp),
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
                         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                     ) {
@@ -192,6 +195,12 @@ fun EventsScreen(
                             ) {
                                 ProgressSummary(Modifier.weight(1f), completedCount, totalCount)
                                 ProgressBadge(Modifier, progressFraction)
+                                Icon(
+                                    imageVector = Icons.Default.ChevronRight,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(22.dp)
+                                )
                             }
 
                             Spacer(modifier = Modifier.height(12.dp))

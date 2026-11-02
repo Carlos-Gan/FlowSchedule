@@ -87,6 +87,11 @@
     <string name="exportar">Export</string>
     <string name="importar">Import</string>
     <string name="copias_automaticas">Automatic Backups</string>
+    <string name="respaldo_programado_automaticamente">Create automatic backup</string>
+    <string name="respaldo_programado">Scheduled backup</string>
+    <string name="respaldo_cada_dia">Daily</string>
+    <string name="respaldo_cada_semana">Weekly</string>
+    <string name="respaldo_cada_mes">Monthly</string>
     <string name="no_hay_respaldos_automaticos">No automatic backups found.</string>
     <string name="confirmar_restaurar_respaldo">Restore backup?</string>
     <string name="reemplazar_informacion_respaldo">Current data will be replaced with backup data.</string>
@@ -430,6 +435,15 @@
     <string name="recordatorio_preparacion">Preparation reminder</string>
     <string name="recordatorio_preparacion_desc">Extra reminder days before for exams</string>
     <string name="aviso_antes_de">Notify before…</string>
+    <string name="recordatorio_aviso_antes_formato">Notify me %1$s before</string>
+    <string name="recordatorio_personalizado">Custom</string>
+    <string name="recordatorio_minutos_antes">Minutes before</string>
+    <string name="recordatorio_cantidad">Amount</string>
+    <string name="recordatorio_unidad_minutos">Minutes</string>
+    <string name="recordatorio_unidad_horas">Hours</string>
+    <string name="recordatorio_unidad_dias">Days</string>
+    <string name="minutos_abreviado" translatable="false">min</string>
+    <string name="recordatorio_minutos_personalizado">%1$d min</string>
     <string name="dias">Days</string>
     <string name="modo_apariencia">Appearance Mode</string>
     <string name="tema_claro">Light</string>

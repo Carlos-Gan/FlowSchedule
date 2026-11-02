@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.activity.ComponentActivity
@@ -700,10 +701,13 @@ fun FlowScheduleTheme(
     }
 
     val systemDensity = LocalDensity.current
+    val isTablet = LocalConfiguration.current.screenWidthDp >= 840
+    val effectiveFontScale = (systemDensity.fontScale * if (isTablet) 1.08f else 1f)
+        .coerceAtMost(1.3f)
     CompositionLocalProvider(
         LocalDensity provides Density(
             density = systemDensity.density,
-            fontScale = systemDensity.fontScale.coerceAtMost(1.3f)
+            fontScale = effectiveFontScale
         )
     ) {
         MaterialTheme(

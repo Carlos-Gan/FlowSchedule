@@ -21,6 +21,7 @@ fun AppTabContent(
     viewModel: ScheduleViewModel,
     windowSizeClass: WindowSizeClass,
     onOpenAcademicProgress: () -> Unit = {},
+    onSettingsSubScreenChanged: (Boolean) -> Unit = {},
 ) {
     val stateHolder = rememberSaveableStateHolder()
 
@@ -53,7 +54,10 @@ fun AppTabContent(
                 }
 
                 BottomNavTab.CONFIGURACION -> {
-                    SettingsScreen(viewModel = viewModel)
+                    SettingsScreen(
+                        viewModel = viewModel,
+                        onRemindersScreenChanged = onSettingsSubScreenChanged
+                    )
                 }
             }
         }

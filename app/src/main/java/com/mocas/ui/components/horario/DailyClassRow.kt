@@ -19,28 +19,39 @@ import com.mocas.ui.components.parseColorFromHex
 @Composable
 fun DailyClassRow(
     classItem: com.mocas.ui.model.DayClassItem,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    isTablet: Boolean = false
 ) {
     val subjectColor = parseColorFromHex(classItem.subject.colorHex)
     val isNow = classItem.isLiveNow
 
     Row(
         modifier = Modifier
-            .fillMaxWidth(),
-        verticalAlignment = Alignment.Top
+            .fillMaxWidth()
+            .then(
+                if (isTablet) Modifier
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(subjectColor.copy(alpha = 0.05f))
+                    .clickable(onClick = onClick)
+                    .padding(18.dp)
+                else Modifier
+            )
+            .heightIn(min = if (isTablet) 124.dp else 0.dp)
+            .then(if (isTablet) Modifier else Modifier.clickable(onClick = onClick)),
+        verticalAlignment = if (isTablet) Alignment.CenterVertically else Alignment.Top
     ) {
         // Time Column
         Column(
             modifier = Modifier
-                .widthIn(min = 60.dp)
-                .padding(top = 10.dp),
+                .widthIn(min = if (isTablet) 88.dp else 60.dp)
+                .then(if (isTablet) Modifier else Modifier.padding(top = 10.dp)),
             horizontalAlignment = Alignment.End
         ) {
             Text(
                 text = classItem.slot.startTime,
                 style = MaterialTheme.typography.labelLarge.copy(
                     fontWeight = FontWeight.Black,
-                    fontSize = 13.sp
+                    fontSize = if (isTablet) 18.sp else 13.sp
                 ),
                 maxLines = 1,
                 softWrap = false,
@@ -48,22 +59,21 @@ fun DailyClassRow(
             )
             Text(
                 text = classItem.slot.endTime,
-                style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp),
+                style = MaterialTheme.typography.labelSmall.copy(fontSize = if (isTablet) 15.sp else 11.sp),
                 maxLines = 1,
                 softWrap = false,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
             )
         }
 
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(if (isTablet) 24.dp else 16.dp))
 
         // A slim subject-color marker keeps the schedule row clear without
         // turning the whole class into a pill-shaped card.
         Row(
             modifier = Modifier
                 .weight(1f)
-                .height(IntrinsicSize.Min)
-                .clickable { onClick() },
+                .height(IntrinsicSize.Min),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
@@ -77,16 +87,21 @@ fun DailyClassRow(
             Box(modifier = Modifier.weight(1f)) {
                 Column(
                     modifier = Modifier
-                        .padding(start = 12.dp, end = 8.dp, top = 8.dp, bottom = 8.dp)
+                        .padding(
+                            start = if (isTablet) 20.dp else 12.dp,
+                            end = 8.dp,
+                            top = if (isTablet) 16.dp else 8.dp,
+                            bottom = if (isTablet) 16.dp else 8.dp
+                        )
                         .fillMaxWidth()
                 ) {
                     Text(
                         text = classItem.subject.name,
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Black,
-                            fontSize = 17.sp,
+                            fontSize = if (isTablet) 25.sp else 17.sp,
                             letterSpacing = (-0.3).sp,
-                            lineHeight = 20.sp
+                            lineHeight = if (isTablet) 30.sp else 20.sp
                         ),
                         color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.padding(end = 12.dp),
@@ -106,7 +121,7 @@ fun DailyClassRow(
                         Text(
                             text = metadata,
                             style = MaterialTheme.typography.bodySmall.copy(
-                                fontSize = 12.sp,
+                                fontSize = if (isTablet) 17.sp else 12.sp,
                                 fontWeight = FontWeight.Bold
                             ),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
