@@ -642,20 +642,20 @@
     <string name="widget_period_ended">Period ended</string>
 
     <!-- What's New Dialog -->
-    <string name="whats_new_title">What\'s new in version 2.3.0!</string>
-    <string name="whats_new_subtitle">Here are the latest improvements to grades and organization:</string>
-    <string name="whats_new_item_1_title">📊 Activities that count toward your grade</string>
-    <string name="whats_new_item_1_desc">Mark an activity to include it in your subject grade and record its score when you complete it. It links to the selected unit and category.</string>
-    <string name="whats_new_item_2_title">🔔 Reminders for pending grades</string>
-    <string name="whats_new_item_2_desc">If you have not received a score yet, let the app know and we’ll remind you to enter it later.</string>
-    <string name="whats_new_item_3_title">⚙️ Set up grades without extra steps</string>
-    <string name="whats_new_item_3_desc">Open a unit’s settings from the prompt when categories or percentages are missing. Existing units using general percentages are detected too.</string>
-    <string name="whats_new_item_4_title">✨ Quick access from an activity</string>
-    <string name="whats_new_item_4_desc">Open Grades from the activity form to create units or configure categories and percentages without losing what you entered.</string>
-    <string name="whats_new_item_5_title">🗑️ Clearer canceled classes in Trash</string>
-    <string name="whats_new_item_5_desc">Removing a canceled class from Trash now keeps it canceled on the calendar. Only Restore brings the class back to your schedule.</string>
-    <string name="whats_new_item_6_title">📚 Averages by subject and unit</string>
-    <string name="whats_new_item_6_desc">The Grades section shows the subject average and opens a workspace to review each unit and adjust its category percentages.</string>
+    <string name="whats_new_title">What\'s new in version 2.4.2!</string>
+    <string name="whats_new_subtitle">Improvements for large screens, reminders, and backups:</string>
+    <string name="whats_new_item_1_title">📱 Better on tablets and foldables</string>
+    <string name="whats_new_item_1_desc">Sizes and layouts now make better use of large screens and are easier to read.</string>
+    <string name="whats_new_item_2_title">📅 A clearer weekly schedule</string>
+    <string name="whats_new_item_2_desc">The schedule adapts to your screen, and room names scroll automatically when they do not fit.</string>
+    <string name="whats_new_item_3_title">🔔 Reminders on your terms</string>
+    <string name="whats_new_item_3_desc">Configure them on their own screen and set custom times in minutes, hours, or days.</string>
+    <string name="whats_new_item_4_title">💾 Scheduled automatic backups</string>
+    <string name="whats_new_item_4_desc">Choose daily, weekly, or monthly backups. The five most recent are kept.</string>
+    <string name="whats_new_item_5_title">🔥 Keep your streak when restoring</string>
+    <string name="whats_new_item_5_desc">New backups save when you completed each activity so your streak can be restored too.</string>
+    <string name="whats_new_item_6_title">✨ Better Schedule views</string>
+    <string name="whats_new_item_6_desc">Weekly View, Daily View, and Subject List use tablet space better while keeping their layout on phones.</string>
     <string name="whats_new_button">Got it!</string>
 
     <!-- Add Event Dialog UI Strings -->

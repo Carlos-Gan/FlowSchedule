@@ -610,20 +610,20 @@
     <string name="widget_school_days_total_simple">Totale: %1$d giorni scolastici</string>
     <string name="widget_school_days_total_progress">%1$d giorni scolastici · %2$d%% completati</string>
     <string name="widget_period_ended">Periodo terminato</string>
-    <string name="whats_new_title">Novità nella versione 2.3.0!</string>
-    <string name="whats_new_subtitle">Ecco i miglioramenti recenti a voti e organizzazione:</string>
-    <string name="whats_new_item_1_title">📊 Attività che contribuiscono al voto</string>
-    <string name="whats_new_item_1_desc">Indica che un’attività contribuisce al voto della materia e inserisci il risultato quando la completi. Sarà collegata all’unità e alla categoria scelte.</string>
-    <string name="whats_new_item_2_title">🔔 Promemoria per i voti in sospeso</string>
-    <string name="whats_new_item_2_desc">Se non hai ancora ricevuto il voto, avvisa l’app e ti ricorderemo di inserirlo più tardi.</string>
-    <string name="whats_new_item_3_title">⚙️ Configura i voti in pochi passaggi</string>
-    <string name="whats_new_item_3_desc">Apri le impostazioni dell’unità dall’avviso quando mancano categorie o percentuali. Vengono rilevate anche le unità esistenti che usano le percentuali generali.</string>
-    <string name="whats_new_item_4_title">✨ Accesso rapido dall’attività</string>
-    <string name="whats_new_item_4_desc">Apri Voti dal modulo dell’attività per creare unità o configurare categorie e percentuali senza perdere i dati inseriti.</string>
-    <string name="whats_new_item_5_title">🗑️ Annullamenti più chiari nel cestino</string>
-    <string name="whats_new_item_5_desc">Rimuovendo una lezione annullata dal cestino, l’annullamento resta nel calendario. Solo Ripristina riporta la lezione nell’orario.</string>
-    <string name="whats_new_item_6_title">📚 Medie per materia e unità</string>
-    <string name="whats_new_item_6_desc">La sezione Voti mostra la media della materia e apre uno spazio per consultare ogni unità e modificarne le percentuali per categoria.</string>
+    <string name="whats_new_title">Novità nella versione 2.4.2!</string>
+    <string name="whats_new_subtitle">Miglioramenti per schermi grandi, promemoria e backup:</string>
+    <string name="whats_new_item_1_title">📱 Migliore esperienza su tablet e pieghevoli</string>
+    <string name="whats_new_item_1_desc">Dimensioni e layout sfruttano meglio gli schermi grandi e rendono la lettura più semplice.</string>
+    <string name="whats_new_item_2_title">📅 Orario settimanale più chiaro</string>
+    <string name="whats_new_item_2_desc">L’orario si adatta allo schermo e i nomi delle aule scorrono automaticamente quando non entrano.</string>
+    <string name="whats_new_item_3_title">🔔 Promemoria personalizzati</string>
+    <string name="whats_new_item_3_desc">Configura i promemoria nella schermata dedicata e scegli tempi personalizzati in minuti, ore o giorni.</string>
+    <string name="whats_new_item_4_title">💾 Backup automatici programmati</string>
+    <string name="whats_new_item_4_desc">Scegli backup giornalieri, settimanali o mensili. Vengono conservati gli ultimi cinque.</string>
+    <string name="whats_new_item_5_title">🔥 Mantieni la serie dopo il ripristino</string>
+    <string name="whats_new_item_5_desc">I nuovi backup salvano quando hai completato ogni attività, così è possibile recuperare la serie.</string>
+    <string name="whats_new_item_6_title">✨ Viste Schedule migliorate</string>
+    <string name="whats_new_item_6_desc">Weekly View, Daily View e Subject List sfruttano meglio lo spazio sui tablet mantenendo il layout sui telefoni.</string>
     <string name="whats_new_button">Ho capito!</string>
 
     <!-- Add Event Dialog UI Strings -->

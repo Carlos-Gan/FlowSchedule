@@ -640,20 +640,20 @@
     <string name="widget_period_ended">Período finalizado</string>
 
     <!-- What's New Dialog -->
-    <string name="whats_new_title">¡Novedades en la versión 2.3.0!</string>
-    <string name="whats_new_subtitle">Estas son las mejoras recientes en calificaciones y organización:</string>
-    <string name="whats_new_item_1_title">📊 Actividades que cuentan para tu promedio</string>
-    <string name="whats_new_item_1_desc">Marca una actividad para incluirla en la calificación de la materia y registra la nota al completarla. Se vincula con la unidad y categoría elegidas.</string>
-    <string name="whats_new_item_2_title">🔔 Recordatorios para notas pendientes</string>
-    <string name="whats_new_item_2_desc">Si todavía no recibiste tu calificación, indícalo y te recordaremos que la registres después.</string>
-    <string name="whats_new_item_3_title">⚙️ Configura las calificaciones sin dar vueltas</string>
-    <string name="whats_new_item_3_desc">Si faltan categorías o porcentajes en una unidad, puedes abrir su configuración desde el aviso. También detectamos unidades existentes que aún usan la configuración general.</string>
-    <string name="whats_new_item_4_title">✨ Acceso directo desde la actividad</string>
-    <string name="whats_new_item_4_desc">Abre Calificaciones desde el formulario de actividad para crear unidades o configurar categorías y porcentajes sin perder lo que ya llenaste.</string>
-    <string name="whats_new_item_5_title">🗑️ Cancelaciones claras en la papelera</string>
-    <string name="whats_new_item_5_desc">Al quitar una clase cancelada de la papelera, la cancelación se conserva en el calendario. Solo Restaurar hace que la clase vuelva a tu horario.</string>
-    <string name="whats_new_item_6_title">📚 Promedio por materia y por unidad</string>
-    <string name="whats_new_item_6_desc">La sección de calificaciones muestra el promedio de la materia y abre un espacio para consultar cada unidad y ajustar sus porcentajes por categoría.</string>
+    <string name="whats_new_title">¡Novedades en la versión 2.4.2!</string>
+    <string name="whats_new_subtitle">Mejoras para pantallas grandes, recordatorios y respaldos:</string>
+    <string name="whats_new_item_1_title">📱 Mejor experiencia en tabletas y plegables</string>
+    <string name="whats_new_item_1_desc">Ajustamos los tamaños y la distribución para aprovechar mejor las pantallas grandes y facilitar la lectura.</string>
+    <string name="whats_new_item_2_title">📅 Horario semanal más claro</string>
+    <string name="whats_new_item_2_desc">El horario se adapta al tamaño de pantalla y el nombre del salón se desplaza automáticamente cuando no cabe.</string>
+    <string name="whats_new_item_3_title">🔔 Recordatorios a tu medida</string>
+    <string name="whats_new_item_3_desc">Configúralos desde su propia pantalla y define tiempos personalizados en minutos, horas o días.</string>
+    <string name="whats_new_item_4_title">💾 Respaldos automáticos programados</string>
+    <string name="whats_new_item_4_desc">Activa respaldos diarios, semanales o mensuales. Se conservan los cinco más recientes.</string>
+    <string name="whats_new_item_5_title">🔥 Conserva tu racha al restaurar</string>
+    <string name="whats_new_item_5_desc">Los nuevos respaldos guardan cuándo completaste cada actividad para recuperar tu streak al restaurarlos.</string>
+    <string name="whats_new_item_6_title">✨ Mejoras en las vistas de Schedule</string>
+    <string name="whats_new_item_6_desc">Weekly View, Daily View y Subject List aprovechan mejor el espacio en tabletas sin perder su distribución en teléfonos.</string>
     <string name="whats_new_button">¡Entendido!</string>
 
     <!-- Add Event Dialog UI Strings -->

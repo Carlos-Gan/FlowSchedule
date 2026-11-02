@@ -1,6 +1,7 @@
 package com.mocas.ui.components.horario
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -123,8 +125,17 @@ fun WeeklyGridView(
     val isTodayInWeek = today >= weekStart && today < weekStart.plusDays(7)
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val dayColWidth = ((maxWidth - timeColWidth) / days.size).coerceAtLeast(100.dp)
-        val hourHeight = maxOf(90.dp, (maxHeight - 60.dp) / hours.size)
+        val isCompactWidth = maxWidth < 600.dp
+        val dayColWidth = if (isCompactWidth) {
+            140.dp
+        } else {
+            ((maxWidth - timeColWidth) / days.size).coerceAtLeast(100.dp)
+        }
+        val hourHeight = if (isCompactWidth) {
+            90.dp
+        } else {
+            ((maxHeight - 60.dp) / hours.size).coerceIn(90.dp, 120.dp)
+        }
 
         Column(
             modifier = Modifier.fillMaxSize()
@@ -275,29 +286,37 @@ fun WeeklyGridView(
                                                         .padding(horizontal = 10.dp, vertical = 4.dp),
                                                     verticalArrangement = Arrangement.Center
                                                 ) {
-                                                    Row(
-                                                        verticalAlignment = Alignment.CenterVertically
-                                                    ) {
+                                                    Row(verticalAlignment = Alignment.CenterVertically) {
                                                         Text(
                                                             text = effectiveSlot.startTime,
                                                             color = subColor,
                                                             fontSize = 11.sp,
-                                                            fontWeight = FontWeight.ExtraBold
+                                                            fontWeight = FontWeight.ExtraBold,
+                                                            maxLines = 1
                                                         )
-                                                        
                                                         val room = effectiveSlot.room.ifBlank { subWithSlots.subject.defaultRoom }
                                                         if (room.isNotBlank()) {
-                                                            Text(
-                                                                text = " • $room",
-                                                                color = subColor.copy(alpha = 0.7f),
-                                                                fontSize = 9.sp,
-                                                                fontWeight = FontWeight.Bold,
-                                                                maxLines = 1,
-                                                                overflow = TextOverflow.Ellipsis
-                                                            )
+                                                            Spacer(modifier = Modifier.width(4.dp))
+                                                            Box(
+                                                                modifier = Modifier.weight(1f)
+                                                            ) {
+                                                                Text(
+                                                                    text = "• $room",
+                                                                    modifier = Modifier.basicMarquee(
+                                                                        iterations = Int.MAX_VALUE,
+                                                                        initialDelayMillis = 1_000,
+                                                                        repeatDelayMillis = 1_500
+                                                                    ),
+                                                                    color = subColor.copy(alpha = 0.7f),
+                                                                    fontSize = 9.sp,
+                                                                    fontWeight = FontWeight.Bold,
+                                                                    maxLines = 1,
+                                                                    softWrap = false
+                                                                )
+                                                            }
                                                         }
                                                     }
-                                                    
+
                                                     Text(
                                                         text = subWithSlots.subject.name,
                                                         color = subColor,
