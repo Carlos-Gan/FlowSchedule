@@ -8,14 +8,16 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -23,13 +25,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Insights
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Timeline
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -41,7 +43,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -54,8 +55,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -67,7 +66,6 @@ import com.mocas.data.local.GradeItemEntity
 import com.mocas.data.local.GradeUnitCategoryWeightEntity
 import com.mocas.data.local.GradeUnitEntity
 import com.mocas.data.repository.GradeCalculator
-import com.mocas.ui.components.SelectableChip
 import com.mocas.ui.components.UnitAverageCard
 import kotlin.collections.forEach
 
@@ -97,11 +95,6 @@ fun GradesWorkspaceDialog(
     var notifiedUnitIds by remember { mutableStateOf(emptySet<Long>()) }
     val selectUnit: (GradeUnitEntity) -> Unit = { unit ->
         selectedUnitId = unit.id
-        if (!GradeCalculator.hasCustomUnitWeights(unit.id, unitCategoryWeights) && unit.id !in notifiedUnitIds) {
-            showMissingCategoriesNotice = true
-            needsCategorySetupAttention = true
-            notifiedUnitIds = notifiedUnitIds + unit.id
-        }
     }
     val gearPulseScale = rememberInfiniteTransition(label = "categorySetupAttention")
         .animateFloat(
@@ -122,6 +115,11 @@ fun GradesWorkspaceDialog(
         }
         if (newUnit != null) {
             selectUnit(newUnit)
+            if (!GradeCalculator.hasCustomUnitWeights(newUnit.id, unitCategoryWeights) && newUnit.id !in notifiedUnitIds) {
+                showMissingCategoriesNotice = true
+                needsCategorySetupAttention = true
+                notifiedUnitIds = notifiedUnitIds + newUnit.id
+            }
         }
         if (selectedUnitId != null && units.none { it.id == selectedUnitId }) {
             units.firstOrNull()?.let(selectUnit)
@@ -163,10 +161,6 @@ fun GradesWorkspaceDialog(
         GradeCalculator.summarize(categories, gradeItems, passing)
     }
 
-    val windowInfo = LocalWindowInfo.current
-    val density = LocalDensity.current
-    val screenHeightDp = with(density) { windowInfo.containerSize.height.toDp() }
-
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(
@@ -176,18 +170,22 @@ fun GradesWorkspaceDialog(
     ) {
         Surface(
             modifier = Modifier
-                .fillMaxWidth(0.95f)
-                .heightIn(max = screenHeightDp * 0.9f)
-                .imePadding(),
-            shape = RoundedCornerShape(24.dp),
+                .fillMaxSize(),
+            shape = RoundedCornerShape(0.dp),
             color = MaterialTheme.colorScheme.surface
         ) {
             Column(Modifier
+                .fillMaxSize()
+                .windowInsetsPadding(WindowInsets.systemBars)
+                .imePadding()
                 .verticalScroll(rememberScrollState())
-                .padding(18.dp)) {
+                .padding(horizontal = 22.dp, vertical = 12.dp)) {
 
                 // Header
                 Row(verticalAlignment = Alignment.CenterVertically) {
+                    IconButton(onClick = onDismiss) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.cerrar))
+                    }
                     Column(Modifier.weight(1f)) {
                         Text(
                             stringResource(R.string.calificaciones),
@@ -223,7 +221,6 @@ fun GradesWorkspaceDialog(
                             else MaterialTheme.colorScheme.onSurface
                         )
                     }
-                    IconButton(onClick = onDismiss) { Icon(Icons.Default.Close, stringResource(R.string.cerrar)) }
                 }
 
                 Spacer(Modifier.height(14.dp))
@@ -236,14 +233,17 @@ fun GradesWorkspaceDialog(
                     Column(Modifier
                         .fillMaxWidth()
                         .padding(16.dp)) {
-                        Text(stringResource(R.string.promedio_materia_label), color = MaterialTheme.colorScheme.onPrimary.copy(alpha = .8f))
-                        Text(
-                            overallSubjectAverage?.let { "${format(it)} / 100" }
+                        Text(stringResource(R.string.promedio_materia_label), color = MaterialTheme.colorScheme.onPrimary.copy(alpha = .9f))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                            overallSubjectAverage?.let(::format)
                                 ?: stringResource(R.string.sin_calificaciones),
                             color = MaterialTheme.colorScheme.onPrimary,
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold
-                        )
+                            )
+                            if (overallSubjectAverage != null) Text(" / 100", color = MaterialTheme.colorScheme.onPrimary)
+                        }
                         LinearProgressIndicator(
                             progress = { ((overallSubjectAverage ?: 0.0) / 100.0).toFloat() },
                             color = MaterialTheme.colorScheme.onPrimary, trackColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = .25f),
@@ -251,24 +251,34 @@ fun GradesWorkspaceDialog(
                                 .fillMaxWidth()
                                 .padding(top = 8.dp)
                         )
-                        Text(
-                            neededText(generalSummary.neededToPass, passing, generalSummary.gradedWeight),
+                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                            Text("${format(generalSummary.gradedWeight)}% evaluado",
                             color = MaterialTheme.colorScheme.onPrimary.copy(alpha = .9f),
                             style = MaterialTheme.typography.bodySmall,
-                            modifier = Modifier.padding(top = 8.dp)
-                        )
+                            modifier = Modifier.padding(top = 8.dp))
+                            Text("${format(100.0 - generalSummary.gradedWeight)}% restante", color = MaterialTheme.colorScheme.onPrimary.copy(alpha = .9f), style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 8.dp))
+                        }
                     }
                 }
 
-                Spacer(Modifier.height(20.dp))
+                Row(Modifier.fillMaxWidth().padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Text("◎", color = MaterialTheme.colorScheme.primary)
+                    Spacer(Modifier.width(10.dp))
+                    Text(neededText(generalSummary.neededToPass, passing, generalSummary.gradedWeight), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
 
-                Text(stringResource(R.string.promedio_por_unidad), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
-                Spacer(Modifier.height(8.dp))
+                Row(Modifier.fillMaxWidth().padding(top = 22.dp, bottom = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Text(stringResource(R.string.unidades), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+                    TextButton(onClick = { showAddUnit = true }) { Icon(Icons.Default.Add, null, modifier = Modifier.size(16.dp)); Spacer(Modifier.width(3.dp)); Text(stringResource(R.string.nueva_unidad)) }
+                }
                 if (units.isEmpty()) {
                     Text(stringResource(R.string.crea_unidad_instruccion), style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant)
                 } else {
-                    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
                         units.forEach { unit ->
                             val average = GradeCalculator.unitAverage(categories, gradeItems, unit.id, unitCategoryWeights)
                             val isCustom = GradeCalculator.hasCustomUnitWeights(unit.id, unitCategoryWeights)
@@ -289,29 +299,6 @@ fun GradesWorkspaceDialog(
 
                 Spacer(Modifier.height(20.dp))
 
-                // Selector de unidades
-                Text(
-                    stringResource(R.string.unidades),
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleSmall
-                )
-                Spacer(Modifier.height(8.dp))
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    verticalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    units.forEach { unit ->
-                        SelectableChip(
-                            unit.name,
-                            selectedUnitId == unit.id
-                        ) { selectUnit(unit) }
-                    }
-                }
-
-                Spacer(Modifier.height(18.dp))
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                Spacer(Modifier.height(14.dp))
-
                 // Card de contenido de la unidad seleccionada
                 Card(
                     shape = RoundedCornerShape(16.dp),
@@ -329,21 +316,8 @@ fun GradesWorkspaceDialog(
                                     fontWeight = FontWeight.Bold,
                                     style = MaterialTheme.typography.titleMedium
                                 )
-                                Text(
-                                    "${stringResource(R.string.promedio_por_unidad)}: ${unitAverage?.let(::format) ?: "—"}",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
                             }
-                            Button(
-                                onClick = { showAddGrade = true },
-                                enabled = categories.isNotEmpty() && selectedUnit != null,
-                                contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp)
-                            ) {
-                                Icon(Icons.Default.Add, null, modifier = Modifier.size(18.dp))
-                                Spacer(Modifier.width(4.dp))
-                                Text(stringResource(R.string.nota))
-                            }
+                            Text(unitAverage?.let(::format) ?: "—", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
                             if (selectedUnit != null) {
                                 IconButton(onClick = { unitPendingDelete = selectedUnit }) {
                                     Icon(Icons.Default.Delete, stringResource(R.string.eliminar_unidad_desc), tint = MaterialTheme.colorScheme.error)
@@ -428,15 +402,16 @@ fun GradesWorkspaceDialog(
                     }
                 }
 
-                OutlinedButton(
-                    onClick = { showAddUnit = true },
+                Button(
+                    onClick = { showAddGrade = true },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 14.dp)
+                        .padding(top = 14.dp),
+                    enabled = categories.isNotEmpty() && selectedUnit != null
                 ) {
                     Icon(Icons.Default.Add, null, modifier = Modifier.size(16.dp))
                     Spacer(Modifier.width(4.dp))
-                    Text(stringResource(R.string.nueva_unidad))
+                    Text(stringResource(R.string.nota))
                 }
 
                 Spacer(Modifier.height(18.dp))
@@ -454,7 +429,7 @@ fun GradesWorkspaceDialog(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            Icons.Default.Insights,
+                            Icons.Default.Timeline,
                             null,
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(20.dp)
@@ -466,7 +441,7 @@ fun GradesWorkspaceDialog(
                             modifier = Modifier.weight(1f)
                         )
                         Icon(
-                            Icons.AutoMirrored.Filled.ArrowForward,
+                            Icons.Default.ChevronRight,
                             contentDescription = stringResource(R.string.abrir_simulador_desc),
                             tint = MaterialTheme.colorScheme.primary
                         )
@@ -565,7 +540,9 @@ fun GradesWorkspaceDialog(
         GradeSimulatorDialog(
             categories = categories,
             units = units,
+            initialUnitId = selectedUnitId,
             items = gradeItems,
+            unitCategoryWeights = unitCategoryWeights,
             passingText = passingText,
             onPassingChanged = { passingText = it },
             onDismiss = { showSimulator = false }

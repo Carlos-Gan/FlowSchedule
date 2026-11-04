@@ -2,10 +2,12 @@ package com.mocas.ui.screens
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -19,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mocas.ui.add.subject.SubjectDetailScreen
 import com.mocas.ui.components.AppTabContent
 import com.mocas.ui.components.bar.SnapBottomNavBar
 import com.mocas.ui.components.bar.SnapNavigationRail
@@ -38,6 +41,8 @@ fun MainAppScreen(
     var showAcademicProgress by remember { mutableStateOf(false) }
     var showSettingsSubScreen by remember { mutableStateOf(false) }
     BackHandler(showAcademicProgress) { showAcademicProgress = false }
+    val selectedDetailId by viewModel.selectedSubjectDetailId.collectAsStateWithLifecycle()
+    BackHandler(selectedDetailId != null && !showAcademicProgress) { viewModel.closeSubjectDetail() }
     val focusManager = LocalFocusManager.current
     val currentTab by
     viewModel.currentTab.collectAsStateWithLifecycle()
@@ -45,8 +50,20 @@ fun MainAppScreen(
     val subjectsWithSlots by
     viewModel.subjectsWithSlots.collectAsStateWithLifecycle()
 
+    val gradeCategories by viewModel.gradeCategories.collectAsStateWithLifecycle()
+    val gradeItems by viewModel.gradeItems.collectAsStateWithLifecycle()
+    val gradeUnits by viewModel.gradeUnits.collectAsStateWithLifecycle()
+    val gradeUnitCategoryWeights by viewModel.gradeUnitCategoryWeights.collectAsStateWithLifecycle()
+
     val allEventsWithSubject by
     viewModel.allEventsWithSubject.collectAsStateWithLifecycle()
+
+    val selectedSubject = remember(selectedDetailId, subjectsWithSlots) {
+        subjectsWithSlots.firstOrNull { it.subject.id == selectedDetailId }
+    }
+    val linkedSubjectEvents = remember(selectedDetailId, allEventsWithSubject) {
+        allEventsWithSubject.filter { it.event.subjectId == selectedDetailId }
+    }
 
     val userMessage by
     viewModel.userMessage.collectAsStateWithLifecycle()
@@ -97,7 +114,7 @@ fun MainAppScreen(
     )
 
     Row(modifier = Modifier.fillMaxSize()) {
-        if (!isCompact) {
+        if (!isCompact && selectedDetailId == null && !showAcademicProgress) {
             SnapNavigationRail(
                 selectedTab = currentTab,
                 pendingEventCount = pendingEventCount,
@@ -114,11 +131,12 @@ fun MainAppScreen(
         Scaffold(
             modifier = Modifier.weight(1f),
             containerColor = MaterialTheme.colorScheme.background,
+            contentWindowInsets = if (selectedSubject != null) WindowInsets(0, 0, 0, 0) else ScaffoldDefaults.contentWindowInsets,
             snackbarHost = {
                 SnackbarHost(hostState = snackbarHostState)
             },
             topBar = {
-                if (!showAcademicProgress && !showSettingsSubScreen) {
+                if (!showAcademicProgress && selectedDetailId == null && !showSettingsSubScreen) {
                 SnapTopAppBar(
                     title = resolvedTitle,
                     subtitle = resolvedSubtitle,
@@ -160,7 +178,7 @@ fun MainAppScreen(
                 }
             },
             bottomBar = {
-                if (isCompact && !showAcademicProgress && !showSettingsSubScreen) {
+                if (isCompact && !showAcademicProgress && selectedDetailId == null && !showSettingsSubScreen) {
                     SnapBottomNavBar(
                         selectedTab = currentTab,
                         pendingEventCount = pendingEventCount,
@@ -175,7 +193,50 @@ fun MainAppScreen(
                 }
             }
         ) { innerPadding ->
-            if (showAcademicProgress) {
+            if (selectedDetailId != null && selectedSubject != null) {
+                SubjectDetailScreen(
+                    subjectWithSlots = selectedSubject,
+                    linkedEvents = linkedSubjectEvents,
+                    onDismiss = viewModel::closeSubjectDetail,
+                    onEditClick = {
+                        viewModel.closeSubjectDetail()
+                        viewModel.openAddSubject(selectedSubject)
+                    },
+                    onDeleteClick = {
+                        val subjectId = selectedSubject.subject.id
+                        viewModel.closeSubjectDetail()
+                        viewModel.deleteSubject(subjectId)
+                    },
+                    onAddEventClick = {
+                        val subjectId = selectedSubject.subject.id
+                        viewModel.closeSubjectDetail()
+                        viewModel.openAddEvent(subjectId = subjectId)
+                    },
+                    onToggleEventCompleted = { eventId, completed -> viewModel.toggleEventCompleted(eventId, completed) },
+                    onToggleSubtask = viewModel::toggleSubtaskCompleted,
+                    onEditEvent = { event ->
+                        if (event.event.countsTowardGrade) {
+                            viewModel.openGradeEntry(event.event.id)
+                        } else {
+                            viewModel.closeSubjectDetail()
+                            viewModel.openAddEvent(event)
+                        }
+                    },
+                    gradeCategories = gradeCategories.filter { it.subjectId == selectedSubject.subject.id },
+                    gradeItems = gradeItems,
+                    gradeUnits = gradeUnits.filter { it.subjectId == selectedSubject.subject.id },
+                    gradeUnitCategoryWeights = gradeUnitCategoryWeights,
+                    onAddGradeCategory = viewModel::addGradeCategory,
+                    onAddGradeItem = viewModel::addGradeItem,
+                    onDeleteGradeCategory = viewModel::deleteGradeCategory,
+                    onDeleteItem = viewModel::deleteGradeItem,
+                    onAddGradeUnit = viewModel::addGradeUnit,
+                    onDeleteGradeUnit = viewModel::deleteGradeUnit,
+                    onSaveUnitCategoryWeights = viewModel::saveUnitCategoryWeights,
+                    onResetUnitCategoryWeights = viewModel::resetUnitCategoryWeights,
+                    modifier = Modifier.fillMaxSize().padding(innerPadding)
+                )
+            } else if (showAcademicProgress) {
                 AcademicProgressScreen(
                     viewModel = viewModel,
                     onBack = { showAcademicProgress = false },

@@ -10,6 +10,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -23,6 +24,7 @@ fun CustomInputField(
     modifier: Modifier = Modifier,
     leadingIcon: @Composable (() -> Unit)? = null
 ) {
+    val cornerRadius = with(LocalDensity.current) { 15.sp.toDp() }
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
             text = label,
@@ -38,12 +40,12 @@ fun CustomInputField(
             leadingIcon = leadingIcon,
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp),
+            shape = RoundedCornerShape(cornerRadius),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow, // surface-container-low
                 unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant, // outline-variant
+                unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f), // outline-variant
                 focusedTextColor = MaterialTheme.colorScheme.onSurface,
                 unfocusedTextColor = MaterialTheme.colorScheme.onSurface
             )

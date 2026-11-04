@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="academic_back">Indietro</string>
-    <string name="academic_progress_eyebrow">I MIEI RISULTATI</string>
+    <string name="academic_progress_eyebrow">I Miei Risultati</string>
     <string name="academic_progress_title">Progresso accademico</string>
     <string name="academic_progress_subtitle">Scopri come cambiano i tuoi voti nel tempo.</string>
     <string name="academic_tab_current">Riepilogo</string>
@@ -268,7 +268,7 @@
     <string name="guardar_periodo_boton">Salva periodo</string>
     <string name="inicio_periodo_label">Inizio periodo</string>
     <string name="fin_periodo_label">Fine periodo</string>
-    <string name="nombre_materia_label">Nome Materia *</string>
+    <string name="nombre_materia_label">Nome Materia</string>
     <string name="nombre_materia_placeholder">es. Calcolo Integrale</string>
     <string name="codigo_label">Codice / Abbreviazione</string>
     <string name="codigo_placeholder">es. MAT-102</string>
@@ -610,24 +610,24 @@
     <string name="widget_school_days_total_simple">Totale: %1$d giorni scolastici</string>
     <string name="widget_school_days_total_progress">%1$d giorni scolastici · %2$d%% completati</string>
     <string name="widget_period_ended">Periodo terminato</string>
-    <string name="whats_new_title">Novità nella versione 2.4.2!</string>
-    <string name="whats_new_subtitle">Miglioramenti per schermi grandi, promemoria e backup:</string>
-    <string name="whats_new_item_1_title">📱 Migliore esperienza su tablet e pieghevoli</string>
-    <string name="whats_new_item_1_desc">Dimensioni e layout sfruttano meglio gli schermi grandi e rendono la lettura più semplice.</string>
-    <string name="whats_new_item_2_title">📅 Orario settimanale più chiaro</string>
-    <string name="whats_new_item_2_desc">L’orario si adatta allo schermo e i nomi delle aule scorrono automaticamente quando non entrano.</string>
-    <string name="whats_new_item_3_title">🔔 Promemoria personalizzati</string>
-    <string name="whats_new_item_3_desc">Configura i promemoria nella schermata dedicata e scegli tempi personalizzati in minuti, ore o giorni.</string>
-    <string name="whats_new_item_4_title">💾 Backup automatici programmati</string>
-    <string name="whats_new_item_4_desc">Scegli backup giornalieri, settimanali o mensili. Vengono conservati gli ultimi cinque.</string>
-    <string name="whats_new_item_5_title">🔥 Mantieni la serie dopo il ripristino</string>
-    <string name="whats_new_item_5_desc">I nuovi backup salvano quando hai completato ogni attività, così è possibile recuperare la serie.</string>
-    <string name="whats_new_item_6_title">✨ Viste Schedule migliorate</string>
-    <string name="whats_new_item_6_desc">Weekly View, Daily View e Subject List sfruttano meglio lo spazio sui tablet mantenendo il layout sui telefoni.</string>
+    <string name="whats_new_title">Novità sul tuo rendimento scolastico!</string>
+    <string name="whats_new_subtitle">Nuovi modi per consultare e organizzare le materie:</string>
+    <string name="whats_new_item_1_title">📊 Grades, ora a schermo intero</string>
+    <string name="whats_new_item_1_desc">Consulta le unità con più spazio e visualizza la media della materia in un grafico circolare.</string>
+    <string name="whats_new_item_2_title">🎯 Simulatore più preciso</string>
+    <string name="whats_new_item_2_desc">Le proiezioni usano i voti e i pesi dell’unità selezionata.</string>
+    <string name="whats_new_item_3_title">📈 Nuovo riepilogo del rendimento</string>
+    <string name="whats_new_item_3_desc">Controlla la media, filtra per materia e segui l’andamento dei voti mese per mese.</string>
+    <string name="whats_new_item_4_title">📚 Dettagli della materia a schermo intero</string>
+    <string name="whats_new_item_4_desc">Orari, attività e voti hanno più spazio. Torna indietro con la freccia o il tasto Indietro.</string>
+    <string name="whats_new_item_5_title">🗂️ Organizzazione più semplice</string>
+    <string name="whats_new_item_5_desc">Scegli Università, Lavoro o Personale con un selettore compatto e contrassegna ciò che conta.</string>
+    <string name="whats_new_item_6_title">✨ Moduli più comodi</string>
+    <string name="whats_new_item_6_desc">Abbiamo migliorato i campi data, ora e testo; Indietro riporta alla schermata precedente.</string>
     <string name="whats_new_button">Ho capito!</string>
 
     <!-- Add Event Dialog UI Strings -->
-    <string name="detalles_principales">DETTAGLI PRINCIPALI</string>
+    <string name="detalles_principales">Dettagli Principali</string>
     <string name="requerido">Obbligatorio</string>
     <string name="que_hacer_asterisco">Cosa devi fare? *</string>
     <string name="ej_proyecto_final">Es. Consegna Progetto Finale</string>
@@ -652,7 +652,7 @@
     <string name="color_de_materia">Colore della materia</string>
     <string name="organizacion_label_mayus">Organizzazione</string>
     <string name="sub_horario_clases">Giorni, fasce orarie e aule</string>
-    <string name="agregar_sesion_btn">+ Aggiungi sessione</string>
+    <string name="agregar_sesion_btn">Aggiungi sessione</string>
 
     <!-- Events Screen UI Strings -->
     <string name="inicio_ciclo_escolar">Inizio ciclo scolastico</string>

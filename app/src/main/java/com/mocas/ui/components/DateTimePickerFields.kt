@@ -33,9 +33,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.mocas.R
 import com.mocas.util.DateTimeUtils
 import java.time.Instant
@@ -178,14 +180,15 @@ private fun PickerField(
     modifier: Modifier
 ) {
     val accent = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+    val cornerRadius = with(LocalDensity.current) { 15.sp.toDp() }
     Surface(
         modifier = modifier.clickable(onClick = onClick),
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(cornerRadius),
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         border = BorderStroke(
             1.dp,
             if (isError) MaterialTheme.colorScheme.error
-            else MaterialTheme.colorScheme.outlineVariant
+            else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
         )
     ) {
         Row(

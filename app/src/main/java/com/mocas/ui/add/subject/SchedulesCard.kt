@@ -69,8 +69,11 @@ fun SchedulesCard(
                     .fillMaxWidth()
                     .padding(vertical = 4.dp),
                 shape = RoundedCornerShape(16.dp),
-                border = BorderStroke(1.dp, if (hasConflict) MaterialTheme.colorScheme.error.copy(alpha = 0.5f) else MaterialTheme.colorScheme.outlineVariant),
-                colors = CardDefaults.cardColors(containerColor = if (hasConflict) MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.3f) else MaterialTheme.colorScheme.surface)
+                colors = CardDefaults.cardColors(
+                    containerColor = if (hasConflict) MaterialTheme.colorScheme.errorContainer.copy(
+                        alpha = 0.3f
+                    ) else MaterialTheme.colorScheme.surface
+                )
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Row(
@@ -80,11 +83,21 @@ fun SchedulesCard(
                     ) {
                         Text(
                             text = stringResource(R.string.sesion_n_formato, index + 1).uppercase(),
-                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Black, letterSpacing = 1.sp),
+                            style = MaterialTheme.typography.labelMedium.copy(
+                                fontWeight = FontWeight.Black,
+                                letterSpacing = 1.sp
+                            ),
                             color = MaterialTheme.colorScheme.primary
                         )
-                        IconButton(onClick = { onRemoveSlot(index) }, modifier = Modifier.size(24.dp)) {
-                            Icon(Icons.Default.Close, contentDescription = stringResource(R.string.eliminar), tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f))
+                        IconButton(
+                            onClick = { onRemoveSlot(index) },
+                            modifier = Modifier.size(24.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.Close,
+                                contentDescription = stringResource(R.string.eliminar),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                            )
                         }
                     }
 
@@ -93,15 +106,27 @@ fun SchedulesCard(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 8.dp)
-                                .background(MaterialTheme.colorScheme.errorContainer, RoundedCornerShape(8.dp))
+                                .background(
+                                    MaterialTheme.colorScheme.errorContainer,
+                                    RoundedCornerShape(8.dp)
+                                )
                                 .padding(8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(Icons.Default.Warning, contentDescription = null, tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(16.dp))
+                            Icon(
+                                Icons.Default.Warning,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.size(16.dp)
+                            )
                             Spacer(modifier = Modifier.width(8.dp))
                             Column {
                                 conflicts.forEach { conflictMsg ->
-                                    Text(conflictMsg, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.labelSmall)
+                                    Text(
+                                        conflictMsg,
+                                        color = MaterialTheme.colorScheme.error,
+                                        style = MaterialTheme.typography.labelSmall
+                                    )
                                 }
                             }
                         }
@@ -132,18 +157,24 @@ fun SchedulesCard(
                                         shape = RoundedCornerShape(20.dp)
                                     )
                                     .clickable {
-                                        val updatedDays = if (isSelected && slotDraft.selectedDays.size > 1) {
-                                            slotDraft.selectedDays - dayNum
-                                        } else {
-                                            slotDraft.selectedDays + dayNum
-                                        }
-                                        onUpdateSlot(index, slotDraft.copy(selectedDays = updatedDays))
+                                        val updatedDays =
+                                            if (isSelected && slotDraft.selectedDays.size > 1) {
+                                                slotDraft.selectedDays - dayNum
+                                            } else {
+                                                slotDraft.selectedDays + dayNum
+                                            }
+                                        onUpdateSlot(
+                                            index,
+                                            slotDraft.copy(selectedDays = updatedDays)
+                                        )
                                     },
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
                                     text = initial,
-                                    color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                                    color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                                        alpha = 0.7f
+                                    ),
                                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
                                 )
                             }
@@ -158,13 +189,18 @@ fun SchedulesCard(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         SessionTimeField(
-                            label = stringResource(R.string.inicio_label), time = slotDraft.startTime,
-                            onClick = { onTimeClick(index, true) }, modifier = Modifier.weight(1f)
+                            label = stringResource(R.string.inicio_label),
+                            time = slotDraft.startTime,
+                            onClick = { onTimeClick(index, true) },
+                            modifier = Modifier.weight(1f)
                         )
                         SessionTimeField(
                             label = stringResource(R.string.fin_label), time = slotDraft.endTime,
                             onClick = { onTimeClick(index, false) }, modifier = Modifier.weight(1f),
-                            isError = !DateTimeUtils.endIsAfterStart(slotDraft.startTime, slotDraft.endTime)
+                            isError = !DateTimeUtils.endIsAfterStart(
+                                slotDraft.startTime,
+                                slotDraft.endTime
+                            )
                         )
                     }
 
@@ -173,11 +209,23 @@ fun SchedulesCard(
                     OutlinedTextField(
                         value = slotDraft.room,
                         onValueChange = { onUpdateSlot(index, slotDraft.copy(room = it)) },
-                        placeholder = { Text(defaultRoom.ifBlank { stringResource(R.string.sin_salon) }, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)) },
+                        placeholder = {
+                            Text(
+                                defaultRoom.ifBlank { stringResource(R.string.sin_salon) },
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                            )
+                        },
                         singleLine = true,
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier.fillMaxWidth(),
-                        leadingIcon = { Icon(Icons.Default.LocationOn, contentDescription = null, tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f), modifier = Modifier.size(18.dp)) }
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.LocationOn,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
                     )
                 }
             }

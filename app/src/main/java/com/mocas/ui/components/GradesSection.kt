@@ -1,6 +1,7 @@
 package com.mocas.ui.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,7 +13,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -27,6 +27,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -59,6 +61,12 @@ fun GradesSection(
     val currentAverage = remember(categories, gradeItems, units, unitCategoryWeights) {
         GradeCalculator.subjectAverage(subjectId, categories, gradeItems, units, unitCategoryWeights)
     }
+    val subjectCategoryIds = remember(categories, subjectId) {
+        categories.filter { it.subjectId == subjectId }.mapTo(mutableSetOf()) { it.id }
+    }
+    val subjectGradeCount = remember(gradeItems, subjectCategoryIds) {
+        gradeItems.count { it.categoryId in subjectCategoryIds }
+    }
     Card(
         onClick = { open = true },
         modifier = Modifier.fillMaxWidth(),
@@ -71,19 +79,7 @@ fun GradesSection(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Surface(
-                shape = RoundedCornerShape(14.dp),
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(48.dp)
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        Icons.Default.BarChart,
-                        null,
-                        tint = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
-            }
+            GradeProgressRing(currentAverage)
             Column(Modifier
                 .weight(1f)
                 .padding(horizontal = 12.dp)) {
@@ -93,7 +89,7 @@ fun GradesSection(
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
-                    currentAverage?.let { stringResource(R.string.promedio_evaluaciones_formato, format(it), gradeItems.size) }
+                    currentAverage?.let { stringResource(R.string.promedio_evaluaciones_formato, format(it), subjectGradeCount) }
                         ?: stringResource(R.string.configura_porcentajes_instruccion),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -119,6 +115,32 @@ fun GradesSection(
             onSaveUnitCategoryWeights = onSaveUnitCategoryWeights,
             onResetUnitCategoryWeights = onResetUnitCategoryWeights
         )
+    }
+}
+
+@Composable
+private fun GradeProgressRing(average: Double?) {
+    val trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.18f)
+    val progressColor = MaterialTheme.colorScheme.primary
+    Box(Modifier.size(54.dp), contentAlignment = Alignment.Center) {
+        Canvas(Modifier.size(54.dp).padding(3.dp)) {
+            val strokeWidth = 5.dp.toPx()
+            drawArc(
+                color = trackColor,
+                startAngle = -90f,
+                sweepAngle = 360f,
+                useCenter = false,
+                style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
+            )
+            drawArc(
+                color = progressColor,
+                startAngle = -90f,
+                sweepAngle = ((average ?: 0.0).coerceIn(0.0, 100.0) / 100.0 * 360.0).toFloat(),
+                useCenter = false,
+                style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
+            )
+        }
+        Text(average?.let(::format) ?: "—", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, maxLines = 1)
     }
 }
 
@@ -150,15 +172,15 @@ fun UnitAverageCard(
 ) {
     Surface(
         modifier = Modifier
-            .width(142.dp)
+            .width(92.dp)
             .combinedClickable(onClick = onClick, onLongClick = onLongClick),
         shape = RoundedCornerShape(14.dp),
         color = if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.12f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f),
         border = if (selected) BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null
     ) {
-        Column(Modifier.padding(12.dp)) {
+        Column(Modifier.padding(horizontal = 10.dp, vertical = 9.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(name, maxLines = 1, style = MaterialTheme.typography.labelMedium, modifier = Modifier.weight(1f))
+                Text(name, maxLines = 1, style = MaterialTheme.typography.labelLarge, modifier = Modifier.weight(1f))
                 if (isCustomized) {
                     Icon(
                         Icons.Default.Tune,

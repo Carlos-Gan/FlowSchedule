@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="academic_back">Back</string>
-    <string name="academic_progress_eyebrow">MY PERFORMANCE</string>
+    <string name="academic_progress_eyebrow">My Performance</string>
     <string name="academic_progress_title">Academic progress</string>
-    <string name="academic_progress_subtitle">See how your grades are changing over time.</string>
+    <string name="academic_progress_subtitle">Your grades, with a clearer perspective.</string>
+    <string name="academic_grade_count">Based on %1$d recorded grades</string>
+    <string name="academic_evolution_title">Your evolution</string>
+    <string name="academic_one_month_note">One month recorded. Your trend will appear as you add more grades.</string>
     <string name="academic_tab_current">Overview</string>
     <string name="academic_tab_monthly">Month by month</string>
     <string name="academic_gpa">GPA</string>
@@ -268,7 +271,7 @@
     <string name="guardar_periodo_boton">Save period</string>
     <string name="inicio_periodo_label">Period start</string>
     <string name="fin_periodo_label">Period end</string>
-    <string name="nombre_materia_label">Subject Name *</string>
+    <string name="nombre_materia_label">Subject Name</string>
     <string name="nombre_materia_placeholder">e.g. Integral Calculus</string>
     <string name="codigo_label">Code / Abbreviation</string>
     <string name="codigo_placeholder">e.g. MAT-102</string>
@@ -642,24 +645,24 @@
     <string name="widget_period_ended">Period ended</string>
 
     <!-- What's New Dialog -->
-    <string name="whats_new_title">What\'s new in version 2.4.2!</string>
-    <string name="whats_new_subtitle">Improvements for large screens, reminders, and backups:</string>
-    <string name="whats_new_item_1_title">📱 Better on tablets and foldables</string>
-    <string name="whats_new_item_1_desc">Sizes and layouts now make better use of large screens and are easier to read.</string>
-    <string name="whats_new_item_2_title">📅 A clearer weekly schedule</string>
-    <string name="whats_new_item_2_desc">The schedule adapts to your screen, and room names scroll automatically when they do not fit.</string>
-    <string name="whats_new_item_3_title">🔔 Reminders on your terms</string>
-    <string name="whats_new_item_3_desc">Configure them on their own screen and set custom times in minutes, hours, or days.</string>
-    <string name="whats_new_item_4_title">💾 Scheduled automatic backups</string>
-    <string name="whats_new_item_4_desc">Choose daily, weekly, or monthly backups. The five most recent are kept.</string>
-    <string name="whats_new_item_5_title">🔥 Keep your streak when restoring</string>
-    <string name="whats_new_item_5_desc">New backups save when you completed each activity so your streak can be restored too.</string>
-    <string name="whats_new_item_6_title">✨ Better Schedule views</string>
-    <string name="whats_new_item_6_desc">Weekly View, Daily View, and Subject List use tablet space better while keeping their layout on phones.</string>
+    <string name="whats_new_title">What\'s new in your academic progress!</string>
+    <string name="whats_new_subtitle">New ways to review and organize your subjects:</string>
+    <string name="whats_new_item_1_title">📊 Grades, now full screen</string>
+    <string name="whats_new_item_1_desc">Review units with more room and see your subject average in a circular chart.</string>
+    <string name="whats_new_item_2_title">🎯 A more accurate simulator</string>
+    <string name="whats_new_item_2_desc">Projections use the grades and weightings for the selected unit.</string>
+    <string name="whats_new_item_3_title">📈 A new performance overview</string>
+    <string name="whats_new_item_3_desc">Check your average, filter by subject, and follow grade trends month by month.</string>
+    <string name="whats_new_item_4_title">📚 Subject details as a screen</string>
+    <string name="whats_new_item_4_desc">Schedules, tasks, and grades have more room. Go back with the arrow or device Back button.</string>
+    <string name="whats_new_item_5_title">🗂️ Easier organization</string>
+    <string name="whats_new_item_5_desc">Choose School, Work, or Personal with a compact selector, and mark what matters.</string>
+    <string name="whats_new_item_6_title">✨ More comfortable forms</string>
+    <string name="whats_new_item_6_desc">Date, time, and text fields are improved, and Back returns to the previous screen.</string>
     <string name="whats_new_button">Got it!</string>
 
     <!-- Add Event Dialog UI Strings -->
-    <string name="detalles_principales">MAIN DETAILS</string>
+    <string name="detalles_principales">Main Details</string>
     <string name="requerido">Required</string>
     <string name="que_hacer_asterisco">What do you need to do? *</string>
     <string name="ej_proyecto_final">Ex. Final Project Submission</string>
@@ -684,7 +687,7 @@
     <string name="color_de_materia">Subject color</string>
     <string name="organizacion_label_mayus">Organization</string>
     <string name="sub_horario_clases">Days, time ranges and classrooms</string>
-    <string name="agregar_sesion_btn">+ Add session</string>
+    <string name="agregar_sesion_btn">Add session</string>
 
     <!-- Events Screen UI Strings -->
     <string name="inicio_ciclo_escolar">School cycle start</string>

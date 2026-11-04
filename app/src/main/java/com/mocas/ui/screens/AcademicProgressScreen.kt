@@ -3,14 +3,13 @@ package com.mocas.ui.screens
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -62,6 +61,10 @@ fun AcademicProgressScreen(viewModel: ScheduleViewModel, onBack: () -> Unit, mod
         }.takeIf { it.isNotEmpty() }?.average()
     }
     val currentValue = currentAverage?.let { toDisplayGrade(it, settings.useGpaScale) }
+    val recordedGradeCount = remember(categories, gradeItems, selectedSubjectId) {
+        val categoryIds = categories.filter { selectedSubjectId == null || it.subjectId == selectedSubjectId }.mapTo(mutableSetOf()) { it.id }
+        gradeItems.count { it.categoryId in categoryIds }
+    }
     val trend = remember(subjects, categories, gradeItems, gradeUnits, weights, selectedSubjectId, settings.useGpaScale) {
         monthlyTrend(subjects, categories, gradeItems, gradeUnits, weights, selectedSubjectId, settings.useGpaScale)
     }
@@ -69,11 +72,10 @@ fun AcademicProgressScreen(viewModel: ScheduleViewModel, onBack: () -> Unit, mod
     val gradeLabel = if (settings.useGpaScale) stringResource(R.string.academic_gpa) else stringResource(R.string.academic_weighted_average)
 
     Column(modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-        Column(Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface).padding(horizontal = 24.dp, vertical = 16.dp), verticalArrangement = Arrangement.spacedBy(18.dp)) {
-            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
-                IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.academic_back)) }
-                Text(stringResource(R.string.academic_progress_eyebrow), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                Spacer(Modifier.size(48.dp))
+        Column(Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background).padding(horizontal = 24.dp, vertical = 10.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                IconButton(onClick = onBack, modifier = Modifier.size(32.dp)) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.academic_back)) }
+                Text(stringResource(R.string.academic_progress_eyebrow), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(start = 8.dp))
             }
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(stringResource(R.string.academic_progress_title), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
@@ -81,35 +83,38 @@ fun AcademicProgressScreen(viewModel: ScheduleViewModel, onBack: () -> Unit, mod
             }
             Row(Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(12.dp)).padding(4.dp)) {
                 listOf(ProgressTab.CURRENT to stringResource(R.string.academic_tab_current), ProgressTab.MONTHLY to stringResource(R.string.academic_tab_monthly)).forEach { (tab, label) ->
-                    Surface(onClick = { selectedTab = tab }, modifier = Modifier.weight(1f), shape = RoundedCornerShape(9.dp), color = if (selectedTab == tab) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surfaceVariant) {
-                        Text(label, Modifier.padding(vertical = 12.dp), textAlign = TextAlign.Center, fontWeight = if (selectedTab == tab) FontWeight.Bold else FontWeight.Medium, color = if (selectedTab == tab) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant)
+                    Surface(onClick = { selectedTab = tab }, modifier = Modifier.weight(1f), shape = RoundedCornerShape(9.dp), color = if (selectedTab == tab) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceVariant) {
+                        Text(label, Modifier.padding(vertical = 10.dp), textAlign = TextAlign.Center, fontWeight = if (selectedTab == tab) FontWeight.SemiBold else FontWeight.Medium, color = if (selectedTab == tab) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
             }
         }
-        LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(horizontal = 24.dp, vertical = 24.dp), verticalArrangement = Arrangement.spacedBy(24.dp)) {
+        LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(horizontal = 24.dp, vertical = 16.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
             if (selectedTab == ProgressTab.CURRENT) {
                 item {
-                    Surface(Modifier.fillMaxWidth(), shape = RoundedCornerShape(20.dp), color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = .55f)) {
-                        Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                            Text(stringResource(R.string.academic_current_grade, gradeLabel), color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
-                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-                                Text(currentValue?.let(::formatGrade) ?: stringResource(R.string.academic_no_data_short), style = MaterialTheme.typography.displaySmall, fontWeight = FontWeight.Bold)
+                    Surface(Modifier.fillMaxWidth(), shape = RoundedCornerShape(22.dp), color = MaterialTheme.colorScheme.primaryContainer) {
+                        Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+                                Text(stringResource(R.string.academic_current_grade, gradeLabel), color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
                                 Icon(Icons.AutoMirrored.Filled.TrendingUp, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                             }
-                            Text(stringResource(R.string.academic_current_description), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+                                Text(currentValue?.let(::formatGrade) ?: stringResource(R.string.academic_no_data_short), style = MaterialTheme.typography.displayMedium, fontWeight = FontWeight.Bold)
+                                if (currentValue != null) Text(if (settings.useGpaScale) " / 4" else " / 100", color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = .75f))
+                            }
+                            Text(stringResource(R.string.academic_grade_count, recordedGradeCount), color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = .8f), style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 4.dp))
                         }
                     }
                 }
                 item { SubjectPicker(subjects, selectedSubjectId, onSelect = { selectedSubjectId = it }) }
                 item {
                     Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                        Text(stringResource(R.string.academic_period_history), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-                        val points = remember(subjects, periods, categories, gradeItems, gradeUnits, weights, selectedSubjectId, settings.useGpaScale) {
-                            periodPoints(subjects, periods, categories, gradeItems, gradeUnits, weights, selectedSubjectId, settings.useGpaScale)
+                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                            Text(stringResource(R.string.academic_evolution_title), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                            Text(YearMonth.now().year.toString(), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge)
                         }
-                        if (points.isEmpty()) EmptyCard(stringResource(R.string.academic_period_empty))
-                        else TrendCard(points, gradeLabel, settings.useGpaScale)
+                        if (trend.isEmpty()) EmptyCard(stringResource(R.string.academic_monthly_empty))
+                        else TrendCard(trend, gradeLabel, settings.useGpaScale)
                     }
                 }
             } else {
@@ -160,11 +165,24 @@ fun AcademicProgressScreen(viewModel: ScheduleViewModel, onBack: () -> Unit, mod
 
 @Composable
 private fun SubjectPicker(subjects: List<SubjectEntity>, selectedSubjectId: Long?, onSelect: (Long?) -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+    val selectedLabel = subjects.firstOrNull { it.id == selectedSubjectId }?.name ?: stringResource(R.string.academic_all_subjects)
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(stringResource(R.string.academic_subject_filter), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-        Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            FilterChip(selected = selectedSubjectId == null, onClick = { onSelect(null) }, label = { Text(stringResource(R.string.academic_all_subjects)) })
-            subjects.forEach { subject -> FilterChip(selected = selectedSubjectId == subject.id, onClick = { onSelect(subject.id) }, label = { Text(subject.name, maxLines = 1) }) }
+        Text(stringResource(R.string.academic_subject_filter), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Box {
+            Surface(onClick = { expanded = true }, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(14.dp), color = MaterialTheme.colorScheme.surfaceVariant) {
+                Row(Modifier.padding(horizontal = 16.dp, vertical = 14.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Text("▦", color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.titleMedium)
+                    Text(selectedLabel, Modifier.weight(1f).padding(start = 12.dp), fontWeight = FontWeight.Medium)
+                    Icon(Icons.Default.ExpandMore, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            }
+            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                DropdownMenuItem(text = { Text(stringResource(R.string.academic_all_subjects)) }, onClick = { onSelect(null); expanded = false })
+                subjects.forEach { subject ->
+                    DropdownMenuItem(text = { Text(subject.name) }, onClick = { onSelect(subject.id); expanded = false })
+                }
+            }
         }
     }
 }
@@ -172,14 +190,11 @@ private fun SubjectPicker(subjects: List<SubjectEntity>, selectedSubjectId: Long
 @Composable
 private fun TrendCard(points: List<AcademicGradePoint>, gradeLabel: String, useGpa: Boolean) {
     val maxValue = if (useGpa) 4.0 else if (points.maxOfOrNull { it.value }?.let { it > 10 } == true) 100.0 else 10.0
-    Surface(Modifier.fillMaxWidth(), shape = RoundedCornerShape(20.dp), color = MaterialTheme.colorScheme.surface, border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)) {
+    Surface(Modifier.fillMaxWidth(), shape = RoundedCornerShape(22.dp), color = MaterialTheme.colorScheme.surfaceVariant) {
         Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(stringResource(R.string.academic_chart_title, gradeLabel), fontWeight = FontWeight.SemiBold)
-                Text(stringResource(R.string.academic_maximum, formatGrade(maxValue)), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium)
-            }
-            GradeEvolutionChart(points, maxValue, Modifier.fillMaxWidth().height(230.dp))
-            Text(stringResource(R.string.academic_chart_note), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
+            Text(stringResource(R.string.academic_chart_title, gradeLabel), fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
+            GradeEvolutionChart(points, maxValue, Modifier.fillMaxWidth().height(190.dp))
+            Text(if (points.size == 1) stringResource(R.string.academic_one_month_note) else stringResource(R.string.academic_chart_note), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
         }
     }
 }

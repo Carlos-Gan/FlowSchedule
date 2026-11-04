@@ -15,7 +15,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.mocas.R
 import com.mocas.data.local.GradeCategoryEntity
 import com.mocas.data.local.GradeItemEntity
+import com.mocas.data.local.GradeUnitCategoryWeightEntity
 import com.mocas.data.local.GradeUnitEntity
 import com.mocas.data.repository.GradeCalculator
 import com.mocas.ui.components.SelectableChip
@@ -41,24 +41,25 @@ import kotlin.collections.forEach
 fun GradeSimulatorDialog(
     categories: List<GradeCategoryEntity>,
     units: List<GradeUnitEntity>,
+    initialUnitId: Long?,
     items: List<GradeItemEntity>,
+    unitCategoryWeights: List<GradeUnitCategoryWeightEntity>,
     passingText: String,
     onPassingChanged: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
-    var selectedUnit by remember(units) { mutableStateOf(units.firstOrNull()) }
+    var selectedUnit by remember(units, initialUnitId) {
+        mutableStateOf(units.firstOrNull { it.id == initialUnitId } ?: units.firstOrNull())
+    }
     var selectedCategory by remember(categories) { mutableStateOf(categories.firstOrNull()) }
     var hypothetical by remember { mutableFloatStateOf(85f) }
-    val sliderState = remember {
-        SliderState(
-            value = hypothetical,
-            steps = 19,
-            trackRange = 0f..100f
-        )
-    }
-    val current = GradeCalculator.summarize(categories, items).currentAverage
+    val unitItems = items.filter { it.unitId == selectedUnit?.id }
+    val effectiveCategories = selectedUnit?.let {
+        GradeCalculator.resolveCategoriesForUnit(categories, it.id, unitCategoryWeights)
+    } ?: categories
+    val current = GradeCalculator.summarize(effectiveCategories, unitItems).currentAverage
     val projected = selectedCategory?.let {
-        GradeCalculator.simulate(categories, items, it.id, hypothetical.toDouble())
+        GradeCalculator.simulate(effectiveCategories, unitItems, it.id, hypothetical.toDouble())
     }
     val passing = passingText.toDoubleOrNull()?.takeIf { it in 0.0..100.0 } ?: 70.0
     AlertDialog(
@@ -75,7 +76,7 @@ fun GradeSimulatorDialog(
                 }
                 Text(stringResource(R.string.simulador_paso_2), fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(top = 14.dp))
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.padding(top = 6.dp)) {
-                    categories.forEach { category ->
+                    effectiveCategories.forEach { category ->
                         SelectableChip(category.name, selectedCategory?.id == category.id) { selectedCategory = category }
                     }
                 }
@@ -83,8 +84,10 @@ fun GradeSimulatorDialog(
                 Text(format(hypothetical.toDouble()), style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
                 Slider(
-                    state = sliderState,
-                    onValueChange = { hypothetical = it }
+                    value = hypothetical,
+                    onValueChange = { hypothetical = it },
+                    valueRange = 0f..100f,
+                    steps = 19
                 )
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     SimulatorResultCard(stringResource(R.string.actual_label), current, Modifier.weight(1f))

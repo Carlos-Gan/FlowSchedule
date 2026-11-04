@@ -30,11 +30,11 @@ fun SessionTimeField(
     modifier: Modifier = Modifier,
     isError: Boolean = false
 ) {
-    val borderColor = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outlineVariant
+    val borderColor = if (isError) MaterialTheme.colorScheme.error else  MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
 
     Surface(
         modifier = modifier.clickable(onClick = onClick),
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(12.dp),
         color = MaterialTheme.colorScheme.surface,
         border = BorderStroke(1.dp, borderColor)
     ) {

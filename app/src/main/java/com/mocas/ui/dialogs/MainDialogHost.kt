@@ -8,7 +8,6 @@ import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mocas.ui.add.event.AddEditSubjectScreen
 import com.mocas.ui.add.event.AddEventDialog
-import com.mocas.ui.add.subject.SubjectDetailDialog
 import com.mocas.ui.viewmodel.ScheduleViewModel
 import com.mocas.ui.screens.AppearanceScreen
 import com.mocas.ui.components.grade.RecordActivityGradeDialog
@@ -22,9 +21,7 @@ fun MainDialogHost(
     val isAddSubjectOpen by viewModel.isAddSubjectOpen.collectAsStateWithLifecycle()
     val isAddEventOpen by viewModel.isAddEventOpen.collectAsStateWithLifecycle()
     val isAppearanceOpen by viewModel.isAppearanceOpen.collectAsStateWithLifecycle()
-    val selectedDetailId by viewModel.selectedSubjectDetailId.collectAsStateWithLifecycle()
     val subjectsWithSlots by viewModel.subjectsWithSlots.collectAsStateWithLifecycle()
-    val allEventsWithSubject by viewModel.allEventsWithSubject.collectAsStateWithLifecycle()
     val academicPeriods by viewModel.academicPeriods.collectAsStateWithLifecycle()
     val editingSubject by viewModel.editingSubject.collectAsStateWithLifecycle()
     val editingEvent by viewModel.editingEvent.collectAsStateWithLifecycle()
@@ -40,28 +37,6 @@ fun MainDialogHost(
     val gradeUnitCategoryWeights by viewModel.gradeUnitCategoryWeights.collectAsStateWithLifecycle()
     val showWhatsNew by viewModel.showWhatsNew.collectAsStateWithLifecycle()
     val eventAwaitingGrade by viewModel.eventAwaitingGrade.collectAsStateWithLifecycle()
-
-    val selectedSubject = remember(
-        selectedDetailId,
-        subjectsWithSlots
-    ) {
-        subjectsWithSlots.firstOrNull {
-            it.subject.id == selectedDetailId
-        }
-    }
-
-    val linkedEvents = remember(
-        selectedDetailId,
-        allEventsWithSubject
-    ) {
-        if (selectedDetailId == null) {
-            emptyList()
-        } else {
-            allEventsWithSubject.filter {
-                it.event.subjectId == selectedDetailId
-            }
-        }
-    }
 
     if (showWhatsNew) {
         WhatsNewDialog(
@@ -122,58 +97,6 @@ fun MainDialogHost(
             onDismiss = viewModel::closeClassOccurrence,
             onSave = viewModel::saveClassException,
             onRestore = occurrence.exception?.let { { id -> viewModel.deleteClassException(id) } }
-        )
-    }
-
-    if (
-        selectedDetailId != null &&
-        selectedSubject != null
-    ) {
-        SubjectDetailDialog(
-            subjectWithSlots = selectedSubject,
-            linkedEvents = linkedEvents,
-            onDismiss = viewModel::closeSubjectDetail,
-            onEditClick = {
-                viewModel.closeSubjectDetail()
-                viewModel.openAddSubject(selectedSubject)
-            },
-            onDeleteClick = {
-                val subjectId = selectedSubject.subject.id
-                viewModel.closeSubjectDetail()
-                viewModel.deleteSubject(subjectId)
-            },
-            onAddEventClick = {
-                val subjectId = selectedSubject.subject.id
-                viewModel.closeSubjectDetail()
-                viewModel.openAddEvent(subjectId = subjectId)
-            },
-            onToggleEventCompleted = { eventId, isCompleted ->
-                viewModel.toggleEventCompleted(
-                    eventId = eventId,
-                    completed = isCompleted
-                )
-            },
-            onToggleSubtask = viewModel::toggleSubtaskCompleted,
-            onEditEvent = { event ->
-                if (event.event.countsTowardGrade) {
-                    viewModel.openGradeEntry(event.event.id)
-                } else {
-                    viewModel.closeSubjectDetail()
-                    viewModel.openAddEvent(event)
-                }
-            },
-            gradeCategories = gradeCategories.filter { it.subjectId == selectedSubject.subject.id },
-            gradeItems = gradeItems,
-            gradeUnits = gradeUnits.filter { it.subjectId == selectedSubject.subject.id },
-            gradeUnitCategoryWeights = gradeUnitCategoryWeights,
-            onAddGradeCategory = viewModel::addGradeCategory,
-            onAddGradeItem = viewModel::addGradeItem,
-            onDeleteGradeCategory = viewModel::deleteGradeCategory,
-            onDeleteItem = viewModel::deleteGradeItem,
-            onAddGradeUnit = viewModel::addGradeUnit,
-            onDeleteGradeUnit = viewModel::deleteGradeUnit,
-            onSaveUnitCategoryWeights = viewModel::saveUnitCategoryWeights,
-            onResetUnitCategoryWeights = viewModel::resetUnitCategoryWeights
         )
     }
 

@@ -1,6 +1,7 @@
 package com.mocas.ui.add.event
 
 import android.content.Context
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -66,6 +67,8 @@ fun AddEditSubjectScreen(
     onSavePeriod: (AcademicPeriodEntity) -> Unit,
     onSave: (SubjectEntity, List<ScheduleSlotEntity>) -> Unit
 ) {
+    BackHandler(enabled = true, onBack = onBack)
+
     val initialSub = editingSubject?.subject
 
     var name by remember { mutableStateOf(initialSub?.name ?: "") }

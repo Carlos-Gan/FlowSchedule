@@ -22,7 +22,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Schedule
@@ -32,6 +31,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -49,6 +49,7 @@ import com.mocas.data.local.SubjectWithSlots
 import com.mocas.data.local.SubtaskEntity
 import com.mocas.ui.components.CalendarDateField
 import com.mocas.ui.components.ClockTimeField
+import com.mocas.ui.components.OrganizationSelector
 import com.mocas.ui.components.parseColorFromHex
 import com.mocas.ui.util.capitalizeFirstLetter
 import com.mocas.util.DateTimeUtils
@@ -66,6 +67,7 @@ fun AddEventDialog(
     onDismiss: () -> Unit,
     onSave: (SchoolEventEntity, List<SubtaskEntity>) -> Unit
 ) {
+    val textFieldCornerRadius = with(LocalDensity.current) { 15.sp.toDp() }
     val initialEvent = editingEvent?.event
     var title by remember { mutableStateOf(initialEvent?.title ?: defaultTitle.orEmpty()) }
     var selectedType by remember {
@@ -255,10 +257,10 @@ fun AddEventDialog(
                             singleLine = true,
                             textStyle = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
                             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
-                            shape = RoundedCornerShape(14.dp),
+                            shape = RoundedCornerShape(textFieldCornerRadius),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                                focusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                                unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                                 focusedContainerColor = MaterialTheme.colorScheme.surface,
                                 unfocusedContainerColor = MaterialTheme.colorScheme.surface
                             ),
@@ -325,14 +327,14 @@ fun AddEventDialog(
                         ExposedDropdownMenuBox(
                             expanded = isSubjectDropdownExpanded,
                             onExpandedChange = { isSubjectDropdownExpanded = !isSubjectDropdownExpanded },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
                         ) {
                             val currentSubjectName = subjects.find { it.subject.id == selectedSubjectId }?.subject?.name ?: stringResource(R.string.seleccionar_materia_placeholder)
                             Surface(
                                 modifier = Modifier.fillMaxWidth().menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
-                                shape = RoundedCornerShape(14.dp),
+                                shape = RoundedCornerShape(15.dp),
                                 color = MaterialTheme.colorScheme.surface,
-                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)),
                                 onClick = { isSubjectDropdownExpanded = true }
                             ) {
                                 Row(
@@ -432,7 +434,7 @@ fun AddEventDialog(
                                     Surface(
                                         onClick = { isUnitDropdownExpanded = true },
                                         modifier = Modifier.fillMaxWidth().menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
-                                        shape = RoundedCornerShape(14.dp),
+                                        shape = RoundedCornerShape(15.dp),
                                         color = MaterialTheme.colorScheme.surface,
                                         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                                     ) {
@@ -474,7 +476,7 @@ fun AddEventDialog(
                             color = MaterialTheme.colorScheme.primary
                         )
                         Surface(
-                            shape = RoundedCornerShape(8.dp),
+                            shape = RoundedCornerShape(15.dp),
                             color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
                         ) {
                             Text(
@@ -558,7 +560,7 @@ fun AddEventDialog(
                             color = MaterialTheme.colorScheme.primary
                         )
                         Surface(
-                            shape = RoundedCornerShape(8.dp),
+                            shape = RoundedCornerShape(15.dp),
                             color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
                         ) {
                             Text(
@@ -583,10 +585,10 @@ fun AddEventDialog(
                             leadingIcon = { Icon(Icons.Outlined.LocationOn, contentDescription = null, tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)) },
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
-                            shape = RoundedCornerShape(14.dp),
+                            shape = RoundedCornerShape(textFieldCornerRadius),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                                focusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                                unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                                 focusedContainerColor = MaterialTheme.colorScheme.surface,
                                 unfocusedContainerColor = MaterialTheme.colorScheme.surface
                             ),
@@ -607,10 +609,10 @@ fun AddEventDialog(
                             leadingIcon = { Icon(Icons.Outlined.Description, contentDescription = null, tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)) },
                             minLines = 3,
                             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
-                            shape = RoundedCornerShape(14.dp),
+                            shape = RoundedCornerShape(textFieldCornerRadius),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                                focusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                                unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                                 focusedContainerColor = MaterialTheme.colorScheme.surface,
                                 unfocusedContainerColor = MaterialTheme.colorScheme.surface
                             ),
@@ -638,7 +640,7 @@ fun AddEventDialog(
                             color = MaterialTheme.colorScheme.primary
                         )
                         Surface(
-                            shape = RoundedCornerShape(8.dp),
+                            shape = RoundedCornerShape(15.dp),
                             color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
                         ) {
                             Text(
@@ -650,77 +652,12 @@ fun AddEventDialog(
                         }
                     }
 
-                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Text(
-                            text = stringResource(R.string.espacio_o_etiqueta),
-                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            val tags = listOf(
-                                OrganizationTag.UNIVERSIDAD to stringResource(R.string.tag_universidad),
-                                OrganizationTag.TRABAJO to stringResource(R.string.tag_trabajo),
-                                OrganizationTag.PERSONAL to stringResource(R.string.tag_personal)
-                            )
-                            tags.forEach { (tag, label) ->
-                                val selected = organizationTag == tag.name
-                                FilterChip(
-                                    selected = selected,
-                                    onClick = { organizationTag = tag.name },
-                                    label = { Text(label, fontWeight = FontWeight.Medium) },
-                                    leadingIcon = if (selected) {
-                                        {
-                                            Box(
-                                                modifier = Modifier
-                                                    .size(8.dp)
-                                                    .clip(CircleShape)
-                                                    .background(MaterialTheme.colorScheme.onPrimary)
-                                            )
-                                        }
-                                    } else null,
-                                    colors = FilterChipDefaults.filterChipColors(
-                                        selectedContainerColor = MaterialTheme.colorScheme.primary,
-                                        selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
-                                        containerColor = MaterialTheme.colorScheme.surface
-                                    )
-                                )
-                            }
-                        }
-                    }
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Surface(
-                                shape = CircleShape,
-                                color = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.4f),
-                                modifier = Modifier.size(40.dp)
-                            ) {
-                                Box(contentAlignment = Alignment.Center) {
-                                    Icon(Icons.Default.Star, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
-                                }
-                            }
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Column {
-                                Text(stringResource(R.string.prioridad_alta_titulo), fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, fontSize = 15.sp)
-                                Text(stringResource(R.string.destacar_lista_dia), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                            }
-                        }
-                        Switch(
-                            checked = isImportant,
-                            onCheckedChange = { isImportant = it },
-                            colors = SwitchDefaults.colors(
-                                checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
-                                checkedTrackColor = MaterialTheme.colorScheme.primary
-                            )
-                        )
-                    }
+                    OrganizationSelector(
+                        selectedTag = organizationTag,
+                        isImportant = isImportant,
+                        onTagSelected = { organizationTag = it },
+                        onImportantChanged = { isImportant = it }
+                    )
                 }
             }
         }
