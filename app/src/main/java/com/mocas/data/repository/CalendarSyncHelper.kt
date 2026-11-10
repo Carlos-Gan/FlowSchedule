@@ -289,6 +289,9 @@ object CalendarSyncHelper {
                     firstEnd.toInstant().toEpochMilli()
                 )
 
+                // Make sure calendar apps treat class sessions as timed events.
+                putExtra(CalendarContract.Events.ALL_DAY, 0)
+
                 putExtra(
                     CalendarContract.Events.EVENT_TIMEZONE,
                     zoneId.id

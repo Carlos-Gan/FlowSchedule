@@ -173,16 +173,9 @@ fun CustomEventCard(
                                     verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
                                 ) {
-                                    Icon(
-                                        Icons.Default.Warning,
-                                        contentDescription = null,
-                                        tint = colors.onErrorContainer,
-                                        modifier = Modifier.size(14.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(4.dp))
                                     Text(
                                         text = typeLabel,
-                                        fontSize = 11.sp,
+                                        fontSize = 10.sp,
                                         fontWeight = FontWeight.Bold,
                                         color = colors.onErrorContainer
                                     )
@@ -194,11 +187,11 @@ fun CustomEventCard(
                                 Surface(
                                     shape = RoundedCornerShape(8.dp),
                                     color = colors.surfaceContainerHigh,
-                                    border = BorderStroke(1.dp, colors.outlineVariant)
+                                    //border = BorderStroke(1.dp, colors.outlineVariant)
                                 ) {
                                     Text(
                                         text = eventWithSubject.subject.name,
-                                        fontSize = 11.sp,
+                                        fontSize = 10.sp,
                                         fontWeight = FontWeight.Bold,
                                         color = colors.onSurface,
                                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)

@@ -1,18 +1,16 @@
 package com.mocas.ui.components.settings
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -22,6 +20,7 @@ import androidx.compose.material.icons.outlined.NotificationsActive
 import androidx.compose.material.icons.outlined.Quiz
 import androidx.compose.material3.Icon
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -30,10 +29,12 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.ToggleButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +42,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -278,48 +282,37 @@ private fun ReminderOptionChips(
     customSelected: Boolean = false,
     customSelectedLabel: String? = null
 ) {
-    FlowRow(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        options.forEach { (minutes, label) ->
-            val isSelected = currentMinutes == minutes
-            Surface(
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .clickable { onSelect(minutes) }
-                    .heightIn(min = 48.dp),
-                color = if (isSelected) MaterialTheme.colorScheme.primary
-                else MaterialTheme.colorScheme.surfaceContainerHighest,
-                shape = CircleShape
-            ) {
-                Text(
-                    text = label,
-                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 9.dp),
-                    fontSize = 13.sp,
-                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                    color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
+    val allOptions = buildList {
+        addAll(options)
         if (customLabel != null) {
-            Surface(
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .clickable(onClick = onCustomClick)
-                    .heightIn(min = 48.dp),
-                color = if (customSelected) MaterialTheme.colorScheme.primary
-                else MaterialTheme.colorScheme.surfaceContainerHighest,
-                shape = CircleShape
+            add(currentMinutes to (if (customSelected) customSelectedLabel ?: customLabel else customLabel))
+        }
+    }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .horizontalScroll(rememberScrollState()),
+        horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        allOptions.forEachIndexed { index, (minutes, label) ->
+            val isCustom = customLabel != null && index == allOptions.lastIndex
+            val isSelected = if (isCustom) customSelected else currentMinutes == minutes
+            ToggleButton(
+                checked = isSelected,
+                onCheckedChange = { checked ->
+                    if (checked) {
+                        if (isCustom) onCustomClick() else onSelect(minutes)
+                    }
+                },
+                shapes = when (index) {
+                    0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                    allOptions.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                    else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                },
+                modifier = Modifier.semantics { role = Role.RadioButton }
             ) {
-                Text(
-                    text = if (customSelected) customSelectedLabel ?: customLabel else customLabel,
-                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 9.dp),
-                    fontSize = 13.sp,
-                    fontWeight = if (customSelected) FontWeight.Bold else FontWeight.Medium,
-                    color = if (customSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Text(label)
             }
         }
     }

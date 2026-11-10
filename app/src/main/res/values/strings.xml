@@ -448,8 +448,8 @@
     <string name="notif_next_class_title">Próxima clase: %1$s</string>
     <string name="notif_summary_title">Resumen de mañana</string>
     <string name="notif_summary_message">%1$d clases • %2$d actividades</string>
-    <string name="minuto_corto" translatable="false">%1$dm</string>
-    <string name="hora_corta" translatable="false">%1$dh</string>
+    <string name="minuto_corto" translatable="false">%1$d min</string>
+    <string name="hora_corta" translatable="false">%1$d h</string>
 
     <!-- Recordatorio de actividad (tarea/examen/exposición/evento) -->
     <!-- %1$s = tipo (Tarea/Examen/Exposición/Actividad), %2$s = título de la actividad -->

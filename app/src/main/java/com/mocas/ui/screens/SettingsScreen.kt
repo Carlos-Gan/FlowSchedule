@@ -957,7 +957,9 @@ fun SettingsScreen(
         LaunchedEffect(Unit) { viewModel.refreshAutomaticBackupsNow() }
 
         val exportLauncher =
-            rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
+            // Keep the custom .flow extension; application/json can make some document
+            // providers append .json to the suggested filename.
+            rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/octet-stream")) { uri ->
                 uri?.let(viewModel::exportScheduleBackup)
             }
         val importLauncher =

@@ -21,6 +21,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.School
 import androidx.compose.material3.Card
@@ -29,10 +30,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -118,24 +125,56 @@ fun WeeklyGridView(
 
     val hScrollState = rememberScrollState()
     val vScrollState = rememberScrollState()
+    var zoomScale by rememberSaveable { mutableFloatStateOf(1f) }
 
     val cal = java.time.LocalDateTime.now()
     val nowMins = cal.hour * 60 + cal.minute
     val today = LocalDate.now()
     val isTodayInWeek = today >= weekStart && today < weekStart.plusDays(7)
 
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+    BoxWithConstraints(
+        modifier = Modifier
+            .fillMaxSize()
+            .pointerInput(Unit) {
+                awaitEachGesture {
+                    var previousSpan = 0f
+                    do {
+                        val event = awaitPointerEvent()
+                        val pressed = event.changes.filter { it.pressed }
+                        if (pressed.size >= 2) {
+                            val centroid = pressed.fold(Offset.Zero) { sum, change ->
+                                sum + change.position
+                            } / pressed.size.toFloat()
+                            val span = pressed
+                                .map { (it.position - centroid).getDistance() }
+                                .average()
+                                .toFloat() * 2f
+
+                            if (previousSpan > 0f && span > 0f) {
+                                zoomScale = (zoomScale * (span / previousSpan)).coerceIn(0.35f, 1.65f)
+                            }
+                            previousSpan = span
+                            event.changes.forEach { it.consume() }
+                        } else {
+                            previousSpan = 0f
+                        }
+                    } while (event.changes.any { it.pressed })
+                }
+            }
+    ) {
         val isCompactWidth = maxWidth < 600.dp
-        val dayColWidth = if (isCompactWidth) {
+        val baseDayColWidth = if (isCompactWidth) {
             140.dp
         } else {
             ((maxWidth - timeColWidth) / days.size).coerceAtLeast(100.dp)
         }
-        val hourHeight = if (isCompactWidth) {
+        val dayColWidth = (baseDayColWidth * zoomScale).coerceIn(44.dp, 240.dp)
+        val baseHourHeight = if (isCompactWidth) {
             90.dp
         } else {
             ((maxHeight - 60.dp) / hours.size).coerceIn(90.dp, 120.dp)
         }
+        val hourHeight = (baseHourHeight * zoomScale).coerceIn(32.dp, 180.dp)
 
         Column(
             modifier = Modifier.fillMaxSize()

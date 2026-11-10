@@ -1,5 +1,6 @@
 package com.mocas.ui.add.event
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -67,6 +68,8 @@ fun AddEventDialog(
     onDismiss: () -> Unit,
     onSave: (SchoolEventEntity, List<SubtaskEntity>) -> Unit
 ) {
+    BackHandler(enabled = true, onBack = onDismiss)
+
     val textFieldCornerRadius = with(LocalDensity.current) { 15.sp.toDp() }
     val initialEvent = editingEvent?.event
     var title by remember { mutableStateOf(initialEvent?.title ?: defaultTitle.orEmpty()) }

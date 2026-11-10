@@ -63,6 +63,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
@@ -74,6 +75,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlin.math.roundToInt
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import com.mocas.R
@@ -141,8 +143,9 @@ fun SnapTopAppBar(
         derivedStateOf { isSearchActive && normalizedQuery.isNotEmpty() }
     }
 
-    var barHeightPx by remember { mutableIntStateOf(0) }
     var barWidthPx by remember { mutableIntStateOf(0) }
+    var surfaceTopPx by remember { mutableIntStateOf(0) }
+    var searchFieldBottomPx by remember { mutableIntStateOf(0) }
     val density = LocalDensity.current
 
 
@@ -151,8 +154,8 @@ fun SnapTopAppBar(
         modifier = Modifier
             .fillMaxWidth()
             .onGloballyPositioned {
-                barHeightPx = it.size.height
                 barWidthPx = it.size.width
+                surfaceTopPx = it.positionInRoot().y.roundToInt()
             },
         color = MaterialTheme.colorScheme.background,
         tonalElevation = 0.dp
@@ -266,6 +269,9 @@ fun SnapTopAppBar(
                                 .weight(1f)
                                 .heightIn(min = 52.dp)
                                 .focusRequester(focusRequester)
+                                .onGloballyPositioned {
+                                    searchFieldBottomPx = it.positionInRoot().y.roundToInt() + it.size.height
+                                }
                         )
                     }
 
@@ -273,7 +279,10 @@ fun SnapTopAppBar(
                     if (showDropdown) {
                         Popup(
                             alignment = Alignment.TopStart,
-                            offset = IntOffset(0, barHeightPx),
+                            offset = IntOffset(
+                                0,
+                                (searchFieldBottomPx - surfaceTopPx).coerceAtLeast(0)
+                            ),
                             properties = PopupProperties(focusable = false)
                         ) {
                             AnimatedVisibility(
