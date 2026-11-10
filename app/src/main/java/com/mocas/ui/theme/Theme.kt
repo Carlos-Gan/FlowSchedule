@@ -1,5 +1,6 @@
 package com.mocas.ui.theme
 
+import android.annotation.SuppressLint
 import android.content.ContextWrapper
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -629,6 +630,7 @@ private val ForestDarkColorScheme = darkColorScheme(
     onSurface = Color(0xFFE1E3DE)
 )
 
+@SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
 fun FlowScheduleTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),

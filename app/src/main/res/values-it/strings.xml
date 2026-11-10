@@ -4,6 +4,9 @@
     <string name="academic_progress_eyebrow">I Miei Risultati</string>
     <string name="academic_progress_title">Progresso accademico</string>
     <string name="academic_progress_subtitle">Scopri come cambiano i tuoi voti nel tempo.</string>
+    <string name="academic_grade_count">Basato su %1$d voti registrati</string>
+    <string name="academic_evolution_title">La tua evoluzione</string>
+    <string name="academic_one_month_note">È stato registrato un solo mese. L’andamento apparirà man mano che aggiungerai altri voti.</string>
     <string name="academic_tab_current">Riepilogo</string>
     <string name="academic_tab_monthly">Mese per mese</string>
     <string name="academic_gpa">GPA</string>
@@ -610,20 +613,20 @@
     <string name="widget_school_days_total_simple">Totale: %1$d giorni scolastici</string>
     <string name="widget_school_days_total_progress">%1$d giorni scolastici · %2$d%% completati</string>
     <string name="widget_period_ended">Periodo terminato</string>
-    <string name="whats_new_title">Novità sul tuo rendimento scolastico!</string>
-    <string name="whats_new_subtitle">Nuovi modi per consultare e organizzare le materie:</string>
-    <string name="whats_new_item_1_title">📊 Grades, ora a schermo intero</string>
-    <string name="whats_new_item_1_desc">Consulta le unità con più spazio e visualizza la media della materia in un grafico circolare.</string>
-    <string name="whats_new_item_2_title">🎯 Simulatore più preciso</string>
-    <string name="whats_new_item_2_desc">Le proiezioni usano i voti e i pesi dell’unità selezionata.</string>
-    <string name="whats_new_item_3_title">📈 Nuovo riepilogo del rendimento</string>
-    <string name="whats_new_item_3_desc">Controlla la media, filtra per materia e segui l’andamento dei voti mese per mese.</string>
-    <string name="whats_new_item_4_title">📚 Dettagli della materia a schermo intero</string>
-    <string name="whats_new_item_4_desc">Orari, attività e voti hanno più spazio. Torna indietro con la freccia o il tasto Indietro.</string>
-    <string name="whats_new_item_5_title">🗂️ Organizzazione più semplice</string>
-    <string name="whats_new_item_5_desc">Scegli Università, Lavoro o Personale con un selettore compatto e contrassegna ciò che conta.</string>
-    <string name="whats_new_item_6_title">✨ Moduli più comodi</string>
-    <string name="whats_new_item_6_desc">Abbiamo migliorato i campi data, ora e testo; Indietro riporta alla schermata precedente.</string>
+    <string name="whats_new_title">Novità in FlowSchedule!</string>
+    <string name="whats_new_subtitle">Ecco alcuni dei miglioramenti recenti:</string>
+    <string name="whats_new_item_1_title">🗓️ Zoom nella vista settimanale</string>
+    <string name="whats_new_item_1_desc">Pizzica con due dita per ingrandire o compattare le colonne e le fasce orarie del calendario settimanale.</string>
+    <string name="whats_new_item_2_title">⏰ Orario di fine delle lezioni</string>
+    <string name="whats_new_item_2_desc">La sincronizzazione con il calendario del telefono include l’orario di inizio e di fine di ogni lezione.</string>
+    <string name="whats_new_item_3_title">💾 Backup Flow</string>
+    <string name="whats_new_item_3_desc">Esporta i backup con estensione .flow per riconoscerli e condividerli più facilmente.</string>
+    <string name="whats_new_item_4_title">🔔 Promemoria più pratici</string>
+    <string name="whats_new_item_4_desc">Scegli l’anticipo da una fila scorrevole di pulsanti Expressive.</string>
+    <string name="whats_new_item_5_title">🔎 Ricerca più chiara</string>
+    <string name="whats_new_item_5_desc">I risultati di ricerca ora compaiono subito sotto la barra di ricerca.</string>
+    <string name="whats_new_item_6_title">📝 Modifica delle attività migliorata</string>
+    <string name="whats_new_item_6_desc">Indietro torna all’app senza chiuderla e la materia compare accanto al tipo di attività.</string>
     <string name="whats_new_button">Ho capito!</string>
 
     <!-- Add Event Dialog UI Strings -->

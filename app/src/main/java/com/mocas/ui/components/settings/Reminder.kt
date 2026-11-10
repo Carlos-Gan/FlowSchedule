@@ -35,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -221,7 +222,7 @@ private fun ReminderCategoryCard(
             currentMinutes % 60 == 0 -> 60
             else -> 1
         }
-        var unitMinutes by remember(currentMinutes) { mutableStateOf(initialUnit) }
+        var unitMinutes by remember(currentMinutes) { mutableIntStateOf(initialUnit) }
         var amountText by remember(currentMinutes) {
             mutableStateOf((currentMinutes / initialUnit).toString())
         }

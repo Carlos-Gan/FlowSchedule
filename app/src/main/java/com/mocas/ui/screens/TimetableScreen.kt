@@ -36,7 +36,6 @@ import com.mocas.ui.components.horario.WeekNavigationBar
 import com.mocas.ui.components.horario.WeeklyGridView
 import com.mocas.ui.dialogs.ShareScheduleDialog
 import com.mocas.ui.model.TimetableDisplayMode
-import com.mocas.ui.util.isVacationDate
 import com.mocas.ui.viewmodel.ScheduleViewModel
 
 @Composable

@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mocas.R
-import com.mocas.data.local.AcademicPeriodEntity
 import com.mocas.data.local.GradeItemEntity
 import com.mocas.data.local.SubjectEntity
 import com.mocas.data.repository.GradeCalculator
@@ -45,7 +44,6 @@ private enum class ProgressTab { CURRENT, MONTHLY }
 fun AcademicProgressScreen(viewModel: ScheduleViewModel, onBack: () -> Unit, modifier: Modifier = Modifier) {
     val settings by viewModel.appSettings.collectAsStateWithLifecycle()
     val subjectsWithSlots by viewModel.subjectsWithSlots.collectAsStateWithLifecycle()
-    val periods by viewModel.academicPeriods.collectAsStateWithLifecycle()
     val categories by viewModel.gradeCategories.collectAsStateWithLifecycle()
     val gradeItems by viewModel.gradeItems.collectAsStateWithLifecycle()
     val gradeUnits by viewModel.gradeUnits.collectAsStateWithLifecycle()
@@ -225,16 +223,6 @@ private fun monthlyTrend(
             .takeIf { it.isNotEmpty() }?.average()
         avg?.let { AcademicGradePoint(month.format(DateTimeFormatter.ofPattern("MMM yyyy", Locale.getDefault())), toDisplayGrade(it, useGpa)) }
     }
-}
-
-private fun periodPoints(
-    subjects: List<SubjectEntity>, periods: List<AcademicPeriodEntity>, categories: List<com.mocas.data.local.GradeCategoryEntity>,
-    items: List<GradeItemEntity>, units: List<com.mocas.data.local.GradeUnitEntity>, weights: List<com.mocas.data.local.GradeUnitCategoryWeightEntity>,
-    subjectId: Long?, useGpa: Boolean
-): List<AcademicGradePoint> = periods.sortedBy { it.startDate }.mapNotNull { period ->
-    val active = subjects.filter { subject -> (subjectId == null || subject.id == subjectId) && subject.semesterStart <= period.endDate && subject.semesterEnd >= period.startDate }
-    active.mapNotNull { GradeCalculator.subjectAverage(it.id, categories, items, units, weights) }.takeIf { it.isNotEmpty() }?.average()
-        ?.let { AcademicGradePoint(period.name, toDisplayGrade(it, useGpa)) }
 }
 
 private fun toDisplayGrade(value: Double, useGpa: Boolean): Double = if (useGpa) (value / if (value > 10) 100.0 else 10.0) * 4.0 else value

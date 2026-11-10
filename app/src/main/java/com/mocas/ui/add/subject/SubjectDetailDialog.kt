@@ -78,6 +78,7 @@ import com.mocas.ui.util.showCalendarResult
 
 @Composable
 fun SubjectDetailScreen(
+    modifier: Modifier = Modifier,
     subjectWithSlots: SubjectWithSlots,
     linkedEvents: List<SchoolEventWithSubject>,
     onDismiss: () -> Unit,
@@ -99,7 +100,6 @@ fun SubjectDetailScreen(
     onDeleteGradeUnit: (GradeUnitEntity) -> Unit,
     onSaveUnitCategoryWeights: (Long, List<GradeUnitCategoryWeightEntity>) -> Unit = { _, _ -> },
     onResetUnitCategoryWeights: (Long) -> Unit = {},
-    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val view = LocalView.current

@@ -1,5 +1,6 @@
 package com.mocas.ui.components.horario
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -45,6 +46,7 @@ import com.mocas.ui.components.EmptyStateCard
 import com.mocas.ui.components.parseColorFromHex
 import kotlin.text.isNotBlank
 
+@SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
 fun SubjectListView(
     subjectsWithSlots: List<SubjectWithSlots>,

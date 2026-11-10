@@ -645,20 +645,20 @@
     <string name="widget_period_ended">Period ended</string>
 
     <!-- What's New Dialog -->
-    <string name="whats_new_title">What\'s new in your academic progress!</string>
-    <string name="whats_new_subtitle">New ways to review and organize your subjects:</string>
-    <string name="whats_new_item_1_title">📊 Grades, now full screen</string>
-    <string name="whats_new_item_1_desc">Review units with more room and see your subject average in a circular chart.</string>
-    <string name="whats_new_item_2_title">🎯 A more accurate simulator</string>
-    <string name="whats_new_item_2_desc">Projections use the grades and weightings for the selected unit.</string>
-    <string name="whats_new_item_3_title">📈 A new performance overview</string>
-    <string name="whats_new_item_3_desc">Check your average, filter by subject, and follow grade trends month by month.</string>
-    <string name="whats_new_item_4_title">📚 Subject details as a screen</string>
-    <string name="whats_new_item_4_desc">Schedules, tasks, and grades have more room. Go back with the arrow or device Back button.</string>
-    <string name="whats_new_item_5_title">🗂️ Easier organization</string>
-    <string name="whats_new_item_5_desc">Choose School, Work, or Personal with a compact selector, and mark what matters.</string>
-    <string name="whats_new_item_6_title">✨ More comfortable forms</string>
-    <string name="whats_new_item_6_desc">Date, time, and text fields are improved, and Back returns to the previous screen.</string>
+    <string name="whats_new_title">What\'s new in FlowSchedule!</string>
+    <string name="whats_new_subtitle">Here are some of the latest improvements:</string>
+    <string name="whats_new_item_1_title">🗓️ Zoom in weekly view</string>
+    <string name="whats_new_item_1_desc">Pinch with two fingers to expand or compact the columns and time rows in your weekly calendar.</string>
+    <string name="whats_new_item_2_title">⏰ Class end times</string>
+    <string name="whats_new_item_2_desc">Syncing with your phone calendar now includes each class\'s start and end times.</string>
+    <string name="whats_new_item_3_title">💾 Flow backups</string>
+    <string name="whats_new_item_3_desc">Export backups with the .flow extension to make them easier to identify and share.</string>
+    <string name="whats_new_item_4_title">🔔 Easier reminder controls</string>
+    <string name="whats_new_item_4_desc">Choose a reminder time from a horizontally scrolling row of Expressive buttons.</string>
+    <string name="whats_new_item_5_title">🔎 Clearer search</string>
+    <string name="whats_new_item_5_desc">Search results now appear directly below the search bar.</string>
+    <string name="whats_new_item_6_title">📝 Improved activity editing</string>
+    <string name="whats_new_item_6_desc">Back returns to the app without closing it, and the subject appears beside the activity type.</string>
     <string name="whats_new_button">Got it!</string>
 
     <!-- Add Event Dialog UI Strings -->

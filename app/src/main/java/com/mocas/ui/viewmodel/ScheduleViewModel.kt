@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
+import com.mocas.BuildConfig
 import com.mocas.R
 import com.mocas.data.backup.AutomaticBackupInfo
 import com.mocas.data.backup.AutomaticBackupManager
@@ -36,7 +37,6 @@ import com.mocas.data.repository.ScheduleRepository
 import com.mocas.data.repository.CalendarSyncManager
 import com.mocas.data.repository.CalendarSyncScheduler
 import com.mocas.data.repository.CalendarSyncWorker
-import com.mocas.data.repository.ExternalCalendarEvent
 import com.mocas.ui.model.AppSettings
 import com.mocas.ui.model.ClassOccurrenceInfo
 import com.mocas.ui.model.BottomNavTab
@@ -83,12 +83,12 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     private val _appSettings = MutableStateFlow(settingsStore.load())
     val appSettings = _appSettings.asStateFlow()
 
-    private val currentVERSIONCODE = 16
-    private val _showWhatsNew = MutableStateFlow(settingsStore.getLastSeenVersionCode() < currentVERSIONCODE)
+    private val currentVersionCode = BuildConfig.VERSION_CODE
+    private val _showWhatsNew = MutableStateFlow(settingsStore.getLastSeenVersionCode() < currentVersionCode)
     val showWhatsNew = _showWhatsNew.asStateFlow()
 
     fun dismissWhatsNew() {
-        settingsStore.setLastSeenVersionCode(currentVERSIONCODE)
+        settingsStore.setLastSeenVersionCode(currentVersionCode)
         _showWhatsNew.value = false
     }
 
@@ -153,8 +153,6 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
             else -> null
         }
     }
-
-    private val _externalCalendarEvents = MutableStateFlow<List<ExternalCalendarEvent>>(emptyList())
 
     fun syncWithDeviceCalendar() {
         val context = getApplication<Application>()

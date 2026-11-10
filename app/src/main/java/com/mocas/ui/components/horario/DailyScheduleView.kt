@@ -49,7 +49,7 @@ import java.util.Locale
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.platform.LocalConfiguration
 
-@SuppressLint("LocalContextGetResourceValueCall")
+@SuppressLint("LocalContextGetResourceValueCall", "ConfigurationScreenWidthHeight")
 @Composable
 fun DailyScheduleView(
     viewModel: ScheduleViewModel,

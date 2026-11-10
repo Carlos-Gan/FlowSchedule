@@ -87,7 +87,7 @@ fun GradesWorkspaceDialog(
     onResetUnitCategoryWeights: (Long) -> Unit
 ) {
     var selectedUnitId by remember { mutableStateOf<Long?>(null) }
-    var knownUnitIds by remember { mutableStateOf(units.mapTo(mutableSetOf()) { it.id }) }
+    var knownUnitIds by remember { mutableStateOf(units.map { it.id }.toSet()) }
     val workspaceOpenedAtMillis = remember { System.currentTimeMillis() }
     var showMissingCategoriesNotice by remember { mutableStateOf(false) }
     var needsCategorySetupAttention by remember { mutableStateOf(false) }
@@ -104,7 +104,7 @@ fun GradesWorkspaceDialog(
             label = "categoryGearPulse"
         )
     LaunchedEffect(units, categories, unitCategoryWeights) {
-        val currentIds = units.mapTo(mutableSetOf()) { it.id }
+        val currentIds = units.map { it.id }.toSet()
         if (!hasCheckedInitialUnit && units.isNotEmpty()) {
             val initialUnit = units.firstOrNull { it.id == selectedUnitId } ?: units.first()
             hasCheckedInitialUnit = true
