@@ -87,6 +87,7 @@ data class CalendarDayItem(
 data class AppSettings(
     val userName: String = "Estudiante", // Se sobreescribe con stringResource en UI
     val educationLevel: String = "Grado o Carrera",
+    val educationStage: String = "UNIVERSITY",
     val educationInstitution: String = "Escuela o Institución",
     val useGpaScale: Boolean = false,
     val themeMode: String = "LIGHT", // LIGHT por defecto; AUTO y DARK siguen disponibles

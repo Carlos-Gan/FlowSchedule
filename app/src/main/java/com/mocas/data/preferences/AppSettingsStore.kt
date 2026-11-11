@@ -15,6 +15,7 @@ class AppSettingsStore(context: Context) {
     fun load(): AppSettings = AppSettings(
         userName = preferences.getString(KEY_USER_NAME, "Estudiante") ?: "Estudiante",
         educationLevel = preferences.getString(KEY_EDUCATION_LEVEL, "Grado o Carrera") ?: "Grado o Carrera",
+        educationStage = preferences.getString(KEY_EDUCATION_STAGE, "UNIVERSITY") ?: "UNIVERSITY",
         educationInstitution = preferences.getString(KEY_EDUCATION_INSTITUTION, "Escuela o Institución") ?: "Escuela o Institución",
         useGpaScale = preferences.getBoolean(KEY_USE_GPA_SCALE, false),
         themeMode = preferences.getString(KEY_THEME_MODE, "LIGHT") ?: "LIGHT",
@@ -59,6 +60,7 @@ class AppSettingsStore(context: Context) {
         preferences.edit {
             putString(KEY_USER_NAME, settings.userName)
                 .putString(KEY_EDUCATION_LEVEL, settings.educationLevel)
+                .putString(KEY_EDUCATION_STAGE, settings.educationStage)
                 .putString(KEY_EDUCATION_INSTITUTION, settings.educationInstitution)
                 .putBoolean(KEY_USE_GPA_SCALE, settings.useGpaScale)
                 .putString(KEY_THEME_MODE, settings.themeMode)
@@ -109,6 +111,7 @@ class AppSettingsStore(context: Context) {
         const val KEY_EVENT_FILTER_STATUS = "event_filter_status"
         const val KEY_USER_NAME = "user_name"
         const val KEY_EDUCATION_LEVEL = "education_level"
+        const val KEY_EDUCATION_STAGE = "education_stage"
         const val KEY_EDUCATION_INSTITUTION = "education_institution"
         const val KEY_USE_GPA_SCALE = "use_gpa_scale"
         const val KEY_THEME_MODE = "theme_mode"
