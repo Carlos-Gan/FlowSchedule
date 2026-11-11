@@ -20,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -34,28 +35,71 @@ import java.util.Locale
 @Composable
 fun DailyFocusCard(
     stats: DailyClassStats,
+    isVacation: Boolean = false,
     modifier: Modifier = Modifier,
     showTitle: Boolean = true
 ) {
-    val isFreeDay = stats.totalHours == 0.0
-    val isFinishedOrFree = isFreeDay || stats.progress >= 1f
-    val displayedProgress = if (isFreeDay) 1f else stats.progress
+    val dayHash = remember { java.time.LocalDate.now().toEpochDay().toInt() }
+    val phraseIndex = kotlin.math.abs(dayHash) % 4
 
-    val remainingLabel = if (stats.remainingHours > 0) {
-        val wholeHours = stats.remainingHours.toInt()
-        val minutes = ((stats.remainingHours - wholeHours) * 60).toInt()
-        if (wholeHours > 0) stringResource(R.string.horas_restan_formato, wholeHours, minutes) 
-        else stringResource(R.string.minutos_restan_formato, minutes)
-    } else if (stats.totalHours > 0) {
-        stringResource(R.string.dia_terminado)
-    } else {
-        stringResource(R.string.dia_libre)
+    val vacationPhrases = listOf(
+        stringResource(R.string.motivacion_vacaciones_1),
+        stringResource(R.string.motivacion_vacaciones_2),
+        stringResource(R.string.motivacion_vacaciones_3),
+        stringResource(R.string.motivacion_vacaciones_4)
+    )
+    val freeDayPhrases = listOf(
+        stringResource(R.string.motivacion_dia_libre_1),
+        stringResource(R.string.motivacion_dia_libre_2),
+        stringResource(R.string.motivacion_dia_libre_3),
+        stringResource(R.string.motivacion_dia_libre_4)
+    )
+    val finishedPhrases = listOf(
+        stringResource(R.string.motivacion_terminado_1),
+        stringResource(R.string.motivacion_terminado_2),
+        stringResource(R.string.motivacion_terminado_3),
+        stringResource(R.string.motivacion_terminado_4)
+    )
+
+    val todayDate = remember { java.time.LocalDate.now() }
+    val month = todayDate.monthValue
+    val day = todayDate.dayOfMonth
+
+    val holidayPhrase = when {
+        month == 1 && day == 1 -> stringResource(R.string.festivo_ano_nuevo)
+        month == 2 && day == 14 -> stringResource(R.string.festivo_san_valentin)
+        month == 10 && day == 31 -> stringResource(R.string.festivo_halloween)
+        month == 11 && (day == 1 || day == 2) -> stringResource(R.string.festivo_dia_muertos)
+        month == 12 && day == 25 -> stringResource(R.string.festivo_navidad)
+        month == 12 && day == 31 -> stringResource(R.string.festivo_fin_ano)
+        else -> null
     }
 
-    val footerText = if (stats.totalHours > 0) {
-        stringResource(R.string.total_hoy_formato, String.format(Locale.US, "%.1f", stats.totalHours))
-    } else {
-        stringResource(R.string.sin_clases_hoy)
+    val isHoliday = holidayPhrase != null
+    val isFreeDay = stats.totalHours == 0.0 && !isVacation && !isHoliday
+    val isFinished = stats.totalHours > 0.0 && stats.progress >= 1f
+    val isFinishedOrFree = isHoliday || isVacation || isFreeDay || isFinished
+    val displayedProgress = if (isFinishedOrFree) 1f else stats.progress
+
+    val remainingLabel = when {
+        holidayPhrase != null -> holidayPhrase
+        isVacation -> vacationPhrases[phraseIndex % vacationPhrases.size]
+        isFreeDay -> freeDayPhrases[phraseIndex % freeDayPhrases.size]
+        isFinished -> finishedPhrases[phraseIndex % finishedPhrases.size]
+        stats.remainingHours > 0 -> {
+            val wholeHours = stats.remainingHours.toInt()
+            val minutes = ((stats.remainingHours - wholeHours) * 60).toInt()
+            if (wholeHours > 0) stringResource(R.string.horas_restan_formato, wholeHours, minutes) 
+            else stringResource(R.string.minutos_restan_formato, minutes)
+        }
+        else -> stringResource(R.string.dia_terminado)
+    }
+
+    val footerText = when {
+        holidayPhrase != null -> stringResource(R.string.dia_festivo_etiqueta)
+        isVacation -> stringResource(R.string.dia_vacaciones)
+        isFreeDay -> stringResource(R.string.sin_clases_hoy)
+        else -> stringResource(R.string.total_hoy_formato, String.format(Locale.US, "%.1f", stats.totalHours))
     }
 
     val backgroundColor =

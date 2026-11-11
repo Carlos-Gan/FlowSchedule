@@ -129,6 +129,13 @@ fun DashboardScreen(
             .sortedBy { it.event.startTime ?: "23:59" }
     }
 
+    val todayDate = remember(today) {
+        runCatching { LocalDate.parse(today) }.getOrElse { LocalDate.now() }
+    }
+    val isVacation = remember(todayDate, periods, allEvents, settings.outsidePeriodsAreVacations) {
+        com.mocas.ui.util.isVacationDate(todayDate, periods, allEvents, settings.outsidePeriodsAreVacations)
+    }
+
     DashboardContent(
         greeting = ScheduleViewModel.getGreetingText(
             LocalContext.current.applicationContext as Application,
@@ -137,6 +144,7 @@ fun DashboardScreen(
         nextClass = nextClass,
         dueTodayEvents = dueTodayEvents,
         classStats = classStats,
+        isVacation = isVacation,
         average = average,
         remainingDays = remainingDays,
         academicPeriodName = activePeriod?.name,
@@ -162,6 +170,7 @@ fun DashboardContent(
     nextClass: NextClassInfo?,
     dueTodayEvents: List<SchoolEventWithSubject>,
     classStats: DailyClassStats,
+    isVacation: Boolean,
     windowSizeClass: WindowSizeClass,
     onNextClassClick: () -> Unit,
     onViewAllEvents: () -> Unit,
@@ -262,6 +271,7 @@ fun DashboardContent(
                                 }
                                 DailyFocusCard(
                                     stats = classStats,
+                                    isVacation = isVacation,
                                     modifier = Modifier.height(150.dp),
                                     showTitle = false
                                 )
@@ -289,7 +299,8 @@ fun DashboardContent(
 
                 item {
                     DailyFocusCard(
-                        stats = classStats
+                        stats = classStats,
+                        isVacation = isVacation
                     )
                 }
             } else {
@@ -307,7 +318,8 @@ fun DashboardContent(
                             }
                             Box(modifier = Modifier.weight(1f)) {
                                 DailyFocusCard(
-                                    stats = classStats
+                                    stats = classStats,
+                                    isVacation = isVacation
                                 )
                             }
                         }
@@ -317,7 +329,8 @@ fun DashboardContent(
                     // el ancho en vez de dejar medio espacio vacío al lado.
                     item {
                         DailyFocusCard(
-                            stats = classStats
+                            stats = classStats,
+                            isVacation = isVacation
                         )
                     }
                 }

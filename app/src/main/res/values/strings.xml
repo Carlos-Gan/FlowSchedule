@@ -792,4 +792,23 @@
     <string name="academic_periods_empty_title">Sin períodos académicos</string>
     <string name="academic_periods_empty_message">Agrega un período académico para organizar tus ciclos escolares.</string>
     <string name="academic_periods_name">Nombre del período</string>
+    <string name="motivacion_vacaciones_1">¡Disfruta tus vacaciones al máximo!</string>
+    <string name="motivacion_vacaciones_2">Descansa y recarga energías para el próximo ciclo.</string>
+    <string name="motivacion_vacaciones_3">Es momento de relajarse y desconectar.</string>
+    <string name="motivacion_vacaciones_4">¡Bien merecidas vacaciones, disfrútalas!</string>
+    <string name="motivacion_dia_libre_1">¡Disfruta tu día libre al máximo!</string>
+    <string name="motivacion_dia_libre_2">Relájate o aprovecha para avanzar en lo que te gusta.</string>
+    <string name="motivacion_dia_libre_3">¡Un día sin clases para sonreír y descansar!</string>
+    <string name="motivacion_dia_libre_4">Recarga energías y disfruta tu día.</string>
+    <string name="motivacion_terminado_1">¡Excelente trabajo, terminaste por hoy!</string>
+    <string name="motivacion_terminado_2">¡Misión cumplida! Descansa y disfruta tu tarde.</string>
+    <string name="motivacion_terminado_3">¡Gran esfuerzo, clases finalizadas con éxito!</string>
+    <string name="motivacion_terminado_4">¡Todo al día por hoy, a descansar y celebrar!</string>
+    <string name="festivo_ano_nuevo">¡Feliz Año Nuevo! Nuevas metas, nuevos logros.</string>
+    <string name="festivo_san_valentin">¡Feliz San Valentín! Comparte buena energía hoy.</string>
+    <string name="festivo_halloween">¡Feliz Halloween! Que tengas un día genial y divertido.</string>
+    <string name="festivo_dia_muertos">¡Feliz Día de Muertos! Recordando con cariño.</string>
+    <string name="festivo_navidad">¡Feliz Navidad! Disfruta con tus seres queridos.</string>
+    <string name="festivo_fin_ano">¡Feliz Nochevieja! Cierra el año orgulloso de tus logros.</string>
+    <string name="dia_festivo_etiqueta">¡Día festivo especial!</string>
 </resources>

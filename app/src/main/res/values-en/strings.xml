@@ -795,4 +795,23 @@
     <string name="academic_periods_empty_title">No Academic Periods</string>
     <string name="academic_periods_empty_message">Add an academic period to organize your school terms.</string>
     <string name="academic_periods_name">Period Name</string>
+    <string name="motivacion_vacaciones_1">Enjoy your vacation to the fullest!</string>
+    <string name="motivacion_vacaciones_2">Rest and recharge for the next term.</string>
+    <string name="motivacion_vacaciones_3">It\'s time to relax and disconnect.</string>
+    <string name="motivacion_vacaciones_4">Well-deserved vacation, enjoy it!</string>
+    <string name="motivacion_dia_libre_1">Enjoy your day off to the fullest!</string>
+    <string name="motivacion_dia_libre_2">Relax or take time for what you love.</string>
+    <string name="motivacion_dia_libre_3">A class-free day to smile and rest!</string>
+    <string name="motivacion_dia_libre_4">Recharge your energy and enjoy your day.</string>
+    <string name="motivacion_terminado_1">Great job, you\'re done for today!</string>
+    <string name="motivacion_terminado_2">Mission accomplished! Rest and enjoy your afternoon.</string>
+    <string name="motivacion_terminado_3">Great effort, classes successfully finished!</string>
+    <string name="motivacion_terminado_4">All caught up for today, time to rest and celebrate!</string>
+    <string name="festivo_ano_nuevo">Happy New Year! New goals, new achievements.</string>
+    <string name="festivo_san_valentin">Happy Valentine\'s Day! Share good energy today.</string>
+    <string name="festivo_halloween">Happy Halloween! Have a spooky and fun day.</string>
+    <string name="festivo_dia_muertos">Happy Day of the Dead! Remembering with love.</string>
+    <string name="festivo_navidad">Merry Christmas! Enjoy time with your loved ones.</string>
+    <string name="festivo_fin_ano">Happy New Year\'s Eve! End the year proud of your achievements.</string>
+    <string name="dia_festivo_etiqueta">Special holiday!</string>
 </resources>
