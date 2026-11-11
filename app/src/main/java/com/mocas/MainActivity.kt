@@ -26,6 +26,7 @@ import com.mocas.ui.model.BottomNavTab
 import com.mocas.ui.viewmodel.ScheduleViewModel
 import com.mocas.data.repository.CalendarSyncScheduler
 import com.mocas.data.repository.ScheduleAvailability
+import com.mocas.worker.MotivationalNotificationScheduler
 import android.content.Intent
 
 class MainActivity : ComponentActivity() {
@@ -40,6 +41,7 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
         handleIntent(intent)
+        MotivationalNotificationScheduler.scheduleDaily(applicationContext)
 
         setContent {
             val settings by

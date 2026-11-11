@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -25,13 +26,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.modifier.ModifierLocal
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.mocas.R
 import com.mocas.data.local.EventPriority
+import com.mocas.data.local.SchoolEventType
 import com.mocas.data.local.SchoolEventWithSubject
 
 @Composable
@@ -91,8 +95,47 @@ fun TaskItemRow(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column(
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(2.dp)
                     ) {
+                        val eventType = eventWithSubject.event.type
+                        val typeRes = when (eventType) {
+                            SchoolEventType.TAREA -> R.string.tipo_tarea
+                            SchoolEventType.EXAMEN -> R.string.tipo_examen
+                            SchoolEventType.EXPOSICION -> R.string.tipo_exposicion
+                            SchoolEventType.EVENTO_ESCOLAR -> R.string.tipo_evento_escolar
+                            SchoolEventType.REUNION -> R.string.tipo_reunion
+                            SchoolEventType.VACACIONES -> R.string.legend_vacaciones
+                            else -> R.string.tipo_otro
+                        }
+                        val typeColor = when (eventType) {
+                            SchoolEventType.TAREA -> Color(0xFF8B5CF6)
+                            SchoolEventType.EXAMEN -> Color(0xFFEF4444)
+                            SchoolEventType.EXPOSICION -> Color(0xFF06B6D4)
+                            SchoolEventType.EVENTO_ESCOLAR -> Color(0xFFF59E0B)
+                            SchoolEventType.REUNION -> Color(0xFF3B82F6)
+                            SchoolEventType.VACACIONES -> Color(0xFF10B981)
+                            else -> Color(0xFF64748B)
+                        }
+                        val alpha = if (isDone) 0.45f else 1f
+
+                        Surface(
+                            shape = RoundedCornerShape(6.dp),
+                            color = typeColor.copy(alpha = 0.14f * alpha)
+                        ) {
+                            Text(
+                                text = stringResource(typeRes).uppercase(),
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontSize = 9.sp,
+                                    fontWeight = FontWeight.Bold
+                                ),
+                                color = typeColor.copy(alpha = alpha)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(3.dp))
+
                         Text(
                             text = eventWithSubject.event.title,
                             style = MaterialTheme.typography.bodyMedium.copy(
