@@ -118,7 +118,7 @@ fun DailyScheduleView(
                     modifier = Modifier.padding(horizontal = 14.dp, vertical = 9.dp),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.ExtraBold,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             }
         }

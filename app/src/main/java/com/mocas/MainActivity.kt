@@ -25,6 +25,7 @@ import com.mocas.ui.theme.FlowScheduleTheme
 import com.mocas.ui.model.BottomNavTab
 import com.mocas.ui.viewmodel.ScheduleViewModel
 import com.mocas.data.repository.CalendarSyncScheduler
+import com.mocas.data.repository.ScheduleAvailability
 import android.content.Intent
 
 class MainActivity : ComponentActivity() {
@@ -126,6 +127,20 @@ class MainActivity : ComponentActivity() {
             }
             "ACTION_OPEN_SCHEDULE" -> viewModel.setTab(BottomNavTab.HORARIO)
             Intent.ACTION_VIEW, Intent.ACTION_SEND -> {
+                intent.data?.let(ScheduleAvailability::fromUri)?.let {
+                    viewModel.setIncomingAvailability(it)
+                    viewModel.setTab(BottomNavTab.HORARIO)
+                    viewModel.openScheduleComparison()
+                    return
+                }
+                intent.getStringExtra(Intent.EXTRA_TEXT)?.let { text ->
+                    android.net.Uri.parse(text.trim()).let(ScheduleAvailability::fromUri)?.let {
+                        viewModel.setIncomingAvailability(it)
+                        viewModel.setTab(BottomNavTab.HORARIO)
+                        viewModel.openScheduleComparison()
+                        return
+                    }
+                }
                 val uri = intent.data ?: if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     intent.getParcelableExtra(Intent.EXTRA_STREAM, android.net.Uri::class.java)
                 } else {

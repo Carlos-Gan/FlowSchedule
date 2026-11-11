@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
@@ -37,6 +38,7 @@ import com.mocas.ui.components.horario.WeeklyGridView
 import com.mocas.ui.dialogs.ShareScheduleDialog
 import com.mocas.ui.model.TimetableDisplayMode
 import com.mocas.ui.viewmodel.ScheduleViewModel
+import java.time.LocalDate
 
 @Composable
 fun TimetableScreen(
@@ -53,7 +55,21 @@ fun TimetableScreen(
     val classExceptions by viewModel.classExceptions.collectAsStateWithLifecycle()
     val settings by viewModel.appSettings.collectAsStateWithLifecycle()
     var showShareDialog by remember { mutableStateOf(false) }
+    val isComparisonOpen by viewModel.isScheduleComparisonOpen.collectAsStateWithLifecycle()
+    val incomingAvailability by viewModel.pendingSharedAvailability.collectAsStateWithLifecycle()
+    LaunchedEffect(incomingAvailability) { if (incomingAvailability != null) viewModel.openScheduleComparison() }
     val selectedDate = selectedWeekStart.plusDays((selectedDay - 1).toLong())
+    if (isComparisonOpen) {
+        ScheduleComparisonScreen(
+            subjects = subjectsWithSlots,
+            events = allEvents,
+            classExceptions = classExceptions,
+            initialWeek = incomingAvailability?.weekStart ?: LocalDate.now().with(java.time.DayOfWeek.MONDAY),
+            incoming = incomingAvailability,
+            onConsumeIncoming = viewModel::consumeIncomingAvailability,
+            onDismiss = viewModel::closeScheduleComparison
+        )
+    } else {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -169,7 +185,12 @@ fun TimetableScreen(
                     context.startActivity(android.content.Intent.createChooser(intent, compartirFlowDesc))
                 }
             },
+            onCompareSchedules = {
+                showShareDialog = false
+                viewModel.openScheduleComparison()
+            },
             onDismiss = { showShareDialog = false }
         )
+    }
     }
 }

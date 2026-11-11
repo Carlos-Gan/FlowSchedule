@@ -34,6 +34,7 @@ import com.mocas.data.widget.ScheduleWidgetProvider
 import com.mocas.data.widget.DailyScheduleWidgetProvider
 import com.mocas.data.widget.AcademicPeriodWidgetProvider
 import com.mocas.data.repository.ScheduleRepository
+import com.mocas.data.repository.SharedAvailability
 import com.mocas.data.repository.CalendarSyncManager
 import com.mocas.data.repository.CalendarSyncScheduler
 import com.mocas.data.repository.CalendarSyncWorker
@@ -121,6 +122,28 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
 
     private val _userMessage = MutableStateFlow<String?>(null)
     val userMessage = _userMessage.asStateFlow()
+
+    private val _pendingSharedAvailability = MutableStateFlow<SharedAvailability?>(null)
+    val pendingSharedAvailability = _pendingSharedAvailability.asStateFlow()
+
+    fun setIncomingAvailability(availability: SharedAvailability) {
+        _pendingSharedAvailability.value = availability
+    }
+
+    fun consumeIncomingAvailability() {
+        _pendingSharedAvailability.value = null
+    }
+
+    private val _isScheduleComparisonOpen = MutableStateFlow(false)
+    val isScheduleComparisonOpen = _isScheduleComparisonOpen.asStateFlow()
+
+    fun openScheduleComparison() {
+        _isScheduleComparisonOpen.value = true
+    }
+
+    fun closeScheduleComparison() {
+        _isScheduleComparisonOpen.value = false
+    }
 
     private val _syncMessage = MutableStateFlow<String?>(null)
     val syncMessage = _syncMessage.asStateFlow()

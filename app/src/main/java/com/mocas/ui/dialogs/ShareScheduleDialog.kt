@@ -10,12 +10,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FileUpload
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -54,6 +58,7 @@ fun ShareScheduleDialog(
     events: List<SchoolEventWithSubject>,
     weekStart: LocalDate,
     onShareFlow: (() -> Unit)? = null,
+    onCompareSchedules: (() -> Unit)? = null,
     onDismiss: () -> Unit
 ) {
     var showProfessor by remember { mutableStateOf(true) }
@@ -67,12 +72,25 @@ fun ShareScheduleDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.compartir_horario_titulo)) },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Column(
+                modifier = Modifier.heightIn(max = 560.dp).verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
                 Text(
                     stringResource(R.string.compartir_horario_subtitulo),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+
+                if (onCompareSchedules != null) {
+                    ShareOptionButton(
+                        icon = Icons.Default.Groups,
+                        title = stringResource(R.string.compare_title),
+                        detail = stringResource(R.string.compare_privacy),
+                        accent = Color(0xFF4F46E5),
+                        onClick = onCompareSchedules
+                    )
+                }
 
                 Card(
                     shape = RoundedCornerShape(16.dp),

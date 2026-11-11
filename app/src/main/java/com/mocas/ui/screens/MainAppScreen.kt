@@ -46,6 +46,8 @@ fun MainAppScreen(
     val focusManager = LocalFocusManager.current
     val currentTab by
     viewModel.currentTab.collectAsStateWithLifecycle()
+    val isScheduleComparisonOpen by viewModel.isScheduleComparisonOpen.collectAsStateWithLifecycle()
+    BackHandler(isScheduleComparisonOpen) { viewModel.closeScheduleComparison() }
 
     val subjectsWithSlots by
     viewModel.subjectsWithSlots.collectAsStateWithLifecycle()
@@ -114,7 +116,7 @@ fun MainAppScreen(
     )
 
     Row(modifier = Modifier.fillMaxSize()) {
-        if (!isCompact && selectedDetailId == null && !showAcademicProgress) {
+        if (!isCompact && selectedDetailId == null && !showAcademicProgress && !isScheduleComparisonOpen) {
             SnapNavigationRail(
                 selectedTab = currentTab,
                 pendingEventCount = pendingEventCount,
@@ -131,12 +133,12 @@ fun MainAppScreen(
         Scaffold(
             modifier = Modifier.weight(1f),
             containerColor = MaterialTheme.colorScheme.background,
-            contentWindowInsets = if (selectedSubject != null) WindowInsets(0, 0, 0, 0) else ScaffoldDefaults.contentWindowInsets,
+            contentWindowInsets = if (selectedSubject != null || isScheduleComparisonOpen) WindowInsets(0, 0, 0, 0) else ScaffoldDefaults.contentWindowInsets,
             snackbarHost = {
                 SnackbarHost(hostState = snackbarHostState)
             },
             topBar = {
-                if (!showAcademicProgress && selectedDetailId == null && !showSettingsSubScreen) {
+                if (!showAcademicProgress && selectedDetailId == null && !showSettingsSubScreen && !isScheduleComparisonOpen) {
                 SnapTopAppBar(
                     title = resolvedTitle,
                     subtitle = resolvedSubtitle,
@@ -178,7 +180,7 @@ fun MainAppScreen(
                 }
             },
             bottomBar = {
-                if (isCompact && !showAcademicProgress && selectedDetailId == null && !showSettingsSubScreen) {
+                if (isCompact && !showAcademicProgress && selectedDetailId == null && !showSettingsSubScreen && !isScheduleComparisonOpen) {
                     SnapBottomNavBar(
                         selectedTab = currentTab,
                         pendingEventCount = pendingEventCount,

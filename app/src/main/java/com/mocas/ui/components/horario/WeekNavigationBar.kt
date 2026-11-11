@@ -77,7 +77,7 @@ fun WeekNavigationBar(
                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 7.dp),
                 fontSize = 11.sp,
                 fontWeight = FontWeight.ExtraBold,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.onPrimaryContainer
             )
         }
         IconButton(onClick = onNextWeek) {
