@@ -11,8 +11,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -34,7 +37,9 @@ fun DailyFocusCard(
     modifier: Modifier = Modifier,
     showTitle: Boolean = true
 ) {
-    val isFinishedOrFree = stats.totalHours == 0.0 || stats.progress >= 1f
+    val isFreeDay = stats.totalHours == 0.0
+    val isFinishedOrFree = isFreeDay || stats.progress >= 1f
+    val displayedProgress = if (isFreeDay) 1f else stats.progress
 
     val remainingLabel = if (stats.remainingHours > 0) {
         val wholeHours = stats.remainingHours.toInt()
@@ -112,16 +117,32 @@ fun DailyFocusCard(
                 modifier = Modifier.size(72.dp)
             ) {
                 CircularWavyProgressIndicator(
-                    progress = { stats.progress },
+                    progress = { displayedProgress },
                     modifier = Modifier.fillMaxSize()
                 )
-                Text(
-                    text = "${(stats.progress * 100).toInt()}%",
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.Black
-                    ),
-                    color = contentColor
-                )
+                if (isFreeDay) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(
+                            imageVector = Icons.Default.Check,
+                            contentDescription = stringResource(R.string.dia_libre),
+                            tint = contentColor,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Text(
+                            text = "100%",
+                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Black),
+                            color = contentColor
+                        )
+                    }
+                } else {
+                    Text(
+                        text = "${(displayedProgress * 100).toInt()}%",
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Black
+                        ),
+                        color = contentColor
+                    )
+                }
             }
         }
     }

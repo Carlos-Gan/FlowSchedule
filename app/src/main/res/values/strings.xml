@@ -23,6 +23,7 @@
     <string name="academic_monthly_history">Historial mensual</string>
     <string name="academic_monthly_empty">Aún no hay calificaciones con fecha para mostrar la evolución mensual.</string>
     <string name="academic_average">Promedio</string>
+    <string name="dashboard_days_remaining">días restantes</string>
     <string name="academic_change_up_short">+%1$s</string>
     <string name="academic_change_down_short">−%1$s</string>
     <string name="academic_chart_title">%1$s por mes</string>
@@ -104,7 +105,7 @@
     <string name="sin_resultados_filtros">No hay resultados con estos filtros</string>
     <string name="mensaje_sin_resultados_filtros">Prueba otro tipo o estado, o quita los filtros para ver todas tus actividades.</string>
     <string name="limpiar_filtros_boton">Quitar filtros</string>
-    <string name="nueva_actividad_boton">+ Nueva Actividad</string>
+    <string name="nueva_actividad_boton">Nueva Actividad</string>
     <string name="pendientes">Pendientes</string>
     <string name="completadas">Completadas</string>
     <string name="editar">Editar</string>
@@ -199,10 +200,10 @@
     <string name="no_hay_clases_semana">No hay clases esta semana</string>
     <string name="mensaje_sin_clases_semana">Agrega tus materias o importa una foto de tu horario escolar.</string>
     <string name="mensaje_revisar_periodos">Elige otra semana o revisa las fechas de tus periodos académicos.</string>
-    <string name="agregar_materia_boton">+ Agregar Materia</string>
+    <string name="agregar_materia_boton">Agregar Materia</string>
     <string name="ahora_label">Ahora</string>
     <string name="tu_dia_libre">Tu día está libre</string>
-    <string name="agregar_clase_boton">+ Agregar Clase</string>
+    <string name="agregar_clase_boton">Agregar Clase</string>
     <string name="no_hay_materias_registradas">No hay materias registradas</string>
     <string name="mensaje_primera_materia">Agrega tu primera materia para armar tu semestre.</string>
     <string name="salones_label">Salones</string>
@@ -603,6 +604,7 @@
     <string name="msg_papelera_vaciada">Papelera vaciada.</string>
     <string name="msg_periodo_guardado">Periodo guardado.</string>
     <string name="msg_periodo_actualizado">Periodo actualizado.</string>
+    <string name="msg_periodo_eliminado">Periodo eliminado.</string>
     <string name="msg_no_materias_nuevas_copiar">No había materias nuevas para copiar.</string>
     <string name="msg_copio_1_materia">Se copió 1 materia al periodo.</string>
     <string name="msg_copiaron_n_materias">Se copiaron %1$d materias al periodo.</string>
@@ -777,4 +779,17 @@
     <string name="calificacion">Calificación</string>
     <string name="ingresa_valor_0_100">Ingresa un valor de 0 a 100</string>
     <string name="guardar_y_completar">Guardar y completar</string>
+    <string name="academic_periods_title">Períodos académicos</string>
+    <string name="academic_periods_saved">Períodos guardados</string>
+    <string name="academic_periods_add">Agregar período</string>
+    <string name="academic_periods_delete_title">Eliminar período</string>
+    <string name="academic_periods_delete_message">¿Estás seguro de eliminar el período \"%1$s\"?</string>
+    <string name="academic_periods_active">Activo</string>
+    <string name="academic_periods_upcoming">Próximo</string>
+    <string name="academic_periods_past">Pasado</string>
+    <string name="academic_periods_days_left">Quedan %1$d días</string>
+    <string name="academic_periods_starts_in">Inicia en %1$d días</string>
+    <string name="academic_periods_empty_title">Sin períodos académicos</string>
+    <string name="academic_periods_empty_message">Agrega un período académico para organizar tus ciclos escolares.</string>
+    <string name="academic_periods_name">Nombre del período</string>
 </resources>

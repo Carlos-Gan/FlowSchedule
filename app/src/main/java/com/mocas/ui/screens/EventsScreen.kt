@@ -453,8 +453,7 @@ fun EventsScreen(
         // --- M3 FAB MENU FOR ACTIVITY STATUS FILTERING ---
         FloatingActionButtonMenu(
             modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(bottom = 24.dp, end = 20.dp),
+                .align(Alignment.BottomEnd),
             expanded = fabMenuExpanded,
             button = {
                 ToggleFloatingActionButton(

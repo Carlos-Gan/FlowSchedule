@@ -110,7 +110,7 @@ fun EmptyStateCard(
                     Icon(
                         imageVector = actionIcon,
                         contentDescription = null,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.size(6.dp))
                     Text(
@@ -128,6 +128,12 @@ fun EmptyStateCard(
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier.testTag("empty_state_secondary_action_btn")
                 ) {
+                    Icon(
+                        imageVector = actionIcon,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.size(6.dp))
                     Text(
                         text = secondaryActionButtonText,
                         fontSize = 13.sp,

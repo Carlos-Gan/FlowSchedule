@@ -24,6 +24,7 @@
     <string name="academic_monthly_history">Monthly history</string>
     <string name="academic_monthly_empty">There are no dated grades to show monthly progress yet.</string>
     <string name="academic_average">Average</string>
+    <string name="dashboard_days_remaining">days left</string>
     <string name="academic_change_up_short">+%1$s</string>
     <string name="academic_change_down_short">−%1$s</string>
     <string name="academic_chart_title">%1$s by month</string>
@@ -115,7 +116,7 @@
     <string name="sin_resultados_filtros">No results for these filters</string>
     <string name="mensaje_sin_resultados_filtros">Try another type or status, or clear the filters to see all your activities.</string>
     <string name="limpiar_filtros_boton">Clear filters</string>
-    <string name="nueva_actividad_boton">+ New Activity</string>
+    <string name="nueva_actividad_boton">New Activity</string>
     <string name="pendientes">Pending</string>
     <string name="completadas">Completed</string>
     <string name="editar">Edit</string>
@@ -210,10 +211,10 @@
     <string name="no_hay_clases_semana">No classes this week</string>
     <string name="mensaje_sin_clases_semana">Add your subjects or import a photo of your school schedule.</string>
     <string name="mensaje_revisar_periodos">Choose another week or check your academic period dates.</string>
-    <string name="agregar_materia_boton">+ Add Subject</string>
+    <string name="agregar_materia_boton">Add Subject</string>
     <string name="ahora_label">Now</string>
     <string name="tu_dia_libre">Your day is free</string>
-    <string name="agregar_clase_boton">+ Add Class</string>
+    <string name="agregar_clase_boton">Add Class</string>
     <string name="no_hay_materias_registradas">No subjects registered</string>
     <string name="mensaje_primera_materia">Add your first subject to build your semester.</string>
     <string name="salones_label">Rooms</string>
@@ -223,7 +224,7 @@
     <string name="horario_sesiones_formato">Schedule (%1$d sessions/week)</string>
     <string name="sin_salon">No room</string>
     <string name="tareas_examenes_conteo_formato">Tasks &amp; Exams (%1$d)</string>
-    <string name="agregar_corto">+ Add</string>
+    <string name="agregar_corto">Add</string>
     <string name="sin_tareas_materia">No tasks or exams registered for this subject.</string>
     <string name="eliminar">Delete</string>
     <string name="confirmar_eliminar_materia">Delete subject?</string>
@@ -605,6 +606,7 @@
     <string name="msg_papelera_vaciada">Recycle bin emptied.</string>
     <string name="msg_periodo_guardado">Period saved.</string>
     <string name="msg_periodo_actualizado">Period updated.</string>
+    <string name="msg_periodo_eliminado">Period deleted.</string>
     <string name="msg_no_materias_nuevas_copiar">No new subjects to copy.</string>
     <string name="msg_copio_1_materia">1 subject copied to the period.</string>
     <string name="msg_copiaron_n_materias">%1$d subjects copied to the period.</string>
@@ -780,4 +782,17 @@
     <string name="calificacion">Grade</string>
     <string name="ingresa_valor_0_100">Enter a value from 0 to 100</string>
     <string name="guardar_y_completar">Save and complete</string>
+    <string name="academic_periods_title">Academic Periods</string>
+    <string name="academic_periods_saved">Saved Periods</string>
+    <string name="academic_periods_add">Add Period</string>
+    <string name="academic_periods_delete_title">Delete Period</string>
+    <string name="academic_periods_delete_message">Are you sure you want to delete the period \"%1$s\"?</string>
+    <string name="academic_periods_active">Active</string>
+    <string name="academic_periods_upcoming">Upcoming</string>
+    <string name="academic_periods_past">Past</string>
+    <string name="academic_periods_days_left">%1$d days left</string>
+    <string name="academic_periods_starts_in">Starts in %1$d days</string>
+    <string name="academic_periods_empty_title">No Academic Periods</string>
+    <string name="academic_periods_empty_message">Add an academic period to organize your school terms.</string>
+    <string name="academic_periods_name">Period Name</string>
 </resources>

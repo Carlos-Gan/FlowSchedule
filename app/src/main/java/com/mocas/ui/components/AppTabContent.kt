@@ -21,6 +21,7 @@ fun AppTabContent(
     viewModel: ScheduleViewModel,
     windowSizeClass: WindowSizeClass,
     onOpenAcademicProgress: () -> Unit = {},
+    onOpenAcademicPeriods: () -> Unit = {},
     onSettingsSubScreenChanged: (Boolean) -> Unit = {},
 ) {
     val stateHolder = rememberSaveableStateHolder()
@@ -37,7 +38,9 @@ fun AppTabContent(
                 BottomNavTab.INICIO -> {
                     DashboardScreen(
                         viewModel = viewModel,
-                        windowSizeClass = windowSizeClass
+                        windowSizeClass = windowSizeClass,
+                        onOpenAcademicProgress = onOpenAcademicProgress,
+                        onOpenAcademicPeriods = onOpenAcademicPeriods
                     )
                 }
 

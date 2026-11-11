@@ -39,8 +39,10 @@ fun MainAppScreen(
 ) {
     val isCompact = windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact
     var showAcademicProgress by remember { mutableStateOf(false) }
+    var showAcademicPeriods by remember { mutableStateOf(false) }
     var showSettingsSubScreen by remember { mutableStateOf(false) }
     BackHandler(showAcademicProgress) { showAcademicProgress = false }
+    BackHandler(showAcademicPeriods) { showAcademicPeriods = false }
     val selectedDetailId by viewModel.selectedSubjectDetailId.collectAsStateWithLifecycle()
     BackHandler(selectedDetailId != null && !showAcademicProgress) { viewModel.closeSubjectDetail() }
     val focusManager = LocalFocusManager.current
@@ -116,7 +118,7 @@ fun MainAppScreen(
     )
 
     Row(modifier = Modifier.fillMaxSize()) {
-        if (!isCompact && selectedDetailId == null && !showAcademicProgress && !isScheduleComparisonOpen) {
+        if (!isCompact && selectedDetailId == null && !showAcademicProgress && !showAcademicPeriods && !isScheduleComparisonOpen) {
             SnapNavigationRail(
                 selectedTab = currentTab,
                 pendingEventCount = pendingEventCount,
@@ -138,7 +140,7 @@ fun MainAppScreen(
                 SnackbarHost(hostState = snackbarHostState)
             },
             topBar = {
-                if (!showAcademicProgress && selectedDetailId == null && !showSettingsSubScreen && !isScheduleComparisonOpen) {
+                if (!showAcademicProgress && !showAcademicPeriods && selectedDetailId == null && !showSettingsSubScreen && !isScheduleComparisonOpen) {
                 SnapTopAppBar(
                     title = resolvedTitle,
                     subtitle = resolvedSubtitle,
@@ -180,7 +182,7 @@ fun MainAppScreen(
                 }
             },
             bottomBar = {
-                if (isCompact && !showAcademicProgress && selectedDetailId == null && !showSettingsSubScreen && !isScheduleComparisonOpen) {
+                if (isCompact && !showAcademicProgress && !showAcademicPeriods && selectedDetailId == null && !showSettingsSubScreen && !isScheduleComparisonOpen) {
                     SnapBottomNavBar(
                         selectedTab = currentTab,
                         pendingEventCount = pendingEventCount,
@@ -244,6 +246,12 @@ fun MainAppScreen(
                     onBack = { showAcademicProgress = false },
                     modifier = Modifier.fillMaxSize().padding(innerPadding)
                 )
+            } else if (showAcademicPeriods) {
+                AcademicPeriodsScreen(
+                    viewModel = viewModel,
+                    onBack = { showAcademicPeriods = false },
+                    modifier = Modifier.fillMaxSize().padding(innerPadding)
+                )
             } else AppTabContent(
                 currentTab = currentTab,
                 viewModel = viewModel,
@@ -252,6 +260,7 @@ fun MainAppScreen(
                     .fillMaxSize()
                     .padding(innerPadding),
                 onOpenAcademicProgress = { showAcademicProgress = true },
+                onOpenAcademicPeriods = { showAcademicPeriods = true },
                 onSettingsSubScreenChanged = { showSettingsSubScreen = it }
             )
         }

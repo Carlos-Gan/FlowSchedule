@@ -1,7 +1,9 @@
 package com.mocas.ui.screens
 
 import android.app.Application
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,25 +13,42 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddTask
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.LibraryAdd
+import androidx.compose.material.icons.filled.HourglassBottom
+import androidx.compose.material.icons.filled.School
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButtonMenu
+import androidx.compose.material3.FloatingActionButtonMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.ToggleFloatingActionButton
+import androidx.compose.material3.ToggleFloatingActionButtonDefaults.animateIcon
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -38,14 +57,17 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mocas.R
 import com.mocas.data.local.SchoolEventWithSubject
+import com.mocas.data.repository.GradeCalculator
 import com.mocas.ui.components.dashboard.DailyFocusCard
 import com.mocas.ui.components.dashboard.NextClassCard
-import com.mocas.ui.components.dashboard.QuickActionButton
 import com.mocas.ui.components.dashboard.TaskItemRow
 import com.mocas.ui.model.BottomNavTab
 import com.mocas.ui.model.DailyClassStats
 import com.mocas.ui.model.NextClassInfo
 import com.mocas.ui.viewmodel.ScheduleViewModel
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
+import java.util.Locale
 
 // Ancho máximo del contenido: en pantallas grandes (tablet/desktop/foldable
 // abierto) evita que el texto y las tarjetas se estiren de borde a borde.
@@ -55,13 +77,51 @@ private val MAX_CONTENT_WIDTH: Dp = 1200.dp
 fun DashboardScreen(
     viewModel: ScheduleViewModel,
     windowSizeClass: WindowSizeClass,
+    onOpenAcademicProgress: () -> Unit = {},
+    onOpenAcademicPeriods: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val settings by viewModel.appSettings.collectAsStateWithLifecycle()
     val nextClass by viewModel.nextClassInfo.collectAsStateWithLifecycle()
     val allEvents by viewModel.allEventsWithSubject.collectAsStateWithLifecycle()
     val classStats by viewModel.todayClassStats.collectAsStateWithLifecycle()
+    val subjects by viewModel.subjectsWithSlots.collectAsStateWithLifecycle()
+    val periods by viewModel.academicPeriods.collectAsStateWithLifecycle()
+    val gradeCategories by viewModel.gradeCategories.collectAsStateWithLifecycle()
+    val gradeItems by viewModel.gradeItems.collectAsStateWithLifecycle()
+    val gradeUnits by viewModel.gradeUnits.collectAsStateWithLifecycle()
+    val gradeWeights by viewModel.gradeUnitCategoryWeights.collectAsStateWithLifecycle()
     val today = ScheduleViewModel.getTodayDateString()
+
+    val average = remember(subjects, gradeCategories, gradeItems, gradeUnits, gradeWeights, settings.useGpaScale) {
+        GradeCalculator.periodAverage(
+            subjectIds = subjects.filterNot { it.subject.isDeleted }.map { it.subject.id }.distinct(),
+            categories = gradeCategories,
+            items = gradeItems,
+            units = gradeUnits,
+            unitCategoryWeights = gradeWeights
+        )?.let { value ->
+            val displayValue = if (settings.useGpaScale) {
+                if (value > 10) (value / 100.0) * 4.0 else (value / 10.0) * 4.0
+            } else value
+            val pattern = if (settings.useGpaScale) "%.2f" else if (displayValue > 10) "%.0f" else "%.1f"
+            String.format(Locale.getDefault(), pattern, displayValue)
+        }
+    }
+    val activePeriod = remember(periods, today) {
+        val now = runCatching { LocalDate.parse(today) }.getOrElse { LocalDate.now() }
+        periods.firstOrNull { period ->
+            val start = runCatching { LocalDate.parse(period.startDate) }.getOrNull()
+            val end = runCatching { LocalDate.parse(period.endDate) }.getOrNull()
+            start != null && end != null && now in start..end
+        }
+    }
+    val remainingDays = activePeriod?.let { period ->
+        runCatching {
+            val now = runCatching { LocalDate.parse(today) }.getOrElse { LocalDate.now() }
+            ChronoUnit.DAYS.between(now, LocalDate.parse(period.endDate)).toInt().coerceAtLeast(0)
+        }.getOrNull()
+    }
 
     val dueTodayEvents = remember(allEvents, today) {
         allEvents
@@ -77,6 +137,9 @@ fun DashboardScreen(
         nextClass = nextClass,
         dueTodayEvents = dueTodayEvents,
         classStats = classStats,
+        average = average,
+        remainingDays = remainingDays,
+        academicPeriodName = activePeriod?.name,
         windowSizeClass = windowSizeClass,
         onNextClassClick = { nextClass?.subject?.id?.let(viewModel::openSubjectDetail) },
         onViewAllEvents = { viewModel.setTab(BottomNavTab.EVENTOS) },
@@ -86,6 +149,8 @@ fun DashboardScreen(
         onEventClick = { viewModel.openAddEvent(it) },
         onAddTaskClick = { viewModel.openAddEvent() },
         onAddSubjectClick = { viewModel.openAddSubject() },
+        onOpenAcademicProgress = onOpenAcademicProgress,
+        onOpenAcademicPeriods = onOpenAcademicPeriods,
         modifier = modifier
     )
 }
@@ -104,8 +169,16 @@ fun DashboardContent(
     onEventClick: (SchoolEventWithSubject) -> Unit,
     onAddTaskClick: () -> Unit,
     onAddSubjectClick: () -> Unit,
+    average: String? = null,
+    remainingDays: Int? = null,
+    academicPeriodName: String? = null,
+    onOpenAcademicProgress: () -> Unit = {},
+    onOpenAcademicPeriods: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    var fabMenuExpanded by rememberSaveable { mutableStateOf(false) }
+    BackHandler(fabMenuExpanded) { fabMenuExpanded = false }
+
     val widthClass = windowSizeClass.widthSizeClass
     val isCompact = widthClass == WindowWidthSizeClass.Compact
     val isExpanded = widthClass == WindowWidthSizeClass.Expanded
@@ -122,7 +195,12 @@ fun DashboardContent(
                 .align(Alignment.TopCenter)
                 .widthIn(max = MAX_CONTENT_WIDTH)
                 .fillMaxWidth(),
-            contentPadding = PaddingValues(horizontal = horizontalPadding, vertical = 24.dp),
+            contentPadding = PaddingValues(
+                start = horizontalPadding,
+                end = horizontalPadding,
+                top = 24.dp,
+                bottom = 104.dp
+            ),
             verticalArrangement = Arrangement.spacedBy(if (isExpanded) 20.dp else 13.dp)
         ) {
             // Greeting Section
@@ -147,29 +225,14 @@ fun DashboardContent(
                 }
             }
 
-            // Quick Actions Row
             item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    QuickActionButton(
-                        icon = Icons.Default.AddTask,
-                        label = stringResource(R.string.añadir_tarea),
-                        containerColor = MaterialTheme.colorScheme.surfaceDim,
-                        contentColor = MaterialTheme.colorScheme.primary,
-                        onClick = onAddTaskClick,
-                        modifier = Modifier.weight(1f).then(if (isExpanded) Modifier.height(68.dp) else Modifier)
-                    )
-                    QuickActionButton(
-                        icon = Icons.Default.LibraryAdd,
-                        label = stringResource(R.string.añadir_materia),
-                        containerColor = MaterialTheme.colorScheme.surfaceDim,
-                        contentColor = MaterialTheme.colorScheme.secondary,
-                        onClick = onAddSubjectClick,
-                        modifier = Modifier.weight(1f).then(if (isExpanded) Modifier.height(68.dp) else Modifier)
-                    )
-                }
+                DashboardAcademicSummaryCard(
+                    average = average,
+                    remainingDays = remainingDays,
+                    periodName = academicPeriodName,
+                    onAverageClick = onOpenAcademicProgress,
+                    onPeriodClick = onOpenAcademicPeriods
+                )
             }
 
             if (isExpanded) {
@@ -269,6 +332,110 @@ fun DashboardContent(
                         onEventClick = onEventClick
                     )
                 }
+            }
+        }
+
+        FloatingActionButtonMenu(
+            modifier = Modifier.align(Alignment.BottomEnd),
+            expanded = fabMenuExpanded,
+            button = {
+                ToggleFloatingActionButton(
+                    checked = fabMenuExpanded,
+                    onCheckedChange = { fabMenuExpanded = it }
+                ) {
+                    val icon = if (checkedProgress > 0.5f) Icons.Default.Close else Icons.Default.Add
+                    Icon(
+                        painter = rememberVectorPainter(icon),
+                        contentDescription = stringResource(R.string.añadir_tarea),
+                        modifier = Modifier.animateIcon({ checkedProgress })
+                    )
+                }
+            }
+        ) {
+            FloatingActionButtonMenuItem(
+                onClick = {
+                    fabMenuExpanded = false
+                    onAddTaskClick()
+                },
+                icon = { Icon(Icons.Default.AddTask, contentDescription = null) },
+                text = { Text(stringResource(R.string.añadir_tarea)) }
+            )
+            FloatingActionButtonMenuItem(
+                onClick = {
+                    fabMenuExpanded = false
+                    onAddSubjectClick()
+                },
+                icon = { Icon(Icons.Default.LibraryAdd, contentDescription = null) },
+                text = { Text(stringResource(R.string.añadir_materia)) }
+            )
+        }
+    }
+}
+
+@Composable
+private fun DashboardAcademicSummaryCard(
+    average: String?,
+    remainingDays: Int?,
+    periodName: String?,
+    onAverageClick: () -> Unit,
+    onPeriodClick: () -> Unit
+) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(18.dp),
+        color = MaterialTheme.colorScheme.surface,
+        shadowElevation = 2.dp
+    ) {
+        Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 12.dp)) {
+            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                DashboardSummaryMetric(
+                    modifier = Modifier.weight(1f).clickable(role = Role.Button, onClick = onAverageClick).padding(end = 12.dp),
+                    icon = Icons.Default.School,
+                    value = average ?: stringResource(R.string.academic_no_data_short),
+                    label = stringResource(R.string.academic_average)
+                )
+                DashboardSummaryMetric(
+                    modifier = Modifier.weight(1f).clickable(role = Role.Button, onClick = onPeriodClick).padding(start = 12.dp),
+                    icon = Icons.Default.HourglassBottom,
+                    value = remainingDays?.toString() ?: stringResource(R.string.academic_no_data_short),
+                    label = stringResource(R.string.dashboard_days_remaining),
+                    detail = periodName ?: stringResource(R.string.widget_no_academic_period)
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .width(1.dp)
+                    .height(34.dp)
+                    .background(MaterialTheme.colorScheme.outlineVariant)
+            )
+        }
+    }
+}
+
+@Composable
+private fun DashboardSummaryMetric(
+    modifier: Modifier,
+    icon: ImageVector,
+    value: String,
+    label: String,
+    detail: String? = null
+) {
+    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+        Surface(
+            modifier = Modifier.size(32.dp),
+            shape = RoundedCornerShape(10.dp),
+            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f)
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
+            }
+        }
+        Column(modifier = Modifier.weight(1f).padding(start = 8.dp)) {
+            Text(value, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, maxLines = 1)
+            Text(label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1)
+            if (detail != null) {
+                Text(detail, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1)
             }
         }
     }

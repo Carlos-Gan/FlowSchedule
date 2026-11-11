@@ -482,6 +482,15 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
+    fun deleteAcademicPeriod(periodId: Long) {
+        viewModelScope.launch {
+            runOperation {
+                repository.deleteAcademicPeriod(periodId)
+                _userMessage.value = getApplication<Application>().getString(R.string.msg_periodo_eliminado)
+            }
+        }
+    }
+
     fun toggleEventCompleted(eventId: Long, completed: Boolean) {
         viewModelScope.launch {
             runOperation {

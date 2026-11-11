@@ -129,6 +129,15 @@ class ScheduleRepository(private val context: Context, private val database: App
     suspend fun insertAcademicPeriod(period: AcademicPeriodEntity): Long =
         saveAcademicPeriod(period.copy(id = 0))
 
+    suspend fun deleteAcademicPeriod(periodId: Long) = database.withTransaction {
+        requireNotNull(periodDao.getPeriodById(periodId)) {
+            context.getString(R.string.error_periodo_no_existe)
+        }
+        check(periodDao.deletePeriod(periodId) > 0) {
+            context.getString(R.string.msg_error_inesperado)
+        }
+    }
+
     suspend fun saveAcademicPeriod(period: AcademicPeriodEntity): Long = database.withTransaction {
         require(period.name.isNotBlank()) { context.getString(R.string.error_nombre_periodo_obligatorio) }
         val start = requireDate(period.startDate, context.getString(R.string.fecha_inicio_label))
