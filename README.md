@@ -180,12 +180,14 @@ Open the project in Android Studio, allow Gradle to synchronize, and run the app
 
 ## 📌 Project Status
 
-**Current version:** `1.8.0`
+**Current version:** `2.5.7`
 
 **Application ID:** `dev.charlesmoran.flowschedule`
 
 **Minimum SDK:** 26  
 **Target SDK:** 37
+
+[![Get it on Google Play](https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png)](https://play.google.com/store/apps/details?id=dev.charlesmoran.flowschedule)
 
 FlowSchedule is an actively developed project. New features and improvements are added based on real-world academic use and testing.
 
