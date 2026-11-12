@@ -1,6 +1,7 @@
 package com.mocas.ui.add.event
 
 import android.content.Context
+import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -261,22 +262,22 @@ fun formatTime(hour: Int, minute: Int): String =
 fun buildPeriodName(context: Context, startDate: String, endDate: String): String {
     val start = DateTimeUtils.parseDate(startDate) ?: return context.getString(R.string.periodo_academico_default)
     val end = DateTimeUtils.parseDate(endDate) ?: return context.getString(R.string.periodo_academico_default)
-    val months = listOf(
-        context.getString(R.string.month_jan),
-        context.getString(R.string.month_feb),
-        context.getString(R.string.month_mar),
-        context.getString(R.string.month_apr),
-        context.getString(R.string.month_may),
-        context.getString(R.string.month_jun),
-        context.getString(R.string.month_jul),
-        context.getString(R.string.month_aug),
-        context.getString(R.string.month_sep),
-        context.getString(R.string.month_oct),
-        context.getString(R.string.month_nov),
-        context.getString(R.string.month_dec)
-    )
-    return "${months[start.monthValue - 1]} ${start.year} – " +
-            "${months[end.monthValue - 1]} ${end.year}"
+    val locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        context.resources.configuration.locales[0]
+    } else {
+        @Suppress("DEPRECATION")
+        context.resources.configuration.locale
+    }
+    val startMonthName = start.month.getDisplayName(java.time.format.TextStyle.FULL, locale)
+        .replaceFirstChar { it.titlecase(locale) }
+    val endMonthName = end.month.getDisplayName(java.time.format.TextStyle.FULL, locale)
+        .replaceFirstChar { it.titlecase(locale) }
+
+    return if (start.year == end.year) {
+        "$startMonthName – $endMonthName ${start.year}"
+    } else {
+        "$startMonthName ${start.year} – $endMonthName ${end.year}"
+    }
 }
 
 @Composable

@@ -68,44 +68,13 @@ import com.mocas.R
 import com.mocas.data.local.SchoolEventType
 import com.mocas.ui.components.EmptyStateCard
 import com.mocas.ui.components.events.CustomEventCard
+import com.mocas.ui.components.events.ProgressBadge
+import com.mocas.ui.components.events.ProgressSummary
 import com.mocas.ui.viewmodel.ScheduleViewModel
 import com.mocas.util.DateTimeUtils
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
-
-@Composable
-private fun ProgressBadge(modifier: Modifier, progressFraction: Float) {
-    Surface(
-        modifier = modifier,
-        shape = RoundedCornerShape(12.dp),
-        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-    ) {
-        Text(
-            text = "${(progressFraction * 100).toInt()}%",
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)
-        )
-    }
-}
-
-@Composable
-private fun ProgressSummary(modifier: Modifier, completedCount: Int, totalCount: Int) {
-    Column(modifier = modifier) {
-        Text(
-            text = stringResource(R.string.progreso_del_semestre),
-            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-            color = MaterialTheme.colorScheme.onSurface
-        )
-        Text(
-            text = stringResource(R.string.actividades_completadas_formato, completedCount, totalCount),
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    }
-}
 
 @Composable
 fun EventsScreen(

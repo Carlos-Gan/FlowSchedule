@@ -32,7 +32,8 @@ fun CreateUnitDialog(
     onDismiss: () -> Unit,
     onConfirm: (GradeUnitEntity) -> Unit
 ) {
-    var name by remember { mutableStateOf("Unidad ${unitCount + 1}") }
+    val defaultUnitName = stringResource(R.string.unit_formato, unitCount + 1)
+    var name by remember(unitCount) { mutableStateOf(defaultUnitName) }
     AlertDialog(
         onDismissRequest = onDismiss,
         icon = { Icon(Icons.Default.CreateNewFolder, null) },

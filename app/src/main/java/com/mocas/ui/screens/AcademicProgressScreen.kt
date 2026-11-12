@@ -29,16 +29,21 @@ import com.mocas.R
 import com.mocas.data.local.GradeItemEntity
 import com.mocas.data.local.SubjectEntity
 import com.mocas.data.repository.GradeCalculator
+import com.mocas.ui.components.academic.EmptyCard
+import com.mocas.ui.components.academic.GradeEvolutionChart
+import com.mocas.ui.components.academic.SubjectPicker
+import com.mocas.ui.components.academic.TrendCard
 import com.mocas.ui.viewmodel.ScheduleViewModel
+import com.mocas.util.ProgressTab
+import com.mocas.util.formatGrade
+import com.mocas.util.monthlyTrend
+import com.mocas.util.toDisplayGrade
 import java.time.Instant
 import java.time.YearMonth
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.math.abs
-
-private data class AcademicGradePoint(val label: String, val value: Double)
-private enum class ProgressTab { CURRENT, MONTHLY }
 
 @Composable
 fun AcademicProgressScreen(viewModel: ScheduleViewModel, onBack: () -> Unit, modifier: Modifier = Modifier) {
@@ -160,101 +165,3 @@ fun AcademicProgressScreen(viewModel: ScheduleViewModel, onBack: () -> Unit, mod
         }
     }
 }
-
-@Composable
-private fun SubjectPicker(subjects: List<SubjectEntity>, selectedSubjectId: Long?, onSelect: (Long?) -> Unit) {
-    var expanded by remember { mutableStateOf(false) }
-    val selectedLabel = subjects.firstOrNull { it.id == selectedSubjectId }?.name ?: stringResource(R.string.academic_all_subjects)
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(stringResource(R.string.academic_subject_filter), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        Box {
-            Surface(onClick = { expanded = true }, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(14.dp), color = MaterialTheme.colorScheme.surfaceVariant) {
-                Row(Modifier.padding(horizontal = 16.dp, vertical = 14.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Text("▦", color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.titleMedium)
-                    Text(selectedLabel, Modifier.weight(1f).padding(start = 12.dp), fontWeight = FontWeight.Medium)
-                    Icon(Icons.Default.ExpandMore, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
-            }
-            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                DropdownMenuItem(text = { Text(stringResource(R.string.academic_all_subjects)) }, onClick = { onSelect(null); expanded = false })
-                subjects.forEach { subject ->
-                    DropdownMenuItem(text = { Text(subject.name) }, onClick = { onSelect(subject.id); expanded = false })
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun TrendCard(points: List<AcademicGradePoint>, gradeLabel: String, useGpa: Boolean) {
-    val maxValue = if (useGpa) 4.0 else if (points.maxOfOrNull { it.value }?.let { it > 10 } == true) 100.0 else 10.0
-    Surface(Modifier.fillMaxWidth(), shape = RoundedCornerShape(22.dp), color = MaterialTheme.colorScheme.surfaceVariant) {
-        Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text(stringResource(R.string.academic_chart_title, gradeLabel), fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
-            GradeEvolutionChart(points, maxValue, Modifier.fillMaxWidth().height(190.dp))
-            Text(if (points.size == 1) stringResource(R.string.academic_one_month_note) else stringResource(R.string.academic_chart_note), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
-        }
-    }
-}
-
-@Composable
-private fun EmptyCard(message: String) {
-    Surface(Modifier.fillMaxWidth(), shape = RoundedCornerShape(20.dp), color = MaterialTheme.colorScheme.surface, border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)) {
-        Text(message, Modifier.padding(18.dp), color = MaterialTheme.colorScheme.onSurfaceVariant)
-    }
-}
-
-private fun monthlyTrend(
-    subjects: List<SubjectEntity>, categories: List<com.mocas.data.local.GradeCategoryEntity>, items: List<GradeItemEntity>,
-    units: List<com.mocas.data.local.GradeUnitEntity>, weights: List<com.mocas.data.local.GradeUnitCategoryWeightEntity>,
-    subjectId: Long?, useGpa: Boolean
-): List<AcademicGradePoint> {
-    if (items.isEmpty()) return emptyList()
-    val categorySubjects = categories.associate { it.id to it.subjectId }
-    val relevant = items.filter { item -> categorySubjects[item.categoryId]?.let { subjectId == null || it == subjectId } == true }
-    if (relevant.isEmpty()) return emptyList()
-    val zone = ZoneId.systemDefault()
-    val months = relevant.map { YearMonth.from(Instant.ofEpochMilli(it.createdAtMillis).atZone(zone)) }.distinct().sorted()
-    return months.mapNotNull { month ->
-        val cutoff = month.atEndOfMonth().atTime(23, 59, 59).atZone(zone).toInstant().toEpochMilli()
-        val asOf = relevant.filter { it.createdAtMillis <= cutoff }
-        val scoped = subjects.filter { subject -> subjectId == null || subject.id == subjectId }
-        val avg = scoped.mapNotNull { subject -> GradeCalculator.subjectAverage(subject.id, categories, asOf, units, weights) }
-            .takeIf { it.isNotEmpty() }?.average()
-        avg?.let { AcademicGradePoint(month.format(DateTimeFormatter.ofPattern("MMM yyyy", Locale.getDefault())), toDisplayGrade(it, useGpa)) }
-    }
-}
-
-private fun toDisplayGrade(value: Double, useGpa: Boolean): Double = if (useGpa) (value / if (value > 10) 100.0 else 10.0) * 4.0 else value
-
-@Composable
-private fun GradeEvolutionChart(points: List<AcademicGradePoint>, maxValue: Double, modifier: Modifier = Modifier) {
-    val primary = MaterialTheme.colorScheme.primary
-    val surface = MaterialTheme.colorScheme.surface
-    val grid = MaterialTheme.colorScheme.outlineVariant
-    val labelColor = MaterialTheme.colorScheme.onSurfaceVariant
-    Canvas(modifier) {
-        val left = 38.dp.toPx(); val right = 8.dp.toPx(); val top = 24.dp.toPx(); val bottom = 38.dp.toPx()
-        val chartWidth = size.width - left - right; val chartHeight = size.height - top - bottom
-        repeat(5) { i ->
-            val y = top + chartHeight * i / 4
-            drawLine(grid, Offset(left, y), Offset(size.width - right, y), 1.dp.toPx())
-            drawContext.canvas.nativeCanvas.drawText(String.format(Locale.getDefault(), "%.1f", maxValue * (4 - i) / 4), 0f, y + 4.dp.toPx(), android.graphics.Paint().apply { color = labelColor.toArgb(); textSize = 11.sp.toPx() })
-        }
-        val xs = points.indices.map { if (points.size == 1) left + chartWidth / 2 else left + chartWidth * it / (points.size - 1) }
-        val ys = points.map { top + chartHeight * (1f - (it.value / maxValue).toFloat().coerceIn(0f, 1f)) }
-        if (points.size > 1) {
-            val path = Path().apply { moveTo(xs.first(), ys.first()); for (i in 1 until xs.size) lineTo(xs[i], ys[i]) }
-            drawPath(path, primary, style = Stroke(width = 3.dp.toPx()))
-        }
-        points.indices.forEach { i ->
-            drawCircle(surface, 5.dp.toPx(), Offset(xs[i], ys[i])); drawCircle(primary, 3.dp.toPx(), Offset(xs[i], ys[i]))
-            val paint = android.graphics.Paint().apply { color = primary.toArgb(); textSize = 12.sp.toPx(); textAlign = android.graphics.Paint.Align.CENTER; typeface = android.graphics.Typeface.DEFAULT_BOLD }
-            drawContext.canvas.nativeCanvas.drawText(formatGrade(points[i].value), xs[i], ys[i] - 10.dp.toPx(), paint)
-            val labelPaint = android.graphics.Paint().apply { color = labelColor.toArgb(); textSize = 10.sp.toPx(); textAlign = android.graphics.Paint.Align.CENTER }
-            drawContext.canvas.nativeCanvas.drawText(points[i].label.take(9), xs[i], size.height - 8.dp.toPx(), labelPaint)
-        }
-    }
-}
-
-private fun formatGrade(value: Double): String = String.format(Locale.getDefault(), "%.2f", value).replace('.', ',')

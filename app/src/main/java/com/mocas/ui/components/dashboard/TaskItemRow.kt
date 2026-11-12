@@ -17,6 +17,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Schedule
+import com.mocas.util.DateTimeUtils
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -119,19 +121,70 @@ fun TaskItemRow(
                         }
                         val alpha = if (isDone) 0.45f else 1f
 
-                        Surface(
-                            shape = RoundedCornerShape(6.dp),
-                            color = typeColor.copy(alpha = 0.14f * alpha)
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
-                            Text(
-                                text = stringResource(typeRes).uppercase(),
-                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                                style = MaterialTheme.typography.labelSmall.copy(
-                                    fontSize = 9.sp,
-                                    fontWeight = FontWeight.Bold
-                                ),
-                                color = typeColor.copy(alpha = alpha)
-                            )
+                            Surface(
+                                shape = RoundedCornerShape(6.dp),
+                                color = typeColor.copy(alpha = 0.14f * alpha)
+                            ) {
+                                Text(
+                                    text = stringResource(typeRes),
+                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                    style = MaterialTheme.typography.labelSmall.copy(
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.Bold
+                                    ),
+                                    color = typeColor.copy(alpha = alpha)
+                                )
+                            }
+
+                            val formattedTime = DateTimeUtils.formatTime(eventWithSubject.event.startTime, use24Hour = false)
+                            if (!formattedTime.isNullOrBlank() && !eventWithSubject.event.isAllDay) {
+                                Surface(
+                                    shape = RoundedCornerShape(6.dp),
+                                    color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = alpha)
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Schedule,
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = alpha),
+                                            modifier = Modifier.size(10.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(3.dp))
+                                        Text(
+                                            text = stringResource(R.string.due_time_formato, formattedTime),
+                                            style = MaterialTheme.typography.labelSmall.copy(
+                                                fontSize = 10.sp,
+                                                fontWeight = FontWeight.Medium
+                                            ),
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = alpha)
+                                        )
+                                    }
+                                }
+                            }
+
+                            if (isHighPriority && !isDone) {
+                                Surface(
+                                    shape = RoundedCornerShape(6.dp),
+                                    color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.8f)
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.prioridad_alta_label).uppercase(),
+                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                        style = MaterialTheme.typography.labelSmall.copy(
+                                            fontSize = 10.sp,
+                                            fontWeight = FontWeight.Bold
+                                        ),
+                                        color = MaterialTheme.colorScheme.onErrorContainer
+                                    )
+                                }
+                            }
                         }
 
                         Spacer(modifier = Modifier.height(3.dp))
@@ -170,19 +223,7 @@ fun TaskItemRow(
                 }
             }
 
-            if (isHighPriority && !isDone) {
-                Surface(
-                    shape = CircleShape,
-                    color = MaterialTheme.colorScheme.errorContainer
-                ) {
-                    Text(
-                        text = stringResource(R.string.prioridad_alta),
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
-                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                        color = MaterialTheme.colorScheme.onErrorContainer
-                    )
-                }
-            } else if (isDone) {
+            if (isDone) {
                 Surface(
                     shape = CircleShape,
                     color = MaterialTheme.colorScheme.surfaceContainer

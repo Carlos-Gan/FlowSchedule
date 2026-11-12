@@ -24,7 +24,7 @@
     <string name="academic_monthly_history">Histórico mensal</string>
     <string name="academic_monthly_empty">Ainda não há notas com data para mostrar a evolução mensal.</string>
     <string name="academic_average">Média</string>
-    <string name="dashboard_days_remaining">dias restantes</string>
+    <string name="dashboard_days_remaining">Dias Restantes</string>
     <string name="academic_change_up_short">+%1$s</string>
     <string name="academic_change_down_short">−%1$s</string>
     <string name="academic_chart_title">%1$s por mês</string>
@@ -565,6 +565,7 @@
     <string name="error_horario_traslape_externo">O horário %1$s–%2$s se sobrepõe a outra matéria.</string>
     <string name="error_formato_fecha_invalido">%1$s deve usar yyyy-MM-dd.</string>
     <string name="unit_default_name">Unidade 1</string>
+    <string name="unit_formato">Unidade %1$d</string>
     <string name="error_fecha_hora_invalida">Data ou hora inválida.</string>
     <string name="error_sin_clases_semestre">Nenhuma aula no semestre.</string>
     <string name="error_abrir_calendario">Não foi possível abrir o calendário.</string>
@@ -636,19 +637,19 @@
     <string name="widget_school_days_total_progress">%1$d dias letivos · %2$d%% concluídos</string>
     <string name="widget_period_ended">Período finalizado</string>
     <string name="whats_new_title">Novidades no FlowSchedule!</string>
-    <string name="whats_new_subtitle">Confira algumas das melhorias recentes:</string>
-    <string name="whats_new_item_1_title">🗓️ Zoom na visualização semanal</string>
-    <string name="whats_new_item_1_desc">Use o gesto de pinça para ampliar ou compactar as colunas e os horários do calendário semanal.</string>
-    <string name="whats_new_item_2_title">⏰ Horário de término das aulas</string>
-    <string name="whats_new_item_2_desc">A sincronização com o calendário do celular agora inclui os horários de início e término de cada aula.</string>
-    <string name="whats_new_item_3_title">💾 Backups Flow</string>
-    <string name="whats_new_item_3_desc">Exporte seus backups com a extensão .flow para identificá-los e compartilhá-los com facilidade.</string>
-    <string name="whats_new_item_4_title">🔔 Lembretes mais práticos</string>
-    <string name="whats_new_item_4_desc">Escolha o tempo de antecedência em uma linha rolável de botões Expressive.</string>
-    <string name="whats_new_item_5_title">🔎 Busca mais clara</string>
-    <string name="whats_new_item_5_desc">Os resultados agora aparecem logo abaixo da barra de busca.</string>
-    <string name="whats_new_item_6_title">📝 Edição de atividades melhorada</string>
-    <string name="whats_new_item_6_desc">Voltar retorna ao app sem fechá-lo, e a matéria aparece ao lado do tipo de atividade.</string>
+    <string name="whats_new_subtitle">Confira as principais melhorias desde a v2.5.2:</string>
+    <string name="whats_new_item_1_title">📆 Períodos acadêmicos</string>
+    <string name="whats_new_item_1_desc">Organize seus semestres com datas de início e fim, cartões de progresso e contagem regressiva de dias restantes.</string>
+    <string name="whats_new_item_2_title">✨ Mensagens motivacionais</string>
+    <string name="whats_new_item_2_desc">Inspiração diária no cartão de progresso em dias livres, férias ou ao concluir todas as aulas.</string>
+    <string name="whats_new_item_3_title">🔔 Notificações de feriados e fim de semestre</string>
+    <string name="whats_new_item_3_desc">Saudações automáticas em feriados e alertas de contagem regressiva nos últimos dias do semestre.</string>
+    <string name="whats_new_item_4_title">🏷️ Tipo de evento e horário nas tarefas</string>
+    <string name="whats_new_item_4_desc">Identifique rapidamente suas atividades de hoje por tipo (Tarefa, Exame, etc.), horário e prioridade.</string>
+    <string name="whats_new_item_5_title">👥 Comparação de horários</string>
+    <string name="whats_new_item_5_desc">Compare a disponibilidade semanal com amigos via QR ou link para encontrar horários livres juntos.</string>
+    <string name="whats_new_item_6_title">🔄 Sincronização automática de calendário</string>
+    <string name="whats_new_item_6_desc">Suas aulas e tarefas são sincronizadas automaticamente em segundo plano com Google Calendar ou Outlook.</string>
     <string name="whats_new_button">Entendi!</string>
 
     <!-- Add Event Dialog UI Strings -->
@@ -786,4 +787,5 @@
     <string name="notif_holiday_title">Feriado especial!</string>
     <string name="notif_semester_ending_title">Contagem regressiva final!</string>
     <string name="notif_semester_ending_message">Restam apenas %1$d dias de aulas neste período.</string>
+    <string name="due_time_formato">Para às %1$s</string>
 </resources>

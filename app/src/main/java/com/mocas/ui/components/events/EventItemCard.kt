@@ -209,7 +209,7 @@ fun EventItemCard(
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             if (event.priority != EventPriority.MEDIUM) {
                                 val priorityColor = if (event.priority == EventPriority.HIGH) Color(0xFFEF4444) else Color(0xFF10B981)
-                                val priorityLabel = stringResource(event.priority.titleRes).lowercase()
+                                val priorityLabel = stringResource(event.priority.titleRes)
                                 Text(
                                     text = stringResource(R.string.prioridad_formato, priorityLabel),
                                     style = MaterialTheme.typography.labelSmall,
@@ -314,19 +314,6 @@ fun EventItemCard(
                         }
                     }
                 }
-
-                Spacer(modifier = Modifier.width(4.dp))
-
-                Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-                    IconButton(onClick = onCalendarSyncClick, modifier = Modifier.size(40.dp).testTag("sync_event_btn_${event.id}")) {
-                        Icon(Icons.Default.CalendarMonth, contentDescription = stringResource(R.string.sincronizar_calendario_desc), tint = MaterialTheme.colorScheme.primary.copy(alpha = if (event.isCompleted) 0.5f else 1f), modifier = Modifier.size(19.dp))
-                    }
-                    if (onDeleteClick != null) {
-                        IconButton(onClick = { showDeleteConfirmation = true }, modifier = Modifier.size(48.dp).testTag("delete_event_btn_${event.id}")) {
-                            Icon(Icons.Default.Delete, contentDescription = "Eliminar evento", tint = MaterialTheme.colorScheme.error.copy(alpha = if (event.isCompleted) 0.4f else 0.8f), modifier = Modifier.size(19.dp))
-                        }
-                    }
-                }
             }
         }
     }
@@ -366,7 +353,7 @@ private fun EventTypeChip(type: SchoolEventType, color: Color, isCompleted: Bool
                 SchoolEventType.VACACIONES -> R.string.legend_vacaciones
                 else -> R.string.tipo_otro
             }
-            Text(text = stringResource(typeRes).uppercase(), color = color.copy(alpha = alpha), fontSize = 10.sp, fontWeight = FontWeight.ExtraBold)
+            Text(text = stringResource(typeRes), color = color.copy(alpha = alpha), fontSize = 10.sp, fontWeight = FontWeight.ExtraBold)
         }
     }
 }

@@ -70,6 +70,8 @@ import com.mocas.data.repository.SharedAvailability
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import androidx.core.net.toUri
+import com.mocas.ui.components.schedule.AvailabilityGrid
+import com.mocas.util.freeRanges
 
 @Composable
 fun ScheduleComparisonScreen(
@@ -254,77 +256,4 @@ fun ScheduleComparisonScreen(
             Text(stringResource(R.string.cerrar), color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
-}
-
-@Composable
-private fun AvailabilityGrid(common: BooleanArray, dayNames: List<String>) {
-    val colors = MaterialTheme.colorScheme
-    val available = colors.primary
-    val partly = colors.tertiaryContainer
-    val occupied = colors.surfaceVariant
-    Card(colors = CardDefaults.cardColors(containerColor = colors.surfaceContainerLow), shape = RoundedCornerShape(22.dp)) {
-        Column(modifier = Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            Row(modifier = Modifier.fillMaxWidth()) {
-                Spacer(Modifier.width(42.dp))
-                dayNames.forEach { day ->
-                    Text(day, modifier = Modifier.weight(1f), color = colors.onSurfaceVariant, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
-                }
-            }
-            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
-                Column(modifier = Modifier.width(42.dp)) {
-                    (7..22).forEach { hour ->
-                        Text("%02d:00".format(hour), modifier = Modifier.height(19.dp), color = colors.onSurfaceVariant, style = MaterialTheme.typography.labelSmall)
-                    }
-                    Text("23:00", modifier = Modifier.padding(top = 2.dp), color = colors.onSurfaceVariant, style = MaterialTheme.typography.labelSmall)
-                }
-                Canvas(modifier = Modifier.weight(1f).height(304.dp)) {
-                    val cellWidth = size.width / 7f
-                    val cellHeight = size.height / 16f
-                    val cellInset = 2.dp.toPx()
-                    for (day in 0..6) for (row in 0..15) {
-                        val start = day * 48 + 14 + row * 2
-                        val freeCount = (if (common[start]) 1 else 0) + (if (common[start + 1]) 1 else 0)
-                        val color = when (freeCount) { 2 -> available; 1 -> partly; else -> occupied }
-                        drawRoundRect(
-                            color,
-                            topLeft = androidx.compose.ui.geometry.Offset(day * cellWidth + cellInset, row * cellHeight + cellInset),
-                            size = androidx.compose.ui.geometry.Size(cellWidth - cellInset * 2, cellHeight - cellInset * 2),
-                            cornerRadius = androidx.compose.ui.geometry.CornerRadius(8.dp.toPx(), 8.dp.toPx())
-                        )
-                    }
-                }
-            }
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                GridLegend(available, stringResource(R.string.compare_legend_free))
-                GridLegend(partly, stringResource(R.string.compare_legend_partial))
-                GridLegend(occupied, stringResource(R.string.compare_legend_busy))
-            }
-            Text(stringResource(R.string.compare_day_bounds), color = colors.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
-        }
-    }
-}
-
-@Composable
-private fun GridLegend(color: Color, label: String) {
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-        Box(Modifier.size(10.dp).background(color, RoundedCornerShape(3.dp)))
-        Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelSmall)
-    }
-}
-
-private fun freeRanges(common: BooleanArray, day: Int): String {
-    val slots = common.indices.filter { ScheduleAvailability.dayIndex(it) == day && it % 48 in 14..45 && common[it] }
-    val ranges = mutableListOf<String>()
-    var index = 0
-    while (index < slots.size) {
-        val start = slots[index]
-        var end = start
-        while (index + 1 < slots.size && slots[index + 1] == end + 1) {
-            index++
-            end++
-        }
-        ranges += "${ScheduleAvailability.slotLabel(start)}–${ScheduleAvailability.slotLabel(end + 1)}"
-        index++
-    }
-    return ranges.joinToString(" · ")
 }

@@ -351,50 +351,6 @@ fun CalendarScreen(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-
-                Button(
-                    onClick = {
-                        if (eventsForSelectedDay.isNotEmpty()) {
-                            val first = eventsForSelectedDay.first()
-                            showCalendarResult(
-                                context,
-                                CalendarSyncHelper.addEventToPhoneCalendar(
-                                    context,
-                                    first.event,
-                                    first.subject?.name
-                                )
-                            )
-                        } else if (classesForSelectedDay.isNotEmpty()) {
-                            val first = classesForSelectedDay.first()
-                            showCalendarResult(
-                                context,
-                                CalendarSyncHelper.addClassToPhoneCalendar(
-                                    context,
-                                    first.subject,
-                                    first.slot
-                                )
-                            )
-                        } else {
-                            viewModel.openAddEvent(defaultDate = selectedDateStr)
-                        }
-                    },
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
-                    modifier = Modifier.testTag("calendar_sync_day_btn")
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.CalendarMonth,
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = stringResource(R.string.sincronizar_boton),
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
             }
         }
     }

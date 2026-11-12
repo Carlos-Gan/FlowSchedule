@@ -24,7 +24,7 @@
     <string name="academic_monthly_history">Monthly history</string>
     <string name="academic_monthly_empty">There are no dated grades to show monthly progress yet.</string>
     <string name="academic_average">Average</string>
-    <string name="dashboard_days_remaining">days left</string>
+    <string name="dashboard_days_remaining">Days Left</string>
     <string name="academic_change_up_short">+%1$s</string>
     <string name="academic_change_down_short">−%1$s</string>
     <string name="academic_chart_title">%1$s by month</string>
@@ -584,6 +584,7 @@
     <string name="error_horario_traslape_externo">Schedule %1$s-%2$s overlaps with another subject.</string>
     <string name="error_formato_fecha_invalido">%1$s must use yyyy-MM-dd.</string>
     <string name="unit_default_name">Unit 1</string>
+    <string name="unit_formato">Unit %1$d</string>
     <string name="error_fecha_hora_invalida">Invalid date or time.</string>
     <string name="error_sin_clases_semestre">No classes within the semester.</string>
     <string name="error_abrir_calendario">Could not open calendar.</string>
@@ -667,19 +668,19 @@
 
     <!-- What's New Dialog -->
     <string name="whats_new_title">What\'s new in FlowSchedule!</string>
-    <string name="whats_new_subtitle">Here are some of the latest improvements:</string>
-    <string name="whats_new_item_1_title">🗓️ Zoom in weekly view</string>
-    <string name="whats_new_item_1_desc">Pinch with two fingers to expand or compact the columns and time rows in your weekly calendar.</string>
-    <string name="whats_new_item_2_title">⏰ Class end times</string>
-    <string name="whats_new_item_2_desc">Syncing with your phone calendar now includes each class\'s start and end times.</string>
-    <string name="whats_new_item_3_title">💾 Flow backups</string>
-    <string name="whats_new_item_3_desc">Export backups with the .flow extension to make them easier to identify and share.</string>
-    <string name="whats_new_item_4_title">🔔 Easier reminder controls</string>
-    <string name="whats_new_item_4_desc">Choose a reminder time from a horizontally scrolling row of Expressive buttons.</string>
-    <string name="whats_new_item_5_title">🔎 Clearer search</string>
-    <string name="whats_new_item_5_desc">Search results now appear directly below the search bar.</string>
-    <string name="whats_new_item_6_title">📝 Improved activity editing</string>
-    <string name="whats_new_item_6_desc">Back returns to the app without closing it, and the subject appears beside the activity type.</string>
+    <string name="whats_new_subtitle">Here are the main improvements since v2.5.2:</string>
+    <string name="whats_new_item_1_title">📆 Academic periods</string>
+    <string name="whats_new_item_1_desc">Organize your terms with start/end dates, progress cards, and remaining days countdowns.</string>
+    <string name="whats_new_item_2_title">✨ Motivational phrases</string>
+    <string name="whats_new_item_2_desc">Daily inspiration on your progress card on free days, vacations, or when you finish all classes.</string>
+    <string name="whats_new_item_3_title">🔔 Holiday &amp; term-end notifications</string>
+    <string name="whats_new_item_3_desc">Automatic greetings on special holidays and countdown alerts in the final days of the semester.</string>
+    <string name="whats_new_item_4_title">🏷️ Event type &amp; time badges on tasks</string>
+    <string name="whats_new_item_4_desc">Quickly identify today\'s tasks by type (Task, Exam, etc.), due time, and priority.</string>
+    <string name="whats_new_item_5_title">👥 Schedule comparison</string>
+    <string name="whats_new_item_5_desc">Compare weekly availability with friends via QR or link to find free time together.</string>
+    <string name="whats_new_item_6_title">🔄 Automatic calendar sync</string>
+    <string name="whats_new_item_6_desc">Keep your classes and tasks automatically in sync in the background with Google Calendar or Outlook.</string>
     <string name="whats_new_button">Got it!</string>
 
     <!-- Add Event Dialog UI Strings -->
@@ -818,4 +819,5 @@
     <string name="notif_holiday_title">Special Holiday!</string>
     <string name="notif_semester_ending_title">End of Semester Countdown!</string>
     <string name="notif_semester_ending_message">Only %1$d days of classes left in this term.</string>
+    <string name="due_time_formato">Due %1$s</string>
 </resources>
